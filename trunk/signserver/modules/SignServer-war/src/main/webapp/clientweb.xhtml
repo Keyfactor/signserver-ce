@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:body>
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+
+            <ui:define name="title">
+                <h:outputText value="Client Web"/>
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <div id="container1">
+
+                    <p>
+                        <a href="generic.xhtml">Generic Signing</a>
+                    </p>
+                    <p>
+                        <a href="pdf.xhtml">PDF Signing</a>
+                    </p>
+                    <p>
+                        <a href="cms.xhtml">CMS Signing</a>
+                    </p>
+                    <p>
+                        <a href="mrtdsod.xhtml">MRTD SOD Signing</a>
+                    </p>
+
+                    <p>
+                        <h:link value="Back" outcome="index"></h:link>
+                    </p>
+                    
+                </div>
+            </ui:define>
+            <ui:define name="bottom">
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

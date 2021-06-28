@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<h:table id="data" xmlns:h="http://www.w3.org/TR/html4/">
+    <h:tr>
+        <h:td>Hello XAdES!</h:td>
+    </h:tr>
+</h:table>

@@ -1,0 +1,7 @@
+DEVELOP
+------
+
+Instructions for building and developing SignServer can be found in the
+SignServer Manual.
+
+See: doc/htdocs/Developer_Reference.html

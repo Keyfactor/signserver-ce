@@ -1,0 +1,32 @@
+Building a debian package
+-------------------------
+
+Create source tarball
+$ ant release:source-tarball
+
+Move to a new folder
+$ cd ..
+$ mkdir packaging
+$ mv signserver-3.3.0alpha4-src.tar.gz packaging/
+$ cd packaging
+
+Adjust the name of the tarball and extract it
+$ mv signserver-3.3.0alpha4-src.tar.gz signserver3.3_3.3.0alpha4.orig.tar.gz
+$ tar zxvf signserver3.3_3.3.0alpha4.orig.tar.gz
+$ mv signserver-3.3.0alpha4 signserver3.3-3.3.0alpha4
+
+Symlink the debian folder
+$ cd signserver3.3-3.3.0alpha4
+$ cp -r res/install/debian .
+
+Update the changelog
+$ dch -i
+
+Test to build binary package
+$ debuild -us -uc
+
+Build and sign a source only package
+$ debuild -S
+
+Upload to PPA
+$ dput ppa:markuskilas/ppa ../signserver3.3_3.3.0alpha4-1markus1_source.changes 

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NOTE: This is outdated/legacy WSDL v.3.1 for compatibility testing -->
+<definitions xmlns:tns="gen.ws.protocol.signserver.org"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="SignServerWSService"
+             targetNamespace="gen.ws.protocol.signserver.org">
+    <!-- Input/Output types -->
+    <types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="gen.ws.protocol.signserver.org"
+                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                   xmlns="http://schemas.xmlsoap.org/wsdl/"
+                   targetNamespace="gen.ws.protocol.signserver.org"
+                   version="1.0">
+            <!-- Exceptions -->
+            <xs:element name="CryptoTokenOfflineException" type="tns:CryptoTokenOfflineException"/>
+            <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+            <xs:element name="InvalidWorkerIdException" type="tns:InvalidWorkerIdException"/>
+            <xs:element name="SignServerException" type="tns:SignServerException"/>
+            <!-- getStatus In/Out -->
+            <xs:element name="getStatus" type="tns:getStatus"/>
+            <xs:element name="getStatusResponse" type="tns:getStatusResponse"/>
+            <!-- process In/Out -->
+            <xs:element name="process" type="tns:process"/>
+            <xs:element name="processResponse" type="tns:processResponse"/>
+            <!-- getStatus Input -->
+            <xs:complexType name="getStatus">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- getStatus Output -->
+            <xs:complexType name="getStatusResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:workerStatusWS"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- getStatus Output per Worker -->
+            <xs:complexType name="workerStatusWS">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="errormessage" type="xs:string"/>
+                    <xs:element minOccurs="0" name="overallStatus" type="xs:string"/>
+                    <xs:element minOccurs="0" name="workerName" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- process Input -->
+            <xs:complexType name="process">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="arg1" type="tns:processRequestWS"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- process Input per Request -->
+            <xs:complexType name="processRequestWS">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="requestDataBase64" type="xs:string"/>
+                    <xs:element name="requestMetadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element minOccurs="0" name="key" type="xs:string"/>
+                                            <xs:element minOccurs="0" name="value" type="xs:string"/>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- process Output -->
+            <xs:complexType name="processResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:processResponseWS"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- process Output per Request Entry -->
+            <xs:complexType name="processResponseWS">
+                <xs:sequence>
+                    <xs:element name="requestID" type="xs:int"/>
+                    <xs:element minOccurs="0" name="responseDataBase64" type="xs:string"/>
+                    <xs:element minOccurs="0" name="workerCertificate" type="tns:certificate"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="workerCertificateChain" nillable="true"
+                                type="tns:certificate"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- Certificate -->
+            <xs:complexType name="certificate">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="certType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="certificateBase64" type="xs:string"/>
+                    <xs:element minOccurs="0" name="provider" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- InvalidWorkerIdException Content -->
+            <xs:complexType name="InvalidWorkerIdException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- IllegalRequestException Content -->
+            <xs:complexType name="IllegalRequestException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- CryptoTokenOfflineException Content -->
+            <xs:complexType name="CryptoTokenOfflineException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <!-- SignServerException Content -->
+            <xs:complexType name="SignServerException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </types>
+    <!-- -->
+    <message name="IllegalRequestException">
+        <part element="tns:IllegalRequestException" name="fault"/>
+    </message>
+    <!-- -->
+    <message name="processResponse">
+        <part element="tns:processResponse" name="parameters"/>
+    </message>
+    <!-- -->
+    <message name="getStatus">
+        <part element="tns:getStatus" name="parameters"/>
+    </message>
+    <!-- -->
+    <message name="InvalidWorkerIdException">
+        <part element="tns:InvalidWorkerIdException" name="fault"/>
+    </message>
+    <!-- -->
+    <message name="SignServerException">
+        <part element="tns:SignServerException" name="fault"/>
+    </message>
+    <!-- -->
+    <message name="CryptoTokenOfflineException">
+        <part element="tns:CryptoTokenOfflineException" name="fault"/>
+    </message>
+    <!-- -->
+    <message name="process">
+        <part element="tns:process" name="parameters"/>
+    </message>
+    <!-- -->
+    <message name="getStatusResponse">
+        <part element="tns:getStatusResponse" name="parameters"/>
+    </message>
+    <!-- -->
+    <portType name="SignServerWS">
+        <!-- -->
+        <operation name="process">
+            <input message="tns:process"/>
+            <output message="tns:processResponse"/>
+            <fault message="tns:CryptoTokenOfflineException" name="CryptoTokenOfflineException"/>
+            <fault message="tns:SignServerException" name="SignServerException"/>
+            <fault message="tns:InvalidWorkerIdException" name="InvalidWorkerIdException"/>
+            <fault message="tns:IllegalRequestException" name="IllegalRequestException"/>
+        </operation>
+        <!-- -->
+        <operation name="getStatus">
+            <input message="tns:getStatus"/>
+            <output message="tns:getStatusResponse"/>
+            <fault message="tns:InvalidWorkerIdException" name="InvalidWorkerIdException"/>
+        </operation>
+    </portType>
+    <!-- -->
+    <binding name="SignServerWSPortBinding" type="tns:SignServerWS">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <!-- -->
+        <operation name="process">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="CryptoTokenOfflineException">
+                <soap:fault name="CryptoTokenOfflineException" use="literal"/>
+            </fault>
+            <fault name="SignServerException">
+                <soap:fault name="SignServerException" use="literal"/>
+            </fault>
+            <fault name="InvalidWorkerIdException">
+                <soap:fault name="InvalidWorkerIdException" use="literal"/>
+            </fault>
+            <fault name="IllegalRequestException">
+                <soap:fault name="IllegalRequestException" use="literal"/>
+            </fault>
+        </operation>
+        <!-- -->
+        <operation name="getStatus">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="InvalidWorkerIdException">
+                <soap:fault name="InvalidWorkerIdException" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <!-- -->
+    <service name="SignServerWSService">
+        <port binding="tns:SignServerWSPortBinding" name="SignServerWSPort">
+            <soap:address location="https://localhost:8443/signserver/SignServerWSService/SignServerWS"/>
+        </port>
+    </service>
+</definitions>

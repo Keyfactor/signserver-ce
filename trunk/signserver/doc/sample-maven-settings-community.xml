@@ -1,0 +1,37 @@
+<!-- 
+    Sample of a local Maven settings file overriding the default URLs of Maven
+    central to use HTTPS. Only needed if Maven hasn't fixed this yet.
+    
+    PrimeKey developers: Instead use sample-maven-settings-primekey.xml
+    
+    Copy to ~/.m2/settings.xml or edit your existing file if you have one.
+    
+    The current settings can be seen by running:
+    $ mvn help:effective-settings
+
+    Version:
+    $Id: sample-maven-settings.xml 7394 2016-07-06 10:54:00Z netmackan $   
+-->
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <mirrors>
+	<!-- Force everything (not listed below) through this URL -->
+        <mirror>
+            <id>central-https</id>
+            <name>Central using HTTPS</name>
+            <mirrorOf>*</mirrorOf>
+            <url>https://repo1.maven.org/maven2</url>
+        </mirror>
+
+	<!-- Use cefdigital through this URL -->
+        <mirror>
+            <id>cefdigital-https</id>
+            <name>CEFDigital using HTTPS</name>
+            <mirrorOf>cefdigital</mirrorOf>
+            <url>https://ec.europa.eu/cefdigital/artifact/content/repositories/esignaturedss/</url>
+        </mirror>
+    </mirrors>
+</settings>

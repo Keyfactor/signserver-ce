@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+
+    <display-name>SignServerWS</display-name>
+
+    <filter>
+        <filter-name>ExtensionFilter</filter-name>
+        <filter-class>org.signserver.web.common.filters.ExtensionFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>ExtensionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>SignServerWS</servlet-name>
+        <servlet-class>org.signserver.protocol.ws.server.SignServerWS</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SignServerWS</servlet-name>
+        <url-pattern>/SignServerWS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SignServerWS</servlet-name>
+        <url-pattern>/PrioritySignServerWS</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>restricted methods</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method-omission>GET</http-method-omission>
+            <http-method-omission>POST</http-method-omission>
+            <http-method-omission>HEAD</http-method-omission>
+        </web-resource-collection>
+        <auth-constraint />
+    </security-constraint>
+
+    <!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USED FOR POSTPROCESSING DURING BUILD -->
+    <!--COMMENT-REPLACEMENT(ejbjarheader)-->
+
+    <persistence-context-ref>
+        <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+        <persistence-unit-name>SignServerJPA</persistence-unit-name>
+        <persistence-context-type>Transaction</persistence-context-type>
+        <injection-target>
+            <injection-target-class>org.signserver.protocol.ws.server.SignServerWS</injection-target-class>
+            <injection-target-name>em</injection-target-name>
+        </injection-target>
+    </persistence-context-ref>
+
+    <!--COMMENT-REPLACEMENT(ejbjarfooter)-->
+    <!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
+
+</web-app>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:body>
+        <ui:composition template="../WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="genericdirect"/>
+
+            <ui:define name="title">
+                <h:outputText value="Generic Signing by Direct Input"/>
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <div id="container1">
+
+                    <h1>Generic Signing or Validation by Direct Input</h1>
+
+                    <p>
+                        This page can be used to request signing and validation from any of the generic signers and validators. The content to be signed or validated can optionally be treated as base64 encoded. The name of the worker that should process the request needs to be specified. To perform document and certificate validation, use the process type drop down to select the appropriate operation.
+                    </p>
+
+                    <form id="requestform" action="../process" method="post" autocomplete="off">
+                        <h3>Worker</h3>
+                        <p>
+                            Name: <input type="text" name="workerName"/>
+                        </p>
+
+                        <h3>Input</h3>
+                        <p>
+                            Data:<br/>
+                            <textarea name="data" cols="60" rows="10"></textarea><br/>
+                            Encoding:
+                            <select name="encoding">
+                                <option value="" selected="selected">None</option>
+                                <option value="base64">Base64</option>
+                            </select>
+                        </p>
+
+                        <h3>Options</h3>
+                        <details>
+                            <summary>Process type</summary>
+                            <p>
+                                <select name="processType">
+                                        <option value="signDocument" selected="selected">Sign document</option>
+                                        <option value="validateDocument">Validate document</option>
+                                        <option value="validateCertificate">Validate certificate</option>
+                                </select>
+                            </p>
+                        </details>
+                        <details>
+                            <summary>CMS-specific</summary>
+                            <p>
+                                Request detached signature:
+                                <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="" checked="checked"/>Use default
+                                <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="TRUE"/>Detached
+                                <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="FALSE"/>Include content
+                            </p>
+                        </details>
+                        <details>
+                            <summary>PDF-specific</summary>
+                            <p>Password (if required for opening or signing PDF):<br/>
+                            <input type="password" name="REQUEST_METADATA.pdfPassword" autocomplete="off"/></p>
+                        </details>
+                        <details>
+                            <summary>Generic meta data</summary>
+                            <p>
+                                Include additional meta data with the request:<br/>
+                                <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
+                            </p>
+                        </details>
+
+                        <h3>Submit</h3>
+                        <p>
+                            <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit" class="buttonFeatured"/>
+                        </p>
+                    </form>
+                </div>
+            </ui:define>
+            <ui:define name="bottom">
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="workers" value="#{bulkBean.workerIds}"/>
+        <f:viewParam name="previous" value="#{bulkBean.previous}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputText value="#{text['Workers_-_Activate...']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:outputText value="#{text['Activate']}"/></h1>
+
+                <h:form>                    
+                    <h:panelGroup rendered="#{empty bulkBean.workers}">
+                        <p>
+                            <h:outputText value="#{text['(No_Workers_Selected)']}"/>
+                        </p>
+                        <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!empty bulkBean.workers}">
+                        <h:dataTable id="table1" value="#{bulkBean.workers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1 centered,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:selectBooleanCheckbox class="jsHidden" value="true" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
+                                </f:facet>
+                                <h:selectBooleanCheckbox value="#{bulkBean.selectedIdsForActivation[item.id]}" disabled="#{!item.existing || !item.hasCrypto}" class="allSelectable"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['ID']}" />
+                                </f:facet>
+                                <h:outputText value="#{item.id}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Name']}" />
+                                </f:facet>
+                                <h:link outcome="worker" value="#{item.name}" disabled="#{!item.existing}">
+                                    <f:param name="id" value="#{item.id}"/>
+                                </h:link>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Result']}" />
+                                </f:facet>
+                                <span class="errorMessage">
+                                    <h:outputText value="#{item.error}"/>
+                                    <h:panelGroup class="warningMessage" rendered="#{!item.hasCrypto and item.success == null and item.error == null}">
+                                        <h:outputText value="(#{text['Not_a_crypto_worker']}, "/>
+                                        <h:outputText rendered="#{bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN')) != -1}" value="#{text['See']} "/>
+                                        <h:link value="#{(bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN')) != -1 ? (item.config.get('CRYPTOTOKEN')) : (text['No_cryptotoken_configured']))}" disabled="#{bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN'))== -1}" outcome="worker.xhtml?id=#{item.config.get('CRYPTOTOKEN') ? '' : bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN'))}" />
+                                        <h:outputText value=")"/>
+                                    </h:panelGroup>
+                                </span> 
+                                <span class="successMessage"><h:outputText value="#{item.success}"/></span>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel for="password"><h:outputText value="#{text['Authentication_Code_COLON']}"/></h:outputLabel> 
+                            <h:inputSecret id="password" value="#{bulkBean.activatePassword}" autocomplete="off"/>
+                            <f:facet name="footer">
+                                <h:commandButton class="buttonFeatured" value="#{text['Activate']}" action="#{bulkBean.activateAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{bulkBean.backLink}"></h:link>
+                            </f:facet>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                        
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

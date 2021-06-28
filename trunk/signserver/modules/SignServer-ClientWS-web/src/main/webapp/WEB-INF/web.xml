@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+
+    <display-name>ClientWS</display-name>
+
+    <filter>
+        <filter-name>ExtensionFilter</filter-name>
+        <filter-class>org.signserver.web.common.filters.ExtensionFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>ExtensionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>ClientWS</servlet-name>
+        <servlet-class>org.signserver.clientws.ClientWS</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PriorityClientWS</servlet-name>
+        <servlet-class>org.signserver.clientws.ClientWS</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ClientWS</servlet-name>
+        <url-pattern>/ClientWS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PriorityClientWS</servlet-name>
+        <url-pattern>/PriorityClientWS</url-pattern>
+    </servlet-mapping>
+
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>restricted methods</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method-omission>GET</http-method-omission>
+            <http-method-omission>POST</http-method-omission>
+            <http-method-omission>HEAD</http-method-omission>
+        </web-resource-collection>
+        <auth-constraint />
+        </security-constraint>
+</web-app>

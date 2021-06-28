@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{workerAuthBean.id}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerAuthBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Authorization']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerAuthBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-authorization"/>
+                </ui:include>
+
+                <h:form>
+                    <h:panelGroup rendered="#{workerAuthBean.worker.existing}">
+                        <div id="worker_content">
+
+                            <h2><h:outputText value="#{text['Clients']}"/></h2>
+
+                            <p>
+                                <h:outputText value="#{text['Clients_authorized_when_certificate_authentication_is_used_COLON']}"/>
+                            </p>
+
+                            <h:dataTable id="table1" value="#{workerAuthBean.authorizedClientsGen2}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="viewAuthRuleType,viewAuthRuleValue,viewAuthRuleType,viewAuthRuleValue,dss1,dss1" rowClasses="dss1,dss1_odd">
+                                <h:column>
+                                    <f:facet name="header">
+                                        <div align="left">   
+                                            <h:outputText value="#{text['Subject']}"/> 
+                                        </div>
+                                    </f:facet>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{text[item.matchSubjectWithType]}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>                               
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{item.matchSubjectWithValue}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <div align="left">
+                                            <h:outputText value="#{text['Issuer']}" />
+                                        </div>
+                                    </f:facet>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{text[item.matchIssuerWithType]}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{item.matchIssuerWithValue}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <div align="left">
+                                            <h:outputText value="#{text['Description']}" />
+                                        </div>
+                                    </f:facet>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{item.description}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:link value="Edit" outcome="worker-authorization-edit">
+                                            <f:param name="id" value="#{workerAuthBean.worker.id}"/>
+                                            <f:param name="matchSubjectWithValue" value="#{item.matchSubjectWithValue}"/>
+                                            <f:param name="matchIssuerWithValue" value="#{item.matchIssuerWithValue}"/>
+                                            <f:param name="matchSubjectWithType" value="#{item.matchSubjectWithType}"/>
+                                            <f:param name="matchIssuerWithType" value="#{item.matchIssuerWithType}"/>
+                                            <f:param name="description" value="#{item.description}"/>
+                                        </h:link> |
+                                        <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-authorization-remove">
+                                            <f:param name="id" value="#{workerAuthBean.worker.id}"/>
+                                            <f:param name="matchSubjectWithValue" value="#{item.matchSubjectWithValue}"/>
+                                            <f:param name="matchIssuerWithValue" value="#{item.matchIssuerWithValue}"/>
+                                            <f:param name="matchSubjectWithType" value="#{item.matchSubjectWithType}"/>
+                                            <f:param name="matchIssuerWithType" value="#{item.matchIssuerWithType}"/>
+                                            <f:param name="description" value="#{item.description}"/>
+                                        </h:link>
+                                    </h:panelGroup>
+                                </h:column>
+                                <f:facet name="footer">
+                                </f:facet>
+                            </h:dataTable>
+
+                            <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                            <h:commandButton class="buttonNeutral" value="#{text['Reload_from_database']}" action="#{workerAuthBean.bulkAction('worker-authorization-reload')}"/>
+                        </div>
+                    </h:panelGroup>
+                </h:form>
+                <h:panelGroup rendered="#{!workerAuthBean.worker.existing}">
+                    <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                    <p>
+                        <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                    </p>
+                </h:panelGroup>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

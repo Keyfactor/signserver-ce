@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    
+    <body>
+        <ui:composition template="../WEB-INF/templates/template.xhtml">
+
+            <ui:define name="title">
+                <h:outputText value="#{text['ClientCLI_Download']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <div id="container1">
+
+                    <h2>#{text['ClientCLI_Download']}</h2>
+
+                    <p>
+                        If enabled, a binary distribution (zip-file) with the SignServer 
+                        ClientCLI command line signing client can be downloaded from this page.
+                    </p>
+                    
+                    <h:panelGroup rendered="#{publicWebBean.isWebClientCLIDistAvailable()}">
+                        <b>
+                            <h:outputLink value = "signserver-clientcli.zip">signserver-clientcli.zip</h:outputLink> [<h:outputText value="#{publicWebBean.getWebClientCLIDistSize()}"/>]
+                        </b> 
+                    </h:panelGroup>
+                    
+                    <h:panelGroup rendered="#{!publicWebBean.isWebClientCLIDistAvailable()}">
+                        <p><b>Download not available</b></p>
+                    </h:panelGroup>
+                    
+                    <p>&nbsp;</p>        
+                    <p>&nbsp;</p>
+                    <p>
+                        <h:outputLink value="../">Back</h:outputLink>
+                    </p>
+                </div>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+

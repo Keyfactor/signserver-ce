@@ -1,0 +1,73 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer Enterprise - Proprietary Modules.                         *
+ *                                                                       *
+ *  Copyright (c), PrimeKey Solutions AB. All rights reserved.           *
+ *  The use of the Proprietary Modules are subject to specific           *
+ *  commercial license terms.                                            *
+ *                                                                       *
+ *************************************************************************/
+/**
+ * Jenkins pipeline for running JRE patch script.
+ *
+ */
+node('dss-docker') {
+
+    try {
+
+        checkout([$class: 'SubversionSCM', additionalCredentials: [], excludedCommitMessages: '', excludedRegions: '', excludedRevprop: '', excludedUsers: '', filterChangelog: false, ignoreDirPropChanges: false, includedRegions: '', locations: [[cancelProcessOnExternalsFail: true, credentialsId: 'e8aa0eb0-9eb8-42d2-8596-6a7a90c8f7cc', depthOption: 'infinity', ignoreExternalsOption: true, local: '.', remote: 'https://svn.cesecore.eu/svn/signserver-restricted/trunk']], quietOperation: true, workspaceUpdater: [$class: 'UpdateUpdater']])
+
+        def testImage
+        def PWD = pwd();            
+    
+        stage('Prepare Container') {
+            sh 'hostname'
+            sh 'pwd'
+            sh "cd jenkins-files/containers/${env.CONTAINER} && ls -ltr && whoami"
+            sh "cp -rv /home/user/binaries `pwd`/jenkins-files/containers/${env.CONTAINER}/"
+            sh 'which java'
+        }
+
+        stage('Build Container') {
+            sh 'hostname'
+            sh 'ls'
+            testImage = docker.build("${PIPELINE_NAME}:${env.BUILD_ID}", "-m 512m --memory-swap 512m jenkins-files/containers/${env.CONTAINER}/")
+        }
+
+            testImage.inside ("-m 2500m --memory-swap 2500m") {
+                withEnv([]) {
+
+                    stage('Verify environment') {
+                        // Print versions
+                        sh "java -version"
+                        sh  'cd /usr/lib/jvm && ls -ltr'
+                        sh "locale"
+                        echo 'All environment variables'
+                        sh 'printenv'          
+                        sh 'id'
+                    }
+
+                    
+                    stage('Run') {
+                        sh 'hostname'
+                        sh 'ls'
+                        sh 'id'
+                        sh '$USER'   
+
+                        sh 'chmod +x jenkins-files/tools/build-patch.sh'
+                        sh 'jenkins-files/tools/build-patch.sh'
+                    }
+
+                    stage('Package') {
+                        archiveArtifacts '*.zip'
+                    }
+
+                }
+            }
+        }
+
+    finally {   
+        cleanWs()   
+    }
+    
+}

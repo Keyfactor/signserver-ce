@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+ *                                                                       *
+ *  EJBCA - Proprietary Modules: Enterprise Certificate Authority        *
+ *                                                                       *
+ *  Copyright (c), PrimeKey Solutions AB. All rights reserved.           *
+ *  The use of the Proprietary Modules are subject to specific           * 
+ *  commercial license terms.                                            *
+ *                                                                       *
+ *************************************************************************/
+
+ version: $Id$
+ -->
+<connector version="1.6" metadata-complete="true"
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                        http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd">
+   <vendor-name>PrimeKey</vendor-name>
+   <eis-type>PKI</eis-type>
+   <resourceadapter-version>1.0</resourceadapter-version>
+   <resourceadapter>
+      <resourceadapter-class>org.signserver.ejbca.peerconnector.PeerConnectorResourceAdapter</resourceadapter-class>
+      <outbound-resourceadapter>
+         <connection-definition>
+            <managedconnectionfactory-class>org.signserver.ejbca.peerconnector.PeerManagedConnectionFactory</managedconnectionfactory-class>
+            <connectionfactory-interface>org.signserver.ejbca.peerconnector.PeerConnectorResource</connectionfactory-interface>
+            <connectionfactory-impl-class>org.signserver.ejbca.peerconnector.PeerConnectorResourceImpl</connectionfactory-impl-class>
+            <connection-interface>org.signserver.ejbca.peerconnector.PeerConnection</connection-interface>
+            <connection-impl-class>org.signserver.ejbca.peerconnector.PeerConnectionImpl</connection-impl-class>
+         </connection-definition>
+         <transaction-support>NoTransaction</transaction-support>
+         <authentication-mechanism>
+            <authentication-mechanism-type>BasicPassword</authentication-mechanism-type>
+            <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+         </authentication-mechanism>
+         <reauthentication-support>false</reauthentication-support>
+      </outbound-resourceadapter>
+   </resourceadapter>
+</connector>

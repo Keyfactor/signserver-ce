@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+# timemonitor   This shell script takes care of starting and stopping
+#               the SignServer TimeMonitor.
+#
+# chkconfig: - 30 60
+
+### BEGIN INIT INFO
+# Provides: timemonitor
+# Default-Stop: 0 1 6
+# Short-Description: Start up the SignServer TimeMonitor sevice
+### END INIT INFO
+
+
+# old-style (pre-systemd) init script for running the SignServer TimeMonitor
+# on RHEL 6.x
+# install this scipt as /etc/init.d/timemonitor
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+[ -f /etc/sysconfig/network ] &&  . /etc/sysconfig/network
+
+# Path to SignServer, change as needed
+SIGNSERVER_HOME=/opt/signserver
+
+# User to run as, change as needed
+USER=signserver
+
+PIDFILE=$SIGNSERVER_HOME/timemonitor.pid
+
+RETVAL=0
+uid=`id | cut -d\( -f1 | cut -d= -f2`
+
+# See how we were called.
+case "$1" in
+  start)
+
+	# Check that networking is up.
+	[ "${NETWORKING}" != "yes" ] && exit 6
+
+	# Only root can start the service
+	[ $uid -ne 0 ] && exit 4
+
+	echo -n $"Starting timemonitor: "
+	TIMEMONITOR_PIDFILE=$PIDFILE daemon --user $USER --pidfile $PIDFILE $SIGNSERVER_HOME/bin/timemonitor-in-background.sh
+	RETVAL=$?
+	echo
+
+	;;
+  stop)
+	# Only root can stop the service
+	[ $uid -ne 0 ] && exit 4
+
+	# Stop daemons.
+	echo -n $"Shutting down timemonitor: "
+	killproc -p $PIDFILE 
+	RETVAL=$?
+	echo
+
+	;;
+  status)
+	status -p $PIDFILE
+	RETVAL=$?
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo $"Usage: timemonitor {start|stop|status|restart}"
+	RETVAL=2
+	;;
+esac
+
+exit $RETVAL

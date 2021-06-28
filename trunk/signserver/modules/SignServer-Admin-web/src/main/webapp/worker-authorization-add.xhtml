@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{workerAuthBean.id}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerAuthBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Configuration_-_Add_Authorization']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerAuthBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-authorization"/>
+                </ui:include>
+                
+                <div id="worker_content">
+                    <h:panelGroup rendered="#{workerAuthBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Add_Authorized_Client']}"/></h2>
+
+                        <h:form id="form">
+                            <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
+                            
+                            <h:panelGroup id="import" layout="block" styleClass="optionalArea" rendered="#{!workerAuthBean.fromCertificate and !workerAuthBean.importState}">
+                                Import from certificate: <h:commandButton class="buttonNeutral" value="#{text['From_File']}" action="#{workerAuthBean.browseAction()}"/> <h:commandButton class="buttonNeutral" value="#{text['Load_Current']}" action="#{workerAuthBean.loadCurrentAction()}"/>
+                            </h:panelGroup>
+                            <h:panelGroup id="postImport" layout="block" styleClass="postOptionalArea">&nbsp;</h:panelGroup>
+
+                            
+                            <h:panelGroup id="editAuthRule" layout="block" rendered="#{!workerAuthBean.fromCertificate and !workerAuthBean.importState}">
+
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <h:outputLabel for="matchSubjectWithType"><h:outputText value="#{text['Subject_COLON']}" styleClass="editAuthRule"/></h:outputLabel>
+                                        </td>
+                                        <td>
+                                            <h:selectOneMenu value="#{workerAuthBean.matchSubjectWithType}" styleClass="editAuthRule">
+                                        <f:selectItems value="#{workerAuthBean.matchWithSubjectTypes}" />
+                                    </h:selectOneMenu> 
+                                            <h:message for="matchSubjectWithType" class="errorMessage"/>
+                                        </td>
+                                        <td>
+                                            <h:inputText id="matchSubjectWithValue" value="#{workerAuthBean.matchSubjectWithValue}" size="16" requiredMessage="*" styleClass="editAuthRule">
+                                        <f:validator validatorId="optionallyRequiredValidator"/>
+                                        <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                    </h:inputText>
+                                        </td>
+                                        <td>
+                                            <h:message for="matchSubjectWithValue" class="errorMessage"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <h:outputLabel for="matchIssuerWithType"><h:outputText value="#{text['Issuer_COLON']}" styleClass="editAuthRule"/></h:outputLabel>
+                                        </td>
+                                        <td>
+                                            <h:selectOneMenu value="#{workerAuthBean.matchIssuerWithType}" style="" styleClass="editAuthRule">
+                                        <f:selectItems value="#{workerAuthBean.matchWithIssuerTypes}" />
+                                    </h:selectOneMenu> 
+                                            <h:message for="matchIssuerWithType" class="errorMessage"/>
+                                        </td>
+                                        <td>
+                                            <h:inputText id="matchIssuerWithValue" value="#{workerAuthBean.matchIssuerWithValue}" size="50" requiredMessage="*" styleClass="editAuthRule">
+                                        <f:validator validatorId="optionallyRequiredValidator"/>
+                                        <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                    </h:inputText>
+                                        </td>
+                                        <td>
+                                            <h:message for="matchIssuerWithValue" class="errorMessage"/>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>
+                                    <h:outputLabel for="description"><h:outputText value="#{text['Description_COLON']}"/></h:outputLabel>
+                                        </td>
+                                        <td colspan="2">
+                                            <h:inputText id="description" value="#{workerAuthBean.description}" size="50" styleClass="editAuthRule">
+                                        <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                    </h:inputText>
+                                    <h:message for="description" class="errorMessage"/> 
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <h:panelGroup layout="box">
+                                    <p rendered="#{workerAuthBean.errorMessage}">
+                                        <h:outputText value="#{workerAuthBean.errorMessage}" class="errorMessage"/>
+                                    </p>
+                                    <h:commandButton class="buttonPositive" value="#{text['Submit']}" action="#{workerAuthBean.addAction()}" binding="#{components.buttonSubmit}"/>
+                                    <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="importAuthRuleFromCert" layout="block" rendered="#{workerAuthBean.fromCertificate}" styleClass="optionalArea">
+                                <ui:remove>
+                                    <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
+                                </ui:remove>
+                                <h:outputLabel for="cert"><h:outputText value="#{text['Load_From_Certificate_File_COLON']}"/></h:outputLabel><br/>
+                                <h:inputTextarea id="cert" value="#{workerAuthBean.cert}" cols="50" rows="10"/><br/>
+                                <p id="certFileInputContainer" class="fileInputContainer"></p>
+                                <script>
+                                    ejbca.ra.createFileUploadInput("certNewFileInput", "certFileInputContainer", function(uploadedText) {
+                                        document.getElementById("form:cert").value = uploadedText;
+                                        //document.getElementById("keyPairForm:uploadCsrButton").click();
+                                    });
+                                </script>
+                                <br/>
+
+                                <p>
+                                    <h:outputText value="#{workerAuthBean.loadErrorMessage}" class="errorMessage"/>
+                                </p>
+
+                                <h:commandButton class="buttonFeatured" value="#{text['Load']}" action="#{workerAuthBean.loadCertAction()}"/> <h:commandButton class="buttonNeutral" value="#{text['Cancel']}" action="#{workerAuthBean.cancelBrowseAction()}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" styleClass="postOptionalArea">&nbsp;</h:panelGroup>
+                            
+                            <h:panelGroup id="importFields" layout="block" rendered="#{workerAuthBean.importState}" styleClass="optionalArea">
+                                <h:outputText styleClass="titleCell" value="Choose certificate field:"/>
+                                <h:panelGroup id="postHeading" layout="block" styleClass="postOptionalArea">&nbsp;</h:panelGroup>
+                                <table cellspacing="0" cellpadding="0" class="authFieldsTable">
+                                    <ui:repeat value="#{workerAuthBean.subjectFieldsFromCert}" var="item">
+                                        <tr class="#{item.subjectMatchType == workerAuthBean.selectedSubjectMatchType and
+                                                     item.selectable ? 'selectedAuthType' : ''}">
+                                            <td class="authTypeCell authFieldSelectedMark">
+                                                <h:commandButton
+                                                    rendered="#{item.subjectMatchType != workerAuthBean.selectedSubjectMatchType and
+                                                                item.selectable}"
+                                                    action="#{workerAuthBean.selectSubjectMatchType(item.subjectMatchType)}"
+                                                    value="#{text['Select']}"
+                                                    class="buttonNeutral"/>
+                                                <h:panelGroup rendered="#{item.subjectMatchType == workerAuthBean.selectedSubjectMatchType and
+                                                                          item.selectable}" styleClass="authFieldSelectedMark">
+                                                    &#x2714;
+                                                </h:panelGroup>
+                                            </td>
+                                            <td class="authTypeCell">
+                                                <h:outputText class="#{item.selectable ? '' : 'disabledAuthType'}"
+                                                              value="#{item.subjectMatchLabel}"/>
+                                            </td>
+                                            <td class="authTypeCell">
+                                                <h:outputText class="#{item.selectable ? '' : 'disabledAuthType'}"
+                                                              value="#{item.subjectMatchValue}"/>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                </table>
+                                <p>
+                                    <h:outputText value="#{workerAuthBean.loadErrorMessage}" class="errorMessage"/>
+                                </p>
+
+                                <h:commandButton class="buttonFeatured" value="#{text['Submit']}" action="#{workerAuthBean.loadFieldAction()}"/> <h:commandButton class="buttonNeutral" value="#{text['Cancel']}" action="#{workerAuthBean.cancelBrowseAction()}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" styleClass="postOptionalArea">&nbsp;</h:panelGroup>
+
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                        <p>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                        </p>
+                    </h:panelGroup>
+                </div>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

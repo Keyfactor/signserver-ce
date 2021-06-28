@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss>
-
-    <webservices>
-        <context-root>signserver/AdminWSService</context-root>
-    </webservices>
-</jboss>

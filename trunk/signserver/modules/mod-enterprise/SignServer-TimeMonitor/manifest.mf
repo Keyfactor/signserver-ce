@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-X-SIGNSERVER-TIMEMONITOR-VERSION: 1.1.6
-X-SIGNSERVER-TIMEMONITOR-REVISION: $Revision: 5901 $
-X-COMMENT: Main-Class will be added automatically by build

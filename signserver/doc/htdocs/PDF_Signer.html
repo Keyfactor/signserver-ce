@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.1</p>
+                    <p>Version: 5.7.0</p>
                 </div>
             </header>
 
@@ -513,6 +513,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AdES_Signer.html">AdES Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -963,6 +967,10 @@
         <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestMetadataAliasSelector.html">RequestMetadataAliasSelector</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1406,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
 
             </li>
@@ -1496,39 +1508,42 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-96862482"> <span>PDF Signer</span></h1>
+</div>            <h1 id="src-119933236"> <span>PDF Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The PDF signer has the class name: <strong class=" ">org.signserver.module.pdfsigner.PDFSigner</strong>.    </p>
-    <div class="section section-1" id="src-96862482_id-.PDFSignerv5.5.0-Overview">
+    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The main purpose of the PDF signer is to add digital signatures to PDF documents.    </p>
-    <p  >The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader).    </p>
-    <p  >On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)    </p>
-    <p  >PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be trusted. It is strongly advised to apply timestamp to a signature, and the TSA module can be used for this purpose.    </p>
-    <p  >Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).    </p>
+    <p  >The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when a visible signature is applied to a document, signature image (in the shape of a rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader).    </p>
+    <p  >On the other hand, when an invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as: custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see <a   href="https://confluence.primekey.com/pages/viewpage.action?pageId=119933237#id-.PDFSignerv5.7.0-WorkerProperties">.PDF Signer v5.7.0#Worker Properties</a>).    </p>
+    <p  >PDF Signer can also apply a timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that the document was signed before the time specified by the timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be trusted. It is strongly advised to apply a timestamp to a signature, and the TSA module can be used for this purpose.    </p>
+    <p  >Also, CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate the signature even after the signer's certificate is expired. (Though it will not guarantee the long-term signature preservation. The topic of long-term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).    </p>
     <p  >The PDF Signer can also be configured to enforce that certain PDF permissions are not available in the signed document and/or that certain permissions should be removed.    </p>
     </div>
-    <div class="section section-1" id="src-96862482_id-.PDFSignerv5.5.0-PDFpasswords">
-        <h1 class="heading "><span>PDF passwords</span></h1>
+    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-PDFPasswords">
+        <h1 class="heading "><span>PDF Passwords</span></h1>
     <p  >PDF documents can optionally be protected by a password. There are two different types of passwords:    </p>
 <ul class=" "><li class=" ">    <p  >User password: Also sometimes referred to as &quot;open password&quot; or &quot;document password&quot;. Can be used for reading an encrypted document.    </p>
 </li><li class=" ">    <p  >Owner password: Also sometimes referred to as &quot;permission password&quot; or &quot;security restriction password&quot;. It can be used for reading an encrypted document and making changes to a document that has permissions.    </p>
 </li></ul>    <p  >If a document is protected by an Owner password, it has to be supplied with the request for SignServer to sign the document. If the document is protected by a User password, either the User password or the Owner password has to be supplied with the request for SignServer to sign the document.    </p>
     </div>
-    <div class="section section-1" id="src-96862482_id-.PDFSignerv5.5.0-PDFSignerRequests">
+    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-PDFSignerRequests">
         <h1 class="heading "><span>PDFSigner Requests</span></h1>
-    <p  >PDF signing requests can be served using either web services or the web server interface (HTTP). See Integration for general information about the different interfaces.<br/>For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field &quot;pdfPassword&quot; letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).<br/>For the old web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key &quot;pdfPassword&quot;.    </p>
-    <div class="section section-2" id="src-96862482_id-.PDFSignerv5.5.0-WorkerProperties">
-        <h2 class="heading "><span>Worker Properties</span></h2>
+    <p  >PDF signing requests can be served using either web services or the web server interface (HTTP). See <a   href="SignServer_Integration.html">SignServer Integration</a> for general information about the different interfaces.    </p>
+    <p  >For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field &quot;pdfPassword&quot; letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).    </p>
+    <p  >For the old web services interface, the request should contain an encoded GenericProcessesRequest and the response will be a GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key &quot;pdfPassword&quot;.    </p>
+    </div>
+    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-WorkerProperties">
+        <h1 class="heading "><span>Worker Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable scroll-table-layout">
                     <colgroup>
-                                    <col  width="30%"/>
-                                    <col  width="70%"/>
+                                    <col  width="30.0%"/>
+                                    <col  width="70.0%"/>
                             </colgroup>
         <thead class=" ">    <tr>
             <td  class="confluenceTh" rowspan="1" colspan="1">
@@ -1559,7 +1574,7 @@
         <p  >ADD_VISIBLE_SIGNATURE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Setting that control whether signature to be added should be visible or invisible.<br/>Possible values: True or False.<br/>Default: <strong class=" ">False</strong>.    </p>
+        <p  >Controls whether the signature to be added should be visible or invisible.<br/>Possible values: True or False.<br/>Default: <strong class=" ">False</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1568,9 +1583,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specifies the page on which the visible signature will be drawn. This property is ignored if ADD_VISIBLE_SIGNATURE is set to <strong class=" ">False.</strong> Possible values:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">First</strong>: Signature drawn on first page of the document.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Last</strong>: Signature drawn on last page of the document,    </p>
-</li><li class=" ">    <p  ><strong class=" ">page_number</strong>: Signature is drawn on a page specified by numeric argument. If the specified page number exceeds the page count of the document, the signature is drawn on the last page. If the page_number specified is not numeric (or negative number), the signature will be drawn on the first page.    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">First</strong>: Signature drawn on the first page of the document.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Last</strong>: Signature drawn on the last page of the document,    </p>
+</li><li class=" ">    <p  ><strong class=" ">page_number</strong>: Signature is drawn on a page specified by a numeric argument. If the specified page number exceeds the page count of the document, the signature is drawn on the last page. If the page_number specified is not numeric (or negative number), the signature will be drawn on the first page.    </p>
 </li></ul>    <p  >Default: <strong class=" ">First</strong>.    </p>
             </td>
         </tr>
@@ -1588,22 +1603,22 @@
         <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 &amp; VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want the visible signature to contain custom image, specify image as base64 encoded byte array. Alternatively, the custom image can be specified by giving a path to image on file system.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+        <p  >If you want the visible signature to contain a custom image, specify image as base64 encoded byte array. Alternatively, the custom image can be specified by giving a path to the image on the file system.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If specifying a path to an image, &quot;\&quot; should be escaped (thus C:\photo.jpg =&gt; &quot;C:\\photo.jpg&quot;).    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If specifying image as base64 encoded byte array, &quot;=&quot; should be escaped (thus &quot;BBCXMI==&quot; =&gt; &quot;BBCXMI\=\=&quot;).    </p>
-    <p  >If both of properties are set, VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority. To disable the feature, do not set the properties.<br/>Default: not set (no custom image).<br/>These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- Note that in a clustered environment, it is advised to specify image as base64 string, since image data will be stored in a central database. Otherwise, each node should contain copy of the image, and each image managed separately (e.g. on image updates, or insertion of new image for different worker).    </p>
+    <p  >If both properties are set, VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority. To disable the feature, do not set the properties.<br/>Default: not set (no custom image).<br/>These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ Note that in a clustered environment, it is advised to specify image as base64 string, since image data will be stored in a central database. Otherwise, each node should contain a copy of the image, and each image managed separately (e.g. on image updates, or insertion of a new image for a different worker).    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE    </p>
+        <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want our custom image to be resized to specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE), then set to True. If set to True, the image might look different than the original (as an effect of resizing). If set to False, the rectangle drawn will be resized to specified image's sizes.<br/>If set to False, the llx and lly coordinates specified by the VISIBLE_SIGNATURE_RECTANGLE property will be used for drawing the rectangle (urx and ury will be calculated from specified image's size).<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False, or if custom image to use is not specified. Possible values: True, False.<br/>Default: <strong class=" ">True</strong>.    </p>
+        <p  >If you want the custom image to be resized to a specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE), then set to True. If set to True, the image might look different than the original (as an effect of resizing). If set to False, the rectangle drawn will be resized to the specified image's sizes.<br/>If set to False, the llx and lly coordinates specified by the VISIBLE_SIGNATURE_RECTANGLE property will be used for drawing the rectangle (urx and ury will be calculated from the specified image size).<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False, or if the custom image to use is not specified. Possible values: True, False.<br/>Default: <strong class=" ">True</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1616,27 +1631,27 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL<span id="src-96862482_id-.PDFSignerv5.5.0-TSA_URL"></span>    </p>
+        <p  >TSA_URL<span id="src-119933236_id-.PDFSignerv5.7.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If we want to timestamp document signature, specify timestamp authority URL.<br/>This will cause time stamp requests to be issued via HTTP requests. Under high load, this can lead to thread deadlocks in the application server if using a localhost URL (using a time stamp signer running in the same server). In this case, use the internal mechanism described below). To not timestamp document signature, do not set the property.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- iI path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;).    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-96862482_id-.PDFSignerv5.5.0-TSA_WORKER">TSA_WORKER</a>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ If path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;).    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ Cannot be set at the same time as <a   href="https://confluence.primekey.com/pages/viewpage.action?pageId=119933237#id-.PDFSignerv5.7.0-TSA_WORKER">.PDF Signer v5.7.0#TSA_WORKER</a>.    </p>
     <p  >Default: not set (no timestamping).    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER<span id="src-96862482_id-.PDFSignerv5.5.0-TSA_WORKER"></span>    </p>
+        <p  >TSA_WORKER<span id="src-119933236_id-.PDFSignerv5.7.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer<br/>This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Use instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-96862482_id-.PDFSignerv5.5.0-TSA_URL">TSA_URL</a>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ Cannot be set at the same time as <a   href="https://confluence.primekey.com/pages/viewpage.action?pageId=119933237#id-.PDFSignerv5.7.0-TSA_URL">.PDF Signer v5.7.0#TSA_URL</a>.    </p>
     <p  >Default: Not set (no timestamping).    </p>
             </td>
         </tr>
@@ -1662,9 +1677,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >To embed the OCSP response for the signer certificate inside the signature package, set to <strong class=" ">True,</strong> otherwise set to <strong class=" ">False</strong>.    </p>
-    <p  ><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
-</strong> Issuer certificate (of signing certificate) should be in certificate chain.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- OCSP responses must contain a nextUpdate field in order for off-line validation to work with Adobe Reader. For EJBCA OCSP Responder, see configuration of ocsp.untilNextUpdate in ocsp.properties.    </p>
+    <p  ><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+</strong> Issuer certificate (of signing certificate) should be in certificate chain.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ OCSP responses must contain a nextUpdate field in order for offline validation to work with Adobe Reader. For EJBCA OCSP Responder, see configuration of ocsp.untilNextUpdate in ocsp.properties.    </p>
     <p  >Default: <strong class=" ">False</strong>.    </p>
             </td>
         </tr>
@@ -1681,7 +1696,7 @@
         <p  >ARCHIVETODISK_PATH_BASE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The file path to the folder to store the signed documents in.<br/>Required if ARCHIVETODISK is <strong class=" ">True.</strong>    </p>
+        <p  >The file path to the folder to store the signed documents.<br/>Required if ARCHIVETODISK is <strong class=" ">True.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1689,7 +1704,7 @@
         <p  >ARCHIVETODISK_PATH_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Pattern used for creating sub-folders under the ARCHIVETODISK_PATH_BASE folder.<br/>Current date can be put in by adding ${DATE:yyyy} where yyyy can be replaced be the same syntax as defined in the class java.text.SimpleDateFormat. Other fields are:    </p>
+        <p  >Pattern used for creating sub-folders under the ARCHIVETODISK_PATH_BASE folder.<br/>The current date can specified by adding ${DATE:yyyy} where yyyy can be replaced by the same syntax as defined in the class java.text.SimpleDateFormat. Other fields are:    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">${WORKERID}</strong>: ID of the worker processing the request.    </p>
 </li><li class=" ">    <p  ><strong class=" ">${WORKERNAME}</strong>: Name of the worker processing the request.    </p>
 </li><li class=" ">    <p  ><strong class=" ">${REMOTEIP}</strong>: IP address of requestor.    </p>
@@ -1721,7 +1736,7 @@
         <p  >REJECT_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Reject signing of the document if any of the permissions in the comma separated list would be in the document.<br/>Available permissions (from the PDF reference, version 1.6, page 99, TABLE 3.20):    </p>
+        <p  >Reject signing of the document if any of the permissions in the comma-separated list would be in the document.<br/>Available permissions (from the PDF reference, version 1.6, page 99, TABLE 3.20):    </p>
 <ul class=" "><li class=" ">    <p  >ALLOW_PRINTING<br/>Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set (and ALLOW_DEGRADED_PRINTING is set), printing is limited to a low-level representation of the appearance, possibly of degraded quality.    </p>
 </li><li class=" ">    <p  >ALLOW_MODIFY_CONTENTS<br/>Modify the contents of the document by operations other than those controlled by ALLOW_MODIFY_ANNOTATIONS, ALLOW_FILL_IN, and ALLOW_SCREENREADERS.    </p>
 </li><li class=" ">    <p  >ALLOW_COPY<br/>Copy or otherwise extract text and graphics from the document, including extracting text and graphics (in support of accessibility to users with disabilities or for other purposes).    </p>
@@ -1738,9 +1753,9 @@
         <p  >SET_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Replace the current permissions (if any) with the permissions specified in this comma separated list of permissions. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- This property cannot be specified if REMOVE_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- This property and the REMOVE_PERMISSIONS property only sets the permissions setting in the document. All permissions might not be enforced by the PDF reader, and some permissions specified to be allowed by this property, might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).<br/>    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+        <p  >Replace the current permissions (if any) with the permissions specified in this comma-separated list of permissions. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ This property cannot be specified if REMOVE_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ This property and the REMOVE_PERMISSIONS property only set the permissions setting in the document. All permissions might not be enforced by the PDF reader, and some permissions specified to be allowed by this property, might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).<br/>    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If the document is not already protected by an owner password and the SET_OWNERPASSWORD is not specified, a random password will be used as owner password.<br/>Default: Unset (permissions are not set by this property)    </p>
             </td>
         </tr>
@@ -1749,8 +1764,8 @@
         <p  >REMOVE_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Remove all permissions specified in this comma separated list from the document. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if SET_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.<br/>See     <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+        <p  >Remove all permissions specified in this comma-separated list from the document. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if SET_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.<br/>See     <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  notes for REMOVE_PERMISSIONS which also applies to this setting.<br/>Removing only ALLOW_DEGRADED_PRINTING has no effect, as degraded printing is implicitly allowed if printing is allowed.<br/>Default: Unset/empty (no permissions are removed)    </p>
             </td>
         </tr>
@@ -1823,9 +1838,190 @@
     <p  >Default setting is SHA256.    </p>
             </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ALLOW_PROPERTY_OVERRIDE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Comma-separated list of worker properties that are allowed to be overridden by request metadata properties with the same names.    </p>
+    <p  >See <a   href="https://confluence.primekey.com/pages/viewpage.action?pageId=119933237#id-.PDFSignerv5.7.0-RequestMetadataProperties">.PDF Signer v5.7.0#Request Metadata Properties</a> for a list of properties that can be added to this property.    </p>
+    <p  >Default: not set (no properties are allowed to be overridden).    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
     </div>
+    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-RequestMetadataProperties">
+        <h1 class="heading auto-cursor-target"><span>Request Metadata Properties</span></h1>
+    <p  >The following properties can be sent by the client with the request:    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable scroll-table-layout">
+                    <colgroup>
+                                    <col  width="30.0%"/>
+                                    <col  width="70.0%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >pdfPassword    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >User/open password to use for reading the PDF if it is password protected.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >REASON    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >LOCATION    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CERTIFICATION_LEVEL    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >SIGNERCERTCHAIN    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >DIGESTALGORITHM    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ADD_VISIBLE_SIGNATURE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_PAGE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_RECTANGLE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_NAME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sets the visible signature in the existing empty signature filed with this name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >USE_TIMESTAMP    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >EMBED_CRL    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >EMBED_OCSP_RESPONSE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >REJECT_PERMISSIONS    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >SET_PERMISSIONS    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >REMOVE_PERMISSIONS    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >SET_OWNERPASSWORD    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
     </div>
         </div>
 

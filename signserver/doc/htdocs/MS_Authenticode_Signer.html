@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.1</p>
+                    <p>Version: 5.7.0</p>
                 </div>
             </header>
 
@@ -513,6 +513,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AdES_Signer.html">AdES Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -963,6 +967,10 @@
         <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestMetadataAliasSelector.html">RequestMetadataAliasSelector</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1406,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
 
             </li>
@@ -1496,7 +1508,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-93592818"> <span>MS Authenticode Signer</span></h1>
+</div>            <h1 id="src-113778137"> <span>MS Authenticode Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1504,15 +1516,15 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.msauthcode.signer.MSAuthCodeSigner</strong>.    </p>
-    <div class="section section-1" id="src-93592818_id-.MSAuthenticodeSignerv5.5.0-Overview">
+    <div class="section section-1" id="src-113778137_id-.MSAuthenticodeSignerv5.7.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The MS Authenticode signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format, and also Windows installer packages (.msi) and PowerShell scripts (.ps1, .psm1 and .psd1). The signature can optionally include a timestamp response from a TSA using the Authenticode or RFC#3161 format.    </p>
+    <p  >The MS Authenticode signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format, and also Windows installer packages (.msi), PowerShell scripts (.ps1, .psm1 and .psd1), and Windows Catalog Files (.cat). The signature can optionally include a timestamp response from a TSA using the Authenticode or RFC#3161 format.    </p>
     <p  >Note that MSI files larger than 2 GB are currently not supported.    </p>
     </div>
-    <div class="section section-1" id="src-93592818_id-.MSAuthenticodeSignerv5.5.0-AvailableProperties">
+    <div class="section section-1" id="src-113778137_id-.MSAuthenticodeSignerv5.7.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1647,11 +1659,11 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592818_id-.MSAuthenticodeSignerv5.5.0-RequestProperties">
+    <div class="section section-2" id="src-113778137_id-.MSAuthenticodeSignerv5.7.0-RequestProperties">
         <h2 class="heading "><span>Request Properties</span></h2>
     <p  >This worker can accept the following request metadata properties, given that they are configured to be allowed:    </p>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1685,16 +1697,16 @@
         <p  >FILE_TYPE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Option to specify that the supplied file is using a specific file type. Normally this is optional and the PE and MSI file types are detected based on the content of the files and PS1 files are detected based on the file extension of the provided file name (if one). In order to support PowerShell scripts even if the file name is not provided or the extension is not one of .ps1, .psm1 or .psd1, the FILE_TYPE request property can be explicitly set in the request.<br/>Supported values: PE, MSI or PS1.    </p>
+        <p  >Option to specify that the supplied file is using a specific file type. Normally this is optional and the PE, MSI, and CAT file types are detected based on the content of the files and PS1 files are detected based on the file extension of the provided file name (if one). In order to support PowerShell scripts even if the file name is not provided or the extension is not one of .ps1, .psm1 or .psd1, the FILE_TYPE request property can be explicitly set in the request.<br/>Supported values: PE, MSI, PS1, or CAT.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-93592818_id-.MSAuthenticodeSignerv5.5.0-WorkerLogFields">
+    <div class="section section-2" id="src-113778137_id-.MSAuthenticodeSignerv5.7.0-WorkerLogFields">
         <h2 class="heading "><span>Worker Log Fields</span></h2>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1749,7 +1761,6 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >    </p>
     </div>
     </div>
         </div>

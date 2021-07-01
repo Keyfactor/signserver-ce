@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.1</p>
+                    <p>Version: 5.7.0</p>
                 </div>
             </header>
 
@@ -513,6 +513,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AdES_Signer.html">AdES Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -963,6 +967,10 @@
         <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestMetadataAliasSelector.html">RequestMetadataAliasSelector</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1406,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
 
             </li>
@@ -1673,7 +1685,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
     </div>
     <div class="section section-1" id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCBhbmRKQm9zc0VBUDcuMSB2NS4yLjAtRGF0YWJhc2VDb25maWd1cmF0aW9u">
         <h1 class="heading "><span>Database Configuration</span></h1>
-    <p  >Skip this step and instead see <a   href="http://confluence.primekey.com/display/SIGNDS/.Database+Setup+v5.0.0#id-.DatabaseSetupv5.0.0-SignServer_without_DB">SignServer without Database</a> if you want to run SignServer without a database management system.    </p>
+    <p  >Skip this step and instead see <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.Database+Setup+v5.0.0#id-.DatabaseSetupv5.0.0-SignServer_without_DB">SignServer without Database</a> if you want to run SignServer without a database management system.    </p>
     <div class="section section-2" id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCBhbmRKQm9zc0VBUDcuMSB2NS4yLjAtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXI">
         <h2 class="heading "><span>Configure Database Driver</span></h2>
     <p  >Add the MariaDB database driver by hot-deploying it into the deployment directory. The driver will be picked up by WildFly and deployed, allowing creating the data source in the next step. You can use a generic name, without version number, to get a generic <tt class=" ">driver-name</tt> for the data source command.    </p>

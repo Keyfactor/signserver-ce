@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.1</p>
+                    <p>Version: 5.7.0</p>
                 </div>
             </header>
 
@@ -513,6 +513,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AdES_Signer.html">AdES Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -963,6 +967,10 @@
         <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestMetadataAliasSelector.html">RequestMetadataAliasSelector</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1406,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
 
             </li>
@@ -1496,17 +1508,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-26771519"> <span>Plain Signer</span></h1>
+</div>            <h1 id="src-117379710"> <span>Plain Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The Plain signer has the fully qualified class name: <strong class=" ">org.signserver.module.cmssigner.PlainSigner</strong>    </p>
-    <div class="section section-1" id="src-26771519_id-.PlainSignerv4.4.0-Overview">
+    <div class="section section-1" id="src-117379710_id-.PlainSignerv5.7.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The Plain signer can sign arbitrary data and simply produces a signature in the format determined by the configured signature algorithm.    </p>
     </div>
-    <div class="section section-1" id="src-26771519_id-.PlainSignerv4.4.0-AvailableProperties">
+    <div class="section section-1" id="src-117379710_id-.PlainSignerv5.7.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1528,7 +1540,33 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Property specifying the algorithm used to sign the data. Default value depends on the signing key: SHA256withDSA for DSA keys, SHA256withECDSA for ECDSA keys, otherwise SHA256withRSA.    </p>
-    <p  >Algorithms NONEwithRSA and NONEwithECDSA are also supported and should be used when hash digest is supplied for signing not the data itself. When using NONEwithRSA algorithm, the input should be in particular format, refer to <a  class="external-link" href="https://tools.ietf.org/html/rfc3447">RFC#3447</a> for details.    </p>
+    <p  >Algorithms NONEwithRSA and NONEwithECDSA are also supported and should be used when hash digest is supplied for signing not the data itself. When using NONEwithRSA algorithm, the input should be in a particular format, refer to <a  class="external-link" href="https://tools.ietf.org/html/rfc3447">RFC#3447</a> for details.    </p>
+    <p  >The algorithm NONEwithRSAandMGF1 (RSASSA-PSS) is supported by this signer when using specific request metadata properties (see <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>) but note that the configured crypto token also needs to support this algorithm. Currently, the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> relaying in Java support for PKCS#11 does not while the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a> supports this algorithm.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CLIENTSIDEHASHING    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Property specifying if the request data should be considered to be a pre-computed (by the requesting client) hash. If this is set to true, <strong class=" ">ACCEPTED_HASH_DIGEST_ALGORITHMS</strong> must be defined. Default: <strong class=" ">false</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ALLOW_CLIENTSIDEHASHING_OVERRIDE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Property specifying if the request is allowed to override the behavior defined via <strong class=" ">CLIENTSIDEHASHING</strong> as to if the request data is to be considered the actual data to be signed or a pre-computed hash. Default: <strong class=" ">false</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ACCEPTED_HASH_DIGEST_ALGORITHMS    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Comma-separated list of accepted hash digest algorithms. When a request is consisting of a pre-computed hash, the requested digest algorithm must be among the values specified in this property.    </p>
+    <p  >The property does not have a default value and must be specified if client-side hashing is set as the default, or if overriding via the request is allowed.    </p>
             </td>
         </tr>
     <tr>
@@ -1549,7 +1587,35 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-26771519_id-.PlainSignerv4.4.0-WorkerLogFields">
+    </div>
+    <div class="section section-1" id="src-117379710_id-.PlainSignerv5.7.0-RequestParameters">
+        <h1 class="heading "><span>Request Parameters</span></h1>
+    <p  >The following meta data parameters can be specified in a request    </p>
+    <div  class="tablewrap">
+        <table class="relative-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >USING_CLIENTSUPPLIED_HASH    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >If this property is set and defined as true, treat the request data as a pre-computed hash. This requires the CLIENTSIDE_HASHDIGEST_ALGORITHM meta data property to be set and is only allowed if either the signer is configured by default to assume client-side hashing, or if overriding is allowed.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CLIENTSIDE_HASHDIGESTALGORITHM    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The hash digest algorithm of the pre-computed hash.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-2" id="src-117379710_id-.PlainSignerv5.7.0-WorkerLogFields">
         <h2 class="heading "><span>Worker Log Fields</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

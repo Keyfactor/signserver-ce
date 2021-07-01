@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.1</p>
+                    <p>Version: 5.7.0</p>
                 </div>
             </header>
 
@@ -513,6 +513,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AdES_Signer.html">AdES Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -963,6 +967,10 @@
         <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestMetadataAliasSelector.html">RequestMetadataAliasSelector</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1406,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
 
             </li>
@@ -1533,10 +1545,10 @@ Document Validators checks the signature and the certificate(s) in documents. Fo
     <div class="section section-1" id="src-85197034_id-.SignServerWorkersv5.3.0-Dispatchers">
         <h1 class="heading "><span>Dispatchers</span></h1>
     <p  >    <span style="color: #333333;">
-A <a   href="http://confluence.primekey.com/display/SIGNDS/.SignServer+Dispatchers+v4.1.0">SignServer Dispatcher</a> does not perform any processing (i.e. signing) of its own but instead forwards the request to another worker.    </span>
+A <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.SignServer+Dispatchers+v4.1.0">SignServer Dispatcher</a> does not perform any processing (i.e. signing) of its own but instead forwards the request to another worker.    </span>
     </p>
     <p  >    <span style="color: #333333;">
-Dispatchers forward the request to the first available worker that has a valid certificate (<a   href="FirstActiveDispatcher.html">FirstActiveDispatcher</a>), or forward a time-stamp request depending on the requested time-stamp policy (<a   href="RequestedPolicyDispatcher.html">RequestedPolicyDispatcher</a>). For more information, see <a   href="SignServer_Dispatchers.html">SignServer Dispatchers</a>.<br/>    </span>
+Dispatchers forward the request to the first available worker that has a valid certificate (<a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.FirstActiveDispatcher+v4.1.0">FirstActiveDispatcher</a>), or forward a time-stamp request depending on the requested time-stamp policy (<a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.RequestedPolicyDispatcher+v5.1.0">RequestedPolicyDispatcher</a>). For more information, see <a   href="SignServer_Dispatchers.html">SignServer Dispatchers</a>.<br/>    </span>
     </p>
     </div>
     <div class="section section-1" id="src-85197034_id-.SignServerWorkersv5.3.0-ValidationServiceFramework">
@@ -1548,13 +1560,13 @@ The Validation Service Framework validates certificates from one or more issuers
     <div class="section section-1" id="src-85197034_id-.SignServerWorkersv5.3.0-TimedService">
         <h1 class="heading "><span>Timed Service</span></h1>
     <p  >    <span style="color: #333333;">
-A <a   href="http://confluence.primekey.com/display/SIGNDS/.SignServer+Timed+Services+v4.1.0">SignServer Timed Service</a> does not accept any input but instead runs at a fixed time interval (like a cron job). This can be useful for setting up an hourly timed service keeping the connection to the Hardware Security Module (HSM) from timing out. For more information, see <a   href="HSMKeepAliveTimedService.html">HSMKeepAliveTimedService</a>. For more information, see <a   href="SignServer_Timed_Services.html">SignServer Timed Services</a>.<br/>    </span>
+A <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.SignServer+Timed+Services+v4.1.0">SignServer Timed Service</a> does not accept any input but instead runs at a fixed time interval (like a cron job). This can be useful for setting up an hourly timed service keeping the connection to the Hardware Security Module (HSM) from timing out. For more information, see <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.HSMKeepAliveTimedService+v4.2.1">HSMKeepAliveTimedService</a>. For more information, see <a   href="SignServer_Timed_Services.html">SignServer Timed Services</a>.<br/>    </span>
     </p>
     </div>
     <div class="section section-1" id="src-85197034_id-.SignServerWorkersv5.3.0-OtherWorkers">
         <h1 class="heading "><span>Other Workers</span></h1>
     <p  >    <span style="color: #333333;">
-For information on other SignServer workers, see <a   href="Other_Workers.html">Other Workers</a>. For example, the <a   href="CryptoWorker.html">CryptoWorker</a> that is a holder for configuring the <a   href="http://confluence.primekey.com/display/SIGNDS/.CryptoTokens+v4.1.0">Crypto Token</a> component that is used to access key material. By configuring the Crypto Token in a Crypto Worker other workers can reference this crypto worker and use it for signing etc.    </span>
+For information on other SignServer workers, see <a   href="Other_Workers.html">Other Workers</a>. For example, the <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.CryptoWorker+v4.1.0">CryptoWorker</a> that is a holder for configuring the <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.CryptoTokens+v4.1.0">Crypto Token</a> component that is used to access key material. By configuring the Crypto Token in a Crypto Worker other workers can reference this crypto worker and use it for signing etc.    </span>
     </p>
     <p  >    </p>
     </div>

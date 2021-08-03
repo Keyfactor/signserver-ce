@@ -15,28 +15,29 @@ package org.signserver.server.tsa;
 import java.math.BigInteger;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 
 import java.io.IOException;
-import org.apache.commons.fileupload.FileUploadException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.cmp.PKIStatus;
 
-import org.bouncycastle.tsp.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.data.impl.ByteArrayReadableData;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.data.impl.UploadConfig;
-import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -47,6 +48,7 @@ import org.signserver.server.log.AdminInfo;
  * @version $Id$
  */
 public class InternalTimeStampTokenFetcher {
+
     private static final Logger LOG = Logger.getLogger(InternalTimeStampTokenFetcher.class);
 
     private final InternalProcessSessionLocal session;
@@ -66,7 +68,7 @@ public class InternalTimeStampTokenFetcher {
         // Setup the time stamp request
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
-        
+
         if (reqPolicy != null) {
             tsqGenerator.setReqPolicy(reqPolicy);
         }
@@ -79,7 +81,7 @@ public class InternalTimeStampTokenFetcher {
                 CloseableReadableData requestData = new ByteArrayReadableData(requestBytes, uploadConfig.getRepository());
                 CloseableWritableData responseData = new TemporarlyWritableData(false, uploadConfig.getRepository());
             ) {
-        
+
             final RequestContext context = new RequestContext();
 
             if (username != null && password != null) {
@@ -89,7 +91,7 @@ public class InternalTimeStampTokenFetcher {
                 context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
             }
 
-            session.process(new AdminInfo("Client user", null, null), 
+            session.process(new AdminInfo("Client user", null, null),
                     wi, new SignatureRequest(hashCode(), requestData, responseData), context);
 
             final byte[] respBytes = responseData.toReadableData().getAsByteArray();

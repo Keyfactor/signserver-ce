@@ -15,19 +15,6 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>SignServer-Common</artifactId>
       <version>${project.version}</version>
@@ -52,31 +39,6 @@
           <artifactId>c3p0</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.ejbca.cesecore</groupId>
-        <artifactId>cesecore-common</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.ejbca.cesecore</groupId>
-        <artifactId>cesecore-interfaces</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>javaee-api</artifactId>
-        <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

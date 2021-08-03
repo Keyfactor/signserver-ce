@@ -13,6 +13,7 @@
         <!-- BouncyCastle artifacts name, so we can easily switch to the debug ones -->
         <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
         <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
+        <bouncycastle.bcutil.artifact>bcutil-jdk15on</bouncycastle.bcutil.artifact>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +55,13 @@
                 <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
-                <version>1.68</version>
+                <version>1.69</version>
+            </dependency>
+            <dependency>
+                <artifactId>${bouncycastle.bcutil.artifact}</artifactId>
+                <groupId>org.bouncycastle</groupId>
+                <type>jar</type>
+                <version>1.69</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
@@ -376,7 +383,7 @@
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            
+
             <!-- DSS Framework dependencies -->
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -554,7 +561,7 @@
     </build>
 
     <repositories>
-	
+
 
 	<repository>
 	  <id>cefdigital</id>

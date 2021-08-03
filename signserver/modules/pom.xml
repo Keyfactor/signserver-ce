@@ -112,6 +112,11 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <artifactId>${bouncycastle.bcutil.artifact}</artifactId>
+            <groupId>org.bouncycastle</groupId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>

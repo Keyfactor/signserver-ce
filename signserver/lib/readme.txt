@@ -1,7 +1,7 @@
 SignServer Dependencies
 -----------------------
 
-For a list of each library file included and which project they belongs to see
+For a list of each library file included and which project they belong to see
 jars-list.txt.
 
 For a list of each project and their license see projects.list.txt.

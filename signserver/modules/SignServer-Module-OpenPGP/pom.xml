@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
+            <artifactId>${bouncycastle.bcpg.artifact}</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

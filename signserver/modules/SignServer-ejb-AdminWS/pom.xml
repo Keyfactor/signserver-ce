@@ -14,7 +14,7 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
+
         <dist.jar>${project.build.finalName}.jar</dist.jar>
         <module.name>adminws</module.name>
         <module.priority>20</module.priority>
@@ -72,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
+            <artifactId>${bouncycastle.bcpg.artifact}</artifactId>
         </dependency>
     </dependencies>
 

@@ -240,6 +240,9 @@ public class ClientSideHashingHelperUnitTest {
         RequestMetadata.getInstance(requestContext).putAll(requestMetadataMap);
         // then
         exceptionRule.expect(IllegalRequestException.class);
+        // TODO bc 1.69
+//        exceptionRule.expectMessage("Client-side hashing request must specify hash algorithm used");
+        // TODO bc 1.68
         exceptionRule.expectMessage("Client specified an unknown digest algorithm");
         // when
         helper.getClientSideHashAlgorithm(requestContext);
@@ -309,6 +312,9 @@ public class ClientSideHashingHelperUnitTest {
         RequestMetadata.getInstance(requestContext).putAll(requestMetadataMap);
         // then
         exceptionRule.expect(IllegalRequestException.class);
+        // TODO bc 1.69
+//        exceptionRule.expectMessage("Client-side hashing request must specify hash algorithm used");
+        // TODO bc 1.68
         exceptionRule.expectMessage("Client specified an unknown digest algorithm");
         // when
         helper.getClientSideHashAlgorithmName(requestContext);

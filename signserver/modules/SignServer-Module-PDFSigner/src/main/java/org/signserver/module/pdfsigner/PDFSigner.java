@@ -34,6 +34,7 @@ import org.signserver.lib.itext.text.exceptions.BadPasswordException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
@@ -91,11 +92,11 @@ import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
  *
  * REFUSE_DOUBLE_INDIRECT_OBJECTS = True if documents with multiple indirect
  * objects with the same object number and generation number pair should be
- * refused. Used to mitigate a collision signature vulnerability described in 
+ * refused. Used to mitigate a collision signature vulnerability described in
  * http://pdfsig-collision.florz.de/
  *
- * REJECT_PERMISSIONS: Comma separated list of permissions for which SignServer 
- * will refuse to  sign the document if present. See Permissions for available 
+ * REJECT_PERMISSIONS: Comma separated list of permissions for which SignServer
+ * will refuse to  sign the document if present. See Permissions for available
  * permission names.
  *
  * @author Tomas Gustavsson
@@ -115,9 +116,9 @@ public class PDFSigner extends BaseSigner {
     public static final String LOCATION = "LOCATION";
     public static final String LOCATIONDEFAULT = "SignServer";
     public static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
-    
+
     public static final String USE_TIMESTAMP = "USE_TIMESTAMP";
-    
+
     // properties that control signature visibility
     public static final String ADD_VISIBLE_SIGNATURE = "ADD_VISIBLE_SIGNATURE";
     public static final boolean ADD_VISIBLE_SIGNATURE_DEFAULT = false;
@@ -132,23 +133,23 @@ public class PDFSigner extends BaseSigner {
     public static final boolean VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT = true;
     public static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
     public static final int CERTIFICATION_LEVEL_DEFAULT = PdfSignatureAppearance.NOT_CERTIFIED;
-    
+
     // properties that control timestamping of signature
     public static final String TSA_URL = "TSA_URL";
     public static final String TSA_USERNAME = "TSA_USERNAME";
     public static final String TSA_PASSWORD = "TSA_PASSWORD";
     public static final String TSA_WORKER = "TSA_WORKER";
     public static final String TSA_DIGESTALGORITHM = "TSA_DIGESTALGORITHM";
-    
+
     // extra properties
     public static final String EMBED_CRL = "EMBED_CRL";
     public static final boolean EMBED_CRL_DEFAULT = false;
     public static final String EMBED_OCSP_RESPONSE = "EMBED_OCSP_RESPONSE";
     public static final boolean EMBED_OCSP_RESPONSE_DEFAULT = false;
-    
+
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     public static final String REFUSE_DOUBLE_INDIRECT_OBJECTS = "REFUSE_DOUBLE_INDIRECT_OBJECTS";
-    
+
     // Permissions properties
     /** List of permissions for which SignServer will refuse to sign the document if present. **/
     public static final String REJECT_PERMISSIONS = "REJECT_PERMISSIONS";
@@ -160,7 +161,7 @@ public class PDFSigner extends BaseSigner {
     // public static final String ADD_PERMISSIONS = "ADD_PERMISSIONS";
     /** Password to set as owner password. */
     public static final String SET_OWNERPASSWORD = "SET_OWNERPASSWORD";
-    
+
     // archivetodisk properties
     public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
     public static final String PROPERTY_ARCHIVETODISK_PATH_BASE = "ARCHIVETODISK_PATH_BASE";
@@ -176,13 +177,13 @@ public class PDFSigner extends BaseSigner {
 
     public static final String DIGESTALGORITHM = "DIGESTALGORITHM";
     private static final String DEFAULTDIGESTALGORITHM = "SHA256";
-    
+
     private static final String DEFAULT_TSA_DIGESTALGORITHM = "SHA256";
-    
+
     public static final String ALLOW_PROPERTY_OVERRIDE = "ALLOW_PROPERTY_OVERRIDE";
-    
-    /** 
-     * Set of properties that the PDFSigner implementation (actually 
+
+    /**
+     * Set of properties that the PDFSigner implementation (actually
      * PDFSignerParameters use but that should not be overridable.
      */
     private static final Set<String> NOT_OVERRIDABLE_PROPERTIES = new HashSet<>(
@@ -199,13 +200,13 @@ public class PDFSigner extends BaseSigner {
 
     /** Random used for instance when setting a random owner/permissions password*/
     private SecureRandom random = new SecureRandom();
-    
+
     private List<String> configErrors;
 
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
 
     /* TODO: for now these are two separate fields since there are different
-     * APIs handling TSA digests. Maybe this should be handled in the 
+     * APIs handling TSA digests. Maybe this should be handled in the
      * PDFParameters utility class.
      */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
@@ -213,14 +214,14 @@ public class PDFSigner extends BaseSigner {
 
     /** Properties that are configured to be allowed to override. */
     private Set<String> allowPropertyOverride;
-    
+
     @Override
     public void init(int signerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(signerId, config, workerContext, workerEntityManager);
 
         configErrors = new LinkedList<>();
-        
+
         // Handle properties allowed to be overridden
         allowPropertyOverride = new HashSet<>();
         String propertyValue = config.getProperty(PDFSigner.ALLOW_PROPERTY_OVERRIDE);
@@ -256,32 +257,37 @@ public class PDFSigner extends BaseSigner {
             }
         }
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
-        
+
         digestAlgorithm = config.getProperty(DIGESTALGORITHM, DEFAULTDIGESTALGORITHM);
         tsaDigestAlgorithmName = config.getProperty(TSA_DIGESTALGORITHM,
                                                 DEFAULT_TSA_DIGESTALGORITHM);
         final DefaultDigestAlgorithmIdentifierFinder algFinder =
                 new DefaultDigestAlgorithmIdentifierFinder();
         final AlgorithmIdentifier ai = algFinder.find(tsaDigestAlgorithmName);
-        
-        tsaDigestAlgorithm = ai.getAlgorithm();
-        
-        if (tsaDigestAlgorithm == null) {
+
+        if(ai == null) {
             configErrors.add("Illegal timestamping digest algorithm specified: " +
-                             tsaDigestAlgorithmName);
+                    tsaDigestAlgorithmName);
         }
-        
+        else {
+            tsaDigestAlgorithm = ai.getAlgorithm();
+            if (tsaDigestAlgorithm == null) {
+                configErrors.add("Illegal timestamping digest algorithm specified: " +
+                        tsaDigestAlgorithmName);
+            }
+        }
+
         boolean algorithmSupported = PdfSignatureDigestAlgorithms.isSupported(digestAlgorithm);
         if (!algorithmSupported) {
-           configErrors.add("Illegal digest algorithm: " + digestAlgorithm); 
+           configErrors.add("Illegal digest algorithm: " + digestAlgorithm);
         }
-        
-        // additionally check that at least one certificate is included, assumed by iText
+
+        // additionally, check that at least one certificate is included, assumed by iText
         // (initIncludeCertificateLevels already checks non-negative values)
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
         }
-        
+
         // check that TSA_URL and TSA_WORKER is not set at the same time
         if (config.getProperty(TSA_URL, DEFAULT_NULL) != null && config.getProperty(TSA_WORKER, DEFAULT_NULL) != null) {
             configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
@@ -293,31 +299,31 @@ public class PDFSigner extends BaseSigner {
         } catch (IllegalRequestException | SignServerException ex) {
             configErrors.add("PDF configuration error: " + ex.getMessage());
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Configuration errors:\n" + StringUtils.join(configErrors, "\n"));
         }
     }
 
-    
-    
+
+
     @Override
     protected List<String> getCryptoTokenFatalErrors(final IServices services) {
         final List<String> errors = super.getCryptoTokenFatalErrors(services);
-        
+
         // according to the PDF specification, only SHA1 is permitted as digest algorithm
         // for DSA public/private keys
         final RequestContext context = new RequestContext(true);
         context.setServices(services);
         ICryptoInstance crypto = null;
         try {
-            final ICryptoTokenV4 token = getCryptoToken(services);    
+            final ICryptoTokenV4 token = getCryptoToken(services);
             crypto = acquireDefaultCryptoInstance(context);
 
             if (token != null) {
                 final PublicKey pub = crypto.getPublicKey();
                 final PrivateKey priv = crypto.getPrivateKey();
-                
+
                 if (pub instanceof DSAPublicKey || priv instanceof DSAPrivateKey) {
                     if (!"SHA1".equals(digestAlgorithm)) {
                         errors.add("Only SHA1 is permitted as digest algorithm for DSA public/private keys");
@@ -345,11 +351,11 @@ public class PDFSigner extends BaseSigner {
     /**
      * The main method performing the actual signing operation. Expects the
      * signRequest to be a GenericSignRequest containing a signed PDF file.
-     * 
+     *
      * @param signRequest
      * @param requestContext
-     * @return 
-     * @throws IllegalRequestException 
+     * @return
+     * @throws IllegalRequestException
      * @throws SignServerException
      * @throws CryptoTokenOfflineException
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest,
@@ -358,22 +364,22 @@ public class PDFSigner extends BaseSigner {
     @Override
     public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
-            CryptoTokenOfflineException, SignServerException {        
+            CryptoTokenOfflineException, SignServerException {
         if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        
+
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
-        
+
         final SignatureRequest sReq = (SignatureRequest) signRequest;
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
         final ReadableData requestData = sReq.getRequestData();
 
         // Log values
-        final LogMap logMap = LogMap.getInstance(requestContext);        
+        final LogMap logMap = LogMap.getInstance(requestContext);
 
         Object o = requestContext.get(RequestContext.REQUEST_METADATA);
         Map<String, String> metadata = null;
@@ -404,7 +410,7 @@ public class PDFSigner extends BaseSigner {
                 pdfBytes = requestData.getAsByteArray();
             }
             final WritableData responseData = sReq.getResponseData();
-            
+
             if (params.isRefuseDoubleIndirectObjects()) {
                 checkForDuplicateObjects(pdfBytes != null ? new PRTokeniser(pdfBytes) : new PRTokeniser(pdfFile.getAbsolutePath()));
             }
@@ -434,11 +440,11 @@ public class PDFSigner extends BaseSigner {
                                }
                            });
             }
-            
+
             List<Certificate> certificates = addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile, password, 0,
                                               signRequest, responseData, requestContext, tsaDigestAlgorithm, tsaDigestAlgorithmName);
             final Collection<? extends Archivable> archivables = Arrays.asList(
-                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId), 
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId),
                     new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
             // Archive to disk
@@ -446,11 +452,11 @@ public class PDFSigner extends BaseSigner {
                     config.getProperty(PROPERTY_ARCHIVETODISK, Boolean.FALSE.toString()))) {
                 archiveToDisk(sReq, responseData.toReadableData(), requestContext);
             }
-            
+
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
-            
-            
+
+
             return new SignatureResponse(sReq.getRequestID(),
                     responseData,
                     certificates.isEmpty() ? null : certificates.get(0),
@@ -472,14 +478,14 @@ public class PDFSigner extends BaseSigner {
     }
 
     /**
-     * Calculates an estimate of the PKCS#7 structure size given the provided  
+     * Calculates an estimate of the PKCS#7 structure size given the provided
      * input parameters.
      *
-     * Questions that we need to answer to construct an formula for calculating 
+     * Questions that we need to answer to construct an formula for calculating
      * a good enough estimate:
      *
      * 1. What are the parameters influencing the PKCS#7 size?
-     *    - static or depending on algorithms: PKCS#7 signature size, 
+     *    - static or depending on algorithms: PKCS#7 signature size,
      *    - Certificates list
      *    - CRL list
      *    - OCSP bytes
@@ -493,16 +499,16 @@ public class PDFSigner extends BaseSigner {
      *
      * 4. How much does the size increase when the size of the timestamp responses increases?
      *    - It appears to be at maximum the same increase in size
-     *    - However as the response is sent after the signing and possibly 
-     *      from an external server we can not be sure about what size it 
-     *      will have. We should use a large enough (but reasonable) value that 
+     *    - However as the response is sent after the signing and possibly
+     *      from an external server we can not be sure about what size it
+     *      will have. We should use a large enough (but reasonable) value that
      *      it is not so likely that we will have to do a second try.
-     * 
+     *
      * 5. How much does the size increase when the size of an CRL increases?
      *    - It appears to be the same increase in size most of the times but in
      *      in one case it got 1 byte larger.
      *    - It turns out that the CRLs are included twice (!)
-     *    
+     *
      * 6. How much does the size increase for each new CRL, not including the CRL size?
      *    - 0. No increase for each CRL except the actual CRL size
      *
@@ -513,15 +519,15 @@ public class PDFSigner extends BaseSigner {
      *    - Currently 4096 is used but with a chain of 4 "normal" certificates
      *      that is a little bit too little.
      *    - Lets use 7168 and there are room for about 6 "normal" certificates
-     * 
-     * 
-     * See also PDFSignerUnitTest for tests that the answers to the questions 
+     *
+     *
+     * See also PDFSignerUnitTest for tests that the answers to the questions
      * above still holds.
      * @param certChain The signing certificate chain
      * @param tsc Timestamp client, this can be null if no timestamp response is used. The contribution is estimated by using a fixed value
      * @param ocsp The OCSP response, can be null
      * @param crlList The list of CRLs included in the signature, this can be null
-     * 
+     *
      * @return Returns the estimated signature size in bytes
      */
     protected int calculateEstimatedSignatureSize(Certificate[] certChain, TSAClient tsc,
@@ -531,80 +537,80 @@ public class PDFSigner extends BaseSigner {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Calculating estimated signature size");
 		}
-		
+
 		for (Certificate cert : certChain) {
 			try {
 				int certSize = cert.getEncoded().length;
 				estimatedSize += certSize;
-				
+
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Adding " + certSize + " bytes for certificate");
 				}
-				
+
 			} catch (CertificateEncodingException e) {
 				throw new SignServerException("Error estimating signature size contribution for certificate", e);
 			}
 		}
-		
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Total size of certificate chain: " + estimatedSize);
 		}
-		
+
 		// add estimate for PKCS#7 structure + hash
 		estimatedSize += 2000;
 
 		// add space for OCSP response
 		if (ocsp != null) {
 			estimatedSize += ocsp.length;
-			
+
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Adding " + ocsp.length + " bytes for OCSP response");
 			}
 		}
-		
+
 		if (tsc != null) {
 			// add guess for timestamp response (which we can't really know)
 			// TODO: we might be able to store the size of the last TSA response and re-use next time...
 			final int tscSize = 4096;
-			
+
 			estimatedSize += tscSize;
-			
+
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Adding " + tscSize + " bytes for TSA");
 			}
 		}
-	
+
 		// add estimate for CRL
 		if (crlList != null) {
 			for (CRL crl : crlList) {
 				if (crl instanceof X509CRL) {
 					X509CRL x509Crl = (X509CRL) crl;
-				
+
 					try {
 						int crlSize = x509Crl.getEncoded().length;
 						// the CRL is included twice in the signature...
 						estimatedSize += crlSize * 2;
-						
+
 						if (LOG.isDebugEnabled()) {
 							LOG.debug("Adding " + crlSize * 2 + " bytes for CRL");
 						}
-						
+
 					} catch (CRLException e) {
 						throw new SignServerException("Error estimating signature size contribution for CRL", e);
 					}
-				}		
+				}
 			}
 			estimatedSize += 100;
 		}
 
 		return estimatedSize;
     }
-    
-    
+
+
     protected byte[] calculateSignature(PdfPKCS7 sgn, int size, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
     		PdfSignatureAppearance sap, String tsaDigestAlgo) throws IOException, DocumentException, SignServerException {
-     
+
         final HashMap<PdfName, Integer> exc = new HashMap<>();
         exc.put(PdfName.CONTENTS, size * 2 + 2);
         sap.preClose(exc);
@@ -618,7 +624,7 @@ public class PDFSigner extends BaseSigner {
             messageDigest.update(buf, 0, n);
         }
         byte hash[] = messageDigest.digest();
-        
+
 
         byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
         try {
@@ -629,10 +635,10 @@ public class PDFSigner extends BaseSigner {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp,
                                                 tsaDigestAlgo);
-        
+
         return encodedSig;
     }
-    
+
     protected List<Certificate> addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
             byte[] pdfBytes, File pdfFile, byte[] password, int contentEstimated,
             final Request request, final WritableData responseData, final RequestContext context,
@@ -641,7 +647,7 @@ public class PDFSigner extends BaseSigner {
                    CryptoTokenOfflineException, SignServerException, IllegalRequestException {
     	// when given a content length (i.e. non-zero), it means we are running a second try
     	boolean secondTry = contentEstimated != 0;
-    	
+
         // get signing cert certificate chain and private key
         final List<Certificate> includedCerts;
         final List<Certificate> certs;
@@ -670,7 +676,7 @@ public class PDFSigner extends BaseSigner {
                 throw new IllegalRequestException("Only SHA1 is permitted as digest algorithm for DSA private keys");
             }
         }
-        
+
         final PdfReader reader;
         if (pdfBytes != null) {
             reader = new PdfReader(pdfBytes, password);
@@ -681,30 +687,30 @@ public class PDFSigner extends BaseSigner {
 
         String strPdfVersion = Character.toString(reader.getPdfVersion());
         PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, theDigestAlgorithm);
-            
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("PDF version: " + strPdfVersion);
         }
 
         // Don't certify already certified documents
-        if (reader.getCertificationLevel() != PdfSignatureAppearance.NOT_CERTIFIED 
+        if (reader.getCertificationLevel() != PdfSignatureAppearance.NOT_CERTIFIED
                 && params.getCertification_level() != PdfSignatureAppearance.NOT_CERTIFIED) {
             throw new IllegalRequestException("Will not certify an already certified document");
         }
-        
+
         // Don't sign documents where the certification does not allow it
         if (reader.getCertificationLevel() == PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED) {
             throw new IllegalRequestException("Will not sign a certified document where signing is not allowed");
         }
-  
+
         Permissions currentPermissions = Permissions.fromInt(reader.getPermissions());
-        
+
         if (params.getSetPermissions() != null && params.getRemovePermissions() != null) {
             throw new SignServerException("Signer " + workerId
                     + " missconfigured. Only one of " + SET_PERMISSIONS
                     + " and " + REMOVE_PERMISSIONS + " should be specified.");
         }
-        
+
         Permissions newPermissions;
         if (params.getSetPermissions() != null) {
             newPermissions = params.getSetPermissions();
@@ -713,7 +719,7 @@ public class PDFSigner extends BaseSigner {
         } else {
             newPermissions = null;
         }
-        
+
         Permissions rejectPermissions = Permissions.fromSet(params.getRejectPermissions());
         byte[] userPassword = reader.computeUserPassword();
         int cryptoMode = reader.getCryptoMode();
@@ -729,14 +735,14 @@ public class PDFSigner extends BaseSigner {
                     .append("cryptoMode: ").append(cryptoMode);
             LOG.debug(buff.toString());
         }
-        
+
         if (appendMode && (newPermissions != null || params.getSetOwnerPassword() != null)) {
             appendMode = false;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Changing appendMode to false to be able to change permissions");
             }
         }
-        
+
         OutputStream responseOut = null;
         try {
             // Use stream for in-memory data but use file when we got it as file
@@ -756,7 +762,7 @@ public class PDFSigner extends BaseSigner {
                     LOG.debug("Need to upgrade PDF to version 1." + updatedPdfVersion);
                 }
 
-                // check that the document isn't already signed 
+                // check that the document isn't already signed
                 // when trying to upgrade version
                 final AcroFields af = reader.getAcroFields();
                 final List<String> sigNames = af.getSignatureNames();
@@ -774,7 +780,7 @@ public class PDFSigner extends BaseSigner {
 
             PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);
             PdfSignatureAppearance sap = stp.getSignatureAppearance();
-            
+
             // Set PDF permissions/encryption if:
             // - there are new permissions or
             // - the owner password has been specified or
@@ -786,9 +792,9 @@ public class PDFSigner extends BaseSigner {
                         LOG.debug("Setting default encryption algorithm");
                     }
                 }
-                
+
                 if (params.getSetOwnerPassword() != null) {
-                    password = params.getSetOwnerPassword().getBytes("ISO-8859-1");
+                    password = params.getSetOwnerPassword().getBytes(StandardCharsets.ISO_8859_1);
                 } else if (isUserPassword(reader, password) && newPermissions != null) {
                     // If we don't have an owner password we might have to get one.
                     // We need to set an owner password if we have new permissions to set otherwise we should not as the original document did not have
@@ -963,7 +969,7 @@ public class PDFSigner extends BaseSigner {
         }
         return certs;
     }
-    
+
     protected InternalProcessSessionLocal getProcessSession(IServices services) {
         return services.get(InternalProcessSessionLocal.class);
     }
@@ -971,7 +977,7 @@ public class PDFSigner extends BaseSigner {
     /**
      * returns crl list containing crl for each certifcate in crl chain. CRLs
      * are fetched using address specified in CDP.
-     * 
+     *
      * @return n
      * @throws SignServerException
      */
@@ -1023,7 +1029,7 @@ public class PDFSigner extends BaseSigner {
 
     /**
      * get the page number at which to draw signature rectangle
-     * 
+     *
      * @param pReader
      * @param pParams
      * @return
@@ -1117,7 +1123,7 @@ public class PDFSigner extends BaseSigner {
      * "${WORKERID}-${REQUESTID}_${DATE:yyyy-MM-dd}.pdf"
      * Could be:
      * "42-123123123_2010-04-28.pdf"
-     * 
+     *
      * @param pattern Pre-compiled pattern to use for parsing
      * @param text The text that contains keys to be replaced with values
      * @param date The date to use if date should be inserted
@@ -1202,7 +1208,7 @@ public class PDFSigner extends BaseSigner {
     }
 
     private static byte[] getPassword(final RequestContext context) throws UnsupportedEncodingException {
-        final byte[] result;    
+        final byte[] result;
         final String password = RequestMetadata.getInstance(context).get(RequestContext.METADATA_PDFPASSWORD);
         if (password == null) {
             result = null;
@@ -1213,10 +1219,10 @@ public class PDFSigner extends BaseSigner {
     }
 
     /**
-     * @return True if the supplied password is equal to the user password 
+     * @return True if the supplied password is equal to the user password
      * and thus is not the owner password.
      */
-    private boolean isUserPassword(PdfReader reader, byte[] password) {        
+    private boolean isUserPassword(PdfReader reader, byte[] password) {
         return Arrays.equals(reader.computeUserPassword(), password);
     }
 
@@ -1229,21 +1235,21 @@ public class PDFSigner extends BaseSigner {
     @Override
     protected List<String> getFatalErrors(final IServices services) {
         final List<String> fatalErrors = super.getFatalErrors(services);
-        
+
         fatalErrors.addAll(configErrors);
         return fatalErrors;
     }
-    
+
     /**
      * Internal method for the unit test to set the included certificate levels (to a non-zero value)
      * without having to initializing the signer.
-     * 
+     *
      * @param includeCertificateLevels
      */
     void setIncludeCertificateLevels(final int includeCertificateLevels) {
         this.includeCertificateLevels = includeCertificateLevels;
     }
-    
+
     /**
      * Check if a property is not one of those that should not be possible to
      * override.

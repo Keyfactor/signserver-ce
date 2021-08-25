@@ -17,8 +17,8 @@
         <bouncycastle.bcutil.artifact>bcutil-jdk15on</bouncycastle.bcutil.artifact>
 
         <!-- BouncyCastle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.68</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.68</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcpg.artifact.version>1.69</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.69</bouncycastle.bcpkix.artifact.version>
         <bouncycastle.bcprov.artifact.version>1.69</bouncycastle.bcprov.artifact.version>
         <bouncycastle.bcutil.artifact.version>1.69</bouncycastle.bcutil.artifact.version>
 

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DigestAlgorithmIdentifierFinder;
@@ -139,7 +140,9 @@ public class ClientSideHashingHelper {
             throw new IllegalRequestException("Client specified a non-accepted digest hash algorithm");
         }
 
-        return alg;
+        // From BC 1.69 DefaultDigestAlgorithmIdentifierFinder does not use DERNull for all params but
+        // we want (?) that as we had it before
+        return new AlgorithmIdentifier(alg.getAlgorithm(), DERNull.INSTANCE);
     }
 
     /**

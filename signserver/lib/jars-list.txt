@@ -8,8 +8,8 @@
 0addec670fedcd3f113c5c8091d783280d23f75e3acb841b61a9cdb079376a08  ./ext/aopalliance-1.0.jar;                              "AOP Alliance"
 42ae502030df68b4a876879479a2b8eff6b3ac70190f40974bb9402f30f91516  ./ext/apksig-30.0.2-signserver5-1.jar;                  "Android"
 50044403f23114ab40e20a2f5a2f2077d67e2b66c3ccb7d5c409fa9e323147e8  ./ext/appframework-1.0.3.jar;                           "Swing Appframework"
-2251d9c9faa0ee534ab159a6dac1193a69b8a831f0a0e593dc79e34e7e256a4f  ./ext/bcpg-jdk15on-1.68.jar;                            "Bouncy Castle"
-fb8d0f8f673ad6e16c604732093d7aa31b26ff4e0bd9cae1d7f99984c06b8a0f  ./ext/bcpkix-jdk15on-1.68.jar;                          "Bouncy Castle"
+a3984ff7fd9518d00094e34f3d3e714a4823f2505ada1c19b35c129e26f63934  ./ext/bcpg-jdk15on-1.69.jar;                            "Bouncy Castle"
+408376d17aaa8789e7acd055fe404289a11fa335fd7c68a75329049fb7d28ed2  ./ext/bcpkix-jdk15on-1.69.jar;                          "Bouncy Castle"
 e469bd39f936999f256002631003ff022a22951da9d5bd9789c7abfa9763a292  ./ext/bcprov-jdk15on-1.69.jar;                          "Bouncy Castle"
 29e40e2466d040d82a6f0e99635d0bc2bba3a94251cf7939cf0b69321caefc09  ./ext/bcutil-jdk15on-1.69.jar;                          "Bouncy Castle"
 2c7b4e8d3af02d7410e350e20da92e65aa48c69250b855387721705f7dccfd99  ./ext/beansbinding-1.2.1.jar;                           "Swing Appframework"
@@ -72,7 +72,7 @@ dbf575bc3d2896319abbd3599050943f4a27d41b4ffec7719bf4ebbe54d2202a  ./ext/dss-util
 66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9  ./ext/ext/hamcrest-core-1.3.jar;                        "Hamcrest"
 59721f0805e223d84b90677887d9ff567dc534d7c502ca903c0c2b17f05c116a  ./ext/ext/junit-4.12.jar;                               "JUnit"
 d03d5c3c8f292529fe235138756431cf1fc32ef9d0f76131c09b5366de4b3d99  ./ext/ext/selenium-server-standalone-3.13.0.jar;        "Selenium"
-9710db93da64d85a609120a627878f409995ec530a092ababd80d51033d2e508  ./ext/fontbox-2.0.22.jar;
+9710db93da64d85a609120a627878f409995ec530a092ababd80d51033d2e508  ./ext/fontbox-2.0.22.jar;                               
 3cfc1533d323fcc8eda290fcba410ce8df292c8c13df74b3d353f5a5930143f1  ./ext/geronimo-osgi-locator-1.1.jar;                    "Apache Geronimo"
 9fb545199584a41e8064e1232ca3f3c757366b27fc7aa488ac0fc98263642756  ./ext/guice-2.0.jar;                                    "Guice"
 a080af79f5c0bfd431ad337f28ad4e17d6f7e983235aa10dd0ea1dc355938d0c  ./ext/guice-multibindings-2.0.jar;                      "Guice"
@@ -114,7 +114,7 @@ d0d0636d41e116098d769dbe42fb7b7a0de6ba8fc43d9530c048aa511f5dc99b  ./ext/jetty-io
 108045c9675ebf6d6ec4d8dcc331693f9b944ac7c87de52dccff2c55e8dfa6f1  ./ext/json-simple-1.1.1.jar;                            "json-simple"
 1d31696445697720527091754369082a6651bd49781b6005deb94e56753406f9  ./ext/log4j-1.2.17.jar;                                 "Log4j"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
-3069a03429c9c11edbbaf4eb503261bbf87260ff58c74e7e9f0f4ceeae640441  ./ext/pdfbox-2.0.22.jar;
+3069a03429c9c11edbbaf4eb503261bbf87260ff58c74e7e9f0f4ceeae640441  ./ext/pdfbox-2.0.22.jar;                                
 cbe6a7bd0b38e4acf44ae25b11812de967c2f74ea105c89a074ffce5797cfc1e  ./ext/poi-4.1.2.jar;                                    "Apache POI"
 639c6a675bc472e1568df9d8c954ff702da6f83ed27da0ff9a7bd12ed73b8bf0  ./ext/quartz-2.3.2.jar;                                 "Quartz Scheduler"
 e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a  ./ext/serializer-2.7.2.jar;                             "Santuario"
@@ -139,3 +139,6 @@ a44bd80e82cb0f4cfac0dac8575746223802514e3cec9dc75235bc0de646af14  ./ext/xalan-2.
 ffa13d70e827653d93dff3c76598a0821b29c7450538e139989f79fb2c5b4e65  ./ext/xmlschema-core-2.2.3.jar;                         "Apache XmlSchema Core"
 f5965da6ba78949bc17724c56de70c4aeb2598663f6abb1ece63854ba21713ba  ./ext/xmlsec-1.5.8.jar;                                 "Santuario"
 bfc90e9e32d0eab1f397fb974b5f150a815188382ac41f372a7149d5bc178008  ./ext/xpp3_min-1.1.4c.jar;                              "Xpp3"
+                                                                  ./SignServer-Lib-ODFDOM.jar;                            "ODFDOM"
+                                                                  ./SignServer-Lib-OpenXML4J.jar;                         "OpenXML4J"
+                                                                  ./SignServer-Lib-iText.jar;                             "iText"

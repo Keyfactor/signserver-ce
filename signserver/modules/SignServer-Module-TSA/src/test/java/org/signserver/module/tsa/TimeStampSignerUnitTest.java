@@ -138,28 +138,15 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER1
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER1)
-            //config.setProperty(NAME, "TestTimeStampSigner1");
                     .withWorkerName("TestTimeStampSigner1")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
-            //config.setProperty("ACCEPTANYPOLICY", "true");
                     .withAcceptAnyPolicy(true)
                     .build();
+
             workerMock.setupWorker(WORKER1, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(WORKER1);
@@ -167,30 +154,16 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER2: some extensions accepted
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER2)
-            //config.setProperty(NAME, "TestTimeStampSigner3");
                     .withWorkerName("TestTimeStampSigner2")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74;1.2.7.2;1.2.7.8");
                     .withAcceptedExtensions("1.2.74;1.2.7.2;1.2.7.8")
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
-            //config.setProperty("ACCEPTANYPOLICY", "true");
                     .withAcceptAnyPolicy(true)
                     .build();
+
             workerMock.setupWorker(WORKER2, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(WORKER2);
@@ -198,28 +171,13 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER3: empty list of extensions
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER3)
-            //config.setProperty(NAME, "TestTimeStampSigner2");
                     .withWorkerName("TestTimeStampSigner3")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("ACCEPTEDEXTENSIONS", "");
                     .withAcceptedExtensions("")
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
-            //config.setProperty("ACCEPTANYPOLICY", "true");
                     .withAcceptAnyPolicy(true)
                     .build();
 
@@ -230,30 +188,16 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER4: some extensions accepted (spaces between OIDs)
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER4)
-            //config.setProperty(NAME, "TestTimeStampSigner3");
                     .withWorkerName("TestTimeStampSigner4")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
                     .withAcceptedExtensions("1.2.74; 1.2.7.2; 1.2.7.8")
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
-            //config.setProperty("ACCEPTANYPOLICY", "true");
                     .withAcceptAnyPolicy(true)
                     .build();
+
             workerMock.setupWorker(WORKER4, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(WORKER4);
@@ -261,26 +205,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER5: with one additional extension
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER5)
-            //config.setProperty(NAME, "TestTimeStampSigner4");
                     .withWorkerName("TestTimeStampSigner5")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
-            //config.setProperty("ACCEPTANYPOLICY", "true");
                     .withAcceptAnyPolicy(true)
                     .build();
 
@@ -300,26 +230,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER6: with additional extensions
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER6)
-            //config.setProperty(NAME, "TestTimeStampSigner4");
                     .withWorkerName("TestTimeStampSigner6")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
-            //config.setProperty("ACCEPTANYPOLICY", "true");
                     .withAcceptAnyPolicy(true)
                     .build();
 
@@ -345,27 +261,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER7: accepting only a specific request policy
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER7)
-            //config.setProperty(NAME, "TestTimeStampSigner7");
                     .withWorkerName("TestTimeStampSigner7")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("ACCEPTEDPOLICIES",
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withAcceptedPolicies(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
                     .build();
 
@@ -376,27 +277,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // WORKER8: accepting only a specific set of request policies
         {
-            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-            //final WorkerConfig config = new WorkerConfig();
             final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                     .withWorkerId(WORKER8)
-            //config.setProperty(NAME, "TestTimeStampSigner8");
                     .withWorkerName("TestTimeStampSigner8")
-            //config.setProperty(AUTHTYPE, "NOAUTH");
                     .withNoAuthAuthType()
-            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-            //        "1.3.6.1.4.1.22408.1.2.3.45");
                     .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
-            //config.setProperty("ACCEPTEDPOLICIES",
-            //        "1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46");
                     .withAcceptedPolicies("1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46")
-            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            //config.setProperty("KEYSTOREPATH",
-            //        getSignServerHome() + File.separator + "res" +
-            //                File.separator + "test" + File.separator + "dss10" +
-            //                File.separator + "dss10_keystore.p12");
-            //config.setProperty("KEYSTORETYPE", "PKCS12");
-            //config.setProperty("KEYSTOREPASSWORD", "foo123");
                     .withDss10p12Keystore()
                     .build();
 
@@ -640,7 +526,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testIncludeCertIDIssuerSerialInvalid");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("INCLUDE_CERTID_ISSUERSERIAL", "_not_a_boolean_");
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
@@ -874,10 +759,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     public void testBothAnyAcceptedAndAcceptedPoliciesError() {
         LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
 
-        final WorkerConfig config = new WorkerConfig();
-
-        config.setProperty("ACCEPTANYPOLICY", "true");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
+        final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                .withAcceptAnyPolicy(true)
+                .withAcceptedPolicies(DEFAULT_TSA_POLICY_OID)
+                .build();
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
 
@@ -898,9 +783,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("ACCEPTANYPOLICY", "TRUE");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
+        config.setProperty("ACCEPTEDPOLICIES", DEFAULT_TSA_POLICY_OID);
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
 
@@ -922,10 +806,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     public void testAcceptAnyPolicyFalseAndAcceptedPolicies() {
         LOG.info("testAcceptAnyPolicyFalseAndAcceptedPolicies");
 
-        final WorkerConfig config = new WorkerConfig();
-
-        config.setProperty("ACCEPTANYPOLICY", "false");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
+        final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                .withAcceptAnyPolicy(false)
+                .withAcceptedPolicies(DEFAULT_TSA_POLICY_OID)
+                .build();
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
 
@@ -950,9 +834,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAcceptAnyPolicyEmptyAndAcceptedPolicies");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("ACCEPTANYPOLICY", "");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
+        config.setProperty("ACCEPTEDPOLICIES", DEFAULT_TSA_POLICY_OID);
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
 
@@ -1015,9 +898,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     public void testAcceptAnyPolicyFalseAndNoAcceptedPolicies() {
         LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies");
 
-        // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
-        //final WorkerConfig config = new WorkerConfig();
-        //config.setProperty("ACCEPTANYPOLICY", "false");
         final WorkerConfig config = TSAWorkerConfigBuilder.builder()
                 .withAcceptAnyPolicy(false)
                 .build();
@@ -1084,8 +964,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     public void testAcceptedPoliciesEmpty() {
         LOG.info("testAcceptedPoliciesEmpty");
 
-        final WorkerConfig config = new WorkerConfig();
-        config.setProperty("ACCEPTEDPOLICIES", "");
+        final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                .withAcceptedPolicies("")
+                .build();
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
 

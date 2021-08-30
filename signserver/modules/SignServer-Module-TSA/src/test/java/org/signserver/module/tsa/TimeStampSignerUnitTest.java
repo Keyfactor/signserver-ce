@@ -12,7 +12,8 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
@@ -22,8 +23,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Boolean;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cms.Attribute;
@@ -33,6 +40,7 @@ import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.TSTInfo;
+import org.bouncycastle.asn1.tsp.TimeStampReq;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -46,7 +54,11 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -54,6 +66,7 @@ import org.signserver.common.data.Request;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.module.tsa.conf.TSAWorkerConfigBuilder;
 import org.signserver.server.IServices;
 import org.signserver.server.LocalComputerTimeSource;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
@@ -78,14 +91,11 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unit tests for the TimeStampSigner.
  *
- * System tests can be put in the Test-System project instead.
- *
  * @author Markus Kilås
  * @version $Id$
  */
 public class TimeStampSignerUnitTest extends ModulesTestCase {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TimeStampSignerUnitTest.class);
 
     private static final int WORKER1 = 8890;
@@ -96,22 +106,304 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final int WORKER6 = 8895;
     private static final int WORKER7 = 8896;
     private static final int WORKER8 = 8897;
-    private static final String NAME = "NAME";
-    private static final String AUTHTYPE = "AUTHTYPE";
+
     private static final String CRYPTOTOKEN_CLASSNAME =
             "org.signserver.server.cryptotokens.KeystoreCryptoToken";
 
-    private static final String KEY_ALIAS = "ts00001";
+    // OID description: we sign anything that arrives
+    private static final String DEFAULT_TSA_POLICY_OID = "1.3.6.1.4.1.22408.1.2.3.45";
 
-    private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionLocal workerSession;
     private WorkerSessionMock processSession;
     private IServices services;
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    @BeforeClass
+    public static void beforeClass() {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     @Before
     public void setUp() throws Exception {
         setupWorkers();
-        Security.addProvider(new BouncyCastleProvider());
+    }
+
+    private void setupWorkers() throws Exception {
+        final WorkerSessionMock workerMock = new WorkerSessionMock();
+        workerSession = workerMock;
+        processSession = workerMock;
+        services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, new GlobalConfigurationSessionMock());
+
+        // WORKER1
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER1)
+            //config.setProperty(NAME, "TestTimeStampSigner1");
+                    .withWorkerName("TestTimeStampSigner1")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+            //config.setProperty("ACCEPTANYPOLICY", "true");
+                    .withAcceptAnyPolicy(true)
+                    .build();
+            workerMock.setupWorker(WORKER1, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
+            workerSession.reloadConfiguration(WORKER1);
+        }
+
+        // WORKER2: some extensions accepted
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER2)
+            //config.setProperty(NAME, "TestTimeStampSigner3");
+                    .withWorkerName("TestTimeStampSigner2")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74;1.2.7.2;1.2.7.8");
+                    .withAcceptedExtensions("1.2.74;1.2.7.2;1.2.7.8")
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+            //config.setProperty("ACCEPTANYPOLICY", "true");
+                    .withAcceptAnyPolicy(true)
+                    .build();
+            workerMock.setupWorker(WORKER2, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
+            workerSession.reloadConfiguration(WORKER2);
+        }
+
+        // WORKER3: empty list of extensions
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER3)
+            //config.setProperty(NAME, "TestTimeStampSigner2");
+                    .withWorkerName("TestTimeStampSigner3")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("ACCEPTEDEXTENSIONS", "");
+                    .withAcceptedExtensions("")
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+            //config.setProperty("ACCEPTANYPOLICY", "true");
+                    .withAcceptAnyPolicy(true)
+                    .build();
+
+            workerMock.setupWorker(WORKER3, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
+            workerSession.reloadConfiguration(WORKER3);
+        }
+
+        // WORKER4: some extensions accepted (spaces between OIDs)
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER4)
+            //config.setProperty(NAME, "TestTimeStampSigner3");
+                    .withWorkerName("TestTimeStampSigner4")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
+                    .withAcceptedExtensions("1.2.74; 1.2.7.2; 1.2.7.8")
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+            //config.setProperty("ACCEPTANYPOLICY", "true");
+                    .withAcceptAnyPolicy(true)
+                    .build();
+            workerMock.setupWorker(WORKER4, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
+            workerSession.reloadConfiguration(WORKER4);
+        }
+
+        // WORKER5: with one additional extension
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER5)
+            //config.setProperty(NAME, "TestTimeStampSigner4");
+                    .withWorkerName("TestTimeStampSigner5")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+            //config.setProperty("ACCEPTANYPOLICY", "true");
+                    .withAcceptAnyPolicy(true)
+                    .build();
+
+            workerMock.setupWorker(WORKER5, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner() {
+                        @Override
+                        protected Extensions getAdditionalExtensions(Request request, RequestContext context) {
+                            final Extension ext =
+                                    new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
+                                            false,
+                                            new DEROctetString("Value".getBytes()));
+                            return new Extensions(ext);
+                        }
+                    });
+            workerSession.reloadConfiguration(WORKER5);
+        }
+
+        // WORKER6: with additional extensions
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER6)
+            //config.setProperty(NAME, "TestTimeStampSigner4");
+                    .withWorkerName("TestTimeStampSigner6")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+            //config.setProperty("ACCEPTANYPOLICY", "true");
+                    .withAcceptAnyPolicy(true)
+                    .build();
+
+            workerMock.setupWorker(WORKER6, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner() {
+                        @Override
+                        protected Extensions getAdditionalExtensions(Request request, RequestContext context) {
+                            final Extension ext =
+                                    new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
+                                            false,
+                                            new DEROctetString("Value".getBytes()));
+                            // a critical extension
+                            final Extension ext2 =
+                                    new Extension(new ASN1ObjectIdentifier("1.2.7.10"),
+                                            true,
+                                            new DEROctetString("Critical".getBytes()));
+                            final Extension[] exts = {ext, ext2};
+                            return new Extensions(exts);
+                        }
+                    });
+            workerSession.reloadConfiguration(WORKER6);
+        }
+
+        // WORKER7: accepting only a specific request policy
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER7)
+            //config.setProperty(NAME, "TestTimeStampSigner7");
+                    .withWorkerName("TestTimeStampSigner7")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("ACCEPTEDPOLICIES",
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withAcceptedPolicies(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+                    .build();
+
+            workerMock.setupWorker(WORKER7, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
+            workerSession.reloadConfiguration(WORKER7);
+        }
+
+        // WORKER8: accepting only a specific set of request policies
+        {
+            // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+            //final WorkerConfig config = new WorkerConfig();
+            final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                    .withWorkerId(WORKER8)
+            //config.setProperty(NAME, "TestTimeStampSigner8");
+                    .withWorkerName("TestTimeStampSigner8")
+            //config.setProperty(AUTHTYPE, "NOAUTH");
+                    .withNoAuthAuthType()
+            //config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
+            //        "1.3.6.1.4.1.22408.1.2.3.45");
+                    .withDefaultTsaPolicyOid(DEFAULT_TSA_POLICY_OID)
+            //config.setProperty("ACCEPTEDPOLICIES",
+            //        "1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46");
+                    .withAcceptedPolicies("1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46")
+            //config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            //config.setProperty("KEYSTOREPATH",
+            //        getSignServerHome() + File.separator + "res" +
+            //                File.separator + "test" + File.separator + "dss10" +
+            //                File.separator + "dss10_keystore.p12");
+            //config.setProperty("KEYSTORETYPE", "PKCS12");
+            //config.setProperty("KEYSTOREPASSWORD", "foo123");
+                    .withDss10p12Keystore()
+                    .build();
+
+            workerMock.setupWorker(WORKER8, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
+            workerSession.reloadConfiguration(WORKER8);
+        }
     }
 
     /**
@@ -161,218 +453,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertNotNull("request", requestLoggable);
         assertEquals("log line doesn't contain newlines", -1,
                 requestLoggable.toString().lastIndexOf('\n'));
-    }
-
-    private void setupWorkers() throws Exception {
-
-        final GlobalConfigurationSessionMock globalMock
-                = new GlobalConfigurationSessionMock();
-        final WorkerSessionMock workerMock = new WorkerSessionMock();
-        globalConfig = globalMock;
-        workerSession = workerMock;
-        processSession = workerMock;
-        services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, globalMock);
-
-        // WORKER1
-        {
-            final int workerId = WORKER1;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner1");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTANYPOLICY", "true");
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner());
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER2: some extensions accepted
-        {
-            final int workerId = WORKER2;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner3");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74;1.2.7.2;1.2.7.8");
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTANYPOLICY", "true");
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner());
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER3: empty list of extensions
-        {
-            final int workerId = WORKER3;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner2");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                              "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("ACCEPTEDEXTENSIONS", "");
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTANYPOLICY", "true");
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner());
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER4: some extensions accepted (spaces between OIDs)
-        {
-            final int workerId = WORKER4;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner3");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTANYPOLICY", "true");
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner());
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER5: with one additional extension
-        {
-            final int workerId = WORKER5;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner4");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTANYPOLICY", "true");
-
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner() {
-                @Override
-                protected Extensions getAdditionalExtensions(Request request, RequestContext context) {
-                     final Extension ext =
-                             new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
-                                           false,
-                                           new DEROctetString("Value".getBytes()));
-                     return new Extensions(ext);
-                }
-            });
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER6: with additional extensions
-        {
-            final int workerId = WORKER6;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner4");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTANYPOLICY", "true");
-
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner() {
-                @Override
-                protected Extensions getAdditionalExtensions(Request request, RequestContext context) {
-                     final Extension ext =
-                             new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
-                                           false,
-                                           new DEROctetString("Value".getBytes()));
-                     // a critical extension
-                     final Extension ext2 =
-                             new Extension(new ASN1ObjectIdentifier("1.2.7.10"),
-                                           true,
-                                           new DEROctetString("Critical".getBytes()));
-                     final Extension[] exts = {ext, ext2};
-                     return new Extensions(exts);
-                }
-            });
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER7: accepting only a specific request policy
-        {
-            final int workerId = WORKER7;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner7");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTEDPOLICIES",
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner());
-            workerSession.reloadConfiguration(workerId);
-        }
-
-        // WORKER8: accepting only a specific set of request policies
-        {
-            final int workerId = WORKER8;
-            final WorkerConfig config = new WorkerConfig();
-            config.setProperty(NAME, "TestTimeStampSigner8");
-            config.setProperty(AUTHTYPE, "NOAUTH");
-            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.3.45");
-            config.setProperty("DEFAULTKEY", KEY_ALIAS);
-            config.setProperty("KEYSTOREPATH",
-                getSignServerHome() + File.separator + "res" +
-                        File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_keystore.p12");
-            config.setProperty("KEYSTORETYPE", "PKCS12");
-            config.setProperty("KEYSTOREPASSWORD", "foo123");
-            config.setProperty("ACCEPTEDPOLICIES",
-                               "1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46");
-
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner());
-            workerSession.reloadConfiguration(workerId);
-        }
     }
 
     /**
@@ -493,7 +573,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     }
 
     /**
-     * Test with a custom time stamp signer adding an additional extension.
+     * Test with a custom time stamp signer with additional extension.
      */
     @Test
     public void testAdditionalExtension() throws Exception {
@@ -915,7 +995,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("ACCEPTANYPOLICY", "foo");
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
@@ -936,9 +1015,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     public void testAcceptAnyPolicyFalseAndNoAcceptedPolicies() {
         LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies");
 
-        final WorkerConfig config = new WorkerConfig();
-
-        config.setProperty("ACCEPTANYPOLICY", "false");
+        // TODO: Commented blocks here are for simplification of transition, to be removed with next commit
+        //final WorkerConfig config = new WorkerConfig();
+        //config.setProperty("ACCEPTANYPOLICY", "false");
+        final WorkerConfig config = TSAWorkerConfigBuilder.builder()
+                .withAcceptAnyPolicy(false)
+                .build();
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
 
@@ -959,7 +1041,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("ACCEPTANYPOLICY", "FALSE");
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
@@ -983,7 +1064,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAcceptAnyPolicyEmptyAndNoAcceptedPolicies");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("ACCEPTANYPOLICY", "");
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
@@ -1005,7 +1085,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAcceptedPoliciesEmpty");
 
         final WorkerConfig config = new WorkerConfig();
-
         config.setProperty("ACCEPTEDPOLICIES", "");
 
         final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
@@ -1027,7 +1106,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         TimeStampSigner instance = new TimeStampSigner();
 
-        // Certifiate without id_kp_timeStamping
+        // Certificate without id_kp_timeStamping
         final Certificate certNoEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Without EKU").build());
         assertEquals(Arrays.asList("Missing extended key usage timeStamping", "The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Collections.singletonList(certNoEku)));
 
@@ -1073,10 +1152,216 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
     }
 
+    /**
+     * Tests the TimeStampSigner for bad request that cannot be parsed (null).
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void badTimeStampRequest0() throws Exception {
+        LOG.info("badTimeStampRequest0");
+        // given
+        // then
+        expectedException.expect(IllegalRequestException.class);
+        expectedException.expectMessage("Request must contain data");
+        // when
+        timestamp(new BadTimeStampRequest(BadTimeStampRequest.BadTimeStampRequestType.NULL), WORKER1);
+    }
+
+    /**
+     * Tests the TimeStampSigner for bad request that cannot be parsed (empty).
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void badTimeStampRequest1() throws Exception {
+        LOG.info("badTimeStampRequest1");
+        // given
+        // then
+        expectedException.expect(IllegalRequestException.class);
+        expectedException.expectMessage("Request must contain data");
+        // when
+        timestamp(new BadTimeStampRequest(BadTimeStampRequest.BadTimeStampRequestType.EMPTY), WORKER1);
+    }
+
+    /**
+     * Tests the TimeStampSigner for bad request that cannot be parsed (single byte).
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void badTimeStampRequest2() throws Exception {
+        LOG.info("badTimeStampRequest2");
+        // given
+        // when
+        final TimeStampResponse timeStampResponse = timestamp(
+                new BadTimeStampRequest(BadTimeStampRequest.BadTimeStampRequestType.ONE), WORKER1);
+        // then
+        assertEquals("status: rejected", PKIStatus.REJECTION, timeStampResponse.getStatus());
+        assertTrue("Expected message: The request could not be parsed.", timeStampResponse.getStatusString().contains("The request could not be parsed."));
+    }
+
+    /**
+     * Tests the TimeStampSigner for bad request that has wrong length (extra boolean). Expects the TSPException.
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void badTimeStampRequest3() throws Exception {
+        LOG.info("badTimeStampRequest3");
+        // given
+        // when
+        final TimeStampResponse timeStampResponse = timestamp(
+                new BadTimeStampRequest(BadTimeStampRequest.BadTimeStampRequestType.EXTRA), WORKER1);
+        //  then
+        assertEquals("status: rejected", PKIStatus.REJECTION, timeStampResponse.getStatus());
+        assertTrue("Expected message: imprint digest the wrong length", timeStampResponse.getStatusString().contains("imprint digest the wrong length"));
+    }
+
+    /**
+     * Tests for TSA Timestamp Request fields:
+     * <ul>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ</li>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS</li>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS</li>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCE</li>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_VERSION</li>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTALGOID</li>
+     *     <li>ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST</li>
+     * </ul>
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void logTsaTimestampRequestFields() throws Exception {
+        LOG.info("logTsaTimestampRequestFields");
+        // given
+        final TimeStampRequest timeStampRequest = new TimeStampRequestGenerator().generate(
+                TSPAlgorithms.SHA1, new byte[2000], BigInteger.valueOf(100));
+        // when
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER1);
+        // then
+        timeStampResponse.validate(timeStampRequest);
+        final LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
+        final Object logTsaTimestampRequestCertreq = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ", logTsaTimestampRequestCertreq);
+        final Object logTsaTimestampRequestCritExtOids = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS", logTsaTimestampRequestCritExtOids);
+        final Object logTsaTimestampRequestNonCritExtOids = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS", logTsaTimestampRequestNonCritExtOids);
+        final Object logTsaTimestampRequestNonce = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCE);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCE", logTsaTimestampRequestNonce);
+        final Object logTsaTimestampRequestVersion = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_VERSION);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_VERSION", logTsaTimestampRequestVersion);
+        final Object logTsaTimestampRequestMessageImprintAlgOid = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTALGOID);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTALGOID", logTsaTimestampRequestMessageImprintAlgOid);
+        final Object logTsaTimestampRequestMessageImprintDigest = logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST);
+        assertNotNull("ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST", logTsaTimestampRequestMessageImprintDigest);
+    }
+
     private static class NullICryptoTokenV4TimeStampSigner extends TimeStampSigner {
         @Override
         public ICryptoTokenV4 getCryptoToken(final IServices services) {
             return null;
+        }
+    }
+
+    /**
+     * TimeStampRequest containing corrupt data.
+     */
+    private static class BadTimeStampRequest extends TimeStampRequest {
+
+        public enum BadTimeStampRequestType {
+            NULL,
+            EMPTY,
+            ONE,
+            EXTRA
+        }
+
+        private final BadTimeStampRequestType type;
+
+        public BadTimeStampRequest(BadTimeStampRequestType type) {
+            super(new TimeStampReq(null, null, null, null, null));
+            this.type = type;
+        }
+
+        @Override
+        public byte[] getEncoded() throws IOException {
+            switch (type) {
+                case NULL:
+                    return null;
+                case EMPTY:
+                    return new byte[0];
+                case ONE:
+                    return new byte[1];
+                case EXTRA:
+                    return getModifiedSequenceWithExtraBoolean();
+            }
+            throw new IOException("Cannot find proper type.");
+        }
+
+        /**
+         * Returns a modified ASN1Sequence with extra boolean element.
+         * Normal request:
+         * <pre>
+         *    0 2025: SEQUENCE {
+         *    4    1:   INTEGER 1
+         *    7 2015:   SEQUENCE {
+         *   11    9:     SEQUENCE {
+         *   13    5:       OBJECT IDENTIFIER sha1 (1 3 14 3 2 26)
+         *   20    0:       NULL
+         *          :       }
+         *   22 2000:     OCTET STRING
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :               [ Another 1872 bytes skipped ]
+         *          :     }
+         * 2026    1:   INTEGER 100
+         *          :   }
+         * </pre>
+         * After modification:
+         * <pre>
+         *    0 2028: SEQUENCE {
+         *    4    1:   INTEGER 1
+         *    7 2015:   SEQUENCE {
+         *   11    9:     SEQUENCE {
+         *   13    5:       OBJECT IDENTIFIER sha1 (1 3 14 3 2 26)
+         *   20    0:       NULL
+         *          :       }
+         *   22 2000:     OCTET STRING
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+         *          :               [ Another 1872 bytes skipped ]
+         *          :     }
+         * 2026    1:   INTEGER 100
+         * 2029    1:   BOOLEAN TRUE
+         *          :   }
+         * </pre>
+         */
+        private byte[] getModifiedSequenceWithExtraBoolean() throws IOException {
+            // Generate
+            final TimeStampRequest timeStampRequest = new TimeStampRequestGenerator().generate(
+                    TSPAlgorithms.SHA1, new byte[2000], BigInteger.valueOf(100));
+            // Read typical TimeStampRequest
+            final ASN1Primitive asn1Primitive = new ASN1InputStream(
+                    new ByteArrayInputStream(timeStampRequest.getEncoded())).readObject();
+            final ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(asn1Primitive.getEncoded());
+            // Recreate sequence through vector (0-2 original elements)
+            final ASN1EncodableVector asn1EncodableVector = new ASN1EncodableVector();
+            asn1EncodableVector.add(asn1Sequence.getObjectAt(0));
+            asn1EncodableVector.add(asn1Sequence.getObjectAt(1));
+            asn1EncodableVector.add(asn1Sequence.getObjectAt(2));
+            // Extra boolean
+            asn1EncodableVector.add(ASN1Boolean.getInstance(true));
+            // Return new sequence from vector
+            return new DERSequence(asn1EncodableVector).getEncoded();
         }
     }
 }

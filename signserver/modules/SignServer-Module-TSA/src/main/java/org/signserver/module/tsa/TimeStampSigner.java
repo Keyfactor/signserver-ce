@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bouncycastle.asn1.x509.Extension;
 import org.signserver.module.cmssigner.FilteredSignedAttributeTableGenerator;
 import java.io.IOException;
@@ -577,7 +578,7 @@ public class TimeStampSigner extends BaseSigner {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
             final byte[] requestBytes = sReq.getRequestData().getAsByteArray();
 
-            if (requestBytes == null || requestBytes.length == 0) {
+            if (ArrayUtils.isEmpty(requestBytes)) {
                 LOG.error("Request must contain data");
                 throw new IllegalRequestException("Request must contain data");
             }

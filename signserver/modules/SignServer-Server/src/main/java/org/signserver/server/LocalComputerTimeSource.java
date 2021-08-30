@@ -40,7 +40,7 @@ public class LocalComputerTimeSource implements ITimeSource {
 
     /**
      * Method taking the local clock as time source
-     * @see org.signserver.server.ITimeSource#getGenTime()
+     * @see org.signserver.server.ITimeSource#getGenTime(RequestContext context)
      */
     @Override
     public Date getGenTime(final RequestContext context) {

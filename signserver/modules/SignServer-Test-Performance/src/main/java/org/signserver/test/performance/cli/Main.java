@@ -479,7 +479,7 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile, new byte[20], TSPAlgorithms.SHA256,
+                    warmupTime, limitedTime, statFile, new byte[32], TSPAlgorithms.SHA256,
                     continueOnFailure));
         }
     }

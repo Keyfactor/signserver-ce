@@ -112,7 +112,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
         byte[] requestBytes = timeStampRequest.getEncoded();
         try (
                 CloseableReadableData requestData = createRequestData(requestBytes);
-                CloseableWritableData responseData = createResponseData(false);
+                CloseableWritableData responseData = createResponseData(false)
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
 
@@ -154,7 +154,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
 
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
         timeStampRequestGenerator.setCertReq(true);
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[32], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = getTimeStampResponse(timestamp(timeStampRequest, WORKER1));
         timeStampResponse.validate(timeStampRequest);
 

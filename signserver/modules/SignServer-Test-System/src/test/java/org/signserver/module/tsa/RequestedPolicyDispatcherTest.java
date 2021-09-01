@@ -200,21 +200,21 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
 
         // Test that worker1 accepts its profile but not the other
         gen.setReqPolicy(WORKER1_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER1, req);
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER1_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
         assertValid(req, res);
 
         gen.setReqPolicy(WORKER2_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER1, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
         assertValid(req, res);
 
         gen.setReqPolicy(WORKER3_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER1, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
@@ -222,40 +222,40 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
 
         // Test that worker2 accepts its profile but not the other
         gen.setReqPolicy(WORKER2_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER2, req);
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER2_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
         assertValid(req, res);
 
         gen.setReqPolicy(WORKER1_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER2, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
 
         gen.setReqPolicy(WORKER3_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER2, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
 
         // Test that worker3 accepts its profile but not the other
         gen.setReqPolicy(WORKER3_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER3, req);
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER3_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
         assertValid(req, res);
 
         gen.setReqPolicy(WORKER1_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER3, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
 
         gen.setReqPolicy(WORKER2_PROFILE);
-        req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
         res = requestTimeStamp(WORKER3, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
@@ -439,7 +439,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
 
-            req = gen.generate(TSPAlgorithms.SHA256, new byte[20], createNonce());
+            req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
             requestTimeStamp(WORKER1, req);
             fail("Should not allow direct requests to a signer using a DispatchedAuthorizer");
         } catch (IllegalRequestException e) {
@@ -476,7 +476,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         final BigInteger nounce = createNonce();
 
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], nounce);
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[32], nounce);
         byte[] requestBytes = timeStampRequest.getEncoded();
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);

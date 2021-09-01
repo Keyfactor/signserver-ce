@@ -120,7 +120,7 @@ public class Sign implements Task {
                     // Process
                     final TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
                     final int nonce = random.nextInt();
-                    final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(nonce));
+                    final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[32], BigInteger.valueOf(nonce));
                     byte[] requestBytes = timeStampRequest.getEncoded();
 
                     GenericSignRequest signRequest =

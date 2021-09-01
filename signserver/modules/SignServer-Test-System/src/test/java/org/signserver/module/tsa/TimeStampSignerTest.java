@@ -198,7 +198,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
 
         GenericSignRequest signRequest =
@@ -256,7 +256,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
 
         GenericSignRequest signRequest =
@@ -362,7 +362,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	} else if (TSPAlgorithms.RIPEMD160.equals(hashType)) {
     		return 20;
     	} else {
-    		LOG.info("Trying to use an unknow hash algorithm, using dummy length");
+    		LOG.info("Trying to use an unknown hash algorithm, using dummy length");
     		// return the length of a SHA1 hash as a dummy value to allow passing
     		// invalid hash algo names for testing
     		return 20;
@@ -554,7 +554,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ACCEPTEDALGORITHMS, "SHA1");
     	workerSession.reloadConfiguration(WORKER1.getId());
 
-    	int status = testWithHash(TSPAlgorithms.SHA1, null, true);
+    	int status = testWithHash(TSPAlgorithms.SHA256, null, true);
     	assertEquals("Should return status GRANTED", PKIStatus.GRANTED, status);
     }
 
@@ -565,7 +565,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(114));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(114));
         final byte[] requestBytes = timeStampRequest.getEncoded();
 
         final GenericSignRequest signRequest =
@@ -633,7 +633,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         timeStampRequestGenerator.setCertReq(true);
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest =
                 new GenericSignRequest(123124, requestBytes);
@@ -686,7 +686,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     new TimeStampRequestGenerator();
             timeStampRequestGenerator.setCertReq(true);
             TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                    TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                    TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
             byte[] requestBytes = timeStampRequest.getEncoded();
             GenericSignRequest signRequest =
                     new GenericSignRequest(123124, requestBytes);
@@ -785,7 +785,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     new TimeStampRequestGenerator();
             timeStampRequestGenerator.setCertReq(true);
             TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                    TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                    TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
             byte[] requestBytes = timeStampRequest.getEncoded();
             GenericSignRequest signRequest =
                     new GenericSignRequest(123124, requestBytes);
@@ -1547,7 +1547,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     new TimeStampRequestGenerator();
         timeStampRequestGenerator.setCertReq(true);
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest =
                 new GenericSignRequest(123124, requestBytes);
@@ -1569,7 +1569,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     new TimeStampRequestGenerator();
         timeStampRequestGenerator.setCertReq(true);
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest =
                 new GenericSignRequest(123124, requestBytes);

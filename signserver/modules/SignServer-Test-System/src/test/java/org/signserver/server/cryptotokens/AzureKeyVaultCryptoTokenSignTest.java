@@ -327,7 +327,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
 
         // Test signing
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
         final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA), signRequest, new RemoteRequestContext());

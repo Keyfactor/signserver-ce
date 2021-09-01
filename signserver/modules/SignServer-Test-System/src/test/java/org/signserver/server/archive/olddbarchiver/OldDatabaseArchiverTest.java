@@ -516,7 +516,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
 
         GenericSignRequest signRequest =

@@ -86,10 +86,10 @@ public class TimeStampCommand extends AbstractCommand {
 
     /** End key for certificates in PEM format. */
     private static final String PEM_END = "-----END CERTIFICATE-----";
-    
+
     /** OID for the ETSI qualified timestamping extension value. */
     private static final ASN1ObjectIdentifier ID_ETSI_TSTS;
-    
+
     /**
      * OID for default digest algorithm to be used while creating timestamp
      * request.
@@ -113,7 +113,7 @@ public class TimeStampCommand extends AbstractCommand {
     private String infilestring;
 
     private String signerfilestring;
-    
+
     private String digestalgorithm;
 
     private boolean base64;
@@ -126,15 +126,15 @@ public class TimeStampCommand extends AbstractCommand {
 
     private boolean certReq;
     private String reqPolicy;
-    
+
     private final Options options = new Options();
-    
+
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
-    
+
     static {
         ID_ETSI_TSTS = new ASN1ObjectIdentifier("0.4.0.19422.1.1");
     }
-    
+
     public TimeStampCommand() {
         // Create options
         final Option help = new Option("help", false, "Print this message.");
@@ -198,7 +198,7 @@ public class TimeStampCommand extends AbstractCommand {
                 + "request to use instead of creating a new. "
                 + "You must specify the request flag also.");
         final Option inreq = OptionBuilder.create("inreq");
-        
+
         OptionBuilder.hasArg();
         OptionBuilder.withArgName("string");
         OptionBuilder.withDescription("Digest algorithm used for creating timestamp request hash. Default SHA256");
@@ -209,16 +209,16 @@ public class TimeStampCommand extends AbstractCommand {
         OptionBuilder.withDescription("Sleep a number of milliseconds after "
                 + "each request. Default 1000 ms.");
         final Option optionSleep = OptionBuilder.create("sleep");
-        
+
         OptionBuilder.hasArg(false);
         OptionBuilder.withDescription("Request signer certificate");
         final Option certReqOption = OptionBuilder.create("certreq");
-        
+
         OptionBuilder.hasArg();
         OptionBuilder.withArgName("oid");
         OptionBuilder.withDescription("Request timestamp issued under a policy OID");
         final Option reqPolicyOption = OptionBuilder.create("reqpolicy");
-        
+
         // Add options
         options.addOption(help);
         options.addOption(verifyopt);
@@ -236,7 +236,7 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(certReqOption);
         options.addOption(reqPolicyOption);
         options.addOption(digestAlgorithm);
-       
+
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             options.addOption(option);
         }
@@ -251,7 +251,7 @@ public class TimeStampCommand extends AbstractCommand {
     public String getUsages() {
         return usage(options);
     }
-    
+
     private String usage(final Options options) {
         // automatically generate the help statement
         final HelpFormatter formatter = new HelpFormatter();
@@ -325,7 +325,7 @@ public class TimeStampCommand extends AbstractCommand {
             if (cmd.hasOption("digestalgorithm")) {
                 digestalgorithm = cmd.getOptionValue("digestalgorithm");
             }
-            
+
             try {
                 final ConsolePasswordReader passwordReader = createConsolePasswordReader();
                 keyStoreOptions.parseCommandLine(cmd, passwordReader, out);
@@ -346,7 +346,7 @@ public class TimeStampCommand extends AbstractCommand {
                 out.println(usage(options));
                 return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
             }
-            
+
             if (args.length < 1) {
                 out.println(usage(options));
                 return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
@@ -354,9 +354,9 @@ public class TimeStampCommand extends AbstractCommand {
                 LOG.error("Missing URL");
                 out.println(usage(options));
                 return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
-            } else { 
+            } else {
                 keyStoreOptions.validateOptions();
-                
+
                 if (Security.addProvider(new BouncyCastleProvider()) < 0) {
                     LOG.error("Could not install BC provider");
                     // If already installed, remove so we can handle redeploy
@@ -365,7 +365,7 @@ public class TimeStampCommand extends AbstractCommand {
                         LOG.error("Cannot even install BC provider again!");
                     }
                 }
-                
+
                 run();
                 return CommandLineInterface.RETURN_SUCCESS;
             }
@@ -381,7 +381,7 @@ public class TimeStampCommand extends AbstractCommand {
             throw new UnexpectedCommandFailureException(ex);
         }
     }
-    
+
     /**
      * @return a ConsolePasswordReader that can be used to read passwords
      */
@@ -392,7 +392,7 @@ public class TimeStampCommand extends AbstractCommand {
     private void run() throws Exception {
         // Take start time
         final long startTime = System.nanoTime();
-        
+
         if (print) {
             tsaPrint();
         }
@@ -408,7 +408,7 @@ public class TimeStampCommand extends AbstractCommand {
         LOG.info("Processing took "
                 + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
     }
-    
+
     private void tsaPrint() throws Exception {
 
         if (inrepstring == null) {
@@ -417,7 +417,7 @@ public class TimeStampCommand extends AbstractCommand {
             tsaPrintReply();
         }
     }
-    
+
     private void tsaPrintReply() throws Exception {
         final byte[] bytes = readFiletoBuffer(inrepstring);
 
@@ -443,7 +443,7 @@ public class TimeStampCommand extends AbstractCommand {
             token = new TimeStampToken(new CMSSignedData(bytes));
         } else {
             token = response.getTimeStampToken();
-        }          
+        }
         if (token != null) {
             out.println("  Time-stamp token:");
             TimeStampTokenInfo info = token.getTimeStampInfo();
@@ -472,24 +472,24 @@ public class TimeStampCommand extends AbstractCommand {
 
                 out.print("         " + "Policy:                    ");
                 out.println(info.getPolicy());
-                
-                
+
+
                 final Extensions exts = info.toASN1Structure().getExtensions();
-                
+
                 if (exts != null) {
                     out.println("      Extensions: ");
                     for (final ASN1ObjectIdentifier oid : exts.getExtensionOIDs()) {
                         final Extension extension = exts.getExtension(oid);
-                        
+
                         out.println("        OID: " + oid.getId());
                         out.println("        Critical: " +
                                     (extension.isCritical() ? "yes" : "no"));
-                        
+
                         if (oid.equals(Extension.qCStatements)) {
                             printQualifiedStatement(extension);
                         }
                     }
-                    
+
                 }
             }
             out.println("      Signer ID: ");
@@ -498,7 +498,7 @@ public class TimeStampCommand extends AbstractCommand {
 
             out.println("      Signer certificate:           ");
 
-            Store  certs = token.getCertificates();             
+            Store  certs = token.getCertificates();
             Selector signerSelector = new AttributeCertificateHolder(token.getSID().getIssuer(), token.getSID().getSerialNumber());
 
             Collection certCollection = certs.getMatches(signerSelector);
@@ -534,11 +534,11 @@ public class TimeStampCommand extends AbstractCommand {
         }
         out.println("}");
     }
-    
+
     private void printQualifiedStatement(final Extension extension)
         throws IOException {
         out.println("          Qualified statement");
-        
+
         try {
             final ASN1Sequence seq =
                     ASN1Sequence.getInstance(extension.getExtnValue().getOctets());
@@ -572,13 +572,13 @@ public class TimeStampCommand extends AbstractCommand {
                         ex.getMessage());
         }
     }
-    
+
     private void tsaPrintQuery() throws Exception {
         final byte[] bytes = readFiletoBuffer(inreqstring);
 
         final TimeStampRequest request;
         out.println("Time-stamp request {");
-        
+
         request = new TimeStampRequest(bytes);
         out.println("  Version:                          " + request.getVersion());
 
@@ -611,18 +611,18 @@ public class TimeStampCommand extends AbstractCommand {
                 }
             }
         }
-                
+
         out.println("}");
     }
-    
+
     private static class InvertedSelector implements Selector {
 
         private final Selector delegate;
-        
+
         public InvertedSelector(Selector delegate) {
             this.delegate = delegate;
         }
-        
+
         @Override
         public boolean match(Object cert) {
             return !delegate.match(cert);
@@ -644,7 +644,7 @@ public class TimeStampCommand extends AbstractCommand {
         } else {
             final Collection<X509Certificate> col =
                     getCertsFromPEM(signerfilestring);
-            final X509Certificate[] list = (X509Certificate[]) col.toArray(
+            final X509Certificate[] list = col.toArray(
                     new X509Certificate[0]);
             if (list.length == 0) {
                 LOG.error("No certificate found in file: " + signerfilestring);
@@ -665,11 +665,7 @@ public class TimeStampCommand extends AbstractCommand {
             LOG.info("Token was generated on: " + info.getGenTime());
 
             if (LOG.isDebugEnabled()) {
-                if (info.getMessageImprintAlgOID().equals(TSPAlgorithms.SHA1)) {
-                    LOG.debug("Token hash alg: SHA1");
-                } else {
-                    LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
-                }
+                LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
             }
             final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
             LOG.info("MessageDigest=" + new String(hexDigest));
@@ -743,9 +739,9 @@ public class TimeStampCommand extends AbstractCommand {
                     fos.write(outBytes);
                 }
             }
-            
+
             final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out);
-            
+
             if (sf != null) {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sf);
             }
@@ -771,7 +767,7 @@ public class TimeStampCommand extends AbstractCommand {
             urlConn.setUseCaches(false);
             urlConn.setRequestProperty("Content-Type",
                     "application/timestamp-query");
-            
+
             // Send POST output.
             printout = new DataOutputStream(urlConn.getOutputStream());
             printout.write(requestBytes);
@@ -780,19 +776,19 @@ public class TimeStampCommand extends AbstractCommand {
 
             // Get response data.
             final int responseCode = urlConn.getResponseCode();
-            
+
             if (responseCode >= 400) {
                 input = new DataInputStream(urlConn.getErrorStream());
             } else {
                 input = new DataInputStream(urlConn.getInputStream());
             }
-                
+
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int b;
             while ((b = input.read()) != -1) {
                 baos.write(b);
             }
-            
+
             if (responseCode >= 400) {
                 throw new HTTPException(url, responseCode,
                                         urlConn.getResponseMessage(),
@@ -826,17 +822,17 @@ public class TimeStampCommand extends AbstractCommand {
             final int status = timeStampResponse.getStatus();
             final PKIFailureInfo failInfo = timeStampResponse.getFailInfo();
             final String statusString = timeStampResponse.getStatusString();
-            
+
             final StringBuilder sb = new StringBuilder();
-            
+
             sb.append("TimeStampRequest validated with status code: ");
             sb.append(status);
-            
+
             if (failInfo != null) {
                 sb.append(", failure: ");
                 sb.append(failInfo);
             }
-            
+
             if (statusString != null && !"".equals(statusString)) {
                 sb.append(" (");
                 sb.append(statusString);
@@ -854,7 +850,7 @@ public class TimeStampCommand extends AbstractCommand {
                 LOG.debug("(Status: " + status
                         + ", " + failInfo + "): "
                         + statusString + (genTime != null ? (", genTime: " + genTime.getTime()) : "") + "\n");
-                
+
             }
 
             if (doRun) {
@@ -883,7 +879,7 @@ public class TimeStampCommand extends AbstractCommand {
             while ((len = in.read(buf)) > 0) {
                 os.write(buf, 0, len);
             }
-            
+
             return os.toByteArray();
         } finally {
             if (in != null) {
@@ -979,7 +975,7 @@ public class TimeStampCommand extends AbstractCommand {
             final InputStream certstream) throws IOException,
             CertificateException {
         final ArrayList<X509Certificate> ret = new ArrayList<>();
-        
+
         final BufferedReader bufRdr = new BufferedReader(new InputStreamReader(
                 certstream));
 
@@ -994,12 +990,12 @@ public class TimeStampCommand extends AbstractCommand {
                     throw new IOException("Error in " + certstream.toString()
                             + ", missing " + PEM_BEGIN + " boundary");
                 }
-                
+
                 while ((temp = bufRdr.readLine()) != null
                         && !temp.equals(PEM_END)) {
                     opstr.print(temp);
                 }
-                
+
                 if (temp == null) {
                     throw new IOException("Error in " + certstream.toString()
                             + ", missing " + PEM_END + " boundary");
@@ -1025,10 +1021,10 @@ public class TimeStampCommand extends AbstractCommand {
         }
         return null;
     }
-    
+
     /**
-     * Returns the length of output digest in bits for provided digest algorithm.     * 
-     * @param digestAlg digest algorithm 
+     * Returns the length of output digest in bits for provided digest algorithm.     *
+     * @param digestAlg digest algorithm
      * @return digest output length in bits
      */
     private static int getOutputSizeBitsFromDigestAlgorithmString(final String digestAlg) {
@@ -1067,7 +1063,7 @@ public class TimeStampCommand extends AbstractCommand {
                 throw new IllegalArgumentException("Invalid digest algorithm: " + digestAlg);
         }
     }
-    
+
     private ASN1ObjectIdentifier getDigestAlgorithmFromString(final String digestAlg) throws CommandFailureException {
         switch (digestAlg) {
             case "MD5":

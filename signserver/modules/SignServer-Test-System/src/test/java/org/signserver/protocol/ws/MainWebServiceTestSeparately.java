@@ -172,7 +172,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
             sb.append(stat.getWorkerName());
             sb.append(", ");
         }
-        LOG.info("Got status for: " + sb.toString());
+        LOG.info("Got status for: " + sb);
         assertTrue(statuses.size() >= 2);
         assertTrue("workerStatusesContains 9", workerStatusesContains(statuses, "9"));
         assertTrue("workerStatusesContains 16", workerStatusesContains(statuses, "16"));
@@ -187,12 +187,12 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     @Test
     public void test02BasicWSProcess() throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest1 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest1 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes1 = timeStampRequest1.getEncoded();
         GenericSignRequest signRequest1 = new GenericSignRequest(12, requestBytes1);
         ProcessRequestWS req1 = new ProcessRequestWS(signRequest1);
 
-        TimeStampRequest timeStampRequest2 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest2 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes2 = timeStampRequest2.getEncoded();
         GenericSignRequest signRequest2 = new GenericSignRequest(13, requestBytes2);
         ProcessRequestWS req2 = new ProcessRequestWS(signRequest2);
@@ -263,7 +263,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         FaultCallback callback = new FaultCallback();
 
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest1 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest1 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes1 = timeStampRequest1.getEncoded();
         GenericSignRequest signRequest1 = new GenericSignRequest(12, requestBytes1);
         ProcessRequestWS req1 = new ProcessRequestWS(signRequest1);

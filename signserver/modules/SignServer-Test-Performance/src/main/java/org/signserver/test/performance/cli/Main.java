@@ -479,11 +479,11 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile, new byte[20], TSPAlgorithms.SHA1,
+                    warmupTime, limitedTime, statFile, new byte[20], TSPAlgorithms.SHA256,
                     continueOnFailure));
         }
     }
-    
+
     /**
      * Initialize the worker thread list for the time stamp test suite using SHA-256.
      *

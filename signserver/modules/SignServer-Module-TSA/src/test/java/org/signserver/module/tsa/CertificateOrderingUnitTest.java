@@ -154,7 +154,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
 
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
         timeStampRequestGenerator.setCertReq(true);
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = getTimeStampResponse(timestamp(timeStampRequest, WORKER1));
         timeStampResponse.validate(timeStampRequest);
 

@@ -148,7 +148,7 @@ public class ArchiveTestCase extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3"));
         final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         final byte[] requestBytes = timeStampRequest.getEncoded();
 
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
@@ -196,7 +196,7 @@ public class ArchiveTestCase extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3"));
         final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         final byte[] requestBytes = timeStampRequest.getEncoded();
         final String requestHex = new String(Hex.encode(requestBytes));
 
@@ -243,7 +243,7 @@ public class ArchiveTestCase extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3"));
         final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         final byte[] requestBytes = timeStampRequest.getEncoded();
         final String requestHex = new String(Hex.encode(requestBytes));
 

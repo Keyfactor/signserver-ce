@@ -59,15 +59,14 @@ import org.xml.sax.SAXException;
  */
 public class Sign implements Task {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Sign.class);
-    
+
     private final WorkerSpec signer;
     private final ProcessSessionRemote workerSession;
     private final Random random;
-    private int counter;    
+    private int counter;
     private final RequestContextPreProcessor preProcessor;
-    
+
     private static final String TESTXML1 = "<doc>Some sample XML to sign</doc>";
 
     public Sign(final WorkerSpec signerId, final ProcessSessionRemote workerSession, final Random random, final RequestContextPreProcessor preProcessor) {
@@ -76,7 +75,7 @@ public class Sign implements Task {
         this.random = random;
         this.preProcessor = preProcessor;
     }
-    
+
     @Override
     public void run() throws FailedException {
         LOG.debug(">run");
@@ -93,9 +92,8 @@ public class Sign implements Task {
         }
         LOG.debug("<run");
     }
-    
+
     private void process(final WorkerSpec signer, final int reqid) throws FailedException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        final ProcessResponse result;
         final RemoteRequestContext requestContext = new RemoteRequestContext();
         if (preProcessor != null) {
             preProcessor.preProcess(requestContext);
@@ -122,7 +120,7 @@ public class Sign implements Task {
                     // Process
                     final TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
                     final int nonce = random.nextInt();
-                    final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(nonce));
+                    final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(nonce));
                     byte[] requestBytes = timeStampRequest.getEncoded();
 
                     GenericSignRequest signRequest =
@@ -139,7 +137,7 @@ public class Sign implements Task {
                         throw new FailedException("No certificate returned");
                     }
 
-                    final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+                    final TimeStampResponse timeStampResponse = new TimeStampResponse(res.getProcessedData());
                     timeStampResponse.validate(timeStampRequest);
 
                     if (timeStampResponse.getStatus() != PKIStatus.GRANTED) {
@@ -213,7 +211,7 @@ public class Sign implements Task {
     }
 
     /** Key selector just using the first certificate of right type. */
-    class X509KeySelector extends KeySelector {
+    static class X509KeySelector extends KeySelector {
 
         @Override
         public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context) throws KeySelectorException {
@@ -232,12 +230,7 @@ public class Sign implements Task {
                     }
                     final PublicKey key = ((X509Certificate) o).getPublicKey();
                     if (algEquals(method.getAlgorithm(), key.getAlgorithm())) {
-                        return new KeySelectorResult() {
-                            @Override
-                            public Key getKey() {
-                                return key;
-                            }
-                        };
+                        return () -> key;
                     }
                 }
             }

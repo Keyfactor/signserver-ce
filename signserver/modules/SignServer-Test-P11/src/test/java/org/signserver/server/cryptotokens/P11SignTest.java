@@ -325,7 +325,7 @@ public class P11SignTest {
             workerSession.removeKey(new WorkerIdentifier(20020), key);
         }
     }
-    
+
     @Test
     public void testPlainSigner_SHA256withRSAandMGF1() throws Exception {
         Assume.assumeTrue("Test requires HSM that supports RSASSA-PSS", "true".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.PSS_SIGNATURE_ALGORITHM_SUPPORTED")));
@@ -345,12 +345,12 @@ public class P11SignTest {
             PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
             KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
             X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256withRSAandMGF1").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
+
             // Install certificate and chain
             workerSession.uploadSignerCertificate(20020, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
             workerSession.uploadSignerCertificateChain(20020, Collections.singletonList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
             workerSession.reloadConfiguration(20020);
-            
+
             X509Certificate xcert = CertTools.getCertfromByteArray(cert.getEncoded(), X509Certificate.class);
 
             // Test active
@@ -362,13 +362,13 @@ public class P11SignTest {
             // Test signing
             GenericSignResponse response = testCase.signGenericDocument(20020, plainText);
             byte[] signatureBytes = response.getProcessedData();
-            
+
             assertTrue("signature verification", verifySignature(plainText, signatureBytes, "SHA256withRSAandMGF1", xcert.getPublicKey(), "BC"));
         } finally {
             testCase.removeWorker(workerId);
         }
     }
-    
+
     public static boolean verifySignature(final byte[] plainText, final byte[] signatureBytes, final String sigAlgName, final PublicKey publicKey, final String provider) throws Exception {
         final boolean result;
         Signature signature = Signature.getInstance(sigAlgName, provider);
@@ -580,7 +580,7 @@ public class P11SignTest {
 
             // Test signing
             TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-            TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+            TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
             byte[] requestBytes = timeStampRequest.getEncoded();
             GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
             final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA_ALTKEY), signRequest, new RemoteRequestContext());
@@ -647,7 +647,7 @@ public class P11SignTest {
 
         // Test signing
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA256, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
         final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA), signRequest, new RemoteRequestContext());

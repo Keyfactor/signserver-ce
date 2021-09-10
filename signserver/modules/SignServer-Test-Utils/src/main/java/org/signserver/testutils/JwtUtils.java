@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.testutils;
 
-
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,36 +20,38 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Test utilities for JWT. 
+ * Test utilities for JWT.
  *
  * @author Marcus Lundblad
  * @version $Id$
  */
 public class JwtUtils {
+
     /**
-     * 
-     * @param privKey
-     * @param signatureAlgorithm
-     * @param issuer
-     * @param issuedAt
-     * @param subject
-     * @param claims
-     * @return 
+     * Generates a JWT string.
+     * @param privateKey Private key.
+     * @param signatureAlgorithm Signature algorithm.
+     * @param issuer Issuer.
+     * @param issuedAt Issue time.
+     * @param subject Token's subject.
+     * @param claims Token's claims.
+     * @return JWT string.
      */
-    public static String generateToken(final PrivateKey privKey,
+    public static String generateToken(final PrivateKey privateKey,
                                        final SignatureAlgorithm signatureAlgorithm,
                                        final String issuer,
                                        final long issuedAt,
                                        final String subject,
                                        final Map<String, Object> claims) {
-        final JwtBuilder builder = Jwts.builder().setId("id")
+        final JwtBuilder builder = Jwts.builder()
+                .setId("id")
                 .setIssuedAt(new Date(issuedAt))
                 .setSubject(subject)
                 .setIssuer(issuer)
                 .setExpiration(new Date(issuedAt + 10000))
                 .setHeaderParam("typ", "JWT")
                 .addClaims(claims)
-                .signWith(privKey, signatureAlgorithm);
+                .signWith(privateKey, signatureAlgorithm);
 
         return builder.compact();
     }

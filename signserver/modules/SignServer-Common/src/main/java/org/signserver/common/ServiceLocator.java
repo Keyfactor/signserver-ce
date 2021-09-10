@@ -144,6 +144,11 @@ public final class ServiceLocator {
         return lookup(localInterface, null, false);
     }
     
+    public <T> T lookupLocal(final Class<T> localInterface, final String module)
+            throws NamingException {
+        return lookup(localInterface, module, false);
+    }
+    
     /**
      * @return Name ending with Remote or Local
      */

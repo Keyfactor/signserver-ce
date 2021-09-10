@@ -60,6 +60,8 @@ public class CompileTimeSettings {
             = "signserver.configfile";
     public static final String SIGNSERVER_VERSION
             = "signserver.version";
+    public static final String SIGNSERVER_VERSION_NUMBER
+            = "signserver.version.number";
     public static final String CRYPTOTOKEN_DISABLEKEYGENERATION 
             = "cryptotoken.disablekeygeneration";
     

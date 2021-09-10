@@ -173,7 +173,9 @@ public final class ServiceLocator {
         if (beanName.endsWith("Local")) {
             beanName = beanName.substring(0, beanName.length() - "Local".length());
         }
-        beanName += "Bean";
+        if (!beanName.endsWith("Bean")) {
+            beanName += "Bean";
+        }
         return beanName;
     }
     

@@ -147,6 +147,12 @@ public class RequestContext implements Serializable {
     public static final String JWT_MAP = "JWT_MAP";
 
     /**
+     * A prefix for a key of JWT claim.
+     * @see #JWT_MAP
+     */
+    public static final String JWT_KEY_PREFIX = "JWT.";
+
+    /**
      * Filename of file uploaded by client to the process servlet.
      */
     public static final String FILENAME = "FILENAME";

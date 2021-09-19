@@ -26,7 +26,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -278,6 +287,29 @@ public class KeyStoreOptions {
                 return new BufferedInputStream(new FileInputStream(library));
             default:
                 throw new IllegalArgumentException("Unsupported PKCS#11 keystore type: " + keystoreType);
+        }
+    }
+
+    /**
+     * Get the selected client certificate from the keystore, or null if
+     * none is selected (no -keystore and -keyalias or -keyaliasprompt)
+     *
+     * @return The used client certificate from -keystore
+     * @throws KeyStoreException 
+     */
+    public List<Certificate> getClientCertificateChain() throws KeyStoreException {
+        if (keystore != null) {
+            return Arrays.asList(keystore.getCertificateChain(keyAlias));
+        } else {
+            return null;
+        }
+    }
+
+    public PrivateKey getPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        if (keystore != null) {
+            return (PrivateKey) keystore.getKey(keyAlias, keystorePassword.toCharArray());
+        } else {
+            return null;
         }
     }
 

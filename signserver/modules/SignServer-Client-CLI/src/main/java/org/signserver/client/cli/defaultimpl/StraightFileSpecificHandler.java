@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,10 +32,21 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
     private static final Logger LOG = Logger.getLogger(StraightFileSpecificHandler.class);
     
     private final InputStream inputStream;
+    private final File file;
     private final long size;
     
+    private Collection<InputSource> sourcesToClose = new ArrayList<InputSource>();
+    
+    public StraightFileSpecificHandler(final File file,
+                                       final long size) {
+        this.file = file;
+        this.inputStream = null;
+        this.size = size;
+    }
+
     public StraightFileSpecificHandler(final InputStream inputStream,
                                        final long size) {
+        this.file = null;
         this.inputStream = inputStream;
         this.size = size;
     }
@@ -44,7 +58,11 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
 
     @Override
     public InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, IOException {
-        return new InputSource(inputStream, size);
+        if (file != null) {
+            return closeLater(new InputSource(file, size));
+        } else {
+            return new InputSource(inputStream, size);
+        }
     }
 
     @Override
@@ -52,12 +70,26 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
         oc.getOutputStream().close();
     }
 
+    private InputSource closeLater(InputSource source) {
+        sourcesToClose.add(source);
+        return source;
+    }
+    
     @Override
     public void close() {
-        try {
-            inputStream.close();
-        } catch (IOException ex) {
-            LOG.warn("Unable to close resource: " + ex.getLocalizedMessage());
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException ex) {
+                LOG.warn("Unable to close resource: " + ex.getLocalizedMessage());
+            }
+        }
+        for (InputSource source : sourcesToClose) {
+            try {
+                source.close();
+            } catch (IOException ex) {
+                LOG.warn("Unable to close resource: " + ex.getLocalizedMessage());
+            }
         }
     }
 

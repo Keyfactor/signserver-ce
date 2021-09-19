@@ -17,6 +17,8 @@ import java.net.MalformedURLException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -46,6 +48,9 @@ import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.ROUND_ROBIN_LOAD_BALANCING;
+import org.signserver.common.RequestContext;
+import org.signserver.common.signedrequest.SignedRequestException;
+import org.signserver.common.signedrequest.SignedRequestSigningHelper;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -929,7 +934,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                 handler.isSignatureInputHash(),
                                                 handler.getFileTypeIdentifier());
         }
-
+        
         /* add addional metadata from the file handler to the request
          * context
          */
@@ -938,6 +943,33 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         if (extraMetadata != null) {
             metadata.putAll(extraMetadata);
+        }
+
+        try {
+            final byte[] requestDataDigest = inputSource.getHash(); 
+            
+            final List<Certificate> clientCertChain =
+                keyStoreOptions.getClientCertificateChain();
+
+            if (clientCertChain != null && requestDataDigest != null) {
+                
+                final String fileName;
+                if (requestContext.get(RequestContext.FILENAME) != null) {
+                    fileName = (String) requestContext.get(RequestContext.FILENAME);
+                } else {
+                    fileName = null;
+                }
+                
+                metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
+                             SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
+                                     metadata, fileName, workerName, workerId,
+                                     keyStoreOptions.getPrivateKey(),
+                                     /*keyStoreOptions.getProvider*/null,
+                                     clientCertChain));
+            }
+        } catch (KeyStoreException | SignedRequestException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
+            LOG.error("Could not sign signature request", ex);
+            throw new SignServerException("Could not sign signature request", ex);
         }
 
         // Get the data signed

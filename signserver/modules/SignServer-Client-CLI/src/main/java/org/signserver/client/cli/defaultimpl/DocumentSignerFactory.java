@@ -230,4 +230,10 @@ public class DocumentSignerFactory {
     private ConsolePasswordReader createConsolePasswordReader() {
         return new DefaultConsolePasswordReader();
     }
+
+    // XXX For PoC only?
+    public KeyStoreOptions getKeyStoreOptions() {
+        return keyStoreOptions;
+    }
+    
 }

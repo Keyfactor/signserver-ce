@@ -35,7 +35,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+        return new StraightFileSpecificHandler((inFile), inFile.length());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+        return new StraightFileSpecificHandler((inFile), inFile.length());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+        return new StraightFileSpecificHandler((inFile), inFile.length());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+        return new StraightFileSpecificHandler((inFile), inFile.length());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+        return new StraightFileSpecificHandler((inFile), inFile.length());
     }
 
     @Override
@@ -112,7 +112,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+        return new StraightFileSpecificHandler(inFile,
                                                inFile.length());
     }
 
@@ -127,7 +127,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+        return new StraightFileSpecificHandler(inFile,
                                                inFile.length());
     }
 
@@ -145,7 +145,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+        return new StraightFileSpecificHandler((inFile),
                                                inFile.length());
     }
 
@@ -160,7 +160,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+        return new StraightFileSpecificHandler((inFile),
                                                inFile.length());
     }
 
@@ -178,7 +178,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+        return new StraightFileSpecificHandler((inFile),
                                                inFile.length());
     }
 

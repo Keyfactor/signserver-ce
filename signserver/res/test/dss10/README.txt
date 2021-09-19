@@ -64,6 +64,10 @@ TLS Client keystores:
     dss10_admin2.p12
         This file can be imported into your browser or used by the Administration GUI to connect to SignServer when DSSRootCA10 is trusted by the server.
         Password: foo123
+    dss10_admin3.p12
+        This file can be imported into your browser or used by the Administration GUI to connect to SignServer when DSSRootCA10 is trusted by the server.
+	The certificate has OCSP revocation informat (AIA), assuming a testing instance of EJBCA is running as a VA on locallhost with a port offset of 10000.
+        Password: foo123
     dss10_client1.p12
         This file can be imported into your browser or used by the Administration GUI to connect to SignServer when DSSRootCA10 is trusted by the server.
         Password:foo123

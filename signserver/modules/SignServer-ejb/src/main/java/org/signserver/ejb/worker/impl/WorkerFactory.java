@@ -23,6 +23,7 @@ import org.signserver.server.archive.ArchiverInitException;
 import org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.ClientCertAuthorizer;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.UnloadableWorker;

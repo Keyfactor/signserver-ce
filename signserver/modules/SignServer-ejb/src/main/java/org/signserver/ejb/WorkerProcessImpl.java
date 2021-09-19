@@ -118,7 +118,7 @@ class WorkerProcessImpl {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process: " + wi);
         }
-
+        
         // Start time
         final long startTime = System.currentTimeMillis();
 
@@ -179,6 +179,13 @@ class WorkerProcessImpl {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker[" + wi + "]: " + "WorkerLogger: "
                     + workerLogger);
+        }
+        
+        // Put worker identifier
+        final WorkerIdentifier wiBoth = new WorkerIdentifier(workerId, pwc.getName());
+        requestContext.put(RequestContext.WORKER_IDENTIFIER, wiBoth);
+        if (requestContext.get(RequestContext.ORIGINAL_WORKER_IDENTIFIER) == null) {
+            requestContext.put(RequestContext.ORIGINAL_WORKER_IDENTIFIER, wiBoth);
         }
 
         try {

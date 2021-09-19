@@ -36,14 +36,16 @@ public class RequestContext implements Serializable {
      * The request metadata optionally supplied by the client.
      */
     public static final String REQUEST_METADATA = "REQUEST_METADATA";
-
+    
     /**
      * The metadata property with the PDF password.
      */
     public static String METADATA_PDFPASSWORD = "pdfPassword";
+    public static String ORIGINAL_WORKER_IDENTIFIER = "ORIGINAL_WORKER_IDENTIFIER";
+    public static String WORKER_IDENTIFIER = "WORKER_IDENTIFIER";
 
     private HashMap<String, Object> context = new HashMap<>();
-
+    
     /**
      * Used to fetch the client certificate used for the request if there exists any, otherwise is
      * 'null' returned.
@@ -55,37 +57,37 @@ public class RequestContext implements Serializable {
      * 'null' returned.
      */
     public static final String REQUEST_COOKIES = "REQUEST_COOKIES";
-
+    
     /**
-     * Allow all clients access to DSS via setting this Worker property to TRUE
+     * Allow all clients access to DSS via setting this Worker property to TRUE 
      */
     public static final String ALLOW_ANY = "ALLOW_ANY";
-
+    
     /**
      * Used to fetch the remote IP address used by the client if there exists any, otherwise is
      * 'null' returned.
      */
     public static final String REMOTE_IP = "REMOTE_IP";
-
+    
     /**
      * Constant for QoS priority level.
      */
     public static final String QOS_PRIORITY = "QOS_PRIORITY";
-
+    
     public static final String QOS_PRIORITY_WORKER_ID_LIST = "QOS_PRIORITY_WORKER_ID_LIST";
 
     /**
      * Used to fetch the forwarded IP address header if it exists, otherwise 'null' is returned.
      */
     public static final String X_FORWARDED_FOR = "X-Forwarded-For";
-
+    
     /**
      * Custom HTTP header that will be logged and that for instance could be
      * used to differentiate between different types of requests or requests
      * from different sources.
      */
     public static final String X_SIGNSERVER_CUSTOM_1 = "X-SignServer-Custom-1";
-
+    
     /**
      * All requests called from a CLI interface should set this setting to Boolean true.
      */
@@ -99,13 +101,13 @@ public class RequestContext implements Serializable {
      * This value should only be set by the WorkerSessionBean.
      */
     public static final String TRANSACTION_ID = "TRANSACTION_ID";
-
+    
     /**
      * The worker ID (Integer).
      */
     public static final String WORKER_ID = "WORKER_ID";
     public static final String LOGMAP = "LOGMAP";
-
+    
     /**
      * True if the worker has processed the request and is able to return
      * the requested result.
@@ -113,24 +115,24 @@ public class RequestContext implements Serializable {
      * request.
      */
     public static final String WORKER_FULFILLED_REQUEST = "WORKER_GRANTED_REQUEST";
-
+    
     /**
      * Holds one of client credentials provided such as client certificate or
      * username/password.
      * Note: Priority is given to client certificate so this property will
      * only contain that even if both were supplied by the client.
-     * Authorizer implementations are instead recommended to use the
+     * Authorizer implementations are instead recommended to use the 
      * <i>CLIENT_CREDENTIAL_CERTIFICATE</i> and
      * <i>CLIENT_CREDENTIAL_PASSWORD</i> to be able to read both types of
      * values.
      */
     public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
-
+    
     /**
      * Holds the client certificate, if provided.
      */
     public static final String CLIENT_CREDENTIAL_CERTIFICATE = "CLIENT_CREDENTIAL_CERTIFICATE";
-
+    
     /**
      * Holds the username/password, if provided.
      */
@@ -140,7 +142,7 @@ public class RequestContext implements Serializable {
      * Bearer JWT token in RequestContext.
      */
     public static final String CLIENT_CREDENTIAL_BEARER = "CLIENT_CREDENTIAL_BEARER";
-
+    
     /**
      * An identifier in RequestContext for JSON Web Token (JWT) Map<String, String>.
      */
@@ -156,13 +158,13 @@ public class RequestContext implements Serializable {
      * Filename of file uploaded by client to the process servlet.
      */
     public static final String FILENAME = "FILENAME";
-
+    
     /**
-     * Filename to set when returning the signed file. Can be changed by the
+     * Filename to set when returning the signed file. Can be changed by the 
      * workers to suggest an other filename.
      */
     public static String RESPONSE_FILENAME = "RESPONSE_FILENAME";
-
+    
     /**
      * A dispatcher such as the TSADispatcherServlet can set this value to
      * Boolean.TRUE to indicate that authorization has been checked. The
@@ -183,10 +185,10 @@ public class RequestContext implements Serializable {
      * point of view.
      */
     public static final String EM = "EM";
-
-
+    
+    
     private transient IServices services;
-
+    
     /**
      * Default constructor creating an empty context.
      */
@@ -195,7 +197,7 @@ public class RequestContext implements Serializable {
 
     /**
      * Help constructor setting the client certificate and Remote IP.
-     *
+     * 
      * @param clientCertificate Client certificate
      * @param remoteIP Remote IP address of the request
      */
@@ -206,7 +208,7 @@ public class RequestContext implements Serializable {
 
     /**
      * Help constructor used for calls from the RMI cli.
-     *
+     * 
      * @param calledFromCli True if called from the RMI CLI
      */
     public RequestContext(boolean calledFromCli) {
@@ -216,7 +218,7 @@ public class RequestContext implements Serializable {
     /**
      * Retrieves specified field from the context, this could be a custom value or
      * one of the specified constants.
-     *
+     * 
      * @param field Field to get value of
      * @return The value of the field
      */
@@ -227,7 +229,7 @@ public class RequestContext implements Serializable {
     /**
      * Sets specified field from the context, this could be a custom value or
      * one of the specified constants.
-     *
+     * 
      * @param field Field to set value of
      * @param data The value to set
      */
@@ -238,7 +240,7 @@ public class RequestContext implements Serializable {
     /**
      * Removes specified field from the context, this could be a custom value or
      * one of the specified constants.
-     *
+     * 
      * @param field The field to remove
      */
     public void remove(String field) {
@@ -258,7 +260,7 @@ public class RequestContext implements Serializable {
     public Map<String, Object> asUnmodifiableMap() {
         return Collections.unmodifiableMap(context);
     }
-
+    
     /**
      * @return The current EntityManager if available
      */
@@ -272,9 +274,9 @@ public class RequestContext implements Serializable {
     }
 
     /**
-     * A worker implementation should call this method to indicate if it was
+     * A worker implementation should call this method to indicate if it was 
      * able to successfully fulfill the request.
-     * Setting True means that the configured Accounter can go on and charge
+     * Setting True means that the configured Accounter can go on and charge 
      * the client for the request.
      * @param b True if the request was fulfilled
      */
@@ -292,23 +294,23 @@ public class RequestContext implements Serializable {
     public IServices getServices() {
         return services;
     }
-
+    
     public void setServices(IServices services) {
         this.services = services;
     }
-
+    
     /**
      * Make a copy of the request context with a deep-copied log map to avoid
      * passing on a reference for dispatcher workers.
-     *
-     * @return A new request context
+     * 
+     * @return A new request context 
      */
     public RequestContext copyWithNewLogMap() {
         final RequestContext newContext = new RequestContext();
-
+        
         newContext.services = services;
         newContext.context = new HashMap<>();
-
+        
         for (final String key : context.keySet()) {
             final Object value = context.get(key);
             if (LOGMAP.equals(key)) {
@@ -321,7 +323,7 @@ public class RequestContext implements Serializable {
                 newContext.context.put(key, value);
             }
         }
-
+        
         return newContext;
     }
 }

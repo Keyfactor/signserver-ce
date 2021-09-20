@@ -18,8 +18,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,6 +155,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Option LOAD_BALANCING. */
     public static final String LOAD_BALANCING = "loadbalancing";
 
+    /** Option SIGN_REQUEST. */
+    public static final String SIGN_REQUEST = "signrequest";
+    
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -230,6 +233,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("TIMEOUT_DESCRIPTION"));
         OPTIONS.addOption(LOAD_BALANCING, true,
                 TEXTS.getString("LOAD_BALANCING_DESCRIPTION"));
+        OPTIONS.addOption(SIGN_REQUEST, false,
+                TEXTS.getString("SIGN_REQUEST_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -300,6 +305,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private boolean useLoadBalancing;
     private String loadBalancing;
 
+    private boolean signRequest;
+    
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /** Meta data parameters passed in */
@@ -493,7 +500,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         timeOutString = line.getOptionValue(TIMEOUT);      
                 
         loadBalancing = line.getOptionValue(LOAD_BALANCING, DEFAULT_LOAD_BALANCING);
-                
+
+        if (line.hasOption(SIGN_REQUEST)) {
+            signRequest = true;
+        }
+        
         try {
             final ConsolePasswordReader passwordReader = createConsolePasswordReader();
             keyStoreOptions.parseCommandLine(line, passwordReader, out);
@@ -662,6 +673,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         // only support JWT auth with HTTP
         if (accessToken != null && protocol != Protocol.HTTP) {
             throw new IllegalCommandArgumentsException("Can only use -accesstoken with protocol HTTP");
+        }
+
+        // -signrequest reuires -keystore
+        if (signRequest && keyStoreOptions.getKeystoreFile() == null) {
+            throw new IllegalCommandArgumentsException("-signrequest requires -keystore");
         }
     }
 
@@ -945,33 +961,31 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             metadata.putAll(extraMetadata);
         }
 
-        try {
-            final byte[] requestDataDigest = inputSource.getHash(); 
-            
-            final List<Certificate> clientCertChain =
-                keyStoreOptions.getClientCertificateChain();
+        if (signRequest) {
+            try {
+                final byte[] requestDataDigest = inputSource.getHash(); 
 
-            if (clientCertChain != null && requestDataDigest != null) {
-                
-                final String fileName;
-                if (requestContext.get(RequestContext.FILENAME) != null) {
-                    fileName = (String) requestContext.get(RequestContext.FILENAME);
-                } else {
-                    fileName = null;
+                if (requestDataDigest != null) {
+                    final String fileName;
+                    if (requestContext.get(RequestContext.FILENAME) != null) {
+                        fileName = (String) requestContext.get(RequestContext.FILENAME);
+                    } else {
+                        fileName = null;
+                    }
+
+                    metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
+                                 SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
+                                         metadata, fileName, workerName, workerId,
+                                         keyStoreOptions.getPrivateKey(),
+                                         /*keyStoreOptions.getProvider*/null,
+                                         keyStoreOptions.getClientCertificateChain()));
                 }
-                
-                metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
-                             SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
-                                     metadata, fileName, workerName, workerId,
-                                     keyStoreOptions.getPrivateKey(),
-                                     /*keyStoreOptions.getProvider*/null,
-                                     clientCertChain));
+            } catch (KeyStoreException | SignedRequestException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
+                LOG.error("Could not sign signature request", ex);
+                throw new SignServerException("Could not sign signature request", ex);
             }
-        } catch (KeyStoreException | SignedRequestException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
-            LOG.error("Could not sign signature request", ex);
-            throw new SignServerException("Could not sign signature request", ex);
         }
-
+   
         // Get the data signed
         signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
     }

@@ -67,13 +67,17 @@ public class SignedRequestSigningHelper {
      * @return  
      * @throws org.signserver.common.signedrequest.SignedRequestException  
      */
-    public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
+    public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {
             LOG.error(">createSignedRequest");
             final String result;
             
             final CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            final ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA")/*.setProvider(provider)*/.build(signKey);
+            final JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
+            if (provider != null) {
+                csBuilder.setProvider(provider);
+            }
+            final ContentSigner contentSigner = csBuilder.build(signKey);
             final JcaSignerInfoGeneratorBuilder siBuilder = new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
             final SignerInfoGenerator sig = siBuilder.build(contentSigner, (X509Certificate) certificateChain.get(0));
             

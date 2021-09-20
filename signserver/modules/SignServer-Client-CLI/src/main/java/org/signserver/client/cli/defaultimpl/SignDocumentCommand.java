@@ -18,8 +18,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -973,12 +973,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                         fileName = null;
                     }
 
+                    final List<Certificate> clientCertChain =
+                        keyStoreOptions.getClientCertificateChain();
+
                     metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
-                                 SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
-                                         metadata, fileName, workerName, workerId,
-                                         keyStoreOptions.getPrivateKey(),
-                                         /*keyStoreOptions.getProvider*/null,
-                                         keyStoreOptions.getClientCertificateChain()));
+                             SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
+                                     metadata, fileName, workerName, workerId,
+                                     keyStoreOptions.getPrivateKey(),
+                                     KeyStoreOptions.suggestSignatureAlgorithm(clientCertChain.get(0).getPublicKey()),
+                                     /*keyStoreOptions.getProvider*/null,
+                                     clientCertChain));
                 }
             } catch (KeyStoreException | SignedRequestException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
                 LOG.error("Could not sign signature request", ex);

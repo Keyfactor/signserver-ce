@@ -32,6 +32,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
@@ -318,6 +319,26 @@ public class KeyStoreOptions {
         } else {
             return null;
         }
+    }
+    
+    public static String suggestSignatureAlgorithm(PublicKey publicKey) {
+        final String result;
+        final String digestAlgorithm = "SHA256";
+        switch (publicKey.getAlgorithm()) {
+            case "EC":
+            case "ECDSA":
+                result = digestAlgorithm + "withECDSA";
+                break;
+            case "DSA":
+                result = digestAlgorithm + "withDSA";
+                break;
+            case "RSA":
+                result = digestAlgorithm + "withRSA";
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported algorithm: " + publicKey.getAlgorithm());
+        }
+        return result;
     }
 
     /**

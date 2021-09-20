@@ -120,6 +120,16 @@ public class ClientCertAuthorizer implements IAuthorizer {
         // Note 1: RequestContext.CLIENT_CERTIFICATE is already verified by Servlet container
         // Note 2: the whole HTTP request is protected by the TLS layer so there is no verification to be done
         //       for this case with TLS client cert auth already verified by Servlet container
+        return getTlsClientCertificate(requestContext);
+    }
+
+    /**
+     * Get the X.509 TLS client certificate verified by the servlet container
+     * if any, from the request context.
+     * @param requestContext to get the certificate from
+     * @return The certificate or null if there is not one
+     */
+    protected X509Certificate getTlsClientCertificate(RequestContext requestContext) {
         return (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
     }
 

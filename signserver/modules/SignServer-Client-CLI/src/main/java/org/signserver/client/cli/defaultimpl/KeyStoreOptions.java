@@ -299,7 +299,10 @@ public class KeyStoreOptions {
      */
     public List<Certificate> getClientCertificateChain() throws KeyStoreException {
         if (keystore != null) {
-            return Arrays.asList(keystore.getCertificateChain(keyAlias));
+            final String alias =
+                    keyAlias != null ? keyAlias : keystore.aliases().nextElement();
+
+            return Arrays.asList(keystore.getCertificateChain(alias));
         } else {
             return null;
         }
@@ -307,7 +310,11 @@ public class KeyStoreOptions {
 
     public PrivateKey getPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
         if (keystore != null) {
-            return (PrivateKey) keystore.getKey(keyAlias, keystorePassword.toCharArray());
+            final String alias =
+                    keyAlias != null ? keyAlias : keystore.aliases().nextElement();
+
+            return (PrivateKey) keystore.getKey(alias,
+                                                keystorePassword.toCharArray());
         } else {
             return null;
         }

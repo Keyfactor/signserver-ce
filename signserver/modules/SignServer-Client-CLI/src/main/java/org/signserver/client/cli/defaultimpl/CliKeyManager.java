@@ -65,47 +65,7 @@ public class CliKeyManager implements X509KeyManager {
             for (String keyType1 : keyType) {
                 String[] validAliases = base.getClientAliases(keyType1, issuers);
                 if (validAliases != null) {
-                    Arrays.sort(validAliases);
-                    out.println("Choose identity: ");
-                    int i = 1;
-                    for (String alias : validAliases) {
-                        out.println("[" + i++ + "] " + alias);
-                    }
-                    out.flush();
-                    final String format;
-                    if (validAliases.length > 1) {
-                        format = "Choose [1-%d]: ";
-                    } else {
-                        format = "Choose [%d]: ";
-                    }
-
-                    for (int j = 0; j < 3; j++) {
-                        out.printf(format, i - 1);
-
-                        final BufferedReader reader =
-                                new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-                        
-                        String answer = null;
-                        try {
-                            answer = reader.readLine();
-                        } catch (IOException ex) {
-                            LOG.error("Failed to read answer: " + ex);
-                        }
-
-                        if (answer == null) {
-                            break;
-                        }
-                        answer = answer.trim();
-                        try {
-                            int choice = Integer.valueOf(answer);
-                            
-                            if (choice > 0 && choice < i) {
-                                selectedAlias = validAliases[choice - 1];
-                                break;
-                            }
-                            
-                        } catch (NumberFormatException ex) {}
-                    }
+                    selectedAlias = PromptUtils.chooseAlias(validAliases, out);
 
                     if (selectedAlias != null) {
                         break;

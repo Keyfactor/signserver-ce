@@ -12,18 +12,11 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.logging.Level;
 import javax.net.ssl.X509KeyManager;
 import org.apache.log4j.Logger;
 
@@ -65,7 +58,8 @@ public class CliKeyManager implements X509KeyManager {
             for (String keyType1 : keyType) {
                 String[] validAliases = base.getClientAliases(keyType1, issuers);
                 if (validAliases != null) {
-                    selectedAlias = PromptUtils.chooseAlias(validAliases, out);
+                    selectedAlias = PromptUtils.chooseAlias(validAliases, out,
+                                                            "Choose identity: ");
 
                     if (selectedAlias != null) {
                         break;

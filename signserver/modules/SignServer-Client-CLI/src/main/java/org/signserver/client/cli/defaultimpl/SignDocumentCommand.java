@@ -973,16 +973,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                         fileName = null;
                     }
 
-                    final List<Certificate> clientCertChain =
-                        keyStoreOptions.getClientCertificateChain();
+                    final List<Certificate> signCertChain =
+                        keyStoreOptions.getSignCertificateChain();
 
                     metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
                              SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
                                      metadata, fileName, workerName, workerId,
-                                     keyStoreOptions.getPrivateKey(),
-                                     KeyStoreOptions.suggestSignatureAlgorithm(clientCertChain.get(0).getPublicKey()),
+                                     keyStoreOptions.getSignPrivateKey(),
+                                     KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey()),
                                      /*keyStoreOptions.getProvider*/null,
-                                     clientCertChain));
+                                     signCertChain));
                 }
             } catch (KeyStoreException | SignedRequestException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
                 LOG.error("Could not sign signature request", ex);

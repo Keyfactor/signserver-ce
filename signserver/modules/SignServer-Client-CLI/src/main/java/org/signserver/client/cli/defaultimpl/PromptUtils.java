@@ -36,13 +36,15 @@ public class PromptUtils {
      * 
      * @param validAliases array of strings with aliases to select from
      * @param out PrintStream to write selection options to
+     * @param heading Heading to print before listing the available aliases
      * @return The selected alias value, or null if no valid was entered within 4 tries
      */
     public static String chooseAlias(final String[] validAliases,
-                                     final PrintStream out) {
+                                     final PrintStream out,
+                                     final String heading) {
         String selectedAlias = null;
         Arrays.sort(validAliases);
-        out.println("Choose identity: ");
+        out.println(heading);
         int i = 1;
         for (String alias : validAliases) {
             out.println("[" + i++ + "] " + alias);

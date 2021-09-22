@@ -40,6 +40,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -102,6 +103,12 @@ public class KeyStoreOptions {
     /** Option KEYALIASPROMPT. */
     public static final String KEYALIASPROMPT = "keyaliasprompt";
 
+    /** Option SIGNKEYALIAS. */
+    public static final String SIGNKEYALIAS = "signkeyalias";
+
+    /** Option SIGNKEYALIASPROMPT. */
+    public static final String SIGNKEYALIASPROMPT = "signkeyaliasprompt";
+    
     /** Option KEYSTORETYPE. */
     public static final String KEYSTORETYPE = "keystoretype";
 
@@ -115,6 +122,8 @@ public class KeyStoreOptions {
             new Option(KeyStoreOptions.KEYSTOREPWD, true, TEXTS.getString("KEYSTOREPWD_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYALIAS, true, TEXTS.getString("KEYALIAS_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYALIASPROMPT, false, TEXTS.getString("KEYALIASPROMPT_DESCRIPTION")),
+            new Option(KeyStoreOptions.SIGNKEYALIAS, true, TEXTS.getString("SIGNKEYALIAS_DESCRIPTION")),
+            new Option(KeyStoreOptions.SIGNKEYALIASPROMPT, false, TEXTS.getString("SIGNKEYALIASPROMPT_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYSTORETYPE, true, TEXTS.getString("KEYSTORETYPE_DESCRIPTION")),
             new Option(KeyStoreOptions.PASSWORDFROMSTDIN, false, TEXTS.getString("PASSWORDFROMSTDIN_DESCRIPTION"))
         );
@@ -126,6 +135,8 @@ public class KeyStoreOptions {
     private String keystorePassword;
     private String keyAlias;
     private boolean keyAliasPrompt;
+    private String signKeyAlias;
+    private boolean signKeyAliasPrompt;
     private KeystoreType keystoreType;
     private boolean passwordFromStdin;
 
@@ -165,6 +176,16 @@ public class KeyStoreOptions {
 
             if (line.hasOption(KeyStoreOptions.KEYALIAS)) {
                 throw new IllegalCommandArgumentsException("Can not supply both -keyalias and -keyaliasprompt");
+            }
+        }
+        if (line.hasOption(KeyStoreOptions.SIGNKEYALIAS)) {
+            signKeyAlias = line.getOptionValue(KeyStoreOptions.SIGNKEYALIAS, null);
+        }
+        if (line.hasOption(KeyStoreOptions.SIGNKEYALIASPROMPT)) {
+            signKeyAliasPrompt = true;
+
+            if (line.hasOption(KeyStoreOptions.SIGNKEYALIAS)) {
+                throw new IllegalCommandArgumentsException("Can not supply both -signkeyalias and -signkeyaliasprompt");
             }
         }
         if (line.hasOption(KeyStoreOptions.KEYSTORETYPE)) {
@@ -299,22 +320,55 @@ public class KeyStoreOptions {
      * @throws KeyStoreException 
      */
     public List<Certificate> getClientCertificateChain() throws KeyStoreException {
-        if (keystore != null) {
-            final String alias =
-                    keyAlias != null ? keyAlias : keystore.aliases().nextElement();
+        return getCertificateChainForAliasOrFirst(keyAlias);
+    }
 
-            return Arrays.asList(keystore.getCertificateChain(alias));
+    /**
+     * Get the selected request signing certificate from the keystore, or null if
+     * none is selected (no -keystore and -keyalias or -keyaliasprompt)
+     *
+     * @return The used client certificate from -keystore
+     * @throws KeyStoreException 
+     */
+    public List<Certificate> getSignCertificateChain() throws KeyStoreException {
+        return getCertificateChainForAliasOrFirst(signKeyAlias);
+    }
+
+    /**
+     * Gets the certificate chain for a specified key alias, or the chain for
+     * the first found alias, if none specified.
+     *
+     * @param alias alias to return chain for, or null to get first available
+     * @return certificate chain, or null if the keystore is not loaded
+     * @throws KeyStoreException 
+     */
+    private List<Certificate> getCertificateChainForAliasOrFirst(final String alias)
+            throws KeyStoreException {
+        if (keystore != null) {
+            final String aliasToUse =
+                    alias != null ? alias : keystore.aliases().nextElement();
+
+            return Arrays.asList(keystore.getCertificateChain(aliasToUse));
         } else {
             return null;
         }
     }
 
     public PrivateKey getPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        if (keystore != null) {
-            final String alias =
-                    keyAlias != null ? keyAlias : keystore.aliases().nextElement();
+        return getPrivateKeyForAliasOrFirst(keyAlias);
+    }
 
-            return (PrivateKey) keystore.getKey(alias,
+    public PrivateKey getSignPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        return getPrivateKeyForAliasOrFirst(signKeyAlias);
+    }
+    
+    private PrivateKey getPrivateKeyForAliasOrFirst(final String alias)
+            throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        if (keystore != null) {
+            final String aliasToUse =
+                    alias != null ? alias : keystore.aliases().nextElement();
+
+            return (PrivateKey) keystore.getKey(aliasToUse,
                                                 keystorePassword.toCharArray());
         } else {
             return null;
@@ -442,6 +496,23 @@ public class KeyStoreOptions {
                 return null;
             }
         }
+
+        if (signKeyAliasPrompt) {
+            try {
+                final String[] validAliases =
+                        Collections.list(keystore.aliases()).toArray(new String[0]);
+                final String selectedAlias =
+                        PromptUtils.chooseAlias(validAliases, out,
+                                                "Choose certificate to sign request with: ");
+
+                if (selectedAlias != null) {
+                    signKeyAlias = selectedAlias;
+                }
+            } catch (KeyStoreException ex) {
+                throw new RuntimeException("Could not load keystore", ex);
+            }
+        }
+        
         return this.socketFactory;
     }
 

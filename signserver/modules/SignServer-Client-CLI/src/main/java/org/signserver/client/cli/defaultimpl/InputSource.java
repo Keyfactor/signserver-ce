@@ -57,7 +57,7 @@ public class InputSource {
             if (inputStream instanceof ByteArrayInputStream) {
                 final ByteArrayInputStream bis = (ByteArrayInputStream) inputStream;
 
-                hash = calculateHash(IOUtils.toByteArray(inputStream), metadata);
+                hash = calculateHash(inputStream, metadata);
                 bis.reset();
             } else {
                 // TODO: handle file streams...
@@ -81,7 +81,7 @@ public class InputSource {
         // TODO: should not always hash the input, only when signed requests
         // required, but this is a PoC...
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-            hash = calculateHash(IOUtils.toByteArray(bis), metadata);         // XXX TODO: Handle large files !!!!!
+            hash = calculateHash(bis, metadata);         // XXX TODO: Handle large files !!!!!
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
             LOG.error("Unable to calculate hash", ex);
         }
@@ -106,18 +106,6 @@ public class InputSource {
     public InputSource(final File file, final long size) throws IOException {
         this(file, size, null, null);
     }
-
-    private byte[] calculateHash(final byte[] content,
-                                 final Map<String, String> metadata)
-            throws NoSuchAlgorithmException, NoSuchProviderException {
-        final MessageDigest md =
-                MessageDigest.getInstance("SHA-256",
-                                          BouncyCastleProvider.PROVIDER_NAME);
-
-        md.update(content);
-        // TODO: include metadata
-        return md.digest();
-    }
     
     public InputStream getInputStream() {
         return inputStream;
@@ -141,5 +129,22 @@ public class InputSource {
 
     void close() throws IOException {
         inputStream.close();
+    }
+    
+    private byte[] calculateHash(InputStream input,
+                                 final Map<String, String> metadata) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+        final MessageDigest md =
+                MessageDigest.getInstance("SHA-256",
+                                          BouncyCastleProvider.PROVIDER_NAME);
+        return digest(input, md);
+    }
+    
+    public static byte[] digest(InputStream input, MessageDigest md) throws IOException {
+        final byte[] buffer = new byte[4096]; 
+        int n = 0;
+        while (-1 != (n = input.read(buffer))) {
+            md.update(buffer, 0, n);
+        }
+        return md.digest();
     }
 }

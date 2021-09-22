@@ -503,7 +503,7 @@ public class KeyStoreOptions {
                         Collections.list(keystore.aliases()).toArray(new String[0]);
                 final String selectedAlias =
                         PromptUtils.chooseAlias(validAliases, out,
-                                                "Choose certificate to sign request with: ");
+                                                "Choose private key to sign request with: ");
 
                 if (selectedAlias != null) {
                     signKeyAlias = selectedAlias;

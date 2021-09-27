@@ -347,8 +347,9 @@ public class KeyStoreOptions {
         if (keystore != null) {
             final String aliasToUse =
                     alias != null ? alias : keystore.aliases().nextElement();
-
-            return Arrays.asList(keystore.getCertificateChain(aliasToUse));
+            final Certificate[] certs = keystore.getCertificateChain(aliasToUse);
+            
+            return certs != null ? Arrays.asList(certs) : null;
         } else {
             return null;
         }

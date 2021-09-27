@@ -976,6 +976,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     final List<Certificate> signCertChain =
                         keyStoreOptions.getSignCertificateChain();
 
+                    if (signCertChain == null) {
+                        throw new SignServerException("Could not find certificate chain matching signing key");
+                    }
+                    
                     metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
                              SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
                                      metadata, fileName, workerName, workerId,

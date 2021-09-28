@@ -228,14 +228,4 @@ public class ClientCertAuthorizer implements IAuthorizer {
 
         return ruleMatched;
     }
-    
-    private String getDNAttributeValueByProperty(String property, String completeDN) {
-        Map<String, String> dnValueByField = new HashMap<>();
-        List<String> dnFields = Arrays.asList(completeDN.split(","));
-        dnFields.stream().map((dnField) -> dnField.split("=")).forEachOrdered((pairs) -> {
-            dnValueByField.put(pairs[0], pairs[1]);
-        });
-
-        return dnValueByField.get(property);
-    }
 }

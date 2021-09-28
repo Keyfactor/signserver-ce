@@ -14,11 +14,8 @@ package org.signserver.server;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
@@ -198,15 +195,5 @@ public class ClientCertAuthorizer implements IAuthorizer {
         }
 
         return ruleMatched;
-    }
-    
-    private String getDNAttributeValueByProperty(String property, String completeDN) {
-        Map<String, String> dnValueByField = new HashMap<>();
-        List<String> dnFields = Arrays.asList(completeDN.split(","));
-        dnFields.stream().map((dnField) -> dnField.split("=")).forEachOrdered((pairs) -> {
-            dnValueByField.put(pairs[0], pairs[1]);
-        });
-
-        return dnValueByField.get(property);
     }
 }

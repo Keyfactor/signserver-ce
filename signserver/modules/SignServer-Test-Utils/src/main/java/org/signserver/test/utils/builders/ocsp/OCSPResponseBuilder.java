@@ -15,6 +15,7 @@ package org.signserver.test.utils.builders.ocsp;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -28,9 +29,11 @@ import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.ocsp.*;
+import org.bouncycastle.cert.ocsp.jcajce.JcaRespID;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -69,11 +72,19 @@ public class OCSPResponseBuilder {
     private boolean noResponse;
     private byte[] nonce;
     private Set<OcspExt> extensions = new HashSet<>();
+    private boolean useKeyHashRespId;
     
-    private BasicOCSPResp buildBasicOCSPResp() throws OCSPResponseBuilderException {
+    private BasicOCSPResp buildBasicOCSPResp() throws OCSPResponseBuilderException, CertBuilderException {
         try {
-            BasicOCSPRespBuilder gen = new BasicOCSPRespBuilder(new RespID(new X500Name(getResponderName())));
-            
+            final RespID respId;
+            if (isUseKeyHashRespId()) {
+                final PublicKey signerPub = getResponseSignerCertificate().getPublicKey();
+                respId = new JcaRespID(signerPub, new JcaDigestCalculatorProviderBuilder().build().get(RespID.HASH_SHA1));
+            } else {
+                respId = new RespID(new X500Name(getResponderName()));
+            }
+
+            BasicOCSPRespBuilder gen = new BasicOCSPRespBuilder(respId);
             if (getNonce() != null) {
                 extensions.add(new OcspExt(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(nonce)));
             }
@@ -95,7 +106,7 @@ public class OCSPResponseBuilder {
             
             BasicOCSPResp response = gen.build(contentSigner, getChain(), getProducedAt());
             return response;
-        } catch (OCSPException | NoSuchAlgorithmException | NoSuchProviderException | OperatorCreationException ex) {
+        } catch (OCSPException | NoSuchAlgorithmException | NoSuchProviderException | OperatorCreationException | CertificateException ex) {
             throw new OCSPResponseBuilderException(ex);
         }
     }
@@ -324,4 +335,13 @@ public class OCSPResponseBuilder {
         return this;
     }
     
+    public OCSPResponseBuilder setUseKeyHashRespId(boolean useKeyHashRespId) {
+        this.useKeyHashRespId = useKeyHashRespId;
+        return this;
+    }
+
+    public boolean isUseKeyHashRespId() {
+        return useKeyHashRespId;
+    }
+
 }

@@ -70,7 +70,6 @@ public class SignedRequestSigningHelper {
     public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {
             LOG.error(">createSignedRequest");
-            final String result;
             
             final CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             final JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
@@ -87,8 +86,10 @@ public class SignedRequestSigningHelper {
             // Generate the signature
             CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId)), true);
             
-            result = Base64.toBase64String(signedData.getEncoded());
-            LOG.error("Created signed request: " + result);
+            final String result = Base64.toBase64String(signedData.getEncoded());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created signed request: " + result);
+            }
             return result;
         } catch (OperatorCreationException | CMSException | CertificateEncodingException | NoSuchAlgorithmException | NoSuchProviderException | IOException ex) {
             throw new SignedRequestException("Failed to sign signature request", ex);

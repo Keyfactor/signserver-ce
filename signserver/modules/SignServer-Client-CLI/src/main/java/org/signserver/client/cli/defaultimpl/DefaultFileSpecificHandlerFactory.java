@@ -13,9 +13,7 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import org.signserver.client.cli.spi.FileSpecificHandlerFactory;
 
@@ -93,14 +91,11 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     }
 
     @Override
-    public FileSpecificHandler createHandler(final InputStream inStream,
-                                             final long size,
-                                             final File outFile,
-                                             final boolean clientSide, Map<String, String> extraOptions) {
+    public FileSpecificHandler createHandler(final byte[] inData, final File outFile, final boolean clientSide, Map<String, String> extraOptions) {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(inStream, size);
+        return new StraightFileSpecificHandler(inData);
     }
 
     @Override
@@ -184,14 +179,13 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
 
     @Override
     public FileSpecificHandler createHandler(final String fileType,
-                                             final InputStream inStream,
-                                             final long size,
+                                             final byte[] inData,
                                              final File outFile,
                                              final boolean clientSide, Map<String, String> extraOptions) {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
-        return new StraightFileSpecificHandler(inStream, size);
+        return new StraightFileSpecificHandler(inData);
     }
 
     @Override

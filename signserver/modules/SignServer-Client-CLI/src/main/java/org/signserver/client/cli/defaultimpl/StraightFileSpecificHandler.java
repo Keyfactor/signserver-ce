@@ -14,7 +14,6 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,24 +30,22 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
     /** Logger for this class */
     private static final Logger LOG = Logger.getLogger(StraightFileSpecificHandler.class);
     
-    private final InputStream inputStream;
+    private final byte[] inputData;
     private final File file;
-    private final long size;
+    private long size;
     
     private Collection<InputSource> sourcesToClose = new ArrayList<InputSource>();
     
     public StraightFileSpecificHandler(final File file,
                                        final long size) {
         this.file = file;
-        this.inputStream = null;
+        this.inputData = null;
         this.size = size;
     }
 
-    public StraightFileSpecificHandler(final InputStream inputStream,
-                                       final long size) {
+    public StraightFileSpecificHandler(final byte[] inputData) {
         this.file = null;
-        this.inputStream = inputStream;
-        this.size = size;
+        this.inputData = inputData;
     }
     
     @Override
@@ -61,7 +58,7 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
         if (file != null) {
             return closeLater(new InputSource(file, size));
         } else {
-            return new InputSource(inputStream, size);
+            return new InputSource(inputData);
         }
     }
 
@@ -77,13 +74,6 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
     
     @Override
     public void close() {
-        if (inputStream != null) {
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                LOG.warn("Unable to close resource: " + ex.getLocalizedMessage());
-            }
-        }
         for (InputSource source : sourcesToClose) {
             try {
                 source.close();

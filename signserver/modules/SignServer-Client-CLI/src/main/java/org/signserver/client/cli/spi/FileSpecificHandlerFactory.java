@@ -14,7 +14,6 @@ package org.signserver.client.cli.spi;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import org.signserver.client.cli.defaultimpl.DocumentSignerFactory;
 import org.signserver.client.cli.defaultimpl.FileSpecificHandler;
@@ -124,16 +123,13 @@ public interface FileSpecificHandlerFactory {
     /**
      * Create a handler given an input stream and an output file.
      * 
-     * @param inStream input for the handler given as an input stream
-     * @param size the number of bytes provided in the input stream
+     * @param inData input data for the handler given as a byte array
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler 
      */
-    FileSpecificHandler createHandler(InputStream inStream, long size,
-                                      File outFile, boolean clientSide,
-                                      Map<String, String> extraOptions)
+    FileSpecificHandler createHandler(byte[] inData, File outFile, boolean clientSide, Map<String, String> extraOptions)
             throws IllegalArgumentException;
     
     /**
@@ -246,15 +242,13 @@ public interface FileSpecificHandlerFactory {
      * an output file.
      * 
      * @param fileType file type identifier, overriding any autodetection done by the factory
-     * @param inStream input for the handler given as an input stream
-     * @param size the number of bytes provided in the input stream
+     * @param inData input data for the handler given as a byte array
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler 
      */
-    FileSpecificHandler createHandler(String fileType, InputStream inStream,
-                                      long size,
+    FileSpecificHandler createHandler(String fileType, byte[] inData,
                                       File outFile, boolean clientSide,
                                       Map<String, String> extraOptions)
             throws IllegalArgumentException;

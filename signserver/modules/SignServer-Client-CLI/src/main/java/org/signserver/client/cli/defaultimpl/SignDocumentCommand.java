@@ -689,36 +689,24 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
     protected boolean runBatch(TransferManager manager, final File inFile, final File outFile) {
-        boolean success = true;
-        InputStream fin = null;
-        try {
-            final long size;
+        final byte[] bytes;
+        final long size;
 
-            Map<String, Object> requestContext = new HashMap<>();
-            if (inFile == null) {
-                byte[] bs = data.getBytes();
-                fin = new ByteArrayInputStream(bs);
-                size = bs.length;
-            } else {
-                requestContext.put("FILENAME", inFile.getName());
-                fin = new BufferedInputStream(new FileInputStream(inFile));
-                size = inFile.length();
+        Map<String, Object> requestContext = new HashMap<>();
+        if (inFile == null) {
+            bytes = data.getBytes();
+            size = bytes.length;
+        } else {
+            if (!inFile.exists()) {
+                LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
+                                               inFile.getAbsolutePath()));
+                return false;
             }
-            success = runFile(manager, requestContext, inFile, fin, size, outFile);
-        } catch (FileNotFoundException ex) {
-            LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
-                    ex.getLocalizedMessage()));
-            success = false;
-        } finally {
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (IOException ex) {
-                    LOG.error("Error closing file", ex);
-                }
-            }
+            requestContext.put("FILENAME", inFile.getName());
+            bytes = null;
+            size = inFile.length();
         }
-        return success;
+        return runFile(manager, requestContext, inFile, bytes, size, outFile);
     }
     
     private void initFileSpecificHandlerFactory()
@@ -783,7 +771,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param outFile directory
      * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
-    private boolean runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
+    private boolean runFile(final TransferManager manager,
+                            final Map<String, Object> requestContext,
+                            final File inFile,
+                            final byte[] bytes, final long size,
+                            final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
         boolean success = true;
         boolean cleanUpOutputFileOnFailure = false;
 
@@ -1032,15 +1024,15 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
-                                                          final InputStream inStream,
+                                                          final byte[] inData,
                                                           final long size,
                                                           final File outFile, Map<String, String> extraOptions)
             throws IOException {
         if (fileType != null) {
-            return handlerFactory.createHandler(fileType, inStream, size,
-                                                outFile, clientside, extraOptions);
+            return handlerFactory.createHandler(fileType, inData, outFile,
+                                                clientside, extraOptions);
         } else {
-            return handlerFactory.createHandler(inStream, size, outFile,
+            return handlerFactory.createHandler(inData, outFile,
                                                 clientside, extraOptions);
         }
     }

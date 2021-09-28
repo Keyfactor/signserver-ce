@@ -23,7 +23,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Map;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -43,27 +42,17 @@ public class InputSource {
     private final Map<String, String> metadata;
     private byte[] hash;
 
-    public InputSource(final InputStream inputStream, final long size,
-                       final String fileName,
-                       final Map<String, String> metadata) {
-        this.inputStream = inputStream;
-        this.size = size;
+    public InputSource(final byte[] input, final String fileName, final Map<String, String> metadata) {
+        this.inputStream = new ByteArrayInputStream(input);
+        this.size = input.length;
         this.fileName = fileName;
         this.metadata = metadata;
 
         // TODO: should not always hash the input, only when signed requests
         // required, but this is a PoC...
         try {
-            if (inputStream instanceof ByteArrayInputStream) {
-                final ByteArrayInputStream bis = (ByteArrayInputStream) inputStream;
-
-                hash = calculateHash(inputStream, metadata);
-                bis.reset();
-            } else {
-                // TODO: handle file streams...
-                LOG.error("Not yet handling signing file input requests");
-                hash = null;
-            }
+            hash = calculateHash(inputStream, metadata);
+            inputStream.reset();
         } catch (NoSuchAlgorithmException | NoSuchProviderException |
                  IOException ex) {
             LOG.error("Unable to calculate hash", ex);
@@ -89,18 +78,17 @@ public class InputSource {
         this.inputStream = new FileInputStream(file);
     }
 
-    public InputSource(final InputStream inputStream, final long size,
-                       final Map<String, String> metadata) {
-        this(inputStream, size, null, metadata);
+    public InputSource(final byte[] input, final Map<String, String> metadata) {
+        this(input, null, metadata);
     }
 
-    public InputSource(final InputStream inputStream, final long size,
+    public InputSource(final byte[] input, final long size,
                        final String fileName) {
-        this(inputStream, size, fileName, null);
+        this(input, fileName, null);
     }
     
-    public InputSource(final InputStream inputStream, final long size) {
-        this(inputStream, size, null, null);
+    public InputSource(final byte[] input) {
+        this(input, null, null);
     }
     
     public InputSource(final File file, final long size) throws IOException {

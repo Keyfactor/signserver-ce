@@ -14,11 +14,8 @@ package org.signserver.server;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;

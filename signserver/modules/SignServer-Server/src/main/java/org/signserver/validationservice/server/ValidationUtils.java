@@ -227,7 +227,6 @@ public class ValidationUtils {
      */
     public static OCSPResponse queryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
         final OCSPResponse result = new OCSPResponse();
-        
         final HttpURLConnection con;
         final URLConnection urlCon = url.openConnection();
         if (!(urlCon instanceof HttpURLConnection)) {
@@ -275,6 +274,10 @@ public class ValidationUtils {
             }
         }
 
+        return populateOcspResponse(result, response);
+    }
+
+    public static OCSPResponse populateOcspResponse(OCSPResponse result, OCSPResp response) throws OCSPException, IOException {
         if (response == null) {
             result.setError(OCSPResponse.Error.noResponse);
             return result;

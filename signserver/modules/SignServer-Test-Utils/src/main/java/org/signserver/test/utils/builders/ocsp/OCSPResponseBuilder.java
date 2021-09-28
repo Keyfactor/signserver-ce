@@ -195,8 +195,9 @@ public class OCSPResponseBuilder {
         return responderName;
     }
 
-    public void setResponderName(String responderName) {
+    public OCSPResponseBuilder setResponderName(String responderName) {
         this.responderName = responderName;
+        return this;
     }
 
     public OCSPResponseStatus getResponseStatus() {

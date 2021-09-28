@@ -59,13 +59,17 @@ public class SignedRequestSigningHelper {
     /**
      * Constructs the SIGNED_REQUEST request metadata property value.
      *
-     * @param requestDataDigest
-     * @param metadata
-     * @param signKey
-     * @param provider
-     * @param certificateChain 
-     * @return  
-     * @throws org.signserver.common.signedrequest.SignedRequestException  
+     * @param requestDataDigest the digest
+     * @param metadata the metadata
+     * @param fileName the file name field (if any)
+     * @param workerName the worker name field (if any)
+     * @param workerId the worker id field (if any(
+     * @param signKey private key to sign with
+     * @param signatureAlgorithm the algorithm to use
+     * @param provider provider for the signature
+     * @param certificateChain for the signer
+     * @return the String encoding of the SIGNED_REQUEST property
+     * @throws SignedRequestException in case of failure creating the signature
      */
     public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {

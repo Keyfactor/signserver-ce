@@ -42,6 +42,7 @@ public class InputSource {
     private final String fileName;
     private final Map<String, String> metadata;
     private byte[] hash;
+    private final boolean isFile;
 
     /**
      * Construct an instance of InputSource given "raw" input data as
@@ -56,6 +57,7 @@ public class InputSource {
         this.size = input.length;
         this.fileName = fileName;
         this.metadata = metadata;
+        this.isFile = false;
     }
     
     /**
@@ -77,6 +79,7 @@ public class InputSource {
         this.fileName = fileName;
         this.metadata = metadata;
         this.inputStream = new FileInputStream(file);
+        this.isFile = true;
     }
 
     public InputSource(final byte[] input, final Map<String, String> metadata) {
@@ -112,20 +115,17 @@ public class InputSource {
         return metadata;
     }
 
-    public byte[] getHash() throws IOException, SignServerException, NoSuchAlgorithmException, NoSuchProviderException {
+    public byte[] getHash() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
         if (hash == null) {
-            if (inputStream instanceof ByteArrayInputStream) {
-                hash = calculateHash(inputStream, metadata);
-                inputStream.reset();
-            } else if (inputStream instanceof FileInputStream) {
+            if (isFile) {
                 try (BufferedInputStream bis = new BufferedInputStream(inputStream)) {
                     hash = calculateHash(bis, metadata);         // XXX TODO: Handle large files !!!!!
                 } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                     LOG.error("Unable to calculate hash", ex);
                 }
             } else {
-                // this should never happen
-                throw new SignServerException("Unkown input stream");
+                hash = calculateHash(inputStream, metadata);
+                inputStream.reset();
             }
         }
         return hash;

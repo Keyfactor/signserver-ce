@@ -25,6 +25,7 @@ import java.security.NoSuchProviderException;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.signserver.common.SignServerException;
 
 /**
  * Input source encapsulting information about an input stream with an associated
@@ -55,16 +56,6 @@ public class InputSource {
         this.size = input.length;
         this.fileName = fileName;
         this.metadata = metadata;
-
-        // TODO: should not always hash the input, only when signed requests
-        // required, but this is a PoC...
-        try {
-            hash = calculateHash(inputStream, metadata);
-            inputStream.reset();
-        } catch (NoSuchAlgorithmException | NoSuchProviderException |
-                 IOException ex) {
-            LOG.error("Unable to calculate hash", ex);
-        }
     }
     
     /**
@@ -85,15 +76,6 @@ public class InputSource {
         this.size = size;
         this.fileName = fileName;
         this.metadata = metadata;
-
-        // TODO: should not always hash the input, only when signed requests
-        // required, but this is a PoC...
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-            hash = calculateHash(bis, metadata);         // XXX TODO: Handle large files !!!!!
-        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
-            LOG.error("Unable to calculate hash", ex);
-        }
-
         this.inputStream = new FileInputStream(file);
     }
 
@@ -130,7 +112,22 @@ public class InputSource {
         return metadata;
     }
 
-    public byte[] getHash() {
+    public byte[] getHash() throws IOException, SignServerException, NoSuchAlgorithmException, NoSuchProviderException {
+        if (hash == null) {
+            if (inputStream instanceof ByteArrayInputStream) {
+                hash = calculateHash(inputStream, metadata);
+                inputStream.reset();
+            } else if (inputStream instanceof FileInputStream) {
+                try (BufferedInputStream bis = new BufferedInputStream(inputStream)) {
+                    hash = calculateHash(bis, metadata);         // XXX TODO: Handle large files !!!!!
+                } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+                    LOG.error("Unable to calculate hash", ex);
+                }
+            } else {
+                // this should never happen
+                throw new SignServerException("Unkown input stream");
+            }
+        }
         return hash;
     }
 

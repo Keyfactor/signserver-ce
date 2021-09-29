@@ -980,7 +980,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                      /*keyStoreOptions.getProvider*/null,
                                      signCertChain));
                 }
-            } catch (KeyStoreException | SignedRequestException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
+            } catch (KeyStoreException | SignedRequestException |
+                     NoSuchAlgorithmException | UnrecoverableKeyException |
+                     NoSuchProviderException ex) {
                 LOG.error("Could not sign signature request", ex);
                 throw new SignServerException("Could not sign signature request", ex);
             }

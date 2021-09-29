@@ -376,6 +376,13 @@ public class KeyStoreOptions {
         }
     }
     
+    /**
+     * Suggest a signature algorithm expected to work with the provided public
+     * key.
+     *
+     * @param publicKey public key the algorithm should work with
+     * @return an algorithm name
+     */
     public static String suggestSignatureAlgorithm(PublicKey publicKey) {
         final String result;
         final String digestAlgorithm = "SHA256";

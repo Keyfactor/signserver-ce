@@ -69,7 +69,8 @@ public class InputSource {
     
     /**
      * Construct an instance of InputSource given a file.
-     * Note: caller must remember to close the file.
+     * Note: caller must remember to call .close() when done with the
+     * input source.
      * 
      * @param file source file
      * @param size size of the input in bytes

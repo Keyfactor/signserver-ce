@@ -42,6 +42,14 @@ public class InputSource {
     private final Map<String, String> metadata;
     private byte[] hash;
 
+    /**
+     * Construct an instance of InputSource given "raw" input data as
+     * a byte array.
+     *
+     * @param input data
+     * @param fileName suggested file name
+     * @param metadata request metadata
+     */
     public InputSource(final byte[] input, final String fileName, final Map<String, String> metadata) {
         this.inputStream = new ByteArrayInputStream(input);
         this.size = input.length;
@@ -59,7 +67,17 @@ public class InputSource {
         }
     }
     
-    // XXX Caller using this constructor must call .close()
+    /**
+     * Construct an instance of InputSource given a file.
+     * Note: caller must remember to close the file.
+     * 
+     * @param file source file
+     * @param size size of the input in bytes
+     * @param fileName suggested file name
+     * @param metadata request metadata
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public InputSource(final File file, final long size,
                        final String fileName,
                        final Map<String, String> metadata) throws FileNotFoundException, IOException {        

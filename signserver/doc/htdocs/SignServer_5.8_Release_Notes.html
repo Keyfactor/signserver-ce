@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Worker Crypto Token Page - SignServer - Documentation Space</title> -->
-    <title>Worker Crypto Token Page - SignServer Manual</title>
+    <!-- <title>SignServer 5.8 Release Notes - SignServer - Documentation Space</title> -->
+    <title>SignServer 5.8 Release Notes - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -1244,7 +1244,7 @@
 
             </li>
                                         <li class="collapsed">
-        <a class="ht-nav-page-link current" href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a>
+        <a class="ht-nav-page-link" href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a>
 
                     <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
                 <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -1414,7 +1414,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+        <a class="ht-nav-page-link current" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
 
             </li>
                                         <li class="leaf">
@@ -1508,271 +1508,80 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                                         <li class="shortcut"><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
-                                                                                                         <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
-                                                                                                         <li class="shortcut"><a href="Workers_Page.html">Workers Page</a></li>
-                                                                                     <li><a href="Worker_Page.html">Worker Page</a></li>
+                                        <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
+                                                                                     <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221521"> <span>Worker Crypto Token Page</span></h1>
+</div>            <h1 id="src-134447744"> <span>SignServer 5.8 Release Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >For workers having a crypto token, this page displays the key entries in the token and offers actions for managing the entries.    </p>
-    <div class="section section-1" id="src-16221521_id-.WorkerCryptoTokenPagev4.3.0-Entries">
-        <h1 class="heading "><span>Entries</span></h1>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Column    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Alias    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of the entry.    </p>
-    <p  >Clicking the link displays details for the token entry. The fields displayed depend on the crypto token implementation and type of key entry. Examples of fields displayed:    </p>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Alias    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Name of the entry.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Type    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >PRIVATEKEY_ENTRY for private keys (asymmetric keys),    </p>
-    <p  >SECUREKEY_ENTRY for secret keys (symmetric keys), and    </p>
-    <p  >TRUSTED_ENTRY for trusted certificate entries.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Creation Date    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Date when the key was created (if available).    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Certificate    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Subject DN for the certificate in the token.    </p>
-    <p  >Clicking the link <strong class=" ">View</strong> displays the <a   href="Worker_Certificate_Details_Page.html">Worker Certificate Details Page</a>.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key Specification    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key length for RSA and DSA keys, or curve for ECDSA keys.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Signings    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Number of signatures created using the key.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Public Exponent    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Public exponent (in decimal) for RSA keys.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key Algorithm    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key algorithm such as <strong class=" ">RSA, DSA</strong> or <strong class=" ">ECDSA.</strong>    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >PKCS#11 Attributes    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >List of some of the potentially relevant PKCS#11 attributes and their values for the private key object.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Modifiable    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >True if the CKA_MODIFIABLE attribute is specified for the private key object.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Allowed Mechanisms    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >List of mechanisms (i.e. signature algorithms) that are allowed to be used with this key and are stored in the CKA_ALLOWED_MECHANISMS PKCS#11 attribute of the private key.    </p>
-    <p  >See <strong class=" ">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS</strong> in <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> and <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Wrapping Key    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of the secret/symmetric wrapping key in the token that is used to unwrap this key (if the key was wrapped).    </p>
-    <p  >See the <strong class=" ">DEFAULTKEY</strong> worker property in <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11KeyWrappingCryptoToken+v4.3.0">JackNJI11KeyWrappingCryptoToken</a> and <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11KeyWrappingCryptoWorker+v4.3.0">JackNJI11KeyWrappingCryptoWorker</a>.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Wrapping Cipher    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >PKCS#11 mechanism name of cipher algorithm used to wrap the keys by secret/symmetric key. Example: <strong class=" ">CKM_AES_CBC_PAD</strong>    </p>
-    <p  >See the <strong class=" ">WRAPPING_CIPHER_ALGORITHM</strong> worker property in <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11KeyWrappingCryptoToken+v4.3.0">JackNJI11KeyWrappingCryptoToken</a> and <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11KeyWrappingCryptoWorker+v4.3.0">JackNJI11KeyWrappingCryptoWorker</a>.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Type    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Combination of key algorithm and key specification. Example: <strong class=" ">RSA 2048.</strong>    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Certificates    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Number of certificates in the entry.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <p  >The PrimeKey SignServer team is pleased to announce the release of SignServer 5.8.    </p>
+    <p  >This release brings improvements for short-lived certificates when using JSON-based token authentication and enhancements for eIDAS Advanced level signing. With this release, SignServer also supports setting up one-time keys using an EJBCA Peer Connection in RA mode.    </p>
+    <p  >    <span style="color: #000000;">
+Deployment options include <a  class="external-link" href="https://doc.primekey.com/signserver-appliance">SignServer Hardware Appliance</a> and <a  class="external-link" href="https://doc.primekey.com/signserver-cloud">SignServer Cloud</a>.    </span>
+    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-Highlights">Highlights</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-UpgradeInformation">Upgrade Information</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-134447744_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjhSZWxlYXNlTm90ZXN2NS44LjAtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">Change Log: Resolved Issues</a>    </p>
+</li></ul>    <div class="section section-1" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-Highlights">
+        <h1 class="heading "><span>Highlights</span></h1>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-UseInformationfromJWTClaimsinShort-LivedSigningCertificates">
+        <h2 class="heading "><span>Use Information from JWT Claims in Short-Lived Signing Certificates</span></h2>
+    <p  >Customers using OAuth 2.0 or OpenID Connect in an identity provider (authorization server), integrated with SignServer using the SignServer JSON Web Token JWT Authorizer, can now use information from the JWT tokens in short-lived certificates. SignServer 5.8 supports configuring mapping rules between JWT claims and short-lived certificates, allowing user data from the JWT token to be part of the certificate used for signatures on behalf of the authorized user. For more information, see <a   href="JWT_Authorizer.html">JWT Authorizer</a>.    </p>
     </div>
-    <div class="section section-1" id="src-16221521_id-.WorkerCryptoTokenPagev4.3.0-EntriesActions">
-        <h1 class="heading "><span>Entries Actions</span></h1>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Action    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="Crypto_Token_Generate_Key_Page.html">Generate Key...</a>    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the crypto token key generation page.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Test    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the crypto token test key page for the selected entries.    </p>
-    <p  >Click <strong class=" ">Test</strong> to perform the signing test. The results are displayed for each entry in the <strong class=" ">Result</strong> column.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="Crypto_Token_Generate_CSR_Page.html">Generate CSR</a>    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the crypto token certificate signing request page for the selected entries.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="Crypto_Token_Import_Certificates_Page.html">Import Certificates</a>    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the crypto token import certificates page for the selected entries.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Remove    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the crypto token key removal page for the selected entries.    </p>
-    <p  >Click <strong class=" ">Destroy key(s)</strong> to confirm the removal of the selected keys.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-EJBCAPeerConnectioninRAModeforOne-TimeKeys">
+        <h2 class="heading "><span>EJBCA Peer Connection in RA Mode for One-Time Keys</span></h2>
+    <p  >SignServer now allows you to set up one-time keys using an <a  class="external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/peer-systems">EJBCA Peer Connection</a> in RA mode. This improves security on the CA side as the connection is initiated from EJBCA to SignServer, and therefore the network setup will not need to accept incoming connections to the CA when using one-time keys in SignServer. For more information, see <a   href="Peer_Systems.html">Peer Systems</a>.    </p>
     </div>
-    <div class="section section-1" id="src-16221521_id-.WorkerCryptoTokenPagev4.3.0-WorkerActions">
-        <h1 class="heading "><span>Worker Actions</span></h1>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Button    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="Workers_Activation_Page.html">Activate</a>    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the activation page.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="Workers_Deactivation_Page.html">Deactivate</a>    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Opens the deactivation page.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-eIDASAdvancedLevelSigningEnhancements">
+        <h2 class="heading "><span>eIDAS Advanced Level Signing Enhancements</span></h2>
+    <p  >SignServer 5.8 brings improvements for managing long-term archiving of signed documents. For eIDAS Advanced level signing using PAdES and XAdES signature formats, SignServer now supports extending the validity of a document with a previous signature. In addition, the AdES signer has been improved to handle larger signature sizes. For more information, see <a   href="AdES_Signer.html">AdES Signer</a>.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+    <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    <p  >SignServer 5.8.0 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.9.1</a> and    <span style="color: #000000;">
+ <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud 1.10</a>.    </span>
+    </p>
+    </div>
+    <div class="section section-1" id="src-134447744_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjhSZWxlYXNlTm90ZXN2NS44LjAtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+    <p  >For full details of fixed bugs and implemented features in SignServer 5.8.0, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.8.0.Final%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.    </p>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-IssuesResolvedin5.8.0">
+        <h2 class="heading "><span>Issues Resolved in 5.8.0</span></h2>
+    <p  >Released September 2021    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    </div>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-NewFeatures">
+        <h2 class="heading "><span>New Features</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2285">DSS-2285</a> - Extend validity of already PAdES signed document (PAdES-LTA)    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2306">DSS-2306</a> - Extend validity of already signed XAdES file for XAdES-LTA profile    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2331">DSS-2331</a> - Certificate User Data Mapping from JWT    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2332">DSS-2332</a> - Peers Connection where SignServer acts as RA: Implementing Peers &quot;RA mode&quot;    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2333">DSS-2333</a> - EJBCA Peers CA Connector for use with OneTimeCryptoWorker    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2359">DSS-2359</a> - Signed signature requests (Server Authorization)    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2360">DSS-2360</a> - SignClient support for signed signature requests    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2371">DSS-2371</a> - Support for one-time keys using peers and P11NG    </p>
+    </div>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2275">DSS-2275</a> - Respond with failure for incorrectly formatted time-stamp requests    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2277">DSS-2277</a> - Upgrade BC to 1.69 (when available) with stricter TS request checks    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2329">DSS-2329</a> - Handle larger signatures in PAdES Signer    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2354">DSS-2354</a> - Worker template for AdESSigner is missing properties    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2361">DSS-2361</a> - Document that AdES Signer TRUSTANCHOR property could be needed if PDF is already signed    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2362">DSS-2362</a> - Better error handling for unexpected AdES Signer failures    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2368">DSS-2368</a> - Improved SignClient support for signed signature requests    </p>
+    </div>
+    <div class="section section-2" id="src-134447744_id-.SignServer5.8ReleaseNotesv5.8.0-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2357">DSS-2357</a> - Some JAR verification test failures since a later Java 8 version    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2358">DSS-2358</a> - AdES Signer gives error when used with OneTimeCryptoWorker    </p>
+    <p  >    </p>
+    </div>
     </div>
         </div>
 
@@ -1780,7 +1589,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Worker_Authorization_Page.html" class="ht-post-nav-prev">
+                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1789,9 +1598,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Worker Authorization Page</span>
+            <span>SignServer Release Notes</span>
         </a>
-                <a href="Crypto_Token_Generate_Key_Page.html" class="ht-post-nav-next">
+                <a href="SignServer_5.7_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1800,7 +1609,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Crypto Token Generate Key Page</span>
+            <span>SignServer 5.7 Release Notes</span>
         </a>
     </nav>    
             

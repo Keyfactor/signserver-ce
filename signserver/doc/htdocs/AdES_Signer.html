@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1508,7 +1512,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-117378124"> <span>AdES Signer</span></h1>
+</div>            <h1 id="src-124518947"> <span>AdES Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1518,18 +1522,54 @@
     <p  >    <span style="color: #000000;">
 The signer has the fully qualified class name: <strong class=" ">org.signserver.module.ades.signer.AdESSigner</strong>.    </span>
     </p>
-    <div class="section section-1" id="src-117378124_id-.AdESSignerv5.7.0-Overview">
+    <div class="section section-1" id="src-124518947_id-.AdESSignerv5.8.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >    <span style="color: #000000;">
 The AdES signer signs PDF and XML documents using ETSI formats for advanced electronic signatures (AdES).    </span>
     </p>
+    <p  >    <span style="color: #0e101a;">
+The most common electronic signatures formats used within the European Union are XML Advanced Electronic Signatures <strong class=" ">(XAdES)</strong> and PDF Advanced Electronic Signatures <strong class=" ">(PAdES).</strong> The     </span>
+    <span style="color: #0e101a;">
+European Telecommunications Standards Institute (ETSI)     </span>
+    <span style="color: #0e101a;">
+creates and maintains a set of technical standards for electronic signatures that support the eIDAS legal framework.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+As of version 5.7, SignServer supports Baseline Signature Levels for XAdES (as defined in ETSI EN 319 132) and PAdES (as defined in ETSI EN 319 142). The signature formats fulfill the requirements for Advanced Electronic Signatures as per the EU eIDAS regulation.    </span>
+    </p>
+    <div class="section section-2" id="src-124518947_id-.AdESSignerv5.8.0-SignatureLevels">
+        <h2 class="heading "><span>Signature Levels</span></h2>
+    <p  >    <span style="color: #0e101a;">
+The following list the signature levels:<br/>    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">    <span style="color: #0e101a;">
+Baseline-B    </span>
+</strong>    <span style="color: #0e101a;">
+: Basic Electronic Signature. The most simplistic version includes the document signature.    </span>
+    </p>
+</li><li class=" ">    <p  ><strong class=" ">    <span style="color: #0e101a;">
+Baseline-T    </span>
+</strong>    <span style="color: #0e101a;">
+: Signature with a time-stamp. A time-stamp regarding the time of signing is also added.    </span>
+    </p>
+</li><li class=" ">    <p  ><strong class=" ">    <span style="color: #0e101a;">
+Baseline-LT    </span>
+</strong>    <span style="color: #0e101a;">
+: Signature with Long Term Data. Certificates and revocation data are embedded to allow verification in the future even if their original source is not available.    </span>
+    </p>
+</li><li class=" ">    <p  ><strong class=" ">    <span style="color: #0e101a;">
+Baseline-LTA    </span>
+</strong>    <span style="color: #0e101a;">
+: Signature with Long Term Data and Archive time-stamp. Adds an additional time-stamp and is suited for long-term archiving of documents.    </span>
+    </p>
+</li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-117378124_id-.AdESSignerv5.7.0-AvailableProperties">
+    <div class="section section-1" id="src-124518947_id-.AdESSignerv5.8.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
                     <colgroup>
-                                    <col  width="272.0"/>
+                                    <col  width="288.0"/>
                                     <col  width="1788.0"/>
                             </colgroup>
         <thead class=" ">    <tr>
@@ -1690,7 +1730,16 @@ TRUSTANCHORS    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-Additional trusted certificates in PEM format. Needs to set when using a TSA with a signer certificate issued by another root than this signer when using LT, or higher level. Optional.    </span>
+Additional trusted certificates in PEM format.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+When the certificates, revocation data or time-stamp tokens etc. are verified as part of signing, certificates not chaining up to the same root CA needs to have its root certificate added to this property. If not the signing could fail with a processing failure message and the logs show that &quot;revocation data is missing&quot;.<br/>    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+This especially needs to be done when using a TSA with a signer certificate issued by another root then what this signer is using at LT or higher level and also for cases (at LT level) when the input document already contains signatures (or time-stamps) using a different root.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Optional.    </span>
     </p>
             </td>
         </tr>
@@ -1720,7 +1769,7 @@ SIGNATURE_PACKAGING    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property is not supported with PAdES.    </span>
     </p>
     <p  >    <span style="color: #000000;">
@@ -1757,17 +1806,143 @@ Required.    </span>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >FIXED_SIGNATURE_SIZE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-EXTRA_SIGNATURE_SPACE    </span>
+    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ This property is only supported with PAdES.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+This property sets a fixed size for the signature space within the PDF and disables the signature size estimation in the first try.<br/>    </span>
+    </p>
+    <p  >If the signature format is PAdES and FIXED_SIGNATURE_SIZE is not set (or equal to zero) then we try to estimate the PKCS#7 signature size.    </p>
+    <p  ><strong class=" ">Signature Size Estimation and Retry Algorithm</strong>    </p>
+    <p  >The first estimated value is calculated as the sum of:<br/>&bull; Certificate chain size<br/>&bull; 2000 for PKCS#7 structure + hash<br/>&bull; 8192 for OCSP<br/>&bull; 8192 for CRLs size<br/>&bull; 4096 for TSC    </p>
+    <p  >Then if signing the certificate fails due to that the signature became larger than the estimated size, the signer will retry using the actual signature size plus a 1024 bytes margin. The retry can happen up to 3 times before it gives up.    </p>
+    <p  >    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+ADD_VISIBLE_SIGNATURE    </span>
     </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- This property is only supported with PAdES.    </span>
+This property enables adding the visible signature.    </span>
     </p>
-    <p  >    <span style="color: #000000;">
-This property adds extra size and/or space when for large signatures.    </span>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_IMAGE_PATH    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+The path to the image for the visible signature.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_IMAGE_BASE64    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+The image to use in the visible signature in Base64 format.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_CONTENT_TYPE    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+Content-type of the Base64 image. For example, image/png.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_PAGE    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+Sets a page number where the signature field should be placed.    </span>
+<br/>    <span style="color: #000000;">
+    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ The counting starts from 1 (one) for the first page of the document.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_RECTANGLE_LLX    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+Sets an upper-left X coordinate of the visible signature field.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_RECTANGLE_LLY    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+Sets an upper-left Y coordinate of the visible signature field.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_RECTANGLE_URX    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+Sets the width of the visible signature field.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+VISIBLE_SIGNATURE_RECTANGLE_URY    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+Sets the height of the visible signature field.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+EXTEND_VALIDITY    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+When set to true and the signature level is BASELINE-LTA, will extend validity of a document if it was already signed (at any level) with an up-to-date archive timestamp. This can be set to true or false. True is only supported when SIGNATURE_LEVEL is BASELINE-LTA. Optional. Default: false.    </span>
     </p>
             </td>
         </tr>

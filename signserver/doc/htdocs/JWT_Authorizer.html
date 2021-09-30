@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1508,7 +1512,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="Authorizers.html">Authorizers</a></li>
                                                             </ul>
-</div>            <h1 id="src-85929317"> <span>JWT Authorizer</span></h1>
+</div>            <h1 id="src-132448868"> <span>JWT Authorizer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1519,7 +1523,7 @@ The JWT Authorizer is used to authorize signature requests based on the provided
     <p  >    <span style="color: #000000;">
 AUTHTYPE=<strong class=" ">org.signserver.server.jwtauth.JwtAuthorizer</strong>    </span>
     </p>
-    <div class="section section-1" id="src-85929317_id-.JWTAuthorizerv5.4.0-Introduction">
+    <div class="section section-1" id="src-132448868_id-.JWTAuthorizerv5.8.0-Introduction">
         <h1 class="heading "><span>Introduction</span></h1>
     <p  >    <span style="color: #000000;">
 JSON Web Token (JWT) is an internet standard for JSON-based token authentication. JWTs allow you to digitally sign information (referred to as claims) with a signature and can be verified at a later time with the public key of the issuer. JWT claims are typically used to pass the identity of authenticated users between an     <span style="color: #0e101a;">
@@ -1528,7 +1532,7 @@ authorization server    </span>
 resource server    </span>
 . The JWT Authorizer allows having the authorization server separate from the SignServer application.    </span>
     </p>
-    <div class="section section-2" id="src-85929317_id-.JWTAuthorizerv5.4.0-UseCaseExample">
+    <div class="section section-2" id="src-132448868_id-.JWTAuthorizerv5.8.0-UseCaseExample">
         <h2 class="heading "><span>Use Case Example</span></h2>
     <p  >    <span style="color: #0e101a;">
 There are several authorization servers available and this implementation has been tested with     </span>
@@ -1560,9 +1564,12 @@ OpenID Connect    </span>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 <strong class=" ">Response</strong>: SignServer verifies the token (including its signature and validity etcetera) and matches its claims against the configured authorization rules. If a rule matches, the request is processed and the response is returned to the client.    </span>
     </p>
-</li></ol>    </div>
+</li></ol>    <p  >JWT Authorizer can be used in conjunction with     <span style="color: #000000;">
+<a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a> for EJBCA Peers CA Connector introducing additional information for issuing certificates via claims of a JWT.    </span>
+    </p>
     </div>
-    <div class="section section-1" id="src-85929317_id-.JWTAuthorizerv5.4.0-Configuration">
+    </div>
+    <div class="section section-1" id="src-132448868_id-.JWTAuthorizerv5.8.0-Configuration">
         <h1 class="heading "><span>Configuration</span></h1>
     <p  >    <span style="color: #0e101a;">
 Several trusted authorization servers can be set up using indexed worker properties starting with an AUTHSERVER prefix.    </span>
@@ -1632,7 +1639,7 @@ It is also possible to configure a list of accepted audiences that are checked a
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 ACCEPTED_AUDIENCES=&lt;comma-separated list of audience names&gt;    </span>
     </p>
-</li></ul>    <div class="section section-2" id="src-85929317_id-.JWTAuthorizerv5.4.0-Examples">
+</li></ul>    <div class="section section-2" id="src-132448868_id-.JWTAuthorizerv5.8.0-Examples">
         <h2 class="heading "><span>Examples</span></h2>
     <p  >The following displays an example JWT token:    </p>
     <div  class="confbox programlisting">
@@ -1684,10 +1691,10 @@ The following displays an example (using curl) that sends a request authenticati
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-85929317_id-.JWTAuthorizerv5.4.0-Logging">
+    <div class="section section-1" id="src-132448868_id-.JWTAuthorizerv5.8.0-Logging">
         <h1 class="heading "><span>Logging</span></h1>
     <p  >If the request is allowed, the provided subject claim <tt class=" ">(sub)</tt> is logged in the AUTHORIZED_USERNAME field.    </p>
-    <p  >    </p>
+    <p  >Additionally if the request is allowed, all claims are provided internally in the request for other SignServer components to make use of.    </p>
     </div>
         </div>
 

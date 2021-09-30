@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1553,7 +1557,7 @@
         <p  >COMMITMENT_TYPES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-123207716_id-.XAdESSignerv5.7.0-CommitmentTypes">.XAdES Signer v5.7.0#Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
+        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-123207716_id-.XAdESSignerv5.7.0-CommitmentTypes">Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
             </td>
         </tr>
     <tr>
@@ -1594,8 +1598,8 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >URL of Time-Stamping Authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-123207716_id-.XAdESSignerv5.7.0-TSA_WORKER">.XAdES Signer v5.7.0#TSA_WORKER</a>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ Cannot be set at the same time as <a   href="#src-123207716_id-.XAdESSignerv5.7.0-TSA_WORKER">TSA_WORKER</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1604,7 +1608,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer. Required if XADESFORM=T and TSA_URL are not specified. This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Use this option instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load. Cannot be set at the same time as TSA_URL.    </p>
             </td>
         </tr>

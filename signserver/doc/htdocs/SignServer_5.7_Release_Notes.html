@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1513,13 +1517,16 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    <span style="color: #000000;">
+<span class="status grey subtle">JULY 2021</span>    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
 The PrimeKey SignServer team is pleased to announce the release of SignServer 5.7.    </span>
     </p>
     <p  >    <span style="color: #000000;">
 This release introduces support for PAdES and XAdES signature formats including all ETSI Baseline levels complying with EU eIDAS regulation for Advanced Electronic Signatures.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-In the code signing area, SignServer 5.7 adds support for Microsoft CAB file signing. Further, the RSASSA-PSS algorithm is now supported for use with client-side hashing, relevant for firmware signing use cases, among others.    </span>
+In the code signing area, SignServer 5.7 adds support for Microsoft CAT file signing. Further, the RSASSA-PSS algorithm is now supported for use with client-side hashing, relevant for firmware signing use cases, among others.    </span>
     </p>
     <p  >    <span style="color: #000000;">
 Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a> and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
@@ -1557,7 +1564,7 @@ SignServer support for XAdES signature format is implemented in the new AdES Sig
     <div class="section section-2" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-MicrosoftCATFileSigning">
         <h2 class="heading "><span>Microsoft CAT File Signing</span></h2>
     <p  >    <span style="color: #000000;">
-The SignServer MS Authenticode Signer now supports signing of Microsoft CAB files. The file type is automatically detected by SignServer. For more information, see <a   href="MS_Authenticode_Signer.html">MS Authenticode Signer</a> and the <a  class="external-link" href="https://doc.primekey.com/x/aQaK">Authenticode Code Signing Technical How-to</a>.<br/>    </span>
+The SignServer MS Authenticode Signer now supports signing of Microsoft CAT files. The file type is automatically detected by SignServer. For more information, see <a   href="MS_Authenticode_Signer.html">MS Authenticode Signer</a> and the <a  class="external-link" href="https://doc.primekey.com/x/aQaK">Authenticode Code Signing Technical How-to</a>.<br/>    </span>
     </p>
     </div>
     <div class="section section-2" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-RSASSA-PSSwithClient-SideHashingSupportedinP11NG">
@@ -1579,7 +1586,7 @@ The recommended Java runtime environment for SignServer is Java SE 11. Java SE 8
     <div class="section section-1" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-UpgradeInformation">
         <h1 class="heading "><span>Upgrade Information</span></h1>
     <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
-    <p  >SignServer 5.7.0 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.8.1</a> and    <span style="color: #000000;">
+    <p  >SignServer 5.7.0 is included in <a  class="external-link" href="https://doc.primekey.com/x/4Y-iAQ">SignServer Hardware Appliance 3.9.0</a> and    <span style="color: #000000;">
  <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud 1.9</a>.    </span>
     </p>
     </div>
@@ -1609,6 +1616,14 @@ For full details of fixed bugs and implemented features in SignServer 5.7.0, ref
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2305">DSS-2305</a> - XAdES-LTA baseline profile signature support    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2337">DSS-2337</a> - Worker property to configure extra/adjust signature size in PAdES    </p>
     </div>
+    <div class="section section-2" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2291">DSS-2291</a> - Document getPKCS10CertificateRequestForAlias2 WS operation    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2295">DSS-2295</a> - Introduce git ignore files and add some IDE specific ignores to SVN    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2298">DSS-2298</a> - Upgrade external dependencies    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2346">DSS-2346</a> - Previous worker name not removed from cache after rename    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2347">DSS-2347</a> - Workers removed from AdminWeb kept in cache    </p>
+    </div>
     <div class="section section-2" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-Tasks">
         <h2 class="heading "><span>Tasks</span></h2>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2299">DSS-2299</a> - Add DSS library as dependency    </p>
@@ -1618,15 +1633,6 @@ For full details of fixed bugs and implemented features in SignServer 5.7.0, ref
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2311">DSS-2311</a> - Remove any unneeded DSS dependencies and update JARs/project lists    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2323">DSS-2323</a> - Add support for CRL in PAdES-LT and higher levels    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2327">DSS-2327</a> - Switch from PDFBox to OpenPDF in AdES signer    </p>
-    <p  >    </p>
-    </div>
-    <div class="section section-2" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-Improvements">
-        <h2 class="heading "><span>Improvements</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2291">DSS-2291</a> - Document getPKCS10CertificateRequestForAlias2 WS operation    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2295">DSS-2295</a> - Introduce git ignore files and add some IDE specific ignores to SVN    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2298">DSS-2298</a> - Upgrade external dependencies    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2346">DSS-2346</a> - Previous worker name not removed from cache after rename    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2347">DSS-2347</a> - Workers removed from AdminWeb kept in cache    </p>
     </div>
     <div class="section section-2" id="src-119933738_id-.SignServer5.7ReleaseNotesv5.7.0-BugFixes">
         <h2 class="heading "><span>Bug Fixes</span></h2>
@@ -1643,7 +1649,7 @@ For full details of fixed bugs and implemented features in SignServer 5.7.0, ref
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_5.8_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1652,7 +1658,7 @@ For full details of fixed bugs and implemented features in SignServer 5.7.0, ref
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Release Notes</span>
+            <span>SignServer 5.8 Release Notes</span>
         </a>
                 <a href="SignServer_5.6.1_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

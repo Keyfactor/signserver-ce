@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1535,7 +1539,7 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specifies the number of signatures allowed to be created with the same key by this worker. Default is <strong class=" ">-1</strong> = no limit.    </p>
     <p  >After the limit has been reached, the worker is considered offline.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Note that the counter is per key and not per worker. Thus, if multiple workers share the same key they will all increment the counter. This also means that the worker will be active again after it has gotten a new certificate/key.    </p>
             </td>
         </tr>
@@ -1545,7 +1549,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >By default, all key usages are counted, but by specifying this as <strong class=" ">TRUE,</strong> key usages performed by this worker will not be counted. Disabling the key usage counter can improve performance, as it means less database transaction. However, if you have requirements on the number of allowed signings for one worker, ensure not to use the same key with another worker for which the counter is disabled, as those uses will then be missed.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  The key usage counter cannot be disabled for a worker if KEYUSAGELIMIT is also specified.    </p>
             </td>
         </tr>

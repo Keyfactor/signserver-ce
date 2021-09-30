@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1550,7 +1554,6 @@
 <div class="line"><code class="plain">APPSRV_HOME</code><code class="plain">/bin/jboss-cli</code><code class="plain">.sh -c</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >To remove any existing TLS and HTTP configuration and allow configuring port 8443, run the following:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1561,7 +1564,6 @@
 <div class="line"><code class="plain">:reload</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >Configure interfaces using the appropriate bind address. This example uses <strong class=" ">0.0.0.0</strong> to make it available for anyone:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1570,7 +1572,6 @@
 <div class="line"><code class="plain">/</code><code class="keyword">interface</code><code class="plain">=httpspriv:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
 </div>
     </div>
-    <p  >    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
@@ -1590,7 +1591,7 @@
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/https-listener=httpspriv:add(socket-binding=</code><code class="string">"httpspriv"</code><code class="plain">, security-realm=</code><code class="string">"SSLRealm"</code><code class="plain">, verify-client=REQUIRED, max-post-size=</code><code class="string">"10485760"</code><code class="plain">, enable-http2=</code><code class="string">"true"</code><code class="plain">) </code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Configure the default HTTP listener.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">Configure the default HTTP listener.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=http:add(port=</code><code class="string">"8080"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"http"</code><code class="plain">)</code></div>
@@ -1599,14 +1600,14 @@
 <div class="line"><code class="plain">:reload</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Configure the HTTPS httpspub listener and set up the public SSL port not requiring the client certificate.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">Configure the HTTPS httpspub listener and set up the public SSL port not requiring the client certificate.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=</code><code class="string">"8442"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspub"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/https-listener=httpspub:add(socket-binding=</code><code class="string">"httpspub"</code><code class="plain">, security-realm=</code><code class="string">"SSLRealm"</code><code class="plain">, max-post-size=</code><code class="string">"10485760"</code><code class="plain">, enable-http2=</code><code class="string">"true"</code><code class="plain">)</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Configure the remoting (HTTP) listener and secure the CLI by removing the <tt class=" ">http-remoting-connector</tt> from using the HTTP port and instead use a separate port 4447.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">Configure the remoting (HTTP) listener and secure the CLI by removing the <tt class=" ">http-remoting-connector</tt> from using the HTTP port and instead use a separate port 4447.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/subsystem=remoting/http-connector=http-remoting-connector:remove</code></div>
@@ -1615,7 +1616,8 @@
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/http-listener=remoting:add(socket-binding=remoting, max-post-size=</code><code class="string">"10485760"</code><code class="plain">, enable-http2=</code><code class="string">"true"</code><code class="plain">)</code></div>
 </div>
     </div>
-</li></ol>    </div>
+</li></ol>    <p  class="section">    </p>
+    </div>
     <div class="section section-1" id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCBhbmRKQm9zc0VBUDcuMSB2NS4yLjAtV1NETExvY2F0aW9uRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
         <h1 class="heading "><span id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4yLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>WSDL Location </span></h1>
     <p  >In order for the web services to work correctly when requiring client certificate, you need to configure the Web Services Description Language (WSDL) web-host rewriting to use the request host.    </p>

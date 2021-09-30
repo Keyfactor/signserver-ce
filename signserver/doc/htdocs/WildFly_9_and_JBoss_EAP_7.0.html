@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1550,7 +1554,6 @@
 <div class="line"><code class="plain">APPSRV_HOME</code><code class="plain">/bin/jboss-cli</code><code class="plain">.sh -c</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >Configure interfaces using the appropriate bind address. This example uses <strong class=" ">0.0.0.0</strong> to make it available for anyone:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1576,14 +1579,13 @@
 <div class="line"><code class="plain">:reload</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >Set the limit on the HTTP (8080) listener:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/http-listener=</code><code class="keyword">default</code><code class="plain">:write-attribute(name=</code><code class="string">"max-post-size"</code><code class="plain">, value=</code><code class="string">"10485760"</code><code class="plain">)</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Set up the private port which requires client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols:    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">Set up the private port which requires client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port=</code><code class="string">"8443"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspriv"</code><code class="plain">)</code></div>
@@ -1593,7 +1595,7 @@
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/https-listener=httpspriv:add(socket-binding=</code><code class="string">"httpspriv"</code><code class="plain">, security-realm=</code><code class="string">"SSLRealm"</code><code class="plain">, verify-client=REQUIRED, max-post-size=</code><code class="string">"10485760"</code><code class="plain">)</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Set up the public SSL port which does not require the client certificate:    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">Set up the public SSL port which does not require the client certificate:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=</code><code class="string">"8442"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspub"</code><code class="plain">)</code></div>

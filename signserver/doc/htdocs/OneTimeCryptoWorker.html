@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.7.0</p>
+                    <p>Version: 5.8.0</p>
                 </div>
             </header>
 
@@ -1414,6 +1414,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
 
             </li>
@@ -1508,7 +1512,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Other_Workers.html">Other Workers</a></li>
                                                             </ul>
-</div>            <h1 id="src-23858973"> <span>OneTimeCryptoWorker</span></h1>
+</div>            <h1 id="src-128977375"> <span>OneTimeCryptoWorker</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1516,23 +1520,23 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.onetime.cryptoworker.OneTimeCryptoWorker</strong>    </p>
-    <div class="section section-1" id="src-23858973_id-.OneTimeCryptoWorkerv4.4.0-Overview">
+    <div class="section section-1" id="src-128977375_id-.OneTimeCryptoWorkerv5.8.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >This is a specific Crypto Worker used for one-time keys and certificates allowing you to have a large number of individual signing keys and certificates, despite the often limited storage capabilities of HSMs. One-time keys are created on request and are deleted once the signature has been created. For more information on setting up one-time keys using the OneTimeCryptoWorker, see <a   href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>.    </p>
-    <p  >The OneTimeCryptoWorker generates a new key-pair for each signing request, creates a certificate signing request (CSR) and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (i.e. the HSM) after signing.    </p>
+    <p  >The OneTimeCryptoWorker generates a new key-pair for each signing request, creates a certificate signing request (CSR), and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (i.e. the HSM) after signing.    </p>
     <p  >The OneTimeCryptoWorker internally requires a <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.PKCS11CryptoToken+v4.3.0">PKCS11CryptoToken</a> referenced by the CRYPTOTOKEN property to use as the source crypto token.    </p>
     <p  >When using the OneTimeCryptoWorker, enable the CESeCore keystore caching by setting <strong class=" ">cryptotoken.keystorecache=true</strong> in <tt class=" ">conf/cesecore.properties</tt> (by default disabled).    </p>
     <p  >The following displays an overview of the OneTimeCryptoWorker operations:    </p>
-    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/23858973/OneTimeKeysOverview.png" alt="images/download/attachments/23858973/OneTimeKeysOverview.png" width="500"  />
+    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/128977375/OneTimeKeysOverview.png" alt="images/download/attachments/128977375/OneTimeKeysOverview.png" width="500"  />
         </p>
 <ul class=" "><li class=" ">    <p  >The Source Crypto Worker contains a Crypto Token in order to communicate with the HSM and perform key operations. The TLS key is created in the HSM using the Source Crypto Token.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  >The One Time Crypto Worker generates a new key-pair for each signing request, creates a certificate signing request (CSR) and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (i.e. the HSM) after signing.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  >The One Time Crypto Worker references the Source Crypto Worker to get hold of the TLS key/certificate in order to connect to EBJCA CA and also to perform one time key creation/deletion operations in HSM before/after signing respectively.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  >The One Time Crypto Worker generates a new key-pair for each signing request, creates a certificate signing request (CSR), and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (i.e. the HSM) after signing.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  >The One Time Crypto Worker references the Source Crypto Worker to get hold of the TLS key/certificate in order to connect to EJBCA CA and also to perform one time key creation/deletion operations in HSM before/after signing respectively.    </p>
 </li></ul><ul class=" "><li class=" ">    <p  >The XAdeSSigner references the One Time Crypto Worker in order to perform a signing operation. The signer is configured with a <a   href="Username_Authorizer.html">Username Authorizer</a> to provide the user data used by the CA for certificate issuance.    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-23858973_id-.OneTimeCryptoWorkerv4.4.0-WorkerProperties">
+    <div class="section section-1" id="src-128977375_id-.OneTimeCryptoWorkerv5.8.0-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
-    <div class="section section-2" id="src-23858973_id-.OneTimeCryptoWorkerv4.4.0-CommonProperties">
+    <div class="section section-2" id="src-128977375_id-.OneTimeCryptoWorkerv5.8.0-CommonProperties">
         <h2 class="heading "><span>Common Properties</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1549,7 +1553,9 @@
         <p  >CRYPTOTOKEN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Name of (crypto) worker holding the <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.PKCS11CryptoToken+v4.3.0">PKCS11CryptoToken</a> to use as the source crypto token.    </p>
+        <p  >Name of (crypto) worker holding (for instance) the <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.PKCS11CryptoToken+v4.3.0">PKCS11CryptoToken</a> to use as the source crypto token.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ When using the PKCS11CryptoToken, ensure to set <a   href="PKCS11CryptoToken.html">CACHE_PRIVATEKEY=false</a> as each request should use a new key pair.    </p>
             </td>
         </tr>
     <tr>
@@ -1581,17 +1587,123 @@
         <p  >CACONNECTOR_IMPLEMENTATION    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >CA connector implementation class. Required.<br/>Example:<strong class=" "><br/>org.signserver.module.onetime.caconnector.EjbcaWSCAConnector<br/>org.signserver.module.onetime.caconnector.SelfSignedCAConnector</strong>    </p>
+        <p  >CA connector implementation class. Required.<br/>Example:    </p>
+    <p  ><strong class=" ">org.signserver.module.onetime.caconnector.EjbcaPeersCAConnector<br/>org.signserver.module.onetime.caconnector.EjbcaWSCAConnector<br/>org.signserver.module.onetime.caconnector.SelfSignedCAConnector</strong>    </p>
             </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" "></tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-23858973_id-.OneTimeCryptoWorkerv4.4.0-CAConnectorProperties">
+    <div class="section section-2" id="src-128977375_id-.OneTimeCryptoWorkerv5.8.0-CAConnectorProperties">
         <h2 class="heading "><span>CA Connector Properties</span></h2>
-    <div class="section section-3" id="src-23858973_id-.OneTimeCryptoWorkerv4.4.0-EJBCAWSCAConnector">
+    <p  ><strong class=" ">EJBCA Peers CA Connector</strong>    </p>
+    <p  >The EJBCA Peers CA Connector uses <a  class="external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/peer-systems">EJBCA Peer Systems</a> for issuing certificates. See <a   href="Peer_Systems.html">Peer Systems</a> for information on setting up a peer connection, additionally enabling the <a  class="external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-operations-guide/ca-operations-guide/peer-systems-operations/adding-an-outgoing-peer-connection"><strong class=" ">Process incoming requests</strong> option for the Peer Connector in EJBCA</a> (<strong class=" ">EJBCA Admin Web&gt;Peer Systems</strong>).    </p>
+    <p  >This <strong class=" ">EJBCA Peers CA Connector</strong> uses EJBCA Peers in a mode where SignServer acts as the RA and posts certificate signing requests to the CA over the peer connection. The CA Connector also maps the SignServer User Credentials (username) to the user data required by EJBCA to issue the certificate. The mapping can use data forwarded via JWT Bearer token using <a   href="JWT_Authorizer.html">JWT Authorizer</a>. All claim values of a token accesible via pattern &lt;JWT.Claim_Name1&gt; in the corresponding Subject alternative name, Subject DN and User name patterns.    </p>
+    <div  class="tablewrap">
+        <table class="relative-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="30.8167%"/>
+                                    <col  width="69.1833%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CANAME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CA name. Required.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CERTIFICATESTARTTIME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Certificate start time. Optional.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CERTIFICATEENDTIME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Certificate end time. Optional.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CERTIFICATEPROFILE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Certificate profile. Required.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >EJBCAWSURL    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >EJBCA Web Service URL. Required.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ENDENTITYPROFILE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >End entity profile. Required.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CERTSIGNATUREALGORITHM    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Signature algorithm used to sign the certificate signing request (CSR). Required.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >SUBJECTALTNAME_PATTERN    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Subject alternative name pattern used to derive the <strong class=" ">Subject Alternative Names</strong> attribute of the certificate to be issued. Examples: <strong class=" ">dNSName=signservertest. </strong>Optional.<br/><br/>    <span style="color: #555753;">
+<strong class=" ">Example subject alternative names:</strong> <br/>rfc822Name=&lt;email&gt;<br/>dNSName=&lt;host name&gt;<br/>uri=&lt;<a  class="external-link" href="http://host.com/">http://host.com/</a>&gt;<br/>ipaddress=&lt;address&gt;<br/>upn=&lt;MS UPN&gt;<br/>guid=&lt;MS globally unique id&gt;<br/>directoryName=&lt;LDAP escaped DN&gt;<br/>krb5principal=&lt;Krb5 principal name&gt;    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >SUBJECTDN_PATTERN    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+</strong> The<strong class=" "> username</strong> is the name of the SignServer logged-in user, and the <strong class=" ">transactionId</strong> is a SignServer internal random alphanumeric number unique for each signing request.    </p>
+    <p  >JWT Example: <strong class=" ">CN=${JWT.firstName} ${JWT.lastName},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/>The<strong class=" "> firstName</strong> and <strong class=" ">lastName </strong>are corresponding claims of JWT token.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >USERNAME_PATTERN    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+</strong> The <strong class=" ">transactionId</strong> is a SignServer internal random alpha numeric number unique for each signing request.    </p>
+    <p  >JWT Example: <strong class=" ">onetime-${transactionId}-${JWT.iat}</strong><br/>The<strong class=" "> iat</strong><strong class=" "> </strong>is issued at time of JWT token.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-3" id="src-128977375_id-.OneTimeCryptoWorkerv5.8.0-EJBCAWSCAConnector">
         <h3 class="heading "><span>EJBCA WS CA Connector</span></h3>
-    <p  >The EJBCA WS CA Connector connects to EJBCA using Web Services in the same way as the <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.RenewalWorker+v4.2.1">RenewalWorker</a>.    </p>
+    <p  >The EJBCA WS CA Connector connects to EJBCA using Web Services in the same way as the <a   href="RenewalWorker.html">RenewalWorker</a>.    </p>
     <p  >The CA Connector maps the SignServer User Credentials (username) to the user data required by EJBCA to issue the certificate.    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
@@ -1669,7 +1781,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Subject alternative name pattern used to derive the <strong class=" ">Subject Alternative Names</strong> attribute of the certificate to be issued. Example: <strong class=" ">dNSName=signservertest. </strong>Optional.<br/><br/>    <span style="color: #555753;">
-<strong class=" ">Example subject alternative names:</strong> <br/>rfc822Name=&lt;email&gt;<br/>dNSName=&lt;host name&gt;<br/>uri=&lt;http://host.com/&gt;<br/> ipaddress=&lt;address&gt;<br/> upn=&lt;MS UPN&gt;<br/> guid=&lt;MS globally unique id&gt;<br/>directoryName=&lt;LDAP escaped DN&gt;<br/>krb5principal=&lt;Krb5 principal name&gt;    </span>
+<strong class=" ">Example subject alternative names:</strong> <br/>rfc822Name=&lt;email&gt;<br/>dNSName=&lt;host name&gt;<br/>uri=&lt;http://host.com/&gt;<br/>ipaddress=&lt;address&gt;<br/>upn=&lt;MS UPN&gt;<br/>guid=&lt;MS globally unique id&gt;<br/>directoryName=&lt;LDAP escaped DN&gt;<br/>krb5principal=&lt;Krb5 principal name&gt;    </span>
     </p>
             </td>
         </tr>
@@ -1678,8 +1790,8 @@
         <p  >SUBJECTDN_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
-</strong> The<strong class=" "> username</strong> is the name of the SignServer logged in user, and the <strong class=" ">transactionId</strong> is a SignServer internal random alpha numeric number unique for each signing request.    </p>
+        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+</strong> The<strong class=" "> username</strong> is the name of the SignServer logged-in user, and the <strong class=" ">transactionId</strong> is a SignServer internal random alpha numeric number unique for each signing request.    </p>
             </td>
         </tr>
     <tr>
@@ -1727,14 +1839,14 @@
         <p  >USERNAME_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-t92wl0/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
-</strong> The <strong class=" ">transactionId</strong> is a SignServer internal random alpha numeric number unique for each signing request.    </p>
+        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+</strong> The <strong class=" ">transactionId</strong> is a SignServer internal random alpha numericnumber unique for each signing request.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-3" id="src-23858973_id-.OneTimeCryptoWorkerv4.4.0-Self-SignedCAConnector">
+    <div class="section section-3" id="src-128977375_id-.OneTimeCryptoWorkerv5.8.0-Self-SignedCAConnector">
         <h3 class="heading "><span>Self-Signed CA Connector</span></h3>
     <p  >The Self-Signed CA Connector generates its own self-signed certificate and is suitable for testing the OneTimeCryptoWorker without requiring an actual CA.    </p>
     <div  class="tablewrap">

@@ -112,6 +112,9 @@ public class KeyStoreOptions {
     /** Option KEYSTORETYPE. */
     public static final String KEYSTORETYPE = "keystoretype";
 
+    /** Option SIGN_REQUEST. */
+    public static final String SIGN_REQUEST = "signrequest";
+
     public static final String PASSWORDFROMSTDIN = "passwordfromstdin";
 
     public static List<Option> getKeyStoreOptions() {
@@ -125,7 +128,8 @@ public class KeyStoreOptions {
             new Option(KeyStoreOptions.SIGNKEYALIAS, true, TEXTS.getString("SIGNKEYALIAS_DESCRIPTION")),
             new Option(KeyStoreOptions.SIGNKEYALIASPROMPT, false, TEXTS.getString("SIGNKEYALIASPROMPT_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYSTORETYPE, true, TEXTS.getString("KEYSTORETYPE_DESCRIPTION")),
-            new Option(KeyStoreOptions.PASSWORDFROMSTDIN, false, TEXTS.getString("PASSWORDFROMSTDIN_DESCRIPTION"))
+            new Option(KeyStoreOptions.PASSWORDFROMSTDIN, false, TEXTS.getString("PASSWORDFROMSTDIN_DESCRIPTION")),
+            new Option(KeyStoreOptions.SIGN_REQUEST, false, TEXTS.getString("SIGN_REQUEST_DESCRIPTION"))
         );
     }
 
@@ -137,6 +141,8 @@ public class KeyStoreOptions {
     private boolean keyAliasPrompt;
     private String signKeyAlias;
     private boolean signKeyAliasPrompt;
+    private boolean signRequest;
+
     private KeystoreType keystoreType;
     private boolean passwordFromStdin;
 
@@ -187,6 +193,9 @@ public class KeyStoreOptions {
             if (line.hasOption(KeyStoreOptions.SIGNKEYALIAS)) {
                 throw new IllegalCommandArgumentsException("Can not supply both -signkeyalias and -signkeyaliasprompt");
             }
+        }
+        if (line.hasOption(KeyStoreOptions.SIGN_REQUEST)) {
+            signRequest = true;
         }
         if (line.hasOption(KeyStoreOptions.KEYSTORETYPE)) {
             try {
@@ -296,6 +305,10 @@ public class KeyStoreOptions {
 
     public String getTruststorePassword() {
         return truststorePassword;
+    }
+
+    public boolean isSignRequest() {
+        return signRequest;
     }
 
     private static InputStream createConfigInputStream(KeystoreType keystoreType, File library) throws FileNotFoundException {

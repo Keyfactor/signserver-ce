@@ -155,9 +155,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option LOAD_BALANCING. */
     public static final String LOAD_BALANCING = "loadbalancing";
-
-    /** Option SIGN_REQUEST. */
-    public static final String SIGN_REQUEST = "signrequest";
     
     /** The command line options. */
     private static final Options OPTIONS;
@@ -234,8 +231,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("TIMEOUT_DESCRIPTION"));
         OPTIONS.addOption(LOAD_BALANCING, true,
                 TEXTS.getString("LOAD_BALANCING_DESCRIPTION"));
-        OPTIONS.addOption(SIGN_REQUEST, false,
-                TEXTS.getString("SIGN_REQUEST_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -305,8 +300,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private int timeOutLimit;    
     private boolean useLoadBalancing;
     private String loadBalancing;
-
-    private boolean signRequest;
     
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -502,10 +495,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 
         loadBalancing = line.getOptionValue(LOAD_BALANCING, DEFAULT_LOAD_BALANCING);
 
-        if (line.hasOption(SIGN_REQUEST)) {
-            signRequest = true;
-        }
-        
         try {
             final ConsolePasswordReader passwordReader = createConsolePasswordReader();
             keyStoreOptions.parseCommandLine(line, passwordReader, out);
@@ -677,7 +666,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
 
         // -signrequest reuires -keystore
-        if (signRequest && keyStoreOptions.getKeystoreFile() == null) {
+        if (keyStoreOptions.isSignRequest() && keyStoreOptions.getKeystoreFile() == null) {
             throw new IllegalCommandArgumentsException("-signrequest requires -keystore");
         }
     }
@@ -954,7 +943,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             metadata.putAll(extraMetadata);
         }
 
-        if (signRequest) {
+        if (keyStoreOptions.isSignRequest()) {
             try {
                 final byte[] requestDataDigest = inputSource.getHash(); 
 

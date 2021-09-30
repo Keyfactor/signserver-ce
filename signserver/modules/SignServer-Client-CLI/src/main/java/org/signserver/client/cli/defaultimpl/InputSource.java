@@ -119,7 +119,7 @@ public class InputSource {
         if (hash == null) {
             if (isFile) {
                 try (BufferedInputStream bis = new BufferedInputStream(inputStream)) {
-                    hash = calculateHash(bis, metadata);         // XXX TODO: Handle large files !!!!!
+                    hash = calculateHash(bis, metadata);
                 } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                     LOG.error("Unable to calculate hash", ex);
                 }

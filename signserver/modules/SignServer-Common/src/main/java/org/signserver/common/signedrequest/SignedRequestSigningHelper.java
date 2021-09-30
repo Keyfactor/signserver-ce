@@ -57,6 +57,40 @@ public class SignedRequestSigningHelper {
     private static final String DIGEST_ALGORITHM = "SHA-256"; // XXX hardcoded, but should use what's in the request signature
 
     /**
+     * Adds the SIGNED_REQUEST request metadata to the passed in metadata
+     * 
+     * @param digest the digest
+     * @param metadata the metadata
+     * @param fileName the file name (if any)
+     * @param workerName the worker name (if any)
+     * @param workerId the worker ID (if any)
+     * @param signatureAlgorithm the algorithm to use
+     * @param privateKey private key to use for signing
+     * @param certChain cert chain for the signer
+     * @throws SignedRequestException in case of failure creating the signature
+     */
+    public static void addRequestSignature(final byte[] digest,
+                                           final Map<String, String> metadata,
+                                           final String fileName,
+                                           final String workerName,
+                                           final Integer workerId,
+                                           final String signatureAlgorithm,
+                                           final PrivateKey privateKey,
+                                           final List<Certificate> certChain)
+            throws SignedRequestException {
+        final String signature =
+                SignedRequestSigningHelper.createSignedRequest(digest, metadata,
+                                                               fileName,
+                                                               workerName,
+                                                               workerId,
+                                                               privateKey,
+                                                               signatureAlgorithm,
+                                                               null, certChain);
+        metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
+                     signature);
+    }
+    
+    /**
      * Constructs the SIGNED_REQUEST request metadata property value.
      *
      * @param requestDataDigest the digest

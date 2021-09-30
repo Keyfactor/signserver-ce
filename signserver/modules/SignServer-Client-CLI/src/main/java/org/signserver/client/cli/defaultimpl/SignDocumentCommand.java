@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -971,14 +972,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     if (signCertChain == null) {
                         throw new SignServerException("Could not find certificate chain matching signing key");
                     }
-                    
-                    metadata.put(SignedRequestSigningHelper.METADATA_PROPERTY_SIGNED_REQUEST,
-                             SignedRequestSigningHelper.createSignedRequest(requestDataDigest,
-                                     metadata, fileName, workerName, workerId,
-                                     keyStoreOptions.getSignPrivateKey(),
-                                     KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey()),
-                                     /*keyStoreOptions.getProvider*/null,
-                                     signCertChain));
+
+                    final String signatureAlgorithm =
+                        KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey());
+                    final PrivateKey privateKey = keyStoreOptions.getSignPrivateKey();
+
+                    SignedRequestSigningHelper.addRequestSignature(requestDataDigest,
+                                                                   metadata,
+                                                                   fileName,
+                                                                   workerName,
+                                                                   workerId,
+                                                                   signatureAlgorithm,
+                                                                   privateKey,
+                                                                   signCertChain);
                 }
             } catch (KeyStoreException | SignedRequestException |
                      NoSuchAlgorithmException | UnrecoverableKeyException |

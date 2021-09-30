@@ -125,6 +125,7 @@ public class InputSource {
                 }
             } else {
                 hash = calculateHash(inputStream, metadata);
+                // this works, since in this case inputStream is a ByteArrayInputStream
                 inputStream.reset();
             }
         }

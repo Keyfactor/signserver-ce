@@ -42,7 +42,7 @@ public class InputSource {
     private final String fileName;
     private final Map<String, String> metadata;
     private byte[] hash;
-    private final boolean isFile;
+    private final File file;
 
     /**
      * Construct an instance of InputSource given "raw" input data as
@@ -57,7 +57,7 @@ public class InputSource {
         this.size = input.length;
         this.fileName = fileName;
         this.metadata = metadata;
-        this.isFile = false;
+        this.file = null;
     }
     
     /**
@@ -79,7 +79,7 @@ public class InputSource {
         this.fileName = fileName;
         this.metadata = metadata;
         this.inputStream = new FileInputStream(file);
-        this.isFile = true;
+        this.file = file;
     }
 
     public InputSource(final byte[] input, final Map<String, String> metadata) {
@@ -117,8 +117,9 @@ public class InputSource {
 
     public byte[] getHash() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
         if (hash == null) {
-            if (isFile) {
-                try (BufferedInputStream bis = new BufferedInputStream(inputStream)) {
+            if (file != null) {
+                try (BufferedInputStream bis =
+                        new BufferedInputStream(new FileInputStream(file))) {
                     hash = calculateHash(bis, metadata);
                 } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                     LOG.error("Unable to calculate hash", ex);

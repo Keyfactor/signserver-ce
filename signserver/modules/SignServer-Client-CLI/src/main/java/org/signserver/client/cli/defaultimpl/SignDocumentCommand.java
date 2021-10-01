@@ -686,6 +686,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (inFile == null) {
             bytes = data.getBytes();
             size = bytes.length;
+            requestContext.put("FILENAME", "noname.dat");
         } else {
             if (!inFile.exists()) {
                 LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),

@@ -77,7 +77,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
     private static final int WORKER5 = 7904;
 
-    private static final String ALIAS_DEMODSEC = "MRTD Sod Signer";
+    private static final String ALIAS_DEMODSEC = "sod00002";
     private static final String ALIAS_DEMODS1 = "sod00001";
 
     private final WorkerSession workerSession = getWorkerSession();
@@ -142,7 +142,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER5, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
-                + File.separator + "demodsecc1.p12");
+                + File.separator + "dss10" + File.separator + "dss10_keystore.p12");
         workerSession.setWorkerProperty(WORKER5, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKER5, "DEFAULTKEY", ALIAS_DEMODSEC);
 

@@ -39,7 +39,8 @@ Signer crypto token keystore:
         Aliases for code signing: code00001, code00002, code00003, code40003
             Using the same variations as for the document signing keys (with critical EKU codeSigning),
             and additionally a certificate issued by a sub CA using a 4096 bit RSA key.
-        Alias for e-passport signing: sod00001
+        Alias for e-passport signing: sod00001, sod00002
+            Using RSA and ECDSA respectively.
         Key with certificates issued directly by the root CA.
 	Alias for TLS: ra00001
 	    Keys with a certificate suitable for TLS (with EKU tlsClient).

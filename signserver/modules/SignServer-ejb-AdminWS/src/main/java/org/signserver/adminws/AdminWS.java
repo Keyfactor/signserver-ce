@@ -764,12 +764,13 @@ public class AdminWS {
      *
      * @param signerId ID of worker
      * @param alias key alias of key to remove
-     * @return true if removal was successful.
+     * @return True if the key existed and then was successfully removed.
      * @throws CryptoTokenOfflineException if the crypto token is offline
      * @throws InvalidWorkerIdException if the specified worker id does not
      * exist
      * @throws KeyStoreException for keystore related errors
-     * @throws SignServerException for other errors
+     * @throws SignServerException for other errors including trying to remove 
+     * a non-existing key (i.e "No such alias in token")
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "removeKey")

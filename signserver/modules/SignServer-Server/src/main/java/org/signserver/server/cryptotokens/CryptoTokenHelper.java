@@ -308,50 +308,31 @@ public class CryptoTokenHelper {
         final Collection<KeyTestResult> result = new LinkedList<>();
 
         try {
-            for (final TokenEntry entry : keyStore.getEntries()) {
-                final String keyAlias = entry.getAlias();
-                
-                if (alias.equalsIgnoreCase(ICryptoTokenV4.ALL_KEYS)
-                        || alias.equals(keyAlias)) {
+            if (alias.equalsIgnoreCase(ICryptoTokenV4.ALL_KEYS)) {
+            
+                for (final TokenEntry entry : keyStore.getEntries()) {
+                    final String keyAlias = entry.getAlias();
+
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("checking keyAlias: " + keyAlias);
                     }
 
-                    String status;
-                    String publicKeyHash = null;
-                    boolean success = false;
                     if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(entry.getType())) {
-                        status = "Not testing keys with alias: " + keyAlias + ". Not a private key.";
+                        result.add(new KeyTestResult(keyAlias, false, "Not testing keys with alias: " + keyAlias + ". Not a private key.", null));
                     } else if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(entry.getType())) {
-                        PrivateKey privateKey = null;
-                        try {
-                            privateKey = keyStore.aquirePrivateKey(keyAlias, authCode);
-                            final PublicKey publicKey = keyStore.getPublicKey(keyAlias);
-                            if (publicKey != null) {
-                                publicKeyHash = createKeyHash(publicKey);
-                                testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
-                                success = true;
-                                status = "";
-                            } else {
-                                status = "Not testing keys with alias "
-                                        + keyAlias + ". No public key exists.";
-                            }
-                        } catch (ClassCastException ce) {
-                            status = "Not testing keys with alias "
-                                    + keyAlias + ". Not a private key.";
-                        } catch (InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | UnrecoverableKeyException | OperatorCreationException | IOException ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        } finally {
-                            if (privateKey != null) {
-                                keyStore.releasePrivateKey(privateKey);
-                            }
-                        }
+                        result.add(testPrivateKey(keyStore, keyAlias, authCode, signatureProvider, signatureAlgorithm));
                     } else {
-                        status = "No such key: " + keyAlias;
+                        result.add(new KeyTestResult(keyAlias, false, "No such key: " + keyAlias, null));
                     }
-                    result.add(new KeyTestResult(keyAlias, success, status,
-                                publicKeyHash));
+                }
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("checking keyAlias: " + alias);
+                }
+                if (!keyStore.containsAlias(alias)) {
+                    result.add(new KeyTestResult(alias, false, "No such key: " + alias, null));
+                } else {
+                    result.add(testPrivateKey(keyStore, alias, authCode, signatureProvider, signatureAlgorithm));
                 }
             }
         } catch (KeyStoreException ex) {
@@ -362,6 +343,38 @@ public class CryptoTokenHelper {
             LOG.debug("<testKey");
         }
         return result;
+    }
+    
+    private static KeyTestResult testPrivateKey(KeyStoreDelegator keyStore, String keyAlias, char[] authCode, String signatureProvider, String signatureAlgorithm) throws CryptoTokenOfflineException {
+        boolean success = false;
+        String publicKeyHash = null;
+        String status;
+        PrivateKey privateKey = null;
+        try {
+            privateKey = keyStore.aquirePrivateKey(keyAlias, authCode);
+            final PublicKey publicKey = keyStore.getPublicKey(keyAlias);
+            if (publicKey != null) {
+                publicKeyHash = createKeyHash(publicKey);
+                testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
+                success = true;
+                status = "";
+            } else {
+                status = "Not testing keys with alias "
+                        + keyAlias + ". No public key exists.";
+            }
+        } catch (ClassCastException ce) {
+            status = "Not testing keys with alias "
+                    + keyAlias + ". Not a private key.";
+        } catch (InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | UnrecoverableKeyException | OperatorCreationException | IOException ex) {
+            LOG.error("Error testing key: " + keyAlias, ex);
+            status = ex.getMessage();
+        } finally {
+            if (privateKey != null) {
+                keyStore.releasePrivateKey(privateKey);
+            }
+        }
+        
+        return new KeyTestResult(keyAlias, success, status, publicKeyHash);
     }
 
     /**

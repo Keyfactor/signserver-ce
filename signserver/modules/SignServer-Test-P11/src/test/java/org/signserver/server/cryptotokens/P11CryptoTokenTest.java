@@ -169,7 +169,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             generateKey(algo, keySpec, testSecretKeyAlias);
             findNewEntry(testSecretKeyAlias);
         } finally {
-            destroyKey(testSecretKeyAlias);
+            removeKey(testSecretKeyAlias);
             testCase.removeWorker(CRYPTO_TOKEN);
         }
     }
@@ -198,11 +198,28 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         secretKeyGenerationHelper(SECRET_KEY_PREFIX + "DESede", "168");
     }
 
+    /**
+     * Test key removal method.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRemoveKey_PKCS11CryptoToken() throws Exception {
+        try {
+            setupCryptoTokenProperties();
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            removeKeyHelper();
+        } finally {
+            testCase.removeWorker(CRYPTO_TOKEN);
+        }
+    }
+
     private void removeExisting(String alias) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
         TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), alias)), true);
         List<TokenEntry> entries = searchResults.getEntries();
         if (!entries.isEmpty()) {
-            destroyKey(alias);
+            removeKey(alias);
         }
     }
 
@@ -223,7 +240,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+    protected boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         return testCase.getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
     }
 

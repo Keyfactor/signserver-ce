@@ -126,7 +126,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
             generateKey(algo, keySpec, testSecretKeyAlias);
             findNewEntry(testSecretKeyAlias);
         } finally {
-            destroyKey(testSecretKeyAlias);
+            removeKey(testSecretKeyAlias);
             removeWorker(CRYPTO_TOKEN);
             FileUtils.deleteQuietly(keystoreFile);
         }
@@ -136,7 +136,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), alias)), true);
         List<TokenEntry> entries = searchResults.getEntries();
         if (!entries.isEmpty()) {
-            destroyKey(alias);
+            removeKey(alias);
         }
     }
     
@@ -157,7 +157,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+    protected boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         return workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
     }
 

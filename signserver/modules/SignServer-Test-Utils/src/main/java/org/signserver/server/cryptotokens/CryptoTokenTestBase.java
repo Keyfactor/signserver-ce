@@ -40,7 +40,6 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.CertTools;
 import org.cesecore.util.query.Criteria;
@@ -80,7 +79,7 @@ public abstract class CryptoTokenTestBase {
             throws InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter;
     
     protected abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
-    protected abstract boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
+    protected abstract boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
     
     protected abstract void importCertificateChain(List<Certificate> chain, String alias)
             throws CryptoTokenOfflineException, IllegalArgumentException,
@@ -305,7 +304,7 @@ public abstract class CryptoTokenTestBase {
         } finally {
             for (String alias : testAliases) {
                 try {
-                    destroyKey(alias);
+                    removeKey(alias);
                 } catch (Exception ex) {
                     LOG.error("Failed to remove alias: " + alias + ": " + ex.getLocalizedMessage());
                 }
@@ -384,7 +383,7 @@ public abstract class CryptoTokenTestBase {
             
         } finally {
             try {
-                destroyKey(additionalAlias);
+                removeKey(additionalAlias);
             } catch (KeyStoreException ex) {
                 LOG.error("Failed to remove additional key");
             }
@@ -440,6 +439,62 @@ public abstract class CryptoTokenTestBase {
 
         assertEquals("right subject", new JcaX509CertificateConverter().getCertificate(subjectCert2).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[0]).getSubjectX500Principal().getName());
         assertEquals("right issuer", new JcaX509CertificateConverter().getCertificate(issuerCert).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[1]).getSubjectX500Principal().getName());
+    }
+    
+    /**
+     * Tests that the removeKey method works as expected.
+     *
+     * Tests: non-existing key and removal of existing key
+     * 
+     */
+    protected void removeKeyHelper() throws CryptoTokenOfflineException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, OperationUnsupportedException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+        final String additionalAlias = "additionalKey-removeKeyHelper";
+        final String nonexistingAlias = "removeKeyHelper-nonExistingKey123";
+        
+        
+        // Assert that SignServerException("none-existing") is thrown for none-existing key alias
+        try {
+            final boolean result = removeKey(nonexistingAlias);
+            fail("removeKey should have thrown SignServerException but instead returned " + result);
+        } catch (SignServerException ex) {
+            assertEquals("Exception message", "No such alias in token: " + nonexistingAlias, ex.getMessage());
+        } catch (KeyStoreException ex) {
+            LOG.error("KeyStoreException", ex);
+            fail ("removeKey should have thrown SignServerException but instead thrown KeyStoreException: " + ex.getMessage());
+        }
+        
+        try {
+            // Get current number of keys before
+            final TokenSearchResults keysBefore = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create(), false);
+            LOG.debug("Keys before (" + keysBefore.getEntries().size() + "): " + keysBefore.getEntries());
+
+            // Generate one key to work with
+            generateKey("RSA", "1024", additionalAlias);
+            TokenSearchResults keysNow = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create(), false);
+            LOG.debug("Keys now (" + keysNow.getEntries().size() + "): " + keysNow.getEntries());
+            assertEquals("Keys after generating one more", keysBefore.getEntries().size() + 1, keysNow.getEntries().size());
+
+            // Assert that removeKey returns true
+            try {
+                assertTrue("removeKey return code", removeKey(additionalAlias));
+            } catch (SignServerException | KeyStoreException ex) {
+                LOG.error("Exception", ex);
+                fail("removeKey should have returned true but throw exception: " + ex);
+            }
+            
+            // Assert that the key is not there anymore
+            TokenSearchResults keysAfter = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create(), false);
+            LOG.debug("Keys after (" + keysAfter.getEntries().size() + "): " + keysAfter.getEntries());
+            assertFalse("Key not in list", keysAfter.getEntries().toString().contains(additionalAlias));
+            assertEquals("Keys after removing it again", keysBefore.getEntries().size(), keysAfter.getEntries().size());
+        } finally {
+            // Try to remove the key just in case
+            try {
+                removeKey(additionalAlias);
+            } catch (SignServerException | KeyStoreException ex) {
+                LOG.error("Failed to remove additional key: " + ex.getMessage());
+            }
+        }
     }
     
     protected File getSignServerHome() throws FileNotFoundException {

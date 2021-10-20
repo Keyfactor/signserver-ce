@@ -121,7 +121,7 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+    protected boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         return instance.removeKey(alias, instance.getMockedServices());
     }
 

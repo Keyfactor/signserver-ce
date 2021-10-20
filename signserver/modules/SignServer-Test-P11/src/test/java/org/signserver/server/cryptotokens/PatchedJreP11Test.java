@@ -74,7 +74,7 @@ public class PatchedJreP11Test {
         }
 
         @Override
-        protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+        protected boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
             return testCase.getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
         }
 
@@ -182,7 +182,7 @@ public class PatchedJreP11Test {
             TokenSearchResults searchResults = base.searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), testKeyName)), true);
             List<TokenEntry> entries = searchResults.getEntries();
             if (!entries.isEmpty()) {
-                base.destroyKey(testKeyName);
+                base.removeKey(testKeyName);
             }
             
             // Generate the key
@@ -196,7 +196,7 @@ public class PatchedJreP11Test {
             assertEquals("Modifiable field", Boolean.FALSE.toString(), entries.get(0).getInfo().get(CryptoTokenHelper.INFO_KEY_MODIFIABLE));
         } finally {
             try {
-                base.destroyKey(testKeyName);
+                base.removeKey(testKeyName);
             } catch (Exception ex) { // test should not throw error when key can not be removed although failure  is OK.
                 LOG.error("Error in removing key with alias: " + testKeyName + " " + ex.getMessage());
             }

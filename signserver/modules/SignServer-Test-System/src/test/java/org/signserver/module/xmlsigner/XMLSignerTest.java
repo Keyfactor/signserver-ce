@@ -324,7 +324,7 @@ public class XMLSignerTest {
      */
     @Test
     public void test15XMLSecVersion() throws Exception {
-        checkDebugProperty("xml-sec.version", "1.5.8");
+        checkDebugProperty("xml-sec.version", "2.1.7");
     }
     
     /**

@@ -62,7 +62,10 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.CRLReason;
@@ -70,6 +73,8 @@ import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.cesecore.util.CertTools;
@@ -106,6 +111,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.signserver.lib.itext.text.pdf.AcroFields;
+import org.signserver.lib.itext.text.pdf.PdfObject;
 
 /**
  * Unit tests for PDFSigner.
@@ -2040,14 +2047,30 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKER1);
             final Map<String, String> requestMetadata = new HashMap<>();
             requestMetadata.put(PDFSigner.DIGESTALGORITHM, "SHA384");
+            final int expectedDigestLength = 48;
 
             // when
             final byte[] bytes = signPDF(sample, WORKER1, requestMetadata);
 
             // then
             reader = new PdfReader(bytes);
-            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            final AcroFields acroFields = reader.getAcroFields();
+            final PdfPKCS7 p7 = acroFields.verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
             assertEquals("overriding digest algorithm", "SHA384", p7.getHashAlgorithm());
+
+            final PdfDictionary signatureDictionary = acroFields.getSignatureDictionary("Signature1");
+            final PdfObject contents = signatureDictionary.get(PdfName.CONTENTS);
+            final CMSSignedData cms = new CMSSignedData(contents.getBytes());
+            final SignerInformation si = cms.getSignerInfos().iterator().next();
+            final Attribute messageDigest =
+                si.getSignedAttributes().get(CMSAttributes.messageDigest);
+            final ASN1OctetString messageDigestObject =
+                ASN1OctetString.getInstance(messageDigest.getAttrValues().getObjectAt(0).toASN1Primitive());
+            final byte[] encoded = messageDigestObject.getOctets();
+
+            assertEquals("digest lenght", expectedDigestLength,
+                         encoded.length);
+            
         } finally {
             if (reader != null) {
                 reader.close();

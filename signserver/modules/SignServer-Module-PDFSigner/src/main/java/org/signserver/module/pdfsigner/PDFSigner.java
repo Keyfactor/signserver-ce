@@ -914,9 +914,9 @@ public class PDFSigner extends BaseSigner {
 
             MessageDigest messageDigest;
             try {
-                messageDigest = MessageDigest.getInstance(digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
+                messageDigest = MessageDigest.getInstance(theDigestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
             } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-                throw new SignServerException("Error creating " + digestAlgorithm + " digest", e);
+                throw new SignServerException("Error creating " + theDigestAlgorithm + " digest", e);
             }
 
             Calendar cal = Calendar.getInstance();

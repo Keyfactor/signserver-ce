@@ -107,7 +107,18 @@ public class SignedRequestSigningHelper {
      */
     public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {
-            LOG.error(">createSignedRequest");
+            LOG.debug(">createSignedRequest");
+            return createSignedCms(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId),
+                                   signKey, signatureAlgorithm,
+                                   provider, certificateChain);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException ex) {
+            throw new SignedRequestException("Failed to sign signature request", ex);
+        }
+    }
+
+    private static String createSignedCms(byte[] contentToBeSigned, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
+        try {
+            LOG.debug(">createSignedCmss");
             
             final CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             final JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
@@ -122,18 +133,18 @@ public class SignedRequestSigningHelper {
             generator.addCertificates(new JcaCertStore(certificateChain));
             
             // Generate the signature
-            CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId)), true);
+            CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(contentToBeSigned), true);
             
             final String result = Base64.toBase64String(signedData.getEncoded());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created signed request: " + result);
             }
             return result;
-        } catch (OperatorCreationException | CMSException | CertificateEncodingException | NoSuchAlgorithmException | NoSuchProviderException | IOException ex) {
+        } catch (OperatorCreationException | CMSException | CertificateEncodingException | IOException ex) {
             throw new SignedRequestException("Failed to sign signature request", ex);
         }
     }
-
+        
     private static byte[] createContentToBeSigned(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
         Properties properties = new Properties();
        

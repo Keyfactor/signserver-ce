@@ -116,6 +116,7 @@ public class KeyStoreOptions {
     public static final String SIGN_REQUEST = "signrequest";
 
     public static final String PASSWORDFROMSTDIN = "passwordfromstdin";
+    public static String NOHTTPS = "nohttps";
 
     public static List<Option> getKeyStoreOptions() {
         return Arrays.asList(
@@ -129,7 +130,8 @@ public class KeyStoreOptions {
             new Option(KeyStoreOptions.SIGNKEYALIASPROMPT, false, TEXTS.getString("SIGNKEYALIASPROMPT_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYSTORETYPE, true, TEXTS.getString("KEYSTORETYPE_DESCRIPTION")),
             new Option(KeyStoreOptions.PASSWORDFROMSTDIN, false, TEXTS.getString("PASSWORDFROMSTDIN_DESCRIPTION")),
-            new Option(KeyStoreOptions.SIGN_REQUEST, false, TEXTS.getString("SIGN_REQUEST_DESCRIPTION"))
+            new Option(KeyStoreOptions.SIGN_REQUEST, false, TEXTS.getString("SIGN_REQUEST_DESCRIPTION")),
+            new Option(KeyStoreOptions.NOHTTPS, false, TEXTS.getString("NOHTTPS_DESCRIPTION"))
         );
     }
 
@@ -150,6 +152,7 @@ public class KeyStoreOptions {
     private KeyStore keystore;
     private boolean useHTTPS;
     private boolean usePrivateHTTPS;
+    private boolean noHTTPS;
     
     private SSLSocketFactory socketFactory;
 
@@ -196,6 +199,9 @@ public class KeyStoreOptions {
         }
         if (line.hasOption(KeyStoreOptions.SIGN_REQUEST)) {
             signRequest = true;
+        }
+        if (line.hasOption(KeyStoreOptions.NOHTTPS)) {
+            noHTTPS = true;
         }
         if (line.hasOption(KeyStoreOptions.KEYSTORETYPE)) {
             try {
@@ -494,7 +500,9 @@ public class KeyStoreOptions {
                 }
             }
 
-            if (truststore == null && keystore == null) {
+            if (noHTTPS) {
+                useHTTPS = false;
+            } else if (truststore == null && keystore == null) {
                 useHTTPS = false;
             } else if (keystore == null) {
                 useHTTPS = true;

@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultJwtBuilder;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSigner;
+import io.jsonwebtoken.impl.crypto.DefaultSignerFactory;
 import io.jsonwebtoken.impl.crypto.EllipticCurveProvider;
 import static io.jsonwebtoken.impl.crypto.EllipticCurveProvider.getSignatureByteArrayLength;
 import static io.jsonwebtoken.impl.crypto.EllipticCurveProvider.transcodeSignatureToConcat;
@@ -143,112 +144,12 @@ public class SignedRequestSigningHelper {
         }
     }
 
-    private static class OurRsaSigner extends RsaProvider implements Signer {
-
-        public OurRsaSigner(SignatureAlgorithm alg, Key key) {
-            super(alg, key);
-            // https://github.com/jwtk/jjwt/issues/68
-            // Instead of checking for an instance of RSAPrivateKey, check for PrivateKey and RSAKey:
-            if (!(key instanceof PrivateKey && "RSA".equals(key.getAlgorithm()))) {
-                String msg = "RSA signatures must be computed using an RSA PrivateKey.  The specified key of type " +
-                             key.getClass().getName() + " is not an RSA PrivateKey.";
-                throw new IllegalArgumentException(msg);
-            }
-        }
-
-        @Override
-        public byte[] sign(byte[] data) {
-            try {
-                return doSign(data);
-            } catch (InvalidKeyException e) {
-                throw new SignatureException("Invalid RSA PrivateKey. " + e.getMessage(), e);
-            } catch (java.security.SignatureException e) {
-                throw new SignatureException("Unable to calculate signature using RSA PrivateKey. " + e.getMessage(), e);
-            }
-        }
-
-        protected byte[] doSign(byte[] data) throws InvalidKeyException, java.security.SignatureException {
-            PrivateKey privateKey = (PrivateKey)key;
-            Signature sig = createSignatureInstance();
-            sig.initSign(privateKey);
-            sig.update(data);
-            return sig.sign();
-        }
-    }
-
-    private static class OurEcSigner extends EllipticCurveProvider implements Signer {
-        public OurEcSigner(SignatureAlgorithm alg, Key key) {
-            super(alg, key);
-            if (!(key instanceof PrivateKey && "ECDSA".equals(key.getAlgorithm()))) {
-                String msg = "Elliptic Curve signatures must be computed using an EC PrivateKey.  The specified key of " +
-                             "type " + key.getClass().getName() + " is not an EC PrivateKey.";
-                throw new IllegalArgumentException(msg);
-            }
-        }
-
-        @Override
-        public byte[] sign(byte[] data) {
-            try {
-                return doSign(data);
-            } catch (InvalidKeyException e) {
-                throw new SignatureException("Invalid Elliptic Curve PrivateKey. " + e.getMessage(), e);
-            } catch (java.security.SignatureException e) {
-                throw new SignatureException("Unable to calculate signature using Elliptic Curve PrivateKey. " + e.getMessage(), e);
-            } catch (JwtException e) {
-                throw new SignatureException("Unable to convert signature to JOSE format. " + e.getMessage(), e);
-            }
-        }
-
-        protected byte[] doSign(byte[] data) throws InvalidKeyException, java.security.SignatureException, JwtException {
-            PrivateKey privateKey = (PrivateKey)key;
-            Signature sig = createSignatureInstance();
-            sig.initSign(privateKey);
-            sig.update(data);
-            return transcodeSignatureToConcat(sig.sign(), getSignatureByteArrayLength(alg));
-        }
-        
-    }
-    
     private static String createSignedJwt(Properties properties, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException, CertificateEncodingException {
         LOG.debug(">createSignedJwt");
 
         LOG.error("Hardcoded signature algorithm");
 
-        final JwtBuilder builder = new DefaultJwtBuilder() {
-            @Override
-            protected JwtSigner createSigner(SignatureAlgorithm alg, Key key) {
-                return new DefaultJwtSigner(new SignerFactory() {
-                    @Override
-                    public Signer createSigner(SignatureAlgorithm alg, Key key) {
-                        Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
-                        Assert.notNull(key, "Signing Key cannot be null.");
-
-                        switch (alg) {
-                            /*
-                            case HS256:
-                            case HS384:
-                            case HS512:
-                                return new MacSigner(alg, key);
-                            */
-                            case RS256:
-                            case RS384:
-                            case RS512:
-                            case PS256:
-                            case PS384:
-                            case PS512:
-                                return new OurRsaSigner(alg, key);
-                            case ES256:
-                            case ES384:
-                            case ES512:
-                                return new OurEcSigner(alg, key);
-                            default:
-                                throw new IllegalArgumentException("The '" + alg.name() + "' algorithm cannot be used for signing.");
-                        }
-                    } 
-                }, alg, key, Encoders.BASE64URL);
-            }
-            
-        };
+        final JwtBuilder builder = new DefaultJwtBuilder();
         
         builder
                 .setHeaderParam("typ", "JWT") // TODO: type...

@@ -5,18 +5,45 @@
  */
 package org.signserver.common.signedrequest;
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.DefaultJwtBuilder;
+import io.jsonwebtoken.impl.crypto.DefaultJwtSigner;
+import io.jsonwebtoken.impl.crypto.EllipticCurveProvider;
+import static io.jsonwebtoken.impl.crypto.EllipticCurveProvider.getSignatureByteArrayLength;
+import static io.jsonwebtoken.impl.crypto.EllipticCurveProvider.transcodeSignatureToConcat;
+import io.jsonwebtoken.impl.crypto.EllipticCurveSigner;
+import io.jsonwebtoken.impl.crypto.JwtSigner;
+import io.jsonwebtoken.impl.crypto.MacSigner;
+import io.jsonwebtoken.impl.crypto.RsaProvider;
+import io.jsonwebtoken.impl.crypto.RsaSigner;
+import io.jsonwebtoken.impl.crypto.Signer;
+import io.jsonwebtoken.impl.crypto.SignerFactory;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.lang.Assert;
+import io.jsonwebtoken.security.SignatureException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECKey;
+import java.security.interfaces.RSAKey;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -108,17 +135,158 @@ public class SignedRequestSigningHelper {
     public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {
             LOG.debug(">createSignedRequest");
-            return createSignedCms(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId),
+            return createSignedJwt(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId),
                                    signKey, signatureAlgorithm,
                                    provider, certificateChain);
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException ex) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | CertificateEncodingException ex) {
             throw new SignedRequestException("Failed to sign signature request", ex);
         }
     }
 
-    private static String createSignedCms(byte[] contentToBeSigned, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
+    private static class OurRsaSigner extends RsaProvider implements Signer {
+
+        public OurRsaSigner(SignatureAlgorithm alg, Key key) {
+            super(alg, key);
+            // https://github.com/jwtk/jjwt/issues/68
+            // Instead of checking for an instance of RSAPrivateKey, check for PrivateKey and RSAKey:
+            if (!(key instanceof PrivateKey && "RSA".equals(key.getAlgorithm()))) {
+                String msg = "RSA signatures must be computed using an RSA PrivateKey.  The specified key of type " +
+                             key.getClass().getName() + " is not an RSA PrivateKey.";
+                throw new IllegalArgumentException(msg);
+            }
+        }
+
+        @Override
+        public byte[] sign(byte[] data) {
+            try {
+                return doSign(data);
+            } catch (InvalidKeyException e) {
+                throw new SignatureException("Invalid RSA PrivateKey. " + e.getMessage(), e);
+            } catch (java.security.SignatureException e) {
+                throw new SignatureException("Unable to calculate signature using RSA PrivateKey. " + e.getMessage(), e);
+            }
+        }
+
+        protected byte[] doSign(byte[] data) throws InvalidKeyException, java.security.SignatureException {
+            PrivateKey privateKey = (PrivateKey)key;
+            Signature sig = createSignatureInstance();
+            sig.initSign(privateKey);
+            sig.update(data);
+            return sig.sign();
+        }
+    }
+
+    private static class OurEcSigner extends EllipticCurveProvider implements Signer {
+        public OurEcSigner(SignatureAlgorithm alg, Key key) {
+            super(alg, key);
+            if (!(key instanceof PrivateKey && "ECDSA".equals(key.getAlgorithm()))) {
+                String msg = "Elliptic Curve signatures must be computed using an EC PrivateKey.  The specified key of " +
+                             "type " + key.getClass().getName() + " is not an EC PrivateKey.";
+                throw new IllegalArgumentException(msg);
+            }
+        }
+
+        @Override
+        public byte[] sign(byte[] data) {
+            try {
+                return doSign(data);
+            } catch (InvalidKeyException e) {
+                throw new SignatureException("Invalid Elliptic Curve PrivateKey. " + e.getMessage(), e);
+            } catch (java.security.SignatureException e) {
+                throw new SignatureException("Unable to calculate signature using Elliptic Curve PrivateKey. " + e.getMessage(), e);
+            } catch (JwtException e) {
+                throw new SignatureException("Unable to convert signature to JOSE format. " + e.getMessage(), e);
+            }
+        }
+
+        protected byte[] doSign(byte[] data) throws InvalidKeyException, java.security.SignatureException, JwtException {
+            PrivateKey privateKey = (PrivateKey)key;
+            Signature sig = createSignatureInstance();
+            sig.initSign(privateKey);
+            sig.update(data);
+            return transcodeSignatureToConcat(sig.sign(), getSignatureByteArrayLength(alg));
+        }
+        
+    }
+    
+    private static String createSignedJwt(Properties properties, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException, CertificateEncodingException {
+        LOG.debug(">createSignedJwt");
+
+        LOG.error("Hardcoded signature algorithm");
+
+        final JwtBuilder builder = new DefaultJwtBuilder() {
+            @Override
+            protected JwtSigner createSigner(SignatureAlgorithm alg, Key key) {
+                return new DefaultJwtSigner(new SignerFactory() {
+                    @Override
+                    public Signer createSigner(SignatureAlgorithm alg, Key key) {
+                        Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
+                        Assert.notNull(key, "Signing Key cannot be null.");
+
+                        switch (alg) {
+                            /*
+                            case HS256:
+                            case HS384:
+                            case HS512:
+                                return new MacSigner(alg, key);
+                            */
+                            case RS256:
+                            case RS384:
+                            case RS512:
+                            case PS256:
+                            case PS384:
+                            case PS512:
+                                return new OurRsaSigner(alg, key);
+                            case ES256:
+                            case ES384:
+                            case ES512:
+                                return new OurEcSigner(alg, key);
+                            default:
+                                throw new IllegalArgumentException("The '" + alg.name() + "' algorithm cannot be used for signing.");
+                        }
+                    } 
+                }, alg, key, Encoders.BASE64URL);
+            }
+            
+        };
+        
+        builder
+                .setHeaderParam("typ", "JWT") // TODO: type...
+                .setHeaderParam("x5c", convertChain(certificateChain))
+                .addClaims(convertPropertiesToClaims(properties))
+                .signWith(signKey, SignatureAlgorithm.forJcaName(signatureAlgorithm));
+
+        return builder.compact();
+    }
+
+    private static List<String> convertChain(final List<Certificate> chain)
+            throws CertificateEncodingException {
+        final List<String> result = new LinkedList<>();
+
+        for (final Certificate cert : chain) {
+            result.add(Base64.toBase64String(cert.getEncoded()));
+        }
+
+        return result;
+    }
+
+    private static Map<String, Object> convertPropertiesToClaims(final Properties properties) {
+        final Map<String, Object> result = new HashMap<>();
+        
+        for (final String key : properties.stringPropertyNames()) {
+            result.put(key, properties.get(key));
+        }
+
+        return result;
+    }
+    
+    private static String createSignedCms(Properties properties, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {
-            LOG.debug(">createSignedCmss");
+            LOG.debug(">createSignedCms");
+
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            properties.store(bout, null);
+            final byte[] contentToBeSigned = bout.toByteArray();
             
             final CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             final JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
@@ -145,7 +313,7 @@ public class SignedRequestSigningHelper {
         }
     }
         
-    private static byte[] createContentToBeSigned(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+    private static Properties createContentToBeSigned(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
         Properties properties = new Properties();
        
         properties.put("data", Hex.toHexString(requestDataDigest));
@@ -166,9 +334,7 @@ public class SignedRequestSigningHelper {
             properties.put("workerId", Hex.toHexString(hash(String.valueOf(workerId))));
         }
         
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        properties.store(bout, null);
-        return bout.toByteArray();
+        return properties;
     }
     
     public static byte[] hash(String value) throws NoSuchAlgorithmException, NoSuchProviderException {

@@ -147,15 +147,13 @@ public class SignedRequestSigningHelper {
     private static String createSignedJwt(Properties properties, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException, CertificateEncodingException {
         LOG.debug(">createSignedJwt");
 
-        LOG.error("Hardcoded signature algorithm");
-
-        final JwtBuilder builder = new DefaultJwtBuilder();
-        
-        builder
-                .setHeaderParam("typ", "JWT") // TODO: type...
-                .setHeaderParam("x5c", convertChain(certificateChain))
-                .addClaims(convertPropertiesToClaims(properties))
-                .signWith(signKey, SignatureAlgorithm.forJcaName(signatureAlgorithm));
+        final JwtBuilder builder =
+                new DefaultJwtBuilder()
+                        .setHeaderParam("typ", "JWT") // TODO: type...
+                        .setHeaderParam("x5c", convertChain(certificateChain))
+                        .addClaims(convertPropertiesToClaims(properties))
+                        .signWith(signKey,
+                                  SignatureAlgorithm.forJcaName(signatureAlgorithm));
 
         return builder.compact();
     }

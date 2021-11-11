@@ -8,7 +8,6 @@ package org.signserver.common.signedrequest;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultJwtBuilder;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,7 +17,6 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,17 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.SignerInfoGenerator;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.RequestContext;
@@ -154,39 +141,6 @@ public class SignedRequestSigningHelper {
         }
 
         return result;
-    }
-    
-    private static String createSignedCms(Properties properties, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
-        try {
-            LOG.debug(">createSignedCms");
-
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            properties.store(bout, null);
-            final byte[] contentToBeSigned = bout.toByteArray();
-            
-            final CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            final JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
-            if (provider != null) {
-                csBuilder.setProvider(provider);
-            }
-            final ContentSigner contentSigner = csBuilder.build(signKey);
-            final JcaSignerInfoGeneratorBuilder siBuilder = new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
-            final SignerInfoGenerator sig = siBuilder.build(contentSigner, (X509Certificate) certificateChain.get(0));
-            
-            generator.addSignerInfoGenerator(sig);
-            generator.addCertificates(new JcaCertStore(certificateChain));
-            
-            // Generate the signature
-            CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(contentToBeSigned), true);
-            
-            final String result = Base64.toBase64String(signedData.getEncoded());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Created signed request: " + result);
-            }
-            return result;
-        } catch (OperatorCreationException | CMSException | CertificateEncodingException | IOException ex) {
-            throw new SignedRequestException("Failed to sign signature request", ex);
-        }
     }
         
     private static Properties createContentToBeSigned(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {

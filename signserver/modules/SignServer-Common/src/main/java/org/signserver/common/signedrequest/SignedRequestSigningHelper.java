@@ -37,23 +37,21 @@ import org.signserver.common.RequestContext;
 
 /**
  * Helper doing as much of the stuff for the signed request as possible.
- * 
- * Current spec for the format:
- * Request metadata property named "SIGNED_REQUEST"
- * - Value: base64 encoded  CMS SignedData structure with
- *          encapsulated content: SHA-256 hash of requestData
- * 
- * TODO: Spec does not cover hashing of workerName/workerId and request metadata etc.
+ *
+ * Verification is not included here but it is typically implemented in a
+ * corresponding SignedRequestVerifyingHelper.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public class SignedRequestSigningHelper {
-    
+
     private static final Logger LOG = Logger.getLogger(SignedRequestSigningHelper.class);
-    
+
     public static final String METADATA_PROPERTY_SIGNED_REQUEST = "SIGNED_REQUEST";
-    
+
+    public static final String TYPE = "http://signserver.org/specs/signedrequest/1.0";
+
     private static final String DIGEST_ALGORITHM = "SHA-256"; // XXX hardcoded, but should use what's in the request signature
 
     /**
@@ -121,7 +119,7 @@ public class SignedRequestSigningHelper {
 
         final JwtBuilder builder =
                 new DefaultJwtBuilder()
-                        .setHeaderParam("typ", "JWT") // TODO: type...
+                        .setHeaderParam("typ", TYPE)
                         .setHeaderParam("x5c", convertChain(certificateChain))
                         .addClaims(convertPropertiesToClaims(properties))
                         .signWith(signKey,

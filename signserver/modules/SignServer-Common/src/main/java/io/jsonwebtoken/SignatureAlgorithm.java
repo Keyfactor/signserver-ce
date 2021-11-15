@@ -403,7 +403,7 @@ public enum SignatureAlgorithm {
                 }
 
             } else { //RSA
-                /*
+                
                 if (!(key instanceof RSAKey)) {
                     String msg = familyName + " " + keyType(signing) + " keys must be RSAKey instances.";
                     throw new InvalidKeyException(msg);
@@ -424,7 +424,7 @@ public enum SignatureAlgorithm {
                         "https://tools.ietf.org/html/rfc7518#section-" + section + " for more information.";
                     throw new WeakKeyException(msg);
                 }
-                */
+                
             }
         }
     }

@@ -19,6 +19,7 @@ import io.jsonwebtoken.impl.DefaultJwtBuilder;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSigner;
 import io.jsonwebtoken.impl.crypto.EllipticCurveProvider;
 import io.jsonwebtoken.impl.crypto.JwtSigner;
+import io.jsonwebtoken.impl.crypto.MacSigner;
 import io.jsonwebtoken.impl.crypto.RsaProvider;
 import io.jsonwebtoken.impl.crypto.Signer;
 import io.jsonwebtoken.impl.crypto.SignerFactory;
@@ -26,6 +27,7 @@ import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.security.SignatureException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -34,9 +36,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.interfaces.ECKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.ECParameterSpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -120,11 +128,100 @@ public class SignedRequestSigningHelper {
         try {
             LOG.debug(">createSignedRequest");
             return createSignedJwt(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId),
-                                   signKey, signatureAlgorithm,
+                                   signKey, certificateChain.get(0).getPublicKey(), signatureAlgorithm,
                                    provider, certificateChain);
         } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | CertificateEncodingException ex) {
             throw new SignedRequestException("Failed to sign signature request", ex);
         }
+    }
+
+    private static Key packKey(PrivateKey privateKey, PublicKey publicKey) {
+        if (!(privateKey instanceof RSAKey) && !(privateKey instanceof ECKey)) {
+            if (publicKey instanceof RSAPublicKey) {
+                return new PackedRsaPrivateKey(privateKey, (RSAPublicKey) publicKey);
+            } else if (publicKey instanceof ECPublicKey) {
+                return new PackedEcPrivateKey(privateKey, (ECPublicKey) publicKey);
+            }
+        }
+        return privateKey;
+    }
+    
+    private interface PackedPrivateKey {
+        public PrivateKey getPacked();
+    }
+    
+    private static class PackedRsaPrivateKey implements PrivateKey, RSAKey, PackedPrivateKey {
+
+        private final PrivateKey packed;
+        private final RSAPublicKey publicKey;
+
+        public PackedRsaPrivateKey(PrivateKey packed, RSAPublicKey publicKey) {
+            this.packed = packed;
+            this.publicKey = publicKey;
+        }
+        
+        @Override
+        public BigInteger getModulus() {
+            return publicKey.getModulus();
+        }
+
+        @Override
+        public String getAlgorithm() {
+            return packed.getAlgorithm();
+        }
+
+        @Override
+        public String getFormat() {
+            return null;
+        }
+
+        @Override
+        public byte[] getEncoded() {
+            return null;
+        }
+
+        @Override
+        public PrivateKey getPacked() {
+            return packed;
+        }
+        
+    }
+    
+    private static class PackedEcPrivateKey implements PrivateKey, ECKey, PackedPrivateKey {
+
+        private final PrivateKey packed;
+        private final ECPublicKey publicKey;
+
+        public PackedEcPrivateKey(PrivateKey packed, ECPublicKey publicKey) {
+            this.packed = packed;
+            this.publicKey = publicKey;
+        }
+
+        @Override
+        public ECParameterSpec getParams() {
+            return publicKey.getParams();
+        }
+
+        @Override
+        public String getAlgorithm() {
+            return packed.getAlgorithm();
+        }
+
+        @Override
+        public String getFormat() {
+            return null;
+        }
+
+        @Override
+        public byte[] getEncoded() {
+            return null;
+        }
+
+        @Override
+        public PrivateKey getPacked() {
+            return packed;
+        }
+        
     }
 
     private static class RsaSigner extends RsaProvider implements Signer {
@@ -163,7 +260,7 @@ public class SignedRequestSigningHelper {
     private static class EcSigner extends EllipticCurveProvider implements Signer {
         public EcSigner(SignatureAlgorithm alg, Key key) {
             super(alg, key);
-            if (!(key instanceof PrivateKey && "ECDSA".equals(key.getAlgorithm()))) {
+            if (!(key instanceof PrivateKey && ("EC".equals(key.getAlgorithm()) || "ECDSA".equals(key.getAlgorithm())))) {
                 String msg = "Elliptic Curve signatures must be computed using an EC PrivateKey.  The specified key of " +
                              "type " + key.getClass().getName() + " is not an EC PrivateKey.";
                 throw new IllegalArgumentException(msg);
@@ -193,7 +290,7 @@ public class SignedRequestSigningHelper {
         
     }
 
-    private static String createSignedJwt(Properties properties, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException, CertificateEncodingException {
+    private static String createSignedJwt(Properties properties, PrivateKey signKey, PublicKey publicKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException, CertificateEncodingException {
         LOG.debug(">createSignedJwt");
 
         final JwtBuilder builder = new DefaultJwtBuilder() {
@@ -205,24 +302,30 @@ public class SignedRequestSigningHelper {
                         Assert.notNull(alg, "SignatureAlgorithm cannot be null.");
                         Assert.notNull(key, "Signing Key cannot be null.");
 
+                        final Key keyToUse;
+                        if (key instanceof PackedPrivateKey) {
+                            keyToUse = ((PackedPrivateKey) key).getPacked();
+                        } else {
+                            keyToUse = key;
+                        }
+                        
                         switch (alg) {
-                            /*
+                            
                             case HS256:
                             case HS384:
                             case HS512:
-                                return new MacSigner(alg, key);
-                            */
+                                return new MacSigner(alg, keyToUse);
                             case RS256:
                             case RS384:
                             case RS512:
                             case PS256:
                             case PS384:
                             case PS512:
-                                return new RsaSigner(alg, key);
+                                return new RsaSigner(alg, keyToUse);
                             case ES256:
                             case ES384:
                             case ES512:
-                                return new EcSigner(alg, key);
+                                return new EcSigner(alg, keyToUse);
                             default:
                                 throw new IllegalArgumentException("The '" + alg.name() + "' algorithm cannot be used for signing.");
                         }
@@ -235,7 +338,7 @@ public class SignedRequestSigningHelper {
         builder.setHeaderParam("typ", TYPE)
                .setHeaderParam("x5c", convertChain(certificateChain))
                .addClaims(convertPropertiesToClaims(properties))
-               .signWith(signKey,
+               .signWith(packKey(signKey, publicKey),
                          SignatureAlgorithm.forJcaName(signatureAlgorithm));
 
         return builder.compact();

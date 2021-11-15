@@ -339,9 +339,19 @@ public class SignedRequestSigningHelper {
                .setHeaderParam("x5c", convertChain(certificateChain))
                .addClaims(convertPropertiesToClaims(properties))
                .signWith(packKey(signKey, publicKey),
-                         SignatureAlgorithm.forJcaName(signatureAlgorithm));
+                         signatureAlgorithmForJcaName(signatureAlgorithm));
 
         return builder.compact();
+    }
+
+    private static SignatureAlgorithm signatureAlgorithmForJcaName(String algorithm) {
+        for (SignatureAlgorithm alg : SignatureAlgorithm.values()) {
+            if (alg.getJcaName() != null && alg.getJcaName().equalsIgnoreCase(algorithm)) {
+                return alg;
+            }
+        }
+
+        throw new SignatureException("Unsupported signature algorithm '" + algorithm + "'");
     }
 
     private static List<String> convertChain(final List<Certificate> chain)

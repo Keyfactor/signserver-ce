@@ -388,6 +388,10 @@ public class KeyStoreOptions {
             final String aliasToUse =
                     alias != null ? alias : keystore.aliases().nextElement();
 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attempting to use alias: " + aliasToUse);
+            }
+
             return (PrivateKey) keystore.getKey(aliasToUse,
                                                 keystorePassword.toCharArray());
         } else {

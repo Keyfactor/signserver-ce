@@ -325,7 +325,7 @@ public class XMLSigner extends BaseSigner {
 
         if (privKey instanceof DSAPrivateKey) {
             result = "SHA256withDSA";
-        } else if (privKey instanceof ECPrivateKey) {
+        } else if (privKey instanceof ECPrivateKey || ("EC").equalsIgnoreCase(privKey.getAlgorithm())) {
             result = "SHA256withECDSA";
         } else {
             result = "SHA256withRSA";

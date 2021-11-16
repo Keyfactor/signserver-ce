@@ -525,12 +525,10 @@ public class KeyStoreOptions {
                 } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
                     throw new RuntimeException("Could not setup HTTPS", ex);
                 }
-            } else {
-                return null;
             }
         }
 
-        if (signKeyAliasPrompt) {
+        if (signKeyAliasPrompt && signKeyAlias == null) {
             try {
                 final String[] validAliases =
                         Collections.list(keystore.aliases()).toArray(new String[0]);

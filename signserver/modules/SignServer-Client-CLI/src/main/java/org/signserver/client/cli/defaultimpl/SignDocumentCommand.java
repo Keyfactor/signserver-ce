@@ -791,12 +791,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     createFileSpecificHandler(handlerFactory,
                                               bytes, size, outFile,
                                               extraOptions)) {
-                if (outFile == null) {
-                    outStream = System.out;
-                } else {
-                    outStream = new FileOutputStream(outFile);
-                }
-
                 // Take start time
                 final long startTime = System.nanoTime();
                 
@@ -810,16 +804,20 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 
                 // Perform the real request
                 final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
-                final OutputStream os;
+
                 if (clientside) {
-                    os = new ByteArrayOutputStream();
+                    outStream = new ByteArrayOutputStream();
                 } else {
-                    os = outStream;
+                    if (outFile == null) {
+                        outStream = System.out;
+                    } else {
+                        outStream = new FileOutputStream(outFile);
+                    }
                 }
                 if (inputSource != null) {
-                    sign(inputSource, os, signerFactory, handler, requestContext);
+                    sign(inputSource, outStream, signerFactory, handler, requestContext);
                 }
-                handler.assemble(new OutputCollector(os, clientside));
+                handler.assemble(new OutputCollector(outStream, clientside));
 
                 // Take stop time
                 final long estimatedTime = System.nanoTime() - startTime;

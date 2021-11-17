@@ -161,7 +161,7 @@ public abstract class CryptoTokenTestBase {
                 aliases.add(entry.getAlias());
             }
             LOG.info("Existing aliases: " + aliases);
-            assertEquals("no entries except the test key yet", 1, searchResults.getEntries().size());
+            assertEquals("no entries except the test key yet", 2, searchResults.getEntries().size());
             assertFalse("no more entries", searchResults.isMoreEntriesAvailable());
 
             // Now create some entries
@@ -183,7 +183,7 @@ public abstract class CryptoTokenTestBase {
             assertTrue("should contain " + existingKey + " but only had " + aliases,
                         aliases.contains(existingKey));
             assertEquals("no more aliases than the expected in " + aliases,
-                    testAliases.length + 1, aliases.size());
+                    testAliases.length + 2, aliases.size());
             
             final String[] allAliases = aliases.toArray(new String[0]);
             LOG.info("allAliases: " + Arrays.toString(allAliases));
@@ -207,16 +207,16 @@ public abstract class CryptoTokenTestBase {
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
 
             // Search 4 at the time, and then there are no more
-            searchResults = searchTokenEntries(2, 5, QueryCriteria.create(), true);
+            searchResults = searchTokenEntries(3, 5, QueryCriteria.create(), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[2], allAliases[3], allAliases[4], allAliases[5], allAliases[6] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases[3], allAliases[4], allAliases[5], allAliases[6], allAliases[7] }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
 
             // Querying out of index returns empty results
-            searchResults = searchTokenEntries(7, 1, QueryCriteria.create(), true);
+            searchResults = searchTokenEntries(8, 1, QueryCriteria.create(), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
@@ -248,7 +248,7 @@ public abstract class CryptoTokenTestBase {
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5], allAliases[6] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5], allAliases[6], allAliases[7] }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
             // Query all except 3 and 1, only get the 4 first entries
@@ -260,13 +260,13 @@ public abstract class CryptoTokenTestBase {
             assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5] }, aliases.toArray());
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
             
-            // Query all except 3 and 1 (same as last), but get the next one
+            // Query all except 3 and 1 (same as last), but get the next two
             searchResults = searchTokenEntries(4, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[1]))), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[6] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases[6], allAliases[7] }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
 
             // Query with both AND and OR

@@ -944,36 +944,36 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         if (keyStoreOptions.isSignRequest()) {
             try {
-                final byte[] requestDataDigest = inputSource.getHash(); 
-
-                if (requestDataDigest != null) {
-                    final String fileName;
-                    if (requestContext.get(RequestContext.FILENAME) != null) {
-                        fileName = (String) requestContext.get(RequestContext.FILENAME);
-                    } else {
-                        fileName = null;
-                    }
-
-                    final List<Certificate> signCertChain =
-                        keyStoreOptions.getSignCertificateChain();
-
-                    if (signCertChain == null) {
-                        throw new SignServerException("Could not find certificate chain matching signing key");
-                    }
-
-                    final String signatureAlgorithm =
-                        KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey());
-                    final PrivateKey privateKey = keyStoreOptions.getSignPrivateKey();
-
-                    SignedRequestSigningHelper.addRequestSignature(requestDataDigest,
-                                                                   metadata,
-                                                                   fileName,
-                                                                   workerName,
-                                                                   workerId,
-                                                                   signatureAlgorithm,
-                                                                   privateKey,
-                                                                   signCertChain);
+                final String fileName;
+                if (requestContext.get(RequestContext.FILENAME) != null) {
+                    fileName = (String) requestContext.get(RequestContext.FILENAME);
+                } else {
+                    fileName = null;
                 }
+
+                final List<Certificate> signCertChain =
+                    keyStoreOptions.getSignCertificateChain();
+
+                if (signCertChain == null) {
+                    throw new SignServerException("Could not find certificate chain matching signing key");
+                }
+
+                final String signatureAlgorithm =
+                    KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey());
+                final PrivateKey privateKey = keyStoreOptions.getSignPrivateKey();
+                
+                final byte[] requestDataDigest = inputSource.getHash("SHA-256"); 
+
+                SignedRequestSigningHelper.addRequestSignature("SHA-256",
+                                                               requestDataDigest,
+                                                               metadata,
+                                                               fileName,
+                                                               workerName,
+                                                               workerId,
+                                                               signatureAlgorithm,
+                                                               privateKey,
+                                                               signCertChain);
+
             } catch (KeyStoreException | SignedRequestException |
                      NoSuchAlgorithmException | UnrecoverableKeyException |
                      NoSuchProviderException ex) {

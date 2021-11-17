@@ -22,10 +22,10 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.signserver.common.SignServerException;
 
 /**
  * Input source encapsulting information about an input stream with an associated
@@ -41,7 +41,7 @@ public class InputSource {
     private final long size;
     private final String fileName;
     private final Map<String, String> metadata;
-    private byte[] hash;
+    private final Map<String, byte[]> hashes = new HashMap<>(1);
     private final File file;
 
     /**
@@ -115,20 +115,20 @@ public class InputSource {
         return metadata;
     }
 
-    public byte[] getHash() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+    public byte[] getHash(final String algorithm) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+        byte[] hash = hashes.get(algorithm);
         if (hash == null) {
             if (file != null) {
                 try (BufferedInputStream bis =
                         new BufferedInputStream(new FileInputStream(file))) {
-                    hash = calculateHash(bis, metadata);
-                } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
-                    LOG.error("Unable to calculate hash", ex);
+                    hash = calculateHash(algorithm, bis, metadata);
                 }
             } else {
-                hash = calculateHash(inputStream, metadata);
+                hash = calculateHash(algorithm, inputStream, metadata);
                 // this works, since in this case inputStream is a ByteArrayInputStream
                 inputStream.reset();
             }
+            hashes.put(algorithm, hash);
         }
         return hash;
     }
@@ -137,10 +137,10 @@ public class InputSource {
         inputStream.close();
     }
     
-    private byte[] calculateHash(InputStream input,
+    private byte[] calculateHash(String algorithm, InputStream input,
                                  final Map<String, String> metadata) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
         final MessageDigest md =
-                MessageDigest.getInstance("SHA-256",
+                MessageDigest.getInstance(algorithm,
                                           BouncyCastleProvider.PROVIDER_NAME);
         return digest(input, md);
     }

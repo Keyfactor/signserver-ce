@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common.signedrequest;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -73,11 +75,10 @@ public class SignedRequestSigningHelper {
 
     public static final String TYPE = "http://signserver.org/specs/signedrequest/1.0";
 
-    private static final String DIGEST_ALGORITHM = "SHA-256"; // XXX hardcoded, but should use what's in the request signature
-
     /**
      * Adds the SIGNED_REQUEST request metadata to the passed in metadata
      * 
+     * @param digestAlgorithm the digest algorithm used for data and to be used for the other fields
      * @param digest the digest
      * @param metadata the metadata
      * @param fileName the file name (if any)
@@ -88,7 +89,8 @@ public class SignedRequestSigningHelper {
      * @param certChain cert chain for the signer
      * @throws SignedRequestException in case of failure creating the signature
      */
-    public static void addRequestSignature(final byte[] digest,
+    public static void addRequestSignature(final String digestAlgorithm,
+                                           final byte[] digest,
                                            final Map<String, String> metadata,
                                            final String fileName,
                                            final String workerName,
@@ -98,7 +100,8 @@ public class SignedRequestSigningHelper {
                                            final List<Certificate> certChain)
             throws SignedRequestException {
         final String signature =
-                SignedRequestSigningHelper.createSignedRequest(digest, metadata,
+                SignedRequestSigningHelper.createSignedRequest(digestAlgorithm,
+                                                               digest, metadata,
                                                                fileName,
                                                                workerName,
                                                                workerId,
@@ -112,6 +115,7 @@ public class SignedRequestSigningHelper {
     /**
      * Constructs the SIGNED_REQUEST request metadata property value.
      *
+     * @param digestAlgorithm the digest algorithm used for data and to be used for the other fields
      * @param requestDataDigest the digest
      * @param metadata the metadata
      * @param fileName the file name field (if any)
@@ -124,10 +128,10 @@ public class SignedRequestSigningHelper {
      * @return the String encoding of the SIGNED_REQUEST property
      * @throws SignedRequestException in case of failure creating the signature
      */
-    public static String createSignedRequest(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
+    public static String createSignedRequest(String digestAlgorithm, byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId, PrivateKey signKey, String signatureAlgorithm, Provider provider, List<Certificate> certificateChain) throws SignedRequestException {
         try {
             LOG.debug(">createSignedRequest");
-            return createSignedJwt(createContentToBeSigned(requestDataDigest, metadata, fileName, workerName, workerId),
+            return createSignedJwt(createContentToBeSigned(digestAlgorithm, requestDataDigest, metadata, fileName, workerName, workerId),
                                    signKey, certificateChain.get(0).getPublicKey(), signatureAlgorithm,
                                    provider, certificateChain);
         } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | CertificateEncodingException ex) {
@@ -375,34 +379,48 @@ public class SignedRequestSigningHelper {
         return result;
     }
         
-    private static Properties createContentToBeSigned(byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+    private static Properties createContentToBeSigned(String digestAlgorithm, byte[] requestDataDigest, Map<String, String> metadata, String fileName, String workerName, Integer workerId) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
         Properties properties = new Properties();
        
         properties.put("data", Hex.toHexString(requestDataDigest));
         ArrayList<String> metaKeys = new ArrayList<>(metadata.keySet());
         for (String metaKey : metaKeys) {
             if (!metaKey.equals(METADATA_PROPERTY_SIGNED_REQUEST)) {
-                properties.put("meta." + metaKey, Hex.toHexString(hash(metadata.get(metaKey))));
+                properties.put("meta." + metaKey, Hex.toHexString(hash(metadata.get(metaKey), digestAlgorithm)));
             }
         }
         if (fileName != null) {
-            properties.put(RequestContext.FILENAME, Hex.toHexString(hash(fileName)));
+            properties.put(RequestContext.FILENAME, Hex.toHexString(hash(fileName, digestAlgorithm)));
         }
 
         if (workerName != null) {
-            properties.put("workerName", Hex.toHexString(hash(workerName)));
+            properties.put("workerName", Hex.toHexString(hash(workerName, digestAlgorithm)));
         }
         if (workerId != null) {
-            properties.put("workerId", Hex.toHexString(hash(String.valueOf(workerId))));
+            properties.put("workerId", Hex.toHexString(hash(String.valueOf(workerId), digestAlgorithm)));
         }
         
         return properties;
     }
     
-    public static byte[] hash(String value) throws NoSuchAlgorithmException, NoSuchProviderException {
-        MessageDigest md = MessageDigest.getInstance(DIGEST_ALGORITHM, "BC");
+    public static byte[] hash(String value, String digestAlgorithm) throws NoSuchAlgorithmException, NoSuchProviderException {
+        MessageDigest md = MessageDigest.getInstance(digestAlgorithm, "BC");
         
         return md.digest(value == null ? new byte[0] : value.getBytes(StandardCharsets.UTF_8));
+    }
+    
+    /**
+     * Get the hash algorithm to use based on the signature algorithm in the JWS.
+     * Note: This implementation assumes the SHA-2 family is used and the number in the
+     * algorithm indicates the digest bit length. When support for other digest
+     * algorithms like SHA3 is introduced this code need to be updated to handle those
+     * differently.
+     * @param jws to get the signature algorithm from
+     * @return the JCA digest algorithm name corresponding to the signature algorithm
+     */
+    public static String getDigestAlgorithm(final Jws<Claims> jws) {
+        SignatureAlgorithm alg = SignatureAlgorithm.forName(jws.getHeader().getAlgorithm());
+        return "SHA-" + alg.getValue().substring(2);
     }
 
 }

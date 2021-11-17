@@ -116,7 +116,9 @@ public class KeyStoreOptions {
     public static final String SIGN_REQUEST = "signrequest";
 
     public static final String PASSWORDFROMSTDIN = "passwordfromstdin";
-    public static String NOHTTPS = "nohttps";
+
+    /** Option NOHTTPS. */
+    public static final String NOHTTPS = "nohttps";
 
     public static List<Option> getKeyStoreOptions() {
         return Arrays.asList(

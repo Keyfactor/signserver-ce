@@ -64,9 +64,12 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runners.MethodSorters;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.common.AbstractCertReqData;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
@@ -99,6 +102,7 @@ public class SignClientP11AuthTest {
     private static final int WORKER_PLAIN = 40020;
     private static final String TEST_AUTH_KEY = "testAuthKey";
     private static final String TEST_AUTH_ALT_KEY = "testAuthKeyAlt";
+    private static final String TEST_SIGN_KEY = "testSignKey";
 
     private final String sharedLibraryName;
     private final String sharedLibraryPath;
@@ -117,6 +121,7 @@ public class SignClientP11AuthTest {
     
     private final String AUTH_KEY_CERT_CN = "Worker" + CRYPTO_TOKEN_ID + "P11Auth";
     private final String AUTH_KEY_ALT_CERT_CN = "Worker" + CRYPTO_TOKEN_ID + "P11AuthAlt";
+    private final String SIGN_KEY_CERT_CN = "P11RequestSign";
     
     // Using "<data/>" instead of "data" caused "The system cannot find the file specified" error and did not go well with ComplianceTestUtils.execute() on Windows Environment
     private final String data = "data";
@@ -203,6 +208,77 @@ public class SignClientP11AuthTest {
             workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
             testCase.removeWorker(CRYPTO_TOKEN_ID);
             testCase.removeWorker(WORKER_PLAIN);
+        }
+    }
+
+    /**
+     * Test signed request with a fixed key.
+     * Using the -signkeyalias parameter.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testPlainSigner_P11SignedRequestFixedKey() throws Exception {
+        LOG.info("testPlainSignerP11SignedRequest");
+        File p11ConfigFile = null;
+
+        try {
+            p11ConfigFile = File.createTempFile("sunpkcs11-", ".cfg");
+            createPKCS11ConfigFile(p11ConfigFile);
+
+            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+            createP11AuthKey();
+            createP11SignKey();
+
+            final List<Certificate> chain =
+                    workerSession.getSignerCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN_ID),
+                                                            TEST_SIGN_KEY);
+            // Get CA cert from file
+            final File caPemFile = new File(dss10RootCAPemPath);
+            final X509Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
+            final String trustAnchors = CertTools.getPemFromCertificate(caCert);
+            
+            setPlainSignerProperties(WORKER_PLAIN, true);
+            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+                                            "org.signserver.server.enterprise.signedrequest.SignedRequestAuthorizer");
+            workerSession.setWorkerProperty(WORKER_PLAIN, "TRUSTANCHORS",
+                                            trustAnchors);
+            workerSession.setWorkerProperty(WORKER_PLAIN, "REVOCATION_CHECKING",
+                                            "false");
+            workerSession.setWorkerProperty(WORKER_PLAIN,
+                                            "REQUIRE_TLS_CLIENT_CERTIFICATE",
+                                            "false");
+
+            final CertificateMatchingRule authClient =
+                new CertificateMatchingRule(MatchSubjectWithType.SUBJECT_RDN_CN,
+                                            MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                                            SIGN_KEY_CERT_CN,
+                                            ISSUER_DN,
+                                            "Request sign key rule");
+
+            workerSession.addAuthorizedClientGen2(WORKER_PLAIN, authClient);
+            workerSession.addAuthorizedClientGen2(WORKER_PLAIN, authClient);
+
+            workerSession.reloadConfiguration(WORKER_PLAIN);
+
+            ComplianceTestUtils.ProcResult res
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
+                            "-data", data,
+                            "-keystoretype", "PKCS11_CONFIG",
+                            "-signkeyalias", TEST_SIGN_KEY,
+                            "-keystore", p11ConfigFile.getAbsolutePath(),
+                            "-keystorepwd", pin,
+                            "-nohttps",
+                            "-signrequest");
+            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID),
+                                    TEST_AUTH_KEY);
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID),
+                                    TEST_SIGN_KEY);
+            testCase.removeWorker(CRYPTO_TOKEN_ID);
+            testCase.removeWorker(WORKER_PLAIN);
+            FileUtils.deleteQuietly(p11ConfigFile);
         }
     }
     
@@ -686,7 +762,9 @@ public class SignClientP11AuthTest {
                    NoSuchAlgorithmException, CertificateException,
                    UnrecoverableKeyException, OperatorCreationException,
                    OperationUnsupportedException {
-        createP11Key(TEST_AUTH_KEY, AUTH_KEY_CERT_CN);
+        createP11Key(TEST_AUTH_KEY, AUTH_KEY_CERT_CN,
+                     new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth,
+                                          KeyPurposeId.id_kp_codeSigning });
     }
 
     private void createP11AltAuthKey()
@@ -696,10 +774,23 @@ public class SignClientP11AuthTest {
                    CertificateException, CertificateParsingException,
                    UnrecoverableKeyException, OperatorCreationException,
                    OperationUnsupportedException {
-        createP11Key(TEST_AUTH_ALT_KEY, AUTH_KEY_ALT_CERT_CN);
+        createP11Key(TEST_AUTH_ALT_KEY, AUTH_KEY_ALT_CERT_CN, null);
     }
 
-    private void createP11Key(final String keyAlias, final String CN)
+    private void createP11SignKey()
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                   IOException, FileNotFoundException, KeyStoreException,
+                   CertificateParsingException, NoSuchProviderException,
+                   NoSuchAlgorithmException, CertificateException,
+                   UnrecoverableKeyException, OperatorCreationException,
+                   OperationUnsupportedException {
+        createP11Key(TEST_SIGN_KEY, SIGN_KEY_CERT_CN,
+                     new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth,
+                                          KeyPurposeId.id_kp_codeSigning });
+    }
+
+    private void createP11Key(final String keyAlias, final String CN,
+                              final KeyPurposeId[] ekus)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
                    IOException, FileNotFoundException, KeyStoreException,
                    CertificateParsingException, NoSuchProviderException,
@@ -719,7 +810,25 @@ public class SignClientP11AuthTest {
         X509Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
          
         // Issue certificate
-        final X509CertificateHolder certHolder = new X509v3CertificateBuilder(new X500Name(caCert.getIssuerDN().getName()), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning })).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(getdss10CAPrivateKey()));
+        X509v3CertificateBuilder builder =
+                new X509v3CertificateBuilder(new X500Name(caCert.getIssuerDN().getName()),
+                                             BigInteger.ONE, new Date(),
+                                             new Date(System.currentTimeMillis() +
+                                                      TimeUnit.DAYS.toMillis(365)),
+                                             csr.getSubject(),
+                                             csr.getSubjectPublicKeyInfo());
+        
+        if (ekus != null) {
+            final ExtendedKeyUsage eku = new ExtendedKeyUsage(ekus);
+
+            builder.addExtension(Extension.extendedKeyUsage, true, eku);
+        }
+        
+        final X509CertificateHolder certHolder =
+                builder
+                    .build(new JcaContentSignerBuilder("SHA256WithRSA")
+                    .setProvider("BC")
+                    .build(getdss10CAPrivateKey()));
         Certificate signerCert = CertTools.getCertfromByteArray(certHolder.getEncoded());
         
         List certChain = Arrays.asList(signerCert, caCert);        

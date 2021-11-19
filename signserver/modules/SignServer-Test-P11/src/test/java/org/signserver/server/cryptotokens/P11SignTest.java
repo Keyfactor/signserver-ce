@@ -277,6 +277,57 @@ public class P11SignTest {
             testCase.removeWorker(workerId);
         }
     }
+    
+    @Test
+    public void testPlainSigner_NONEwithECDSA() throws Exception {
+        final int workerId = WORKER_PLAIN;
+        String key = "testKeyEc";
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            setPlainSignerProperties();
+            workerSession.reloadConfiguration(workerId);
+
+            workerSession.generateSignerKey(new WorkerIdentifier(20020), "ECDSA", "secp256r1", key, pin.toCharArray());
+            workerSession.setWorkerProperty(20020, "DEFAULTKEY", key);
+            workerSession.setWorkerProperty(20020, "SIGNATUREALGORITHM", "NONEwithECDSA");
+            workerSession.reloadConfiguration(20020);
+
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA256withECDSA", "CN=Worker" + 20020, null);
+            AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(20020), certReqInfo, false);
+
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
+            KeyPair issuerKeyPair = CryptoUtils.generateEcCurve("secp256r1");
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256withECDSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(20020, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(20020, Collections.singletonList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(20020);
+
+            X509Certificate xcert = CertTools.getCertfromByteArray(cert.getEncoded(), X509Certificate.class);
+
+            // Test active
+            List<String> errors = workerSession.getStatus(new WorkerIdentifier(20020)).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+
+            byte[] plainText = "some-data".getBytes(StandardCharsets.US_ASCII);
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(plainText);
+            byte[] hash = md.digest();
+
+            // Test signing
+            GenericSignResponse response = testCase.signGenericDocument(20020, hash);
+
+            byte[] signatureBytes = response.getProcessedData();
+
+            assertTrue("signature verification", verifySignature(plainText, signatureBytes, "SHA256withECDSA", xcert.getPublicKey(), "BC"));
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(20020), key);
+            testCase.removeWorker(workerId);
+        }
+    }
 
     private void setPlainSignerProperties() {
         // Setup worker
@@ -324,6 +375,10 @@ public class P11SignTest {
         } finally {
             workerSession.removeKey(new WorkerIdentifier(20020), key);
         }
+    }
+    
+    private void plainSignerNoneWithEcdsa() throws Exception {
+        
     }
 
     @Test

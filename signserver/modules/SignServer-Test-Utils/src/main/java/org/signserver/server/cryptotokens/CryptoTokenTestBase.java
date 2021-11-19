@@ -161,7 +161,7 @@ public abstract class CryptoTokenTestBase {
                 aliases.add(entry.getAlias());
             }
             LOG.info("Existing aliases: " + aliases);
-            assertEquals("no entries except the test key yet", 1, searchResults.getEntries().size());
+            assertEquals("no entries except the test key yet", 2, searchResults.getEntries().size());
             assertFalse("no more entries", searchResults.isMoreEntriesAvailable());
 
             // Now create some entries

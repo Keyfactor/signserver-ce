@@ -71,8 +71,9 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
     private static final Logger LOG = Logger.getLogger(InternalKeystoreCryptoTokenTest.class);
     
     private final MockedKeystoreInConfig instance = new MockedKeystoreInConfig();
-    
-    private final String existingKey1 = getConfig().getProperty("test.p11.existingkey1");    
+
+    private final String existingKey1 = getConfig().getProperty("test.p11.existingkey1");
+    private final String existingECKey1 = getConfig().getProperty("test.p11.existingECkey1");
 
     public InternalKeystoreCryptoTokenTest() {
     }
@@ -90,6 +91,7 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
         instance.init(1, config, new MockedServicesImpl());
         instance.activate("password123123213", instance.getMockedServices());
         instance.generateKey("RSA", "1024", existingKey1, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
+        instance.generateKey("ECDSA", "secp384r1", existingECKey1, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
     }
     
     @Test

@@ -138,7 +138,7 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
 
         if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
             final Certificate[] chain = keystore.getCertificateChain(keyAlias);
-            if (chain.length > 0) {
+            if (chain != null && chain.length > 0) {
                 final PublicKey pubKey = chain[0].getPublicKey();
                 final String keyAlgorithm =
                         AlgorithmTools.getKeyAlgorithm(pubKey);

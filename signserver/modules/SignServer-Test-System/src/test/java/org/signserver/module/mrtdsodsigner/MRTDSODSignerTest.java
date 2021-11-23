@@ -308,15 +308,15 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1C, "MINREMAININGCERTVALIDITY", "0");
         workerSession.reloadConfiguration(WORKER1C);
 
-        //    Certificate with: cert#1: priv=[2015, 2020], cert=[2025, 2030]
-        //              cert#2: priv=[2025, 2030], cert=[2015, 2020]
+        //    Certificate with: cert#1: priv=[2026, 2028], cert=[2025, 2029]
+        //              cert#2: priv=[2024, 2029], cert=[2015, 2019]
         //
         //
-        //    test#1: 	getSignerValidityNotAfter:  cert#1, bCert 	= 2030
+        //    test#1: 	getSignerValidityNotAfter:  cert#1, bCert 	= 2029
         Date d = workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#1 not null", d);
         cal.setTime(d);
-        assertEquals(2030, cal.get(Calendar.YEAR));
+        assertEquals(2029, cal.get(Calendar.YEAR));
 
         //    test#2	getSignerValidityNotBefore: cert#1, bCert       = 2025
         d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
@@ -324,7 +324,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
 
-        //    test#3: 	getSignerValidityNotAfter:  cert#1, bPriv       = 2020
+        //    test#3: 	getSignerValidityNotAfter:  cert#1, bPriv       = 2028
         workerSession.setWorkerProperty(WORKER1C, "CHECKCERTVALIDITY", "False");
         workerSession.setWorkerProperty(WORKER1C, "CHECKCERTPRIVATEKEYVALIDITY",
                 "True");
@@ -332,27 +332,27 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         d = workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#3 not null", d);
         cal.setTime(d);
-        assertEquals(2020, cal.get(Calendar.YEAR));
+        assertEquals(2028, cal.get(Calendar.YEAR));
 
-        //    test#4	getSignerValidityNotBefore: cert#1, bPriv       = 2015
+        //    test#4	getSignerValidityNotBefore: cert#1, bPriv       = 2026
         d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#4 not null", d);
         cal.setTime(d);
-        assertEquals(2015, cal.get(Calendar.YEAR));
+        assertEquals(2026, cal.get(Calendar.YEAR));
 
-        //    test#5: 	getSignerValidityNotAfter:  cert#1, bCert, bPriv	  = 2020
+        //    test#5: 	getSignerValidityNotAfter:  cert#1, bCert, bPriv	  = 2028
         workerSession.setWorkerProperty(WORKER1C, "CHECKCERTVALIDITY", "True");
         workerSession.reloadConfiguration(WORKER1C);
         d = workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#5 not null", d);
         cal.setTime(d);
-        assertEquals(2020, cal.get(Calendar.YEAR));
+        assertEquals(2028, cal.get(Calendar.YEAR));
 
-        //    test#6		getSignerValidityNotBefore: cert#1, bCert, bPrive = 2015
+        //    test#6		getSignerValidityNotBefore: cert#1, bCert, bPriv = 2026
         d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#6 not null", d);
         cal.setTime(d);
-        assertEquals(2015, cal.get(Calendar.YEAR));
+        assertEquals(2026, cal.get(Calendar.YEAR));
 
         //    test#7: 	getSignerValidityNotAfter:  cert#1, bCert, r10 		  = 2020
         workerSession.setWorkerProperty(WORKER1C, "CHECKCERTPRIVATEKEYVALIDITY",
@@ -364,7 +364,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         cal.setTime(d);
         assertEquals(2020, cal.get(Calendar.YEAR));
 
-        //    test#8		getSignerValidityNotBefore: cert#1, bCert, r10	  = 2015
+        //    test#8		getSignerValidityNotBefore: cert#1, bCert, r10	  = 2025
         d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#8 not null", d);
         cal.setTime(d);
@@ -384,7 +384,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
 
-        //    test#21: 	getSignerValidityNotAfter:  cert#2, bCert 		  = 2020
+        //    test#21: 	getSignerValidityNotAfter:  cert#2, bCert 		  = 2019
         workerSession.setWorkerProperty(WORKER1D, "CHECKCERTVALIDITY", "True");
         workerSession.setWorkerProperty(WORKER1D, "CHECKCERTPRIVATEKEYVALIDITY",
                 "False");
@@ -393,7 +393,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         d = workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#21 not null", d);
         cal.setTime(d);
-        assertEquals(2020, cal.get(Calendar.YEAR));
+        assertEquals(2019, cal.get(Calendar.YEAR));
 
         //    test#22		getSignerValidityNotBefore: cert#2, bCert	  = 2015
         assertNotNull("test#22 not null", d);
@@ -401,7 +401,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         cal.setTime(d);
         assertEquals(2015, cal.get(Calendar.YEAR));
 
-        //    test#23: 	getSignerValidityNotAfter:  cert#2, bPriv 		  = 2030
+        //    test#23: 	getSignerValidityNotAfter:  cert#2, bPriv 		  = 2029
         workerSession.setWorkerProperty(WORKER1D, "CHECKCERTVALIDITY", "False");
         workerSession.setWorkerProperty(WORKER1D, "CHECKCERTPRIVATEKEYVALIDITY",
                 "True");
@@ -409,27 +409,27 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         d = workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#23 not null", d);
         cal.setTime(d);
-        assertEquals(2030, cal.get(Calendar.YEAR));
+        assertEquals(2029, cal.get(Calendar.YEAR));
 
-        //    test#24		getSignerValidityNotBefore: cert#2, bPriv	 = 2025
+        //    test#24		getSignerValidityNotBefore: cert#2, bPriv	 = 2024
         d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#24 not null", d);
         cal.setTime(d);
-        assertEquals(2025, cal.get(Calendar.YEAR));
+        assertEquals(2024, cal.get(Calendar.YEAR));
 
-        //    test#25: 	getSignerValidityNotAfter:  cert#2, bCert, bPriv	 = 2020
+        //    test#25: 	getSignerValidityNotAfter:  cert#2, bCert, bPriv	 = 2019
         workerSession.setWorkerProperty(WORKER1D, "CHECKCERTVALIDITY", "True");
         workerSession.reloadConfiguration(WORKER1D);
         d = workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#25 not null", d);
         cal.setTime(d);
-        assertEquals(2020, cal.get(Calendar.YEAR));
+        assertEquals(2019, cal.get(Calendar.YEAR));
 
-        //    test#26		getSignerValidityNotBefore: cert#2, bCert, bPriv = 2025
+        //    test#26		getSignerValidityNotBefore: cert#2, bCert, bPriv = 2024
         d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#26 not null", d);
         cal.setTime(d);
-        assertEquals(2025, cal.get(Calendar.YEAR));
+        assertEquals(2024, cal.get(Calendar.YEAR));
 
         //    test#27: 	getSignerValidityNotAfter:  cert#2, bCert, r10 		  = 2010 r10 -> 3650
         workerSession.setWorkerProperty(WORKER1D, "CHECKCERTPRIVATEKEYVALIDITY",

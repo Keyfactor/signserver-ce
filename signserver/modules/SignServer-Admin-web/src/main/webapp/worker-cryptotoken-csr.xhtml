@@ -166,9 +166,8 @@
                                           itemLabel="#{text['CSR_signed_by_worker']} "/>
                         </h:selectOneRadio>
                         <h:selectOneMenu id="requestSigner" value="#{cSRBulkBean.requestSigner}">
-                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}"/>
+                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenuList}" var="n" itemValue="#{n.name}" itemLabel="#{n.label}"/>
                         </h:selectOneMenu>
-
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
                                 <h:commandButton class="buttonFeatured" value="#{text['Generate']}" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="#{text['Cancel']}" outcome="#{cSRBulkBean.getBackToCryptoTokenLink(cSRBulkBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>

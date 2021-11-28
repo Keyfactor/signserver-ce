@@ -20,12 +20,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Optional;
 import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -217,7 +216,7 @@ public class CertificatesBulkBean extends BulkBean {
         //private UploadedFile uploadedFile;
         private final int rowIndex;
         private boolean showOther;
-        private LinkedHashMap<String, Object> aliasMenuValues;
+        private List<SelectItem> aliasMenuValues;
         private boolean inToken;
 
         public CertificatesWorker(int id, boolean exists, String name, Properties config, String alias, int rowIndex) {
@@ -270,27 +269,28 @@ public class CertificatesBulkBean extends BulkBean {
             return rowIndex;
         }
 
-        public Map<String, Object> getAliasMenuValues() {
+        public List<SelectItem> getAliasMenuValues() {
             if (aliasMenuValues == null) {
-                aliasMenuValues = new LinkedHashMap<>();
+                aliasMenuValues = new ArrayList<>();
                 Properties config = getConfig();
                 String defaultKey = config.getProperty("DEFAULTKEY");
                 if (defaultKey != null) {
-                    aliasMenuValues.put("Default key (" + defaultKey + ")", defaultKey);
+                    aliasMenuValues.add(new SelectItem("Default key (" + defaultKey + ")", defaultKey));
                 }
                 String nextKey = config.getProperty("NEXTCERTSIGNKEY");
                 if (nextKey != null) {
-                    aliasMenuValues.put("Next key (" + nextKey + ")", nextKey);
+                    aliasMenuValues.add(new SelectItem("Next key (" + nextKey + ")", nextKey));
                 }
                 if (alias != null && !alias.equals(defaultKey) && !alias.equals(nextKey)) {
-                    aliasMenuValues.put("Other key (" + alias + ")", alias);
+                    aliasMenuValues.add(new SelectItem("Other key (" + alias + ")", alias));
                 }
             }
             return aliasMenuValues;
         }
 
         public String getAliasMenuValuesFirst() {
-            return aliasMenuValues.keySet().iterator().next();
+            Optional<SelectItem> first = aliasMenuValues.stream().findFirst();
+            return first.get().getItemLabel();
         }
 
         public boolean isInToken() {

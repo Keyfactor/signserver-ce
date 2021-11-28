@@ -82,7 +82,7 @@
                                         </td>
                                         <td>
                                             <h:selectOneMenu value="#{workerAuthBean.matchSubjectWithType}" styleClass="editAuthRule">
-                                                <f:selectItems value="#{workerAuthBean.matchWithSubjectTypes}" />
+                                                <f:selectItems value="#{workerAuthBean.matchWithSubjectTypes}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
                                             </h:selectOneMenu>
                                             <h:message for="matchSubjectWithType" class="errorMessage"/>
                                         </td>
@@ -103,7 +103,7 @@
                                         </td>
                                         <td>
                                             <h:selectOneMenu value="#{workerAuthBean.matchIssuerWithType}" style="" styleClass="editAuthRule">
-                                                <f:selectItems value="#{workerAuthBean.matchWithIssuerTypes}" />
+                                                <f:selectItems value="#{workerAuthBean.matchWithIssuerTypes}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
                                             </h:selectOneMenu>
                                             <h:message for="matchIssuerWithType" class="errorMessage"/>
                                         </td>

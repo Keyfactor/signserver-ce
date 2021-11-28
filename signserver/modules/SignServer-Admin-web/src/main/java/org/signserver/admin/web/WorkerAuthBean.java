@@ -23,12 +23,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -623,28 +621,26 @@ public class WorkerAuthBean {
     public boolean isImportState() {
         return importState;
     }
-    
-    public Map<String, String> getMatchWithSubjectTypes() {
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        
+
+    public List<SelectItem> getMatchWithSubjectTypes() {
+        List<SelectItem> result = new ArrayList<>();
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "text");
         
         for (MatchSubjectWithType type : MatchSubjectWithType.values()) {
-            result.put(bundle.getString(type.name()), type.name());
+            result.add(new SelectItem(bundle.getString(type.name()), type.name()));
         }
 
         return result;
     }
     
-    public Map<String, String> getMatchWithIssuerTypes() {
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
-
+    public List<SelectItem> getMatchWithIssuerTypes() {
+        List<SelectItem> result = new ArrayList<>();
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "text");
 
         for (MatchIssuerWithType type : MatchIssuerWithType.values()) {
-            result.put(bundle.getString(type.name()), type.name());
+            result.add(new SelectItem(bundle.getString(type.name()), type.name()));
         }
 
         return result;

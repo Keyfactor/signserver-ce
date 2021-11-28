@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -84,13 +83,13 @@ public class AuditLogBean {
     private String conditionColumn;
 
     private static final Map<String, String> NAME_FROM_COLUMN = new HashMap<>();
-    private static final Map<String, String> COLUMN_FROM_NAME = new HashMap<>();
+    private static final List<SelectItem> COLUMN_FROM_NAME = new ArrayList<>();
 
     static {
         for (AuditLogColumn col : AuditLogColumn.values()) {
             String description = col.getDescription() + " (" + col.getName() + ")";
             NAME_FROM_COLUMN.put(col.getName(), description);
-            COLUMN_FROM_NAME.put(description, col.name());
+            COLUMN_FROM_NAME.add(new SelectItem(description, col.name()));
         }
     }
 
@@ -279,7 +278,7 @@ public class AuditLogBean {
         return NAME_FROM_COLUMN;
     }
 
-    public Map<String, String> getColumns() {
+    public List<SelectItem> getColumns() {
         return COLUMN_FROM_NAME;
     }
 
@@ -318,11 +317,11 @@ public class AuditLogBean {
         conditionToAdd = new QueryCondition(column.getName(), RelationalOperator.EQ, value);
     }
 
-    public Map<String, String> getDefinedConditions() {
-        Map<String, String> result = new LinkedHashMap<>();
+    public List<SelectItem> getDefinedConditions() {
+        List<SelectItem> result = new ArrayList<>();
         QueryOperator[] operatorsForColumn = OperatorsPerColumnUtil.getOperatorsForColumn(AuditLogColumn.valueOf(conditionColumn));
         for (QueryOperator op : operatorsForColumn) {
-            result.put(op.getDescription(), op.getOperator().name());
+            result.add(new SelectItem(op.getDescription(), op.getOperator().name()));
         }
         return result;
     }

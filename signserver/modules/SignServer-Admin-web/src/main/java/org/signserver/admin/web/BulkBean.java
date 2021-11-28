@@ -289,14 +289,14 @@ public class BulkBean {
         return availableWorkersMenu;
     }
 
-    public List<WorkerItem> getAvailableWorkersMenuList() throws AdminNotAuthorizedException {
-        List<WorkerItem> workerItems = new ArrayList<>();
+    public List<SelectItem> getAvailableWorkersMenuList() throws AdminNotAuthorizedException {
+        List<SelectItem> result = new ArrayList<>();
         for (Integer id : getWorkerSessionBean().getAllWorkers(getAuthBean().getAdminCertificate())) {
             Properties config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id).getProperties();
             String name = config.getProperty("NAME", String.valueOf(id));
-            workerItems.add(new WorkerItem(name, id));
+            result.add(new SelectItem(name, id.toString()));
         }
-        return workerItems;
+        return result;
     }
 
     public String getBackLink() {

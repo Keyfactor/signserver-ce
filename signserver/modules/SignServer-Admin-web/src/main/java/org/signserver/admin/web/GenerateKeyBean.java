@@ -15,7 +15,6 @@ package org.signserver.admin.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
@@ -272,8 +271,8 @@ public class GenerateKeyBean {
         private boolean selectAlgFromList = true;
         private boolean selectKeySpecFromList = true;
         private String errorMessage;
-        private Map<String, Object> algMenuValues;
-        private Map<String, Object> keySpecMenuValues;
+        private List<SelectItem> algMenuValues;
+        private List<SelectItem> keySpecMenuValues;
         private String keysToBeGenerated = "1";
 
         public Item(WorkerConfig config) {
@@ -358,7 +357,7 @@ public class GenerateKeyBean {
             this.selectKeySpecFromList = selectKeyspecFromList;
         }
 
-        public Map<String, Object> getAlgorithmValues() {
+        public List<SelectItem> getAlgorithmValues() {
             if (algMenuValues == null) {
                 algMenuValues = KeyUtils.getAlgorithmsMap();
             }
@@ -366,7 +365,7 @@ public class GenerateKeyBean {
             return algMenuValues;
         }
 
-        public Map<String, Object> getKeySpecValues() {
+        public List<SelectItem> getKeySpecValues() {
             if (keySpecMenuValues == null) {
                 keySpecMenuValues = KeyUtils.getKeySpecsMap(keyAlg);
             }

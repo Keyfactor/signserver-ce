@@ -72,7 +72,7 @@
                                     <h:selectOneMenu id="keyAlgDropdown"
                                                       value="#{item.keyAlg}"
                                                       rendered="#{item.selectAlgFromList}">
-                                        <f:selectItems value="#{item.algorithmValues}"/>
+                                        <f:selectItems value="#{item.algorithmValues}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
                                         <f:ajax render="keySpecDropdown"/>
                                     </h:selectOneMenu>
                                     <h:commandButton class="buttonNeutral"
@@ -95,7 +95,7 @@
                                     <h:selectOneMenu id="keySpecDropdown"
                                                      value="#{item.keySpec}"
                                                      rendered="#{item.selectKeySpecFromList}">
-                                        <f:selectItems value="#{item.keySpecValues}"/>
+                                        <f:selectItems value="#{item.keySpecValues}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
                                     </h:selectOneMenu>
                                     <h:commandButton class="buttonNeutral"
                                                      id="enterKeySpecManually"

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
 import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.util.StringTools;
 
@@ -68,13 +69,13 @@ public class KeyUtils {
      * 
      * @return The map of key algorithm labels and values.
      */
-    public static Map<String, Object> getAlgorithmsMap() {
-        final Map<String, Object> algMenuValues = new LinkedHashMap<>();
+    public static List<SelectItem> getAlgorithmsMap() {
+        final List<SelectItem> algMenuValues = new ArrayList<>();
 
-        algMenuValues.put("RSA", "RSA");
-        algMenuValues.put("DSA", "DSA");
-        algMenuValues.put("ECDSA", "ECDSA");
-        algMenuValues.put("AES", "AES");
+        algMenuValues.add(new SelectItem("RSA", "RSA"));
+        algMenuValues.add(new SelectItem("DSA", "DSA"));
+        algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
+        algMenuValues.add(new SelectItem("AES", "AES"));
 
         return algMenuValues;
     }
@@ -86,32 +87,32 @@ public class KeyUtils {
      * @param keyAlg
      * @return 
      */
-    public static Map<String, Object> getKeySpecsMap(final String keyAlg) {
-        final Map<String, Object> keySpecMenuValues = new LinkedHashMap<>();
+    public static List<SelectItem> getKeySpecsMap(final String keyAlg) {
+        final List<SelectItem> keySpecMenuValues = new ArrayList<>();
 
         switch (keyAlg) {
             case "RSA":
                 for (final int keySize : RSA_KEY_SIZES) {
-                    keySpecMenuValues.put(Integer.toString(keySize),
-                                          Integer.toString(keySize));
+                    keySpecMenuValues.add(new SelectItem(Integer.toString(keySize),
+                            Integer.toString(keySize)));
                 }
                 break;
             case "DSA":
                 for (final int keySize : DSA_KEY_SIZES) {
-                    keySpecMenuValues.put(Integer.toString(keySize),
-                                          Integer.toString(keySize));
+                    keySpecMenuValues.add(new SelectItem(Integer.toString(keySize),
+                            Integer.toString(keySize)));
                 }
                 break;
             case "ECDSA":
                 for (final String key : ECDSA_CURVES.keySet()) {
-                    keySpecMenuValues.put(ECDSA_CURVES.get(key), key);
+                    keySpecMenuValues.add(new SelectItem(ECDSA_CURVES.get(key), key));
                 }
                 break;
 
             case "AES":
                 for (final int keySize : AES_KEY_SIZES) {
-                    keySpecMenuValues.put(Integer.toString(keySize),
-                                          Integer.toString(keySize));
+                    keySpecMenuValues.add(new SelectItem(Integer.toString(keySize),
+                            Integer.toString(keySize)));
                 }
                 break;
             default:

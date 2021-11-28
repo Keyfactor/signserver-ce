@@ -20,9 +20,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.faces.bean.ManagedBean;
@@ -267,12 +266,12 @@ public class CSRBulkBean extends BulkBean {
         private byte[] pemFile;
         private final int rowIndex;
         private boolean showOther;
-        private LinkedHashMap<String, Object> aliasMenuValues;
+        private List<SelectItem> aliasMenuValues;
         private String contentType;
         private String fileSuffix;
         private final boolean fixedAlias;
         private boolean selectSignatureAlgorithmFromList = true;
-        private LinkedHashMap<String, Object> signatureAlgorithmMenuValues;
+        private List<SelectItem> signatureAlgorithmMenuValues;
 
         public CSRWorker(int id, boolean exists, String name, Properties config, String alias, String signatureAlgorithm, String dn, int rowIndex, boolean fixedAlias) {
             super(id, exists, name, config);
@@ -317,15 +316,14 @@ public class CSRBulkBean extends BulkBean {
          */
         private String getNormalizedSignatureAlgorithm(final String sigAlg) {
             final String trimmedSigAlg = StringUtils.trim(sigAlg);
-            Map<String, Object> knownAlgs = getSignatureAlgorihmMenuValues();
-            
-            for (final String knownAlg : knownAlgs.keySet()) {
-                if (knownAlg.equalsIgnoreCase(trimmedSigAlg)) {
-                    return knownAlg;
-                }
-            }
-
-            return sigAlg;
+            List<SelectItem> knownAlgs = getSignatureAlgorithmMenuValues();
+            SelectItem result = new SelectItem(sigAlg, sigAlg);
+            Optional<SelectItem> first = knownAlgs.stream().filter(alg -> alg.getItemValue().equalsIgnoreCase(trimmedSigAlg)).findFirst();
+            first.ifPresent(a -> {
+                result.setItemValue(a.getItemValue());
+                result.setItemLabel(a.getItemLabel());
+            });
+            return result.getItemValue();
         }
 
         public String getDn() {
@@ -376,49 +374,49 @@ public class CSRBulkBean extends BulkBean {
             this.selectSignatureAlgorithmFromList = selectSignatureAlgorithmFromList;
         }
 
-        public Map<String, Object> getSignatureAlgorihmMenuValues() {
+        public List<SelectItem> getSignatureAlgorithmMenuValues() {
             if (signatureAlgorithmMenuValues == null) {
-                signatureAlgorithmMenuValues = new LinkedHashMap<>();
+                signatureAlgorithmMenuValues = new ArrayList<>();
                 AlgorithmTools.SIG_ALGS_RSA.forEach((alg) -> {
-                    signatureAlgorithmMenuValues.put(alg, alg);
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_DSA.forEach((alg) -> {
-                    signatureAlgorithmMenuValues.put(alg, alg);
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
-                 AlgorithmTools.SIG_ALGS_ECDSA.forEach((alg) -> {
-                    signatureAlgorithmMenuValues.put(alg, alg);
+                AlgorithmTools.SIG_ALGS_ECDSA.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_ECGOST3410.forEach((alg) -> {
-                    signatureAlgorithmMenuValues.put(alg, alg);
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_DSTU4145.forEach((alg) -> {
-                    signatureAlgorithmMenuValues.put(alg, alg);
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
             }
             return signatureAlgorithmMenuValues;
         }
 
-        public Map<String, Object> getAliasMenuValues() {
+        public List<SelectItem> getAliasMenuValues() {
             if (aliasMenuValues == null) {
-                aliasMenuValues = new LinkedHashMap<>();
+                aliasMenuValues = new ArrayList<>();
                 Properties config = getConfig();
                 String defaultKey = config.getProperty("DEFAULTKEY");
                 if (defaultKey != null) {
-                    aliasMenuValues.put("Default key (" + defaultKey + ")", defaultKey);
+                    aliasMenuValues.add(new SelectItem("Default key (" + defaultKey + ")", defaultKey));
                 }
                 String nextKey = config.getProperty("NEXTCERTSIGNKEY");
                 if (nextKey != null) {
-                    aliasMenuValues.put("Next key (" + nextKey + ")", nextKey);
+                    aliasMenuValues.add(new SelectItem("Next key (" + nextKey + ")", nextKey));
                 }
                 if (alias != null && !alias.equals(defaultKey) && !alias.equals(nextKey)) {
-                    aliasMenuValues.put("Other key (" + alias + ")", alias);
+                    aliasMenuValues.add(new SelectItem("Other key (" + alias + ")", alias));
                 }
             }
             return aliasMenuValues;
         }
 
         public String getAliasMenuValuesFirst() {
-            return aliasMenuValues.keySet().iterator().next();
+            return aliasMenuValues.iterator().next().getItemValue();
         }
 
         public String getContentType() {

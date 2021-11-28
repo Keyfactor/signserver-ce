@@ -80,7 +80,7 @@
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{!item.fixedAlias}">
                                     <h:selectOneMenu id="alias" value="#{item.alias}" rendered="#{(!item.showOther and item.aliasMenuValues.size() > 1)}" disabled="#{!item.existing}">
-                                        <f:selectItems value="#{item.aliasMenuValues}"/>
+                                        <f:selectItems value="#{item.aliasMenuValues}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel}"/>
                                     </h:selectOneMenu>
                                     <b><h:outputText value="#{item.aliasMenuValuesFirst}" rendered="#{(!item.showOther and item.aliasMenuValues.size() == 1)}"/></b> 
                                     <h:inputText id="otherKeyValue" value="#{item.alias}" validatorMessage="*" rendered="#{item.showOther}" disabled="#{!item.existing}">
@@ -113,7 +113,7 @@
                                                  value="#{item.signatureAlgorithm}"
                                                  disabled="#{!item.existing}"
                                                  rendered="#{item.selectSignatureAlgorithmFromList}">
-                                    <f:selectItems value="#{item.signatureAlgorihmMenuValues}"/>
+                                    <f:selectItems value="#{item.signatureAlgorithmMenuValues}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel}"/>
                                 </h:selectOneMenu>
                                 <h:commandButton class="buttonNeutral"
                                                  id="enterSigAlgManually"
@@ -166,7 +166,7 @@
                                           itemLabel="#{text['CSR_signed_by_worker']} "/>
                         </h:selectOneRadio>
                         <h:selectOneMenu id="requestSigner" value="#{cSRBulkBean.requestSigner}">
-                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenuList}" var="n" itemValue="#{n.name}" itemLabel="#{n.label}"/>
+                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenuList}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel} ( #{item.itemValue} )"/>
                         </h:selectOneMenu>
                         <h:panelGrid columns="2">
                             <f:facet name="footer">

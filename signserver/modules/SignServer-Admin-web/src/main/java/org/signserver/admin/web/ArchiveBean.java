@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -82,15 +81,15 @@ public class ArchiveBean {
 
     private String requestedSelected;
     private Map<String, Boolean> selectedIds;
+    private static final List<SelectItem> COLUMN_FROM_NAME = new ArrayList<>();
 
     private static final Map<String, String> NAME_FROM_COLUMN = new HashMap<>();
-    private static final Map<String, String> COLUMN_FROM_NAME = new HashMap<>();
 
     static {
         for (ArchiveColumn col : ArchiveColumn.values()) {
             String description = col.toString();
             NAME_FROM_COLUMN.put(col.getName(), description);
-            COLUMN_FROM_NAME.put(description, col.name());
+            COLUMN_FROM_NAME.add(new SelectItem(description, col.name()));
         }
     }
 
@@ -271,7 +270,7 @@ public class ArchiveBean {
         return NAME_FROM_COLUMN;
     }
 
-    public Map<String, String> getColumns() {
+    public List<SelectItem> getColumns() {
         return COLUMN_FROM_NAME;
     }
 
@@ -312,11 +311,11 @@ public class ArchiveBean {
         conditionToAdd = new QueryCondition(column.getName(), RelationalOperator.EQ, value);
     }
 
-    public Map<String, String> getDefinedConditions() {
-        Map<String, String> result = new LinkedHashMap<>();
+    public List<SelectItem> getDefinedConditions() {
+        List<SelectItem> result = new ArrayList<>();
         QueryOperator[] operatorsForColumn = OperatorsPerColumnUtil.getOperatorsForColumn(ArchiveColumn.valueOf(conditionColumn));
         for (QueryOperator op : operatorsForColumn) {
-            result.put(op.getDescription(), op.getOperator().name());
+            result.add(new SelectItem(op.getDescription(), op.getOperator().name()));
         }
         return result;
     }

@@ -55,7 +55,9 @@
                                 </f:facet>
                                 <h:outputText value="#{archiveBean.nameFromColumn[item.column]}"/>
                                 <f:facet name="footer">
-                                    <h:selectOneMenu rendered="#{archiveBean.conditionToAdd == null}" value="#{archiveBean.conditionColumn}"><f:selectItems value="#{archiveBean.columns}"/></h:selectOneMenu>
+                                    <h:selectOneMenu rendered="#{archiveBean.conditionToAdd == null}" value="#{archiveBean.conditionColumn}">
+                                        <f:selectItems value="#{archiveBean.columns}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel}"/>
+                                    </h:selectOneMenu>
                                     <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd == null}" action="#{archiveBean.addConditionAction()}" value="#{text['Add...']}"/>
                                     <h:outputText rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.nameFromColumn[archiveBean.conditionToAdd.column]}"></h:outputText>
                                 </f:facet>
@@ -66,7 +68,9 @@
                                 </f:facet>
                                 <h:outputText value="#{archiveBean.nameFromCondition(item.operator)}"/>
                                 <f:facet name="footer">
-                                    <h:selectOneMenu rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.conditionToAdd.operator}"><f:selectItems value="#{archiveBean.definedConditions}"/></h:selectOneMenu>
+                                    <h:selectOneMenu rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.conditionToAdd.operator}">
+                                        <f:selectItems value="#{archiveBean.definedConditions}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
+                                    </h:selectOneMenu>
                                 </f:facet>
                             </h:column>
                             <h:column>

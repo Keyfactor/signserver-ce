@@ -14,7 +14,6 @@ package org.signserver.admin.web;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -136,8 +135,8 @@ public class RenewKeyBulkBean extends BulkBean {
         private String newKeyAlias;
         private boolean selectAlgFromList = true;
         private boolean selectKeySpecFromList = true;
-        private Map<String, Object> algMenuValues;
-        private Map<String, Object> keySpecMenuValues;
+        private List<SelectItem> algMenuValues;
+        private List<SelectItem> keySpecMenuValues;
 
         public RenewKeyWorker(int id, boolean exists, String name, Properties config, String oldKeyAlias, String keyAlgorithm, String keySpecification, String newKeyAlias) {
             super(id, exists, name, config);
@@ -206,7 +205,7 @@ public class RenewKeyBulkBean extends BulkBean {
             this.selectKeySpecFromList = selectKeyspecFromList;
         }
 
-        public Map<String, Object> getAlgorithmValues() {
+        public List<SelectItem> getAlgorithmValues() {
             if (algMenuValues == null) {
                 algMenuValues = KeyUtils.getAlgorithmsMap();
             }
@@ -214,7 +213,7 @@ public class RenewKeyBulkBean extends BulkBean {
             return algMenuValues;
         }
 
-        public Map<String, Object> getKeySpecValues() {
+        public List<SelectItem> getKeySpecValues() {
             if (keySpecMenuValues == null) {
                 keySpecMenuValues = KeyUtils.getKeySpecsMap(keyAlgorithm);
             }

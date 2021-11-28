@@ -54,7 +54,9 @@
                                 </f:facet>
                                 <h:outputText value="#{auditLogBean.nameFromColumn[item.column]}"/>
                                 <f:facet name="footer">
-                                    <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd == null}" value="#{auditLogBean.conditionColumn}"><f:selectItems value="#{auditLogBean.columns}"/></h:selectOneMenu>
+                                    <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd == null}" value="#{auditLogBean.conditionColumn}">
+                                        <f:selectItems value="#{auditLogBean.columns}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
+                                    </h:selectOneMenu>
                                     <h:commandButton class="buttonNeutral" rendered="#{auditLogBean.conditionToAdd == null}" action="#{auditLogBean.addConditionAction()}" value="#{text['Add...']}"/>
                                     <h:outputText rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.nameFromColumn[auditLogBean.conditionToAdd.column]}"></h:outputText>
                                 </f:facet>
@@ -65,7 +67,9 @@
                                 </f:facet>
                                 <h:outputText value="#{auditLogBean.nameFromCondition(item.operator)}"/>
                                 <f:facet name="footer">
-                                    <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.conditionToAdd.operator}"><f:selectItems value="#{auditLogBean.definedConditions}"/></h:selectOneMenu>
+                                    <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.conditionToAdd.operator}">
+                                        <f:selectItems value="#{auditLogBean.definedConditions}" var="item" itemLabel="#{item.itemLabel}" itemValue="#{item.itemValue}"/>
+                                    </h:selectOneMenu>
                                 </f:facet>
                             </h:column>
                             <h:column>

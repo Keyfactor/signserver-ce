@@ -61,7 +61,7 @@ public class BulkBean {
 
     private String activatePassword;
 
-    private Map<String, Object> availableWorkersMenu;
+    private List<SelectItem> availableWorkersMenu;
 
     private String previous;
 
@@ -275,28 +275,18 @@ public class BulkBean {
         
     }
 
-    public Map<String, Object> getAvailableWorkersMenu() throws AdminNotAuthorizedException {
+    public List<SelectItem> getAvailableWorkersMenu() throws AdminNotAuthorizedException {
         if (availableWorkersMenu == null) {
-            availableWorkersMenu = new LinkedHashMap<>();
-            availableWorkersMenu.put("--", null);
+            availableWorkersMenu = new ArrayList<>();
+            availableWorkersMenu.add(new SelectItem("--", "--"));
             // XXX: Should be some better API to get all the worker names without loading all config
             for (Integer id : getWorkerSessionBean().getAllWorkers(getAuthBean().getAdminCertificate())) {
                 Properties config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id).getProperties();
                 final String name = config.getProperty("NAME", String.valueOf(id));
-                availableWorkersMenu.put(name + " (" + id + ")", name);
+                availableWorkersMenu.add(new SelectItem(name, String.valueOf(id)));
             }
         }
         return availableWorkersMenu;
-    }
-
-    public List<SelectItem> getAvailableWorkersMenuList() throws AdminNotAuthorizedException {
-        List<SelectItem> result = new ArrayList<>();
-        for (Integer id : getWorkerSessionBean().getAllWorkers(getAuthBean().getAdminCertificate())) {
-            Properties config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id).getProperties();
-            String name = config.getProperty("NAME", String.valueOf(id));
-            result.add(new SelectItem(name, id.toString()));
-        }
-        return result;
     }
 
     public String getBackLink() {

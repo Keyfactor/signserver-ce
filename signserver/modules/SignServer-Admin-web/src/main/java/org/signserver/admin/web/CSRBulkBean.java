@@ -74,7 +74,7 @@ public class CSRBulkBean extends BulkBean {
         for (CSRWorker w : getCSRWorkers()) {
             final String signer = (String) w.getConfig()
                     .get("REQUESTSIGNER");
-            if (signer != null && getAvailableWorkersMenu().containsValue(signer)) {
+            if (signer != null && getAvailableWorkersMenu().stream().anyMatch(a -> a.getItemValue().equalsIgnoreCase(signer))) {
                 requestSigner = signer;
                 break;
             }
@@ -317,13 +317,12 @@ public class CSRBulkBean extends BulkBean {
         private String getNormalizedSignatureAlgorithm(final String sigAlg) {
             final String trimmedSigAlg = StringUtils.trim(sigAlg);
             List<SelectItem> knownAlgs = getSignatureAlgorithmMenuValues();
-            SelectItem result = new SelectItem(sigAlg, sigAlg);
+            String result = sigAlg;
             Optional<SelectItem> first = knownAlgs.stream().filter(alg -> alg.getItemValue().equalsIgnoreCase(trimmedSigAlg)).findFirst();
-            first.ifPresent(a -> {
-                result.setItemValue(a.getItemValue());
-                result.setItemLabel(a.getItemLabel());
-            });
-            return result.getItemValue();
+            if (first.isPresent()) {
+                result = first.get().getItemValue();
+            }
+            return result;
         }
 
         public String getDn() {

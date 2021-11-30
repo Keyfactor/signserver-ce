@@ -12,6 +12,13 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+/**
+ * Holder for the item value and item label of the selectItems in the JSF pages.
+ *
+ * @author Nima Saboonchi
+ * @version $Id: SelectItem.java 13063 2021-11-30 19:43:43Z nimas $
+ */
+
 public class SelectItem {
 
     private String itemLabel;

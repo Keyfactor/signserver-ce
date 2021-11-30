@@ -95,7 +95,7 @@
                                     <h:outputText value="#{text['Renewal_Worker']}" />
                                 </f:facet>
                                 <h:selectOneMenu id="renewalWorker" value="#{item.renewalWorker}" required="true" requiredMessage="*" disabled="#{!item.existing}">
-                                    <f:selectItems value="#{cSRBulkBean.availableWorkersMenuList}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel}"/>
+                                    <f:selectItems value="#{renewSignerBulkBean.availableWorkersMenu}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel} ( #{item.itemValue} )"/>
                                 </h:selectOneMenu>
                                 <span class="errorMessage"><h:message for="renewalWorker"/></span>
                             </h:column>

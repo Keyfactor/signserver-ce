@@ -166,7 +166,7 @@
                                           itemLabel="#{text['CSR_signed_by_worker']} "/>
                         </h:selectOneRadio>
                         <h:selectOneMenu id="requestSigner" value="#{cSRBulkBean.requestSigner}">
-                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel} ( #{item.itemValue} )"/>
+                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel}"/>
                         </h:selectOneMenu>
                         <h:panelGrid columns="2">
                             <f:facet name="footer">

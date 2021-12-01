@@ -169,7 +169,7 @@
                             <f:selectItem id="signed" itemValue="#{cSRBulkBean.FORMAT_SIGNED}" itemLabel="#{text['CSR_Signed_by_Worker_COLON']} "/>
                         </h:selectOneRadio>
                         <h:selectOneMenu id="requestSigner" value="#{cSRBulkBean.requestSigner}">
-                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel} ( #{item.itemValue} )"/>
+                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}" var="item" itemValue="#{item.itemValue}" itemLabel="#{item.itemLabel}"/>
                         </h:selectOneMenu>
 
 

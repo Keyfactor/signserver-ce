@@ -278,7 +278,7 @@ public class BulkBean {
     public List<SelectItem> getAvailableWorkersMenu() throws AdminNotAuthorizedException {
         if (availableWorkersMenu == null) {
             availableWorkersMenu = new ArrayList<>();
-            availableWorkersMenu.add(new SelectItem("--", "--"));
+            availableWorkersMenu.add(new SelectItem("--", null));
             // XXX: Should be some better API to get all the worker names without loading all config
             for (Integer id : getWorkerSessionBean().getAllWorkers(getAuthBean().getAdminCertificate())) {
                 Properties config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id).getProperties();

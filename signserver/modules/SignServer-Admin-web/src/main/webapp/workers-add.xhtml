@@ -192,7 +192,7 @@
                         <h2><h:outputText value="#{text['Load_From_Template']}"/></h2>
                         
                         <h:selectOneMenu value="#{addWorkerBean.selectedTemplate}">
-                            <f:selectItems value="#{addWorkerBean.templateNames}"/>
+                            <f:selectItems value="#{addWorkerBean.templateNames}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
                         </h:selectOneMenu>
                         
                         <p>&nbsp;</p>

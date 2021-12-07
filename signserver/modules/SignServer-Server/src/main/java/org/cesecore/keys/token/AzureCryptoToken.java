@@ -109,8 +109,13 @@ public class AzureCryptoToken extends BaseCryptoToken {
     public static final String KEY_VAULT_TYPE = "keyVaultType";
     
     /** Property for storing the key vault name in the crypto token properties.
-     * Azure Key Vault name, key vault specific, this is the string that will be part of the REST call URI 
-     * https://" + KEY_VAULT_NAME + ".vault.azure.net/
+     * Azure Key Vault name, key vault specific, this is the string that will be part of the REST call URI
+     * If KEY_VAULT_NAME contains a dot, it's assumed to be the full FQDN, i.e. keyvault-name.vault.azure-eu.net
+     *   Resulting URL: https://" + KEY_VAULT_NAME/
+     * If KEY_VAULT_NAME does not contains a dot, it's assumed to only be the hostname of a "default" azure FQDN, 
+     *   i.e KEY_VAULT_NAME=keyvault-name, and automatically appended at the end is ".vault.azure.net"
+     *   Resulting URL: https://" + KEY_VAULT_NAME + ".vault.azure.net/
+     * 
      */
     public static final String KEY_VAULT_NAME = "keyVaultName";
     
@@ -170,9 +175,20 @@ public class AzureCryptoToken extends BaseCryptoToken {
      * @param alias the alias name to check
      * @throws IllegalArgumentException in case the alias does not match ^[0-9a-zA-Z-]+$
      */
-    private static void checkAliasName(final String alias) throws IllegalArgumentException {
+    static void checkAliasName(final String alias) throws IllegalArgumentException {
         if (!aliasPattern.matcher(alias).matches()) {
-            throw new IllegalArgumentException("Key Vault only supports numbers, letters and hyphen in alias names. Invalid name: " + alias);
+            throw new IllegalArgumentException("Key Vault aliases only supports numbers, letters and hyphen in alias names. Invalid name: " + alias);
+        }
+    }
+    private static final Pattern aliasPatternPlusDot = Pattern.compile("^[0-9a-zA-Z-.]+$");
+    /** Checks that a key vault name confirms to the Key Vault requirements, same as for an alias, plus dot (for when the full hostname is given).
+     * 
+     * @param vaultName the vault name to check
+     * @throws IllegalArgumentException in case the vault name does not match ^[0-9a-zA-Z-.]+$
+     */
+    protected static void checkVaultName(final String vaultName) throws IllegalArgumentException {
+        if (!aliasPatternPlusDot.matcher(vaultName).matches()) {
+            throw new IllegalArgumentException("Key Vault names only supports numbers, letters, hyphen and dots in names. Invalid name: " + vaultName);
         }
     }
     
@@ -186,8 +202,8 @@ public class AzureCryptoToken extends BaseCryptoToken {
         if (keyVaultName == null) {
             throw new NoSuchSlotException("No key vault Name defined for crypto token");
         }
-        // Check that key vault name does not have any bad characters, should follow the same regexp as aliases
-        checkAliasName(keyVaultName);
+        // Check that key vault name does not have any bad characters, should follow the same regexp as aliases, except also allow dots
+        checkVaultName(keyVaultName);
         clientID = properties.getProperty(AzureCryptoToken.KEY_VAULT_CLIENTID);
         log.info("Initializing Azure Key Vault: Type=" + properties.getProperty(AzureCryptoToken.KEY_VAULT_TYPE) + 
                 ", Name=" + keyVaultName + ", clientID=" + clientID);
@@ -297,7 +313,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
     }
 
     private CloseableHttpResponse listKeysRESTCall() throws CryptoTokenAuthenticationFailedException, CryptoTokenOfflineException {
-        HttpGet request = new HttpGet("https://" + getKeyVaultName() + ".vault.azure.net/keys?api-version=7.0");
+        HttpGet request = new HttpGet(createFullKeyURL(null, getKeyVaultName()) + "?api-version=7.0");
         return performRequest(request);
     }
 
@@ -405,6 +421,24 @@ public class AzureCryptoToken extends BaseCryptoToken {
         }
     }
 
+    /** 
+     * @param alias the key alias you want to access, or null if the key alias should be left out of the returned URL
+     * @return a URL to access a key (without trailing /), i.e. https://vaultname.vault.azure.net/keys/alias, or if alias is null https://vaultname.vault.azure.net/keys
+     */
+    protected static String createFullKeyURL(final String alias, final String vaultName) {
+        final String trailing;
+        if (alias == null) {
+            trailing = "/keys"; 
+        } else {
+            trailing = "/keys/" + alias;
+        }
+        if (StringUtils.contains(vaultName, '.')) {
+            return "https://"+ vaultName + trailing;
+        } else {
+            return "https://"+ vaultName + ".vault.azure.net" + trailing;
+        }
+     }
+
     private CloseableHttpResponse performRESTAPIRequest(HttpRequestBase request) throws IOException {
         // Set the cached authorization token if we have any. If the token has expired, or we don't have a cached token, it will return http 401 and we can get a new one
         request.setHeader("Authorization", authorizationHeader);
@@ -422,8 +456,8 @@ public class AzureCryptoToken extends BaseCryptoToken {
     @Override
     public void activate(final char[] authCode) throws CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException {
         clientSecret = new String(authCode);
-        log.info("Activating Key Vault Crypto Token, listing aliases");
-        getAliases(); // getAliases sets status to on-line is it succeeds
+        log.info("Activating Key Vault Crypto Token, listing aliases: " + getKeyVaultName());
+        getAliases(); // getAliases sets status to on-line if it succeeds
     }
 
     @Override
@@ -456,7 +490,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
             // remove the key from azure
             // https://docs.microsoft.com/en-us/rest/api/keyvault/deletekey/deletekey
             // DELETE {vaultBaseUrl}/keys/{key-name}?api-version=7.0
-            HttpDelete request = new HttpDelete("https://" + getKeyVaultName() + ".vault.azure.net/keys/" + alias + "?api-version=7.0");
+            HttpDelete request = new HttpDelete(createFullKeyURL(alias, getKeyVaultName()) + "?api-version=7.0");
             try (CloseableHttpResponse response = performRequest(request)) {
                 if (response.getStatusLine().getStatusCode() != 200) {
                     final InputStream content = response.getEntity().getContent();
@@ -538,7 +572,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
             }
             str.append(", \"attributes\": {\"enabled\": true}}");
             //  generate key in our previously created key vault.
-            final HttpPost request = new HttpPost("https://" + getKeyVaultName() + ".vault.azure.net/keys/" + alias + "/create?api-version=7.0");
+            final HttpPost request = new HttpPost(createFullKeyURL(alias, getKeyVaultName()) + "/create?api-version=7.0");
             request.setHeader("Content-Type", "application/json");
             try {
                 request.setEntity(new StringEntity(str.toString()));
@@ -639,12 +673,12 @@ public class AzureCryptoToken extends BaseCryptoToken {
             final String msg = intres.getLocalizedMessage("token.errornosuchkey", alias);
             throw new CryptoTokenOfflineException(msg);
         }
-        final String fullkeyname = createFullKeyName(alias);
+        final String keyurl = createFullKeyURL(alias, getKeyVaultName());
         if (log.isDebugEnabled()) {
             // This is a URI for Key Vault
-            log.debug("getPrivateKey: " + fullkeyname);
+            log.debug("getPrivateKey: " + keyurl);
         }
-        return new KeyVaultPrivateKey(fullkeyname, pubK.getAlgorithm(), this);
+        return new KeyVaultPrivateKey(keyurl, pubK.getAlgorithm(), this);
     }
 
     @Override
@@ -660,7 +694,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
             }
             try {
                 // connect to Azure and retrieve public key, use empty version string to get last version (don't check for existing key versions to save a round trip)
-                HttpGet request2 = new HttpGet(createFullKeyName(alias) + "/?api-version=7.0");
+                HttpGet request2 = new HttpGet(createFullKeyURL(alias, getKeyVaultName()) + "/?api-version=7.0");
                 try (CloseableHttpResponse response = performRequest(request2)) {
                     final InputStream content = response.getEntity().getContent();
                     String s = null;
@@ -736,10 +770,6 @@ public class AzureCryptoToken extends BaseCryptoToken {
             }
             return aliasCache.getEntry(alias.hashCode());
         }
-    }
-
-    private String createFullKeyName(String alias) {
-        return "https://"+ getKeyVaultName() +".vault.azure.net/keys/" + alias;
     }
 
     // This is a call to get key versions, but since we always use the last version (save one roundtrip)

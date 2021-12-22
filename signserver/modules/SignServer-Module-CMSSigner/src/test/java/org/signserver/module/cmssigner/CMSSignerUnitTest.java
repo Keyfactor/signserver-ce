@@ -1613,7 +1613,7 @@ public class CMSSignerUnitTest {
                 }   
             }
             
-            assertNotEquals("verified", verified > 0);
+            assertTrue("verified", verified > 0);
             
             return new SimplifiedResponse(signedBytes, signerCertificate);
         }

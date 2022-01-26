@@ -192,16 +192,34 @@
                 <groupId>org.ejbca.cesecore</groupId>
                 <type>jar</type>
                 <version>7.0.0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-interfaces</artifactId>
                 <version>7.0.0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-ejb</artifactId>
                 <version>7.0.0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>cert-cvc</artifactId>

@@ -68,10 +68,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>cesecore-common</artifactId>
-            <groupId>org.ejbca.cesecore</groupId>
-        </dependency>
-        <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
         </dependency>

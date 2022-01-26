@@ -50,18 +50,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>cesecore-common</artifactId>
-            <groupId>org.ejbca.cesecore</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>cesecore-entity</artifactId>
-            <groupId>org.ejbca.cesecore</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>cesecore-interfaces</artifactId>
-            <groupId>org.ejbca.cesecore</groupId>
-        </dependency>
-        <dependency>
             <groupId>org.ejbca.cvc</groupId>
             <artifactId>cert-cvc</artifactId>
         </dependency>

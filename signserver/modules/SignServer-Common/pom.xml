@@ -58,10 +58,22 @@
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-entity</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <artifactId>cesecore-common</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <artifactId>cert-cvc</artifactId>

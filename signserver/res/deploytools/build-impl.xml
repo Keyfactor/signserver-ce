@@ -450,6 +450,7 @@ app.edition.lc=${app.edition.lc}
         <property name="junit.output.dir" location="${tmp}/test/results"/>
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="on" haltonfailure="off">
+            <sysproperty key="log4j1.compatibility" value="true"/> <!-- log4j v1 compatibility bridge to work with log4j.properties -->
             <formatter type="xml"/>
             <batchtest fork="yes" todir="${junit.output.dir}">
                 <resources>

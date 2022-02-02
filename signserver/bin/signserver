@@ -117,6 +117,9 @@ fi
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
 
+# Enable v1 logging API compatibility
+JAVA_OPTS="$JAVA_OPTS -Dlog4j1.compatibility=true"
+
 # Execute the command
 #echo Class-Path: $CP
 exec "$JAVACMD" ${JAVA_OPTS} -cp "${CP}" $class_name "$@"

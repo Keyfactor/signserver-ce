@@ -255,6 +255,16 @@
                 <artifactId>jacknji11</artifactId>
                 <version>1.2-pk2</version>
             </dependency>
+            <dependency>
+            <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>5.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.jnr</groupId>
+                <artifactId>jnr-ffi</artifactId>
+                <version>0.6.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>

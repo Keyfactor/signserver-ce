@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1715,7 +1723,8 @@
 </li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDQ6VGVzdFNpZ25pbmc">Step 4: Test Signing</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">Step 5: Verify Signature</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">Step 6: Optional: Distribute the OpenPGP Public Key</a>    </p>
-</li></ul>    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtUHJlcmVxdWlzaXRlOkNvbmZpZ3VyZWRDcnlwdG9Xb3JrZXI">
+</li></ul>    <p  >    </p>
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtUHJlcmVxdWlzaXRlOkNvbmZpZ3VyZWRDcnlwdG9Xb3JrZXI">
         <h1 class="heading "><span>Prerequisite: Configured Crypto Worker</span></h1>
     <p  >As with all signers, a crypto worker either using a software keystore or PKCS#11, should be available before setting up the OpenPGP signer.    </p>
     <p  >If you do not already have a crypto worker configured, follow the steps below to set one up using a software keystore.    </p>
@@ -1733,7 +1742,7 @@
     <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">
         <h1 class="heading "><span>Step 1: Add OpenPGP Signer</span></h1>
     <p  >Follow the steps below to add the OpenPGP signer using the sample configuration file openpgpsigner.properties as a template.    </p>
-<ol class=" "><li class=" ">    <p  >Select the SignServer AdminWeb <strong class=" ">Workers</strong> tab, and click <strong class=" ">Add</strong> to add a new worker.    </p>
+<ol class=" "><li class=" ">    <p  >Select the SignServer AdminWeb <strong class=" ">Workers</strong> tab, and click <strong class=" ">Add</strong> to add a new worker.<br/><br/>    </p>
 </li><li class=" ">    <p  >Choose the method <strong class=" ">From Template</strong>.    </p>
 </li><li class=" ">    <p  >Select <strong class=" ">openpgpsigner.properties</strong> in the <strong class=" ">Load from Template</strong> list and click <strong class=" ">Next</strong>.    </p>
 </li><li class=" ">    <p  >Change the sample configuration properties as needed, for example:    </p>
@@ -1743,8 +1752,8 @@
 </li><li class=" ">    <p  >Update <strong class=" ">DEFAULTKEY</strong> to an existing key (or do this in a later step).    </p>
 </li></ul></li><li class=" ">    <p  >Click <strong class=" ">Apply</strong> to load the configuration and list the worker in the All Workers list.    </p>
 </li><li class=" ">    <p  >Select the added worker in the list to open the Worker page.    </p>
-</li><li class=" ">    <p  >Check if the <strong class=" ">Worker status</strong> is Offline and if there are any errors listed. The &quot;No key available for purpose&quot; message means that the DEFAULTKEY property does not point to an existing key in the crypto token. In that case, either update the DEFAULTKEY property to point to an existing key or do the following to generate a new key to use with this signer:    </p>
-<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Renew key</strong> and specify the following:    </p>
+</li><li class=" ">    <p  >Check if the <strong class=" ">Worker status</strong> is Offline and if there are any errors listed. The &quot;No key available for purpose&quot; message means that the DEFAULTKEY property does not point to an existing key in the crypto token. In that case, either update the DEFAULTKEY property to point to an existing key or do the following to generate a new key to use with this signer:<br/>    </p>
+<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Renew key</strong> and specify the following:<br/>    </p>
 <ul class=" "><li class=" ">    <p  >Set a <strong class=" ">Key Algorithm</strong>, for example &quot;RSA&quot;, &quot;ECDSA&quot; or &quot;DSA&quot;.    </p>
 </li><li class=" ">    <p  >Set a <strong class=" ">Key Specification</strong>, for example<strong class=" "> </strong>the key length &quot;2048&quot; (for RSA/DSA), or the cure name &quot;prime256v1&quot; (for ECDSA).    </p>
 </li><li class=" ">    <p  ><strong class=" "></strong>Update the <strong class=" ">New Key Alias</strong> to the name of DEFAULTKEY property (typically change to the same value as the Old Key Alias).    </p>
@@ -1785,7 +1794,7 @@
     <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDQ6VGVzdFNpZ25pbmc">
         <h1 class="heading "><span>Step 4: Test Signing</span></h1>
     <p  >The following example shows how to sign using the SignServer Public Web. You can test signing using any of the SignServer client interfaces.    </p>
-<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Client Web</strong>.    </p>
+<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Client Web</strong>.<br/>    </p>
     <img  class="confluence-embedded-image" src="images/download/attachments/81887821/PGPSigner.png" alt="images/download/attachments/81887821/PGPSigner.png" width="500"  />
     </li><li class=" ">    <p  >Under File Upload, specify the <strong class=" ">Worker name</strong> used, for example, OpenPGPSigner.    </p>
 </li><li class=" ">    <p  >Select the file to create a detached signature for, for example, release.zip.    </p>
@@ -1804,7 +1813,7 @@
     </div>
     <p  >If needed, first import the public key to GnuPG before verifying the signature in the third step:    </p>
 <ol class=" "><li class=" ">    <p  >Store the public key (i.e. from PGPPUBLICKEY property) as signer001-pub.asc.    </p>
-</li><li class=" ">    <p  >Import the key to GnuPG:    </p>
+</li><li class=" ">    <p  >Import the key to GnuPG:<br/>    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ gpg --</code><code class="keyword">import</code><code class="plain"> signer001-pub.asc</code></div>

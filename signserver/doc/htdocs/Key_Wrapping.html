@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1708,6 +1716,7 @@
 
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <div class="section section-1" id="src-99157334_id-.KeyWrappingv5.5.0-Introduction">
         <h1 class="heading "><span>Introduction</span></h1>
     <p  >Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.    </p>
@@ -1716,9 +1725,9 @@
     <p  >The following displays an overview of the key wrapping operations:    </p>
     <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/99157334/KeyWrappingOverview.png" alt="images/download/attachments/99157334/KeyWrappingOverview.png"  height="250" />
         </p>
-<ul class=" "><li class=" ">    <p  >The Source Crypto Worker contains a Crypto Token in order to communicate with the HSM and perform key operations. The wrapping key (secret key: <tt class=" ">aeskey001)</tt> is created in the HSM using the Source Crypto Token.    </p>
+<ul class=" "><li class=" ">    <p  >The Source Crypto Worker contains a Crypto Token in order to communicate with the HSM and perform key operations. The wrapping key (secret key: <tt class=" ">aeskey001)</tt> is created in the HSM using the Source Crypto Token.<br/><br/>    </p>
 </li><li class=" ">    <p  >The Key Wrapping Crypto Worker contains a Key Wrapping Crypto Token in order to perform wrapped key operations. The Key Wrapping Crypto Worker references the Source Crypto Worker to get hold of HSM objects and perform key operations in the HSM.    </p>
-    <p  >The main operations of the Key Wrapping Crypto Token are to generate the wrapped key and to unwrap the wrapped key (using the wrapping key) in the HSM to be used for signing.    </p>
+    <p  >The main operations of the Key Wrapping Crypto Token are to generate the wrapped key and to unwrap the wrapped key (using the wrapping key) in the HSM to be used for signing.<br/><br/>    </p>
 </li><li class=" ">    <p  >The Plain Signer references the Key Wrapping Crypto Worker in order to perform a signing operation. The Plain Signer can be configured to use either a fixed key <tt class=" ">(fixedkey01)</tt> or an individual user key (<tt class=" ">userkey1/userkey2/userkey3</tt>) depending on the requirement.    </p>
 </li></ul>    </div>
     <div class="section section-1" id="src-99157334_id-.KeyWrappingv5.5.0-Prerequisites">

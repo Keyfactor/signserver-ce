@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1707,17 +1715,17 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >In SignServer client authentication/authorization can be configured per-worker and happens in different components as the request comes in:    </p>
-<ol class=" "><li class=" ">    <p  ><strong class=" ">Reverse HTTP proxy</strong><br/>Optionally before SignServer and the application server a reverse proxy could be put in place for instance to perform the authentication.<br/>The reverse proxy (i.e. Apache HTTP Server or Nginx) can be configured to perform the authentication and pass along the already authenticated information to the application server using for instance an AJP Connector.<br/>See the <a   href="SignServer_Integration.html">Integration</a> chapter for how to configure a reverse proxy.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Servlet Container</strong><br/>Provided the by application server is the servlet container (web server) that first receives the HTTP request.<br/>The Servlet container provides the remote IP address and all the HTTP headers sent by the client (and/or) any proxy in front of it.<br/>If configured the Servlet container may require TLS client certificate authentication and is in that case performing the TLS authentication and then provides the authenticated certificate.    </p>
-</li><li class=" ">    <p  ><strong class=" ">SignServer Servlet</strong><br/>The Servlet in SignServer receives the request and gathers all relevant information to pass along to the next component called &quot;Process Session&quot;.    </p>
-</li><li class=" ">    <p  ><strong class=" ">SignServer Process Session</strong><br/>Before processing the request it invokes the Authorizer that has been configured for the requested worker. If the Authorizer allows the request it is further processed otherwise the processing stops.    </p>
+<ol class=" "><li class=" ">    <p  ><strong class=" ">Reverse HTTP proxy</strong><br/>Optionally before SignServer and the application server a reverse proxy could be put in place for instance to perform the authentication.<br/>The reverse proxy (i.e. Apache HTTP Server or Nginx) can be configured to perform the authentication and pass along the already authenticated information to the application server using for instance an AJP Connector.<br/>See the <a   href="SignServer_Integration.html">Integration</a> chapter for how to configure a reverse proxy.<br/><br/>    </p>
+</li><li class=" ">    <p  ><strong class=" ">Servlet Container</strong><br/>Provided the by application server is the servlet container (web server) that first receives the HTTP request.<br/>The Servlet container provides the remote IP address and all the HTTP headers sent by the client (and/or) any proxy in front of it.<br/>If configured the Servlet container may require TLS client certificate authentication and is in that case performing the TLS authentication and then provides the authenticated certificate.<br/><br/>    </p>
+</li><li class=" ">    <p  ><strong class=" ">SignServer Servlet</strong><br/>The Servlet in SignServer receives the request and gathers all relevant information to pass along to the next component called &quot;Process Session&quot;.<br/><br/>    </p>
+</li><li class=" ">    <p  ><strong class=" ">SignServer Process Session</strong><br/>Before processing the request it invokes the Authorizer that has been configured for the requested worker. If the Authorizer allows the request it is further processed otherwise the processing stops.<br/><br/>    </p>
 </li><li class=" ">    <p  ><strong class=" ">Authorizer Implementation</strong><br/>The configured Authorizer implementation decides if the request should be allowed or not given the provided information. The Authorizer could also consult its configuration and possibly external systems as well.    </p>
 </li></ol>    <p  >    </p>
     <p  >Examples of Authorizers:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">ListBasedAddressAuthorizer</strong><br/>Uses white or blacklists for the remote (IP) addresses to authorize.    </p>
-</li><li class=" ">    <p  ><strong class=" ">ClientCertAuthorizer</strong><br/>Checks that the certificate serial number and issuer DN from the provided client certificate is available in this workers whitelist.    </p>
-</li><li class=" ">    <p  ><strong class=" ">UsernamePasswordAuthorizer</strong><br/>Checks that the username/password provided in the HTTP Basic Authentication HTTP header matches one of those configured for this worker.    </p>
-</li><li class=" ">    <p  ><strong class=" ">UsernameAuthorizer</strong><br/>Same as the previous but this one could be used in a set up where the user is already authorized by the reversed proxy. The provided user name is simply accepted and used further on.<br/>The reversed proxy could use modules for Active Directory / LDAP authentication or anything else that in the end provides a user name to be passed on to SignServer.    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">ListBasedAddressAuthorizer</strong><br/>Uses white or blacklists for the remote (IP) addresses to authorize.<br/><br/>    </p>
+</li><li class=" ">    <p  ><strong class=" ">ClientCertAuthorizer</strong><br/>Checks that the certificate serial number and issuer DN from the provided client certificate is available in this workers whitelist.<br/><br/>    </p>
+</li><li class=" ">    <p  ><strong class=" ">UsernamePasswordAuthorizer</strong><br/>Checks that the username/password provided in the HTTP Basic Authentication HTTP header matches one of those configured for this worker.<br/><br/>    </p>
+</li><li class=" ">    <p  ><strong class=" ">UsernameAuthorizer</strong><br/>Same as the previous but this one could be used in a set up where the user is already authorized by the reversed proxy. The provided user name is simply accepted and used further on.<br/>The reversed proxy could use modules for Active Directory / LDAP authentication or anything else that in the end provides a user name to be passed on to SignServer.<br/><br/>    </p>
 </li></ul>    <p  >All available Authorizers are listed on the <a   href="Authorizers.html">Authorizers</a> page.    </p>
     <p  >    </p>
         </div>

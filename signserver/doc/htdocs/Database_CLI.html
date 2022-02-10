@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1711,6 +1719,7 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
+    <p  >    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
@@ -1769,20 +1778,20 @@
 <div class="line"><code class="plain">audit verifylog -all</code></div>
 </div>
     </div>
-    <p  >Note down the last sequence number for each node, for example:    </p>
+    <p  ><br/>Note down the last sequence number for each node, for example:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">Last sequences: {server1=2, server2=7}</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >All entries from 0 up to the entry before the last can now be archived and removed from the database. In the example, that would be entry <strong class=" ">0</strong> and <strong class=" ">1</strong> for node <strong class=" ">server1</strong> and entries from <strong class=" ">0</strong> to <strong class=" ">6</strong> for node <strong class=" ">server2.</strong>    </p>
+</li><li class=" ">    <p  >All entries from 0 up to the entry before the last can now be archived and removed from the database. In the example, that would be entry <strong class=" ">0</strong> and <strong class=" ">1</strong> for node <strong class=" ">server1</strong> and entries from <strong class=" ">0</strong> to <strong class=" ">6</strong> for node <strong class=" ">server2.</strong><br/><br/>    </p>
 </li><li class=" ">    <p  >The next time the log should be verified, start the verification from the last sequence numbers:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">audit verifylog -node server1:2 -node server2:7</code></div>
 </div>
     </div>
-    <p  >Again, note down the last sequence number for each node, and all entries up to the sequence number before the last for each node can now be archived.    </p>
+    <p  ><br/>Again, note down the last sequence number for each node, and all entries up to the sequence number before the last for each node can now be archived.    </p>
 </li></ol>    <div  class="confbox admonition admonition-warning">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">

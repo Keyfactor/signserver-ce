@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link current" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1722,7 +1730,8 @@
 </li><li class=" ">    <p  ><a   href="#src-78941113_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4yLjAtVVJJRW5jb2RpbmdKQm9zc0FTNy9FQVA2L1dpbGRGbHlVUkllbmNvZGluZw">URI Encoding</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-78941113_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4yLjAtSkJvc3NUcm91Ymxlc2hvb3RpbmdGaXhTZWN1cml0eWlzc3Vlc2luSkJvc3NFQVA">JBoss Troubleshooting</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-78941113_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4yLjAtRGF0YWJhc2VDb25maWd1cmF0aW9u">Database Configuration</a>    </p>
-</li></ul>    <div class="section section-1" id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCBhbmRKQm9zc0VBUDcuMSB2NS4yLjAtQ29uZmlndXJlV2ViU2VydmVyS2V5c3RvcmVzQ29uZmlndXJlV2ViU2VydmVyS2V5c3RvcmU">
+</li></ul>    <p  >    </p>
+    <div class="section section-1" id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCBhbmRKQm9zc0VBUDcuMSB2NS4yLjAtQ29uZmlndXJlV2ViU2VydmVyS2V5c3RvcmVzQ29uZmlndXJlV2ViU2VydmVyS2V5c3RvcmU">
         <h1 class="heading section"><span id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4yLjAtQ29uZmlndXJlV2ViU2VydmVyS2V5c3RvcmU" class="confluence-anchor-link"></span><span>Configure Web Server Keystores </span></h1>
     <p  >To configure the Web Server TLS keystore, copy the keystore and truststore files to your application server keystore folder. The following displays the WildFly keystore folder location:    </p>
     <div  class="confbox programlisting">
@@ -1808,7 +1817,8 @@
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/http-listener=remoting:add(socket-binding=remoting, max-post-size=</code><code class="string">"10485760"</code><code class="plain">, enable-http2=</code><code class="string">"true"</code><code class="plain">)</code></div>
 </div>
     </div>
-</li></ol>    <p  class="section">    </p>
+</li></ol>    <p  class="section"><br/>    </p>
+    <p  class="section">    </p>
     </div>
     <div class="section section-1" id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCBhbmRKQm9zc0VBUDcuMSB2NS4yLjAtV1NETExvY2F0aW9uRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
         <h1 class="heading "><span id="src-78941113_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4yLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>WSDL Location </span></h1>
@@ -1907,6 +1917,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
 <div class="line"><code class="plain">:reload</code></div>
 </div>
     </div>
+    <p  ><br/>    </p>
     <p  >    </p>
     </div>
     </div>
@@ -1916,7 +1927,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
 
 
             <nav id="ht-post-nav">
-                <a href="Application_Server_Setup.html" class="ht-post-nav-prev">
+                <a href="WildFly_24.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1925,7 +1936,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Application Server Setup</span>
+            <span>WildFly 24</span>
         </a>
                 <a href="WildFly_9_and_JBoss_EAP_7.0.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

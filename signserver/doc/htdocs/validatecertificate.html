@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1709,7 +1717,7 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Request a certificate to be validated by the specified service.    </p>
-<pre class="prettyprint ">usage: Usage: signclient validatecertificate &lt;options&gt;<br/><br/> -cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)<br/>                                (Required).<br/> -certpurposes &lt;certpurposes&gt;   A ',' separated string containing<br/>                                requested certificate purposes.<br/> -der                           Certificate is in DER format.<br/> -help                          Display this info<br/> -hosts &lt;hosts&gt;           A ',' separated string containing the<br/>                                hostnames of the validation service nodes.<br/>                                Ex 'host1.someorg.org,host2.someorg.org'.<br/>                                When using the HTTP protocol, only one<br/>                                host name can be specified. (Required).<br/> -pem                           Certificate is in PEM format (Default).<br/> -port &lt;port&gt;                   Remote port of service (Default is 8080 or<br/>                                8442 for SSL).<br/> -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or<br/>                                HTTP. Default: WEBSERVICES.<br/> -service &lt;service-name&gt;        The name or ID of the validation service<br/>                                to process request. (Required)<br/> -silent                        Don't produce any output, only return<br/>                                value.<br/> -truststore &lt;jks-file&gt;         Path to JKS truststore containing trusted<br/>                                CA for SSL Server certificates.<br/> -truststorepwd &lt;password&gt;      Password to unlock the truststore.<br/><br/>The following values is returned by the program that can be used when scripting.<br/>  -2   : Error happened during execution<br/>  -1   : Bad arguments<br/>   0   : Certificate is valid<br/>   1   : Certificate is revoked<br/>   2   : Certificate is not yet valid<br/>   3   : Certificate have expired<br/>   4   : Certificate doesn't verify<br/>   5   : CA Certificate have been revoked<br/>   6   : CA Certificate is not yet valid<br/>   7   : CA Certificate have expired<br/>   8   : Certificate have no valid certificate purpose<br/><br/>Sample usages:<br/>a) validatecertificate -service CertValidationWorker -hosts localhost -cert<br/>    certificate.pem<br/>b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem<br/>    -truststore p12/truststore.jks -truststorepwd changeit<br/>c) validatecertificate -service CertValidationWorker -hosts localhost<br/>    -cert certificate.pem -protocol HTTP</pre>    <p  >    </p>
+<pre class="prettyprint ">usage: Usage: signclient validatecertificate &lt;options&gt;<br/><br/> -cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)<br/>                                (Required).<br/> -certpurposes &lt;certpurposes&gt;   A ',' separated string containing<br/>                                requested certificate purposes.<br/> -der                           Certificate is in DER format.<br/> -help                          Display this info<br/> -hosts &lt;hosts&gt;           A ',' separated string containing the<br/>                                hostnames of the validation service nodes.<br/>                                Ex 'host1.someorg.org,host2.someorg.org'.<br/>                                When using the HTTP protocol, only one<br/>                                host name can be specified. (Required).<br/> -pem                           Certificate is in PEM format (Default).<br/> -port &lt;port&gt;                   Remote port of service (Default is 8080 or<br/>                                8442 for SSL).<br/> -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or<br/>                                HTTP. Default: WEBSERVICES.<br/> -service &lt;service-name&gt;        The name or ID of the validation service<br/>                                to process request. (Required)<br/> -silent                        Don't produce any output, only return<br/>                                value.<br/> -truststore &lt;jks-file&gt;         Path to JKS truststore containing trusted<br/>                                CA for SSL Server certificates.<br/> -truststorepwd &lt;password&gt;      Password to unlock the truststore.<br/><br/>The following values is returned by the program that can be used when scripting.<br/>  -2   : Error happened during execution<br/>  -1   : Bad arguments<br/>   0   : Certificate is valid<br/>   1   : Certificate is revoked<br/>   2   : Certificate is not yet valid<br/>   3   : Certificate have expired<br/>   4   : Certificate doesn't verify<br/>   5   : CA Certificate have been revoked<br/>   6   : CA Certificate is not yet valid<br/>   7   : CA Certificate have expired<br/>   8   : Certificate have no valid certificate purpose<br/><br/>Sample usages:<br/>a) validatecertificate -service CertValidationWorker -hosts localhost -cert<br/>    certificate.pem<br/>b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem<br/>    -truststore p12/truststore.jks -truststorepwd changeit<br/>c) validatecertificate -service CertValidationWorker -hosts localhost<br/>    -cert certificate.pem -protocol HTTP</pre>    <p  ><br/>    </p>
         </div>
 
     </article>

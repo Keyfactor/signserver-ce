@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1719,7 +1727,8 @@
 </li><li class=" ">    <p  ><a   href="#src-134453228_id-.SignedRequestSpecificationv5.8.1-Verification">Verification</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-134453228_id-.SignedRequestSpecificationv5.8.1-Examples">Examples</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-134453228_id-.SignedRequestSpecificationv5.8.1-SampleCode">Sample Code</a>    </p>
-</li></ul>    <div class="section section-1" id="src-134453228_id-.SignedRequestSpecificationv5.8.1-SignedSignatureRequest">
+</li></ul>    <p  >    </p>
+    <div class="section section-1" id="src-134453228_id-.SignedRequestSpecificationv5.8.1-SignedSignatureRequest">
         <h1 class="heading "><span>Signed Signature Request</span></h1>
     <p  >The meaning of a Signed Signature Request here is a request intended for one of the workers in SignServer and which is protected by an extra <strong class=" ">request metadata field</strong> called <strong class=" ">SIGNED_REQUEST</strong> containing a signature in the format described here.    </p>
     </div>
@@ -1837,7 +1846,7 @@ Follow the steps below to sign:    </span>
     </p>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Construct a key-value map that will be used as the payload in the signature.    </span>
-    </p>
+<br/>    </p>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 To the map, add the key &quot;data&quot; with the value set to the hexadecimal encoded hash of the input data field or file upload.    </span>
     </p>
@@ -1857,7 +1866,7 @@ Create and sign using JWS:    </span>
 Set the header parameter &quot;typ&quot; to &quot;http://signserver.org/specs/signedrequest/1.0&quot;.    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
-Set the header parameter &quot;x5c&quot; to a list of base64 (    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+Set the header parameter &quot;x5c&quot; to a list of base64 (    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  not base64url) encoded certificates making up the certificate chain with the end entity certificate first.    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
@@ -1941,7 +1950,7 @@ Example of a signed signature request for signing a file using HTTP protocol and
 <div class="line"><code class="plain">                            -nohttps</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
      <span style="color: #000000;">
 The &quot;-nohttps&quot; is only used here to more easily capture the request with Wireshark/tcpdump.    </span>
     </p>
@@ -2052,7 +2061,7 @@ Example of a signed signature request for signing a file using ClientWS protocol
 <div class="line"><code class="plain">&lt;/soap:Envelope&gt;</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Data is a reference to a separate part of the HTTP request.    </p>
     </div>
     <div class="section section-3" id="src-134453228_id-.SignedRequestSpecificationv5.8.1-Decoded.1">
@@ -2089,7 +2098,7 @@ Example of a signed signature request for signing a file using ClientWS protocol
     <div class="section section-1" id="src-134453228_id-.SignedRequestSpecificationv5.8.1-SampleCode">
         <h1 class="heading "><span>Sample Code</span></h1>
     <p  >Java sample code for sending a signed signature request using ClientWS is available in the SignServer Enterprise sources under <tt class=" ">modules/mod-enterprise/SignServer--Sample-Clients</tt> module and called ClientWSWithSignedRequestSampleApp.java.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
     </div>
         </div>
 

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1710,6 +1718,7 @@
     </span>
     </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >    <span style="color: #000000;">
 The    </span>
  <a   href="APK_Signer.html">APK Signer</a>     <span style="color: #000000;">
@@ -1752,7 +1761,8 @@ key rollover, see <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-Ro
 For <a  class="external-link" href="http://doc.primekey.com/display/SIGNDS/Client-Side+Hashing">Client-Side Hashing</a>, follow the instructions below but use the <a   href="APK_Hash_Signer.html">APK Hash Signer</a> (in <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-AddAPKSigner">Step 1</a>) and send requests using SignClient with the <tt class=" ">-clientside</tt> flag (in <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-TestSigning">Step 3</a>).    </span>
     </p>
     <p  >    </p>
-<ul class="toc-indentation "></ul>    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVByZXJlcXVpc2l0ZTpDb25maWd1cmVkQ3J5cHRvV29ya2Vy">
+<ul class="toc-indentation "></ul>    <p  >    </p>
+    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVByZXJlcXVpc2l0ZTpDb25maWd1cmVkQ3J5cHRvV29ya2Vy">
         <h1 class="heading "><span>Prerequisite: Configured Crypto Worker</span></h1>
     <p  >    <span style="color: #000000;">
 As with all signers, a crypto worker, for instance using a software keystore or PKCS#11, should be available before setting up the APK signers.    </span>
@@ -1845,7 +1855,7 @@ If the Worker status is Offline, you need to generate a new key to use with the 
     </p>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 As the certificates for Android are typically self-signed, it is not necessary to request a certificate from a CA. However, you might want to specify the names and validity times to include in your certificate, so before generating the key, set the following worker properties     </span>
-(see <a   href="General_properties.html">General properties</a>):    </p>
+(see <a   href="General_properties.html">General properties</a>):<br/>    </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 <strong class=" ">SELFSIGNED_DN:</strong> Set this to the name that you would like to have in the certificate. Typically, the following format is used: &quot;CN=My Application Name, O=My Company Name, C=US&quot;.    </span>
     </p>
@@ -1895,7 +1905,7 @@ To test the signed file you can for instance use the official    </span>
 tool from    </span>
  <a  class="external-link" href="https://developer.android.com/studio/releases/build-tools">Android SDK Build Tools</a>.    </p>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Version 0.9 or later of the apksigner tool is required as previous versions had issues if the APK contained a v3 signature.    </span>
     </p>
     <div class="section section-2" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-VerifySignedAPKusingapkgsigner">
@@ -1926,7 +1936,7 @@ Make sure you have signers set up with the key and certificate for each signer t
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Configure your APK Signer according to the following:    </span>
-    </p>
+<br/>    </p>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Update the worker property <strong class=" ">OTHER_SIGNERS</strong> to contain a comma-separated list with the additional signers to sign with.    </span>
     </p>
@@ -1959,7 +1969,7 @@ Set up a new worker pointing to the new key/certificate and name it <strong clas
     </p>
 </li><li class=" ">    <p  >Add the <a   href="APK_Rotate_Signer.html">APK Rotate Signer</a>,     <span style="color: #000000;">
 name it <strong class=" ">OldToNewApkRotateSigner</strong> and specify the following:    </span>
-    </p>
+<br/>    </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Specify the two signers to include in the lineage by setting <strong class=" ">OTHER_SIGNERS=OldApkSigner, NewApkSigner</strong>.    </span>
     </p>
@@ -1970,7 +1980,7 @@ Optionally configure any of the properties <strong class=" ">OLD_SET_*</strong> 
 to allow inspecting the lineage file and optionally update it.    </span>
     </p>
 </li></ol>    <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Make sure to set the appropriate authentication (AUTHTYPE) of each worker in order to prevent unauthorized usage of the signers. For more information, see    </span>
  <a   href="Authorization_Type.html">Authorization Type</a>.    </p>
     </div>
@@ -2016,7 +2026,7 @@ Inspect the produced lineage file using the <a   href="APK_Lineage_Signer.html">
     </div>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Base64 encode the lineage file and copy the value:    </span>
-    </p>
+<br/>    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">base64 old-to-</code><code class="keyword">new</code><code class="plain">-lineage1.bin</code></div>
@@ -2052,7 +2062,7 @@ Make sure there is a worker available pointing to the signer for which you want 
 Setup the    </span>
  <a   href="APK_Lineage_Signer.html">APK Lineage Signer</a>     <span style="color: #000000;">
 according to the following:    </span>
-    </p>
+<br/>    </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Make sure to set the appropriate <strong class=" ">AUTHTYPE</strong> to protect this signer from unauthorized access in a production environment. For more information, see    </span>
  <a   href="Authorization_Type.html">Authorization Type</a>.    </p>
@@ -2070,7 +2080,7 @@ Send in the previous lineage file:    </span>
 <div class="line"><code class="plain">bin/signclient signdocument -workername ApkLineageSigner -infile a-previous-lineage.bin -outfile </code><code class="keyword">new</code><code class="plain">-lineage.bin</code></div>
 </div>
     </div>
-    <p  >    </p>
+    <p  ><br/>    </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Inspect the new lineage file:    </span>
     </p>
@@ -2079,7 +2089,7 @@ Inspect the new lineage file:    </span>
 <div class="line"><code class="plain">bin/signclient signdocument -workername ApkLineageSigner -infile </code><code class="keyword">new</code><code class="plain">-lineage.bin</code></div>
 </div>
     </div>
-    <p  >    </p>
+    <p  ><br/>    </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Copy the base64 encoded value of the <tt class=" ">new-lineage.bin</tt>:    </span>
     </p>

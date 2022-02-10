@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1711,6 +1719,7 @@
 
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >The Signed Request Authorizer requires signed signature requests and that there is a rule matching one of the fields of the client's certificate in the worker's authorization list. Signed signature requests enable signature requests to be signed by a remote client allowing an end-to-end authorization mechanism for deployment scenarios with proxies or similar between the client and the server.    </p>
     <p  >AUTHTYPE=<strong class=" ">org.signserver.server.enterprise.signedrequest.SignedRequestAuthorizer</strong>    </p>
     <p  >For information on how to list, add, and remove rules, see the <a   href="Worker_Authorization_Page.html">Worker Authorization Page</a> in the AdminWeb, or the <tt class=" ">authorizedclients</tt> command in the <a   href="Administration_CLI.html">Administration CLI</a>. Note that this is handled the same way as for the <a   href="Client_Certificate_Authorizer.html">Client Certificate Authorizer</a>.    </p>
@@ -1743,7 +1752,7 @@
         <p  >PEM encoded set of trusted certificates to use when verifying the certificate chain of the signed request.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-tick" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
     </p>
             </td>
         </tr>
@@ -1756,7 +1765,7 @@
     <p  >Currently, only OCSP is supported. When enabled, certificates in the chain except the trusted certificates are required to have an Authority Information Access (AIA) extension with an accessible URL to the OCSP responder.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    </p>
+        <p  ><br/>    </p>
             </td>
         </tr>
     <tr>
@@ -1767,7 +1776,7 @@
         <p  >In addition to requiring signed signature requests it can also be required that the client connecting to SignServer is authenticated using a TLS client certificate. With this property set to TRUE, the authorizer requires a TLS client certificate to be present. The certificate is not checked against an authorization rule so all client certificates that are accepted by the web/application server are accepted here. Default: TRUE.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    </p>
+        <p  ><br/>    </p>
             </td>
         </tr>
 </tbody>        </table>

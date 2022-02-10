@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1711,15 +1719,17 @@
     <p  >Crypto Tokens provide access to the keys and cryptography operations. Each Signer is typically configured with a reference to a Crypto Worker having a Crypto Token configured.    </p>
     <p  >A Crypto Token using a software keystore is the <a   href="KeyStoreCryptoToken.html">P12CryptoToken</a> and one using a Hardware Security Module (HSM) is the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>.    </p>
     <p  >Available SignServer Crypto Tokens:    </p>
+    <p  >    </p>
 <ul class="childpages-macro "><li class=" ">    <p  ><a   href="General_properties.html">General properties</a>    </p>
 </li><li class=" ">    <p  ><a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>    </p>
 </li><li class=" ">    <p  ><a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>    </p>
 </li><li class=" ">    <p  ><a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>    </p>
 </li><li class=" ">    <p  ><a   href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>    </p>
 </li><li class=" ">    <p  ><a   href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>    </p>
-</li></ul>    <p  >A worker can contain a crypto token as a component by defining which crypto token implementation to use with the <strong class=" ">CRYPTOTOKEN_IMPLEMENTATION_CLASS</strong> property and then add any other properties needed by that implementation.    </p>
+</li></ul>    <p  >    </p>
+    <p  >A worker can contain a crypto token as a component by defining which crypto token implementation to use with the <strong class=" ">CRYPTOTOKEN_IMPLEMENTATION_CLASS</strong> property and then add any other properties needed by that implementation.    </p>
     <p  >A worker with the sole purpose of holding a crypto token is called a Crypto Worker. Then other workers that need a crypto token can instead simply refer to a crypto token in the other worker by specifying the (crypto) worker name in a <strong class=" ">CRYPTOTOKEN</strong> property.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
         </div>
 
     </article>

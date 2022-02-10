@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1718,7 +1726,8 @@
 </li><li class=" ">    <p  ><a   href="#src-117379575_id-.ClientSideHashingv5.7.0-DNSSECSigning">DNSSEC Signing</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-117379575_id-.ClientSideHashingv5.7.0-APPXSigning">APPX Signing</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-117379575_id-.ClientSideHashingv5.7.0-APKSigning">APK Signing</a>    </p>
-</li></ul>    <div class="section section-1" id="src-117379575_id-.ClientSideHashingv5.7.0-CMSDetachedSignatures">
+</li></ul>    <p  >    </p>
+    <div class="section section-1" id="src-117379575_id-.ClientSideHashingv5.7.0-CMSDetachedSignatures">
         <h1 class="heading "><span>CMS Detached Signatures</span></h1>
     <p  >Detached signatures allow the signature to be placed in a separate file next to the original file, and thus the original file does not have to be updated. With CMS signatures, what is covered by the signature is a set of attributes (unless it is a direct signature) where one of the attributes is called messageDigest, which is the hash of the original file. This means that in order to create a CMS detached signature, it is sufficient to get the hash of the original file as input.    </p>
     <p  >The <a   href="CMS_Signer.html">CMS Signer</a> is for instance configured to accept a hash as input by setting CLIENTSIDEHASHING=TRUE, or by allowing the client to specify if the input is the original file or a hash of it, by configuring ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE.    </p>
@@ -1826,6 +1835,7 @@
         <h1 class="heading "><span>Authenticode Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction for Authenticode file signing using the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a> the following options are available. Note that the MS Authenticode Signer supports the following formats:    </p>
 <ul class=" "><li class=" ">    <p  >PE: Portable Executable files (.exe, .dll, ...)    </p>
 </li><li class=" ">    <p  >MSI: Windows Installer files (.msi)    </p>
@@ -1893,6 +1903,7 @@
         <h1 class="heading "><span>JAR Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction for JAR file signing using the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>, the following options are available.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1983,6 +1994,7 @@
         <h1 class="heading "><span>OpenPGP Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction with OpenPGP using the OpenPGPPlainSigner, the parameters key ID and key algorithm (when using a key with an algorithm other than RSA) need to be specified with the request using the <tt class=" ">-extraoption</tt> options.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -2060,6 +2072,7 @@
         <h1 class="heading "><span>Debian Dpkg-sig Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction with Dpkg-sig using the OpenPGPPlainSigner, the key ID, key fingerprint, and key algorithm (when using a key with an algorithm other than RSA) need to be specified with the request using the <tt class=" ">-extraoption</tt> options.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -2139,6 +2152,7 @@
         <h1 class="heading "><span>DNSSEC Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction for DNSSEC zone file signing using the <a   href="ZoneHashSigner.html">ZoneHashSigner</a>, the following <tt class=" ">-extraoption</tt> options should be provided on the command line in addition to the required request metadata property specifying which keys to use.    </p>
     <div  class="tablewrap">
         <table class="wrapped relative-table confluenceTable">
@@ -2232,6 +2246,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
         <h1 class="heading "><span>APPX Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction for Appx file signing using the <a   href="Appx_CMS_Signer.html">Appx CMS Signer</a>, the following options are available.    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
@@ -2286,6 +2301,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
         <h1 class="heading "><span>APK Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >When using the client-side hashing and construction for Android Package Kit (APK) file signing using the <a   href="APK_Hash_Signer.html">APK Hash Signer</a>, the following -extraoptions can be used.    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">

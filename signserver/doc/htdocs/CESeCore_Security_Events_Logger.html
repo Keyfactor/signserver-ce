@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1712,7 +1720,8 @@
     <div class="section section-1" id="src-23859255_id-.CESeCoreSecurityEventsLoggerv4.4.0-Signedlog">
         <h1 class="heading "><span>Signed log</span></h1>
     <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.An example configuration for CESeCore is provided in <strong class=" ">conf/cesecore.properties.sample</strong>.    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >An example configuration for CESeCore is provided in <strong class=" ">conf/cesecore.properties.sample</strong>.    </p>
     <p  >To enable signed audit logs, configure<strong class=" "> conf/databaseprotection.properties</strong> (see conf/databaseprotection.properties.sample).    </p>
     <p  >Also, set the following to enable signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLI or GUI:    </p>
     <div  class="confbox programlisting">
@@ -1744,7 +1753,7 @@
 <div class="line"><code class="plain">databaseprotection.version.0 = 2</code></div>
 </div>
     </div>
-    <p  >    </p>
+    <p  ><br/>    </p>
     </div>
     <div class="section section-2" id="src-23859255_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC40LjAtUEtDUyMxMUV4YW1wbGV1c2luZ0phY2tOSkkxMVByb3ZpZGVy">
         <h2 class="heading prettyprint"><span>PKCS#11 Example using JackNJI11 Provider</span></h2>
@@ -2032,7 +2041,7 @@ org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken  
     </div>
     <div class="section section-1" id="src-23859255_id-.CESeCoreSecurityEventsLoggerv4.4.0-AlternativeLow-PerformanceIntegrityProtectedLogDevice">
         <h1 class="heading "><span>Alternative Low-Performance Integrity Protected Log Device</span></h1>
-    <p  >By default, the IntegrityProtectedLogDevice is used for audit logging to the database. However, there are situations where gaps may occur in the sequence number, for example if the database or HSM is unavailable when the logging is being performed. Normally when this happens, the times of the missing sequence numbers can be correlated to error messages in other logs for database or HSM failures. The operations that the missing sequence numbers represent were not executed since the logging that failed always is performed first. Thus, no log rows are actually missing, it is the counter that has incorrect values.    </p>
+    <p  >By default, the IntegrityProtectedLogDevice is used for audit logging to the database. However, there are situations where gaps may occur in the sequence number, for example if the database or HSM is unavailable when the logging is being performed. Normally when this happens, the times of the missing sequence numbers can be correlated to error messages in other logs for database or HSM failures. The operations that the missing sequence numbers represent were not executed since the logging that failed always is performed first. Thus, no log rows are actually missing, it is the counter that has incorrect values.<br/>    </p>
     <p  >To solve the above issue, an alternative IntegrityProtectedLogDevice can be used that works sequentially and only logs one row at the time and only proceeds with the next one after the first succeeds. The disadvantage is significant less performance.    </p>
     <p  >To configure the alternative device, edit the <tt class=" ">conf/cesecore.properties</tt> file and comment out the default IntegrityProtectedLogDevice and instead set the SequencialIntegrityProtectedLogDevice according to the following example:    </p>
     <div  class="confbox programlisting">
@@ -2042,7 +2051,7 @@ org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken  
 </div>
     </div>
     <p  >Note that SignServer must be redeployed for the changes in <tt class=" ">conf/cesecore.properties</tt> to take effect.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
     </div>
         </div>
 

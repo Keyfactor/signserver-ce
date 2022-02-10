@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1711,6 +1719,7 @@
 
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    </p>
     <p  >    <span style="color: #000000;">
 The signer has the fully qualified class name: <strong class=" ">org.signserver.module.ades.signer.AdESSigner</strong>.    </span>
     </p>
@@ -1961,7 +1970,7 @@ SIGNATURE_PACKAGING    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property is not supported with PAdES.    </span>
     </p>
     <p  >    <span style="color: #000000;">
@@ -2002,7 +2011,7 @@ Required.    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property is only supported with PAdES.    </span>
     </p>
     <p  >    <span style="color: #000000;">
@@ -2012,7 +2021,7 @@ This property sets a fixed size for the signature space within the PDF and disab
     <p  ><strong class=" ">Signature Size Estimation and Retry Algorithm</strong>    </p>
     <p  >The first estimated value is calculated as the sum of:<br/>&bull; Certificate chain size<br/>&bull; 2000 for PKCS#7 structure + hash<br/>&bull; 8192 for OCSP<br/>&bull; 8192 for CRLs size<br/>&bull; 4096 for TSC    </p>
     <p  >Then if signing the certificate fails due to that the signature became larger than the estimated size, the signer will retry using the actual signature size plus a 1024 bytes margin. The retry can happen up to 3 times before it gives up.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
             </td>
         </tr>
     <tr>
@@ -2073,7 +2082,7 @@ VISIBLE_SIGNATURE_PAGE    </span>
         <p  >    <span style="color: #000000;">
 Sets a page number where the signature field should be placed.    </span>
 <br/>    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  The counting starts from 1 (one) for the first page of the document.    </span>
     </p>
             </td>

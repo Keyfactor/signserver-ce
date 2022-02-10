@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1721,7 +1729,7 @@
 </li><li class=" ">    <p  >Accuracy seconds    </p>
 </li><li class=" ">    <p  >Included certificate chain (currently doesn't include CRLs)    </p>
 </li><li class=" ">    <p  >Ordering    </p>
-</li><li class=" ">    <p  >TSA name    </p>
+</li><li class=" ">    <p  >TSA name<br/><br/>    </p>
 </li></ul>    <p  >Time-stamp requests are served through a HTTP(S) service at the URL:    </p>
     <div  class="confbox programlisting">
                 <div class="content">
@@ -1734,7 +1742,7 @@
     <div class="section section-1" id="src-99156889_id-.TimeStampSignerv5.5.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
                     <colgroup>
@@ -1759,7 +1767,7 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    </p>
+        <p  ><br/>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  ><strong class=" ">org.signserver.server.StatusReadingLocalComputerTimeSource</strong><br/>This TimeSource returns the time from the local computer but only if the status property TIMESOURCE0_INSYNC is not expired and returned as <strong class=" ">true</strong> from the Status Repository.    </p>
@@ -1794,7 +1802,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >A ';' separated string containing accepted policies.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/jru6ax/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Note that only policies listed in this property are allowed to be requested. If the property does not contain any policies, then no policy can be requested. Requests not including any policy will use the default policy regardless of this property, but requests explicitly requesting the default policy will still not be allowed unless listed in this property. If this property is used, ACCEPTANYPOLICY cannot be set to true. OPTIONAL, recommended.    </p>
             </td>
         </tr>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1805,28 +1813,28 @@
 </tbody>        </table>
             </div>
     <p  ><sup class=" ">*</sup> if the request content-type in a POST is specified as something else than &quot;x-www-form-urlencoded&quot; or &quot;multipart/form-data&quot; the message body is not parsed but instead directly passed to the worker specified by workerName or workerId in the URI's query string.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
     <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Configuration">
         <h2 class="heading "><span>Configuration</span></h2>
     <p  ><strong class=" ">HTTP_MAX_UPLOAD_SIZE</strong> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request. Defaut: &quot;104857600&quot; (100 MB).    </p>
     <p  ><strong class=" ">FILE_SIZE_THRESHOLD</strong> = Global configuration property that can be set to specify the size threshold (in bytes) after which the data is written to disk Default: &quot;1048576&quot; (1 MB). The directory uploaded files are temporarly stored to is the default temp directory and can be changed by starting the application server with a different value for the Java property java.io.tmpdir.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
     </div>
     <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Samples">
         <h2 class="heading "><span>Samples</span></h2>
-<ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a>    </p>
+<ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a><br/><br/>    </p>
 </li><li class=" ">    <p  >HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>For example see /signserver/clientweb/genericfile.xhtml (multipart/form-data) and /signserver/clientweb/genericdirect.xhtml (x-www-form-urlencoded).<br/><br/>Example with cURL:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">curl -F workerName=PDFSigner -F file=</code><code class="color1">@sample</code><code class="plain">.pdf --output sample-signed.pdf http:</code><code class="comments">//localhost:8080/signserver/process</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >HTTP POST with other content-type:<br/>See the TimeStampClient.    </p>
-</li><li class=" ">    <p  >Samples of content output for certificate validation:    </p>
+</li><li class=" ">    <p  >HTTP POST with other content-type:<br/>See the TimeStampClient.<br/><br/>    </p>
+</li><li class=" ">    <p  >Samples of content output for certificate validation:<br/>    </p>
 <ul class=" "><li class=" ">    <p  >VALID;;This certificate is valid;-1;    </p>
 </li><li class=" ">    <p  >ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supported;-1;    </p>
 </li><li class=" ">    <p  >REVOKED;;This certificate is revoked;3;1376565200519    </p>
-</li></ul></li></ul>    <p  >    </p>
+</li></ul></li></ul>    <p  ><br/>    </p>
     </div>
     </div>
     <div class="section section-1" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-WorkerServlet">
@@ -1899,13 +1907,13 @@
             </div>
     <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Samples.1">
         <h2 class="heading "><span>Samples</span></h2>
-<ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/worker/DemoXMLSigner?data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a>    </p>
+<ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/worker/DemoXMLSigner?data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a><br/><br/>    </p>
 </li></ul>    </div>
     </div>
     <div class="section section-1" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-SODProcessServlet">
         <h1 class="heading "><span>SODProcessServlet</span></h1>
     <p  >Servlet recieving HTTP POST requests containing data group hashes and creates a MRTDSODSignerRequest and passes it to the specified MRTDSODSigner. The response from the servlet is the signed security object in binary format.    </p>
-    <p  >    </p>
+    <p  ><br/>    </p>
     <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-ePassportSigningRequests">
         <h2 class="heading "><span>ePassport Signing Requests</span></h2>
     <div  class="tablewrap">
@@ -1961,7 +1969,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >    </p>
+    <p  ><br/>    </p>
     </div>
     <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-OtherRequests">
         <h2 class="heading "><span>Other Requests</span></h2>

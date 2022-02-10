@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.1</p>
+                    <p>Version: 5.8.2</p>
                 </div>
             </header>
 
@@ -197,6 +197,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
 
@@ -1602,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
 
             </li>
@@ -1721,7 +1729,8 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
 </li><li class=" ">    <p  ><a   href="#src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-SecurityNotice">Security Notice</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-UpgradeInformation">Upgrade Information</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-134451382_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjguMVJlbGVhc2VOb3Rlc3Y1LjguMS1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">Change Log: Resolved Issues</a>    </p>
-</li></ul>    <div class="section section-1" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-Highlights">
+</li></ul>    <p  >    </p>
+    <div class="section section-1" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-Highlights">
         <h1 class="heading "><span>Highlights</span></h1>
     <div class="section section-2" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-SignedSignatureRequests">
         <h2 class="heading "><span>Signed Signature Requests</span></h2>
@@ -1748,7 +1757,7 @@ JSON Web Token (JWT)    </span>
     </div>
     <div class="section section-2" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-Cross-siteScriptingIssueinAdminWeb">
         <h2 class="heading "><span>Cross-site Scripting Issue in Admin Web</span></h2>
-    <p  >During our testing with a new combination of test data and request sequence in the SignServer Admin Web interface, a cross-site scripting issue was found. By setting up a new worker where JavaScript code is used in the worker name followed by a Generate CSR request, the script in the worker name will be executed in the generate CSR step. Similar issues in other parts of Admin Web were also fixed. Two weeks after the release of SignServer 5.8.1 this issue will be reported as a CVE.    </p>
+    <p  >During our testing with a new combination of test data and request sequence in the SignServer Admin Web interface, a cross-site scripting issue was found. By setting up a new worker where JavaScript code is used in the worker name followed by a Generate CSR request, the script in the worker name will be executed in the generate CSR step. This issue has been fixed in SignServer 5.8.1 and s<strong class=" ">i</strong>milar issues in other parts of Admin Web were also fixed. Two weeks after the release of SignServer 5.8.1 this issue will be reported as a CVE.    </p>
     <p  >    <span style="color: #000000;">
 Severity    </span>
     </p>
@@ -1769,23 +1778,34 @@ Severity    </span>
     <p  >For full details of fixed bugs and implemented features in SignServer 5.8.1, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.8.1.Final%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.    </p>
     <div class="section section-2" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-IssuesResolvedin5.8.1">
         <h2 class="heading "><span>Issues Resolved in 5.8.1</span></h2>
-    <p  >Released November 2021    </p>
-    <p  >    </p>
-<ul class="toc-indentation "></ul>    </div>
+    <p  >    <span style="color: #0e101a;">
+Released December 2021    </span>
+    </p>
+    </div>
     <div class="section section-2" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-NewFeatures">
         <h2 class="heading "><span>New Features</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/ECA-6557">DSS-XXXX</a> - Feature Summary    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/ECA-6557">DSS-XXXX</a> - Feature Summary    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2279">DSS-2279</a> - EC support with P11NG    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2367">DSS-2367</a> - Signed Signature Request through Web Service API based on format specification    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2375">DSS-2375</a> - Support for WildFly 24    </p>
     </div>
     <div class="section section-2" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-Improvements">
         <h2 class="heading "><span>Improvements</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/ECA-6557">DSS-XXXX</a> - Improvement Summary    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/ECA-6557">DSS-XXXX</a> - Improvement Summary    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2278">DSS-2278</a> - Merge updated P11NG from EJBCA 7.8.0.1    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2353">DSS-2353</a> - Key removal operation consistency between P11NG and SunPKCS11    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2379">DSS-2379</a> - Document supported algorithms    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2384">DSS-2384</a> - Add demo client certificate issued by a sub CA    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2394">DSS-2394</a> - P11NG signature provider implementation should throw JCA exceptions instead of P11NG-specific runtime exceptions    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2402">DSS-2402</a> - Upgrade BC to 1.70    </p>
     </div>
     <div class="section section-2" id="src-134451382_id-.SignServer5.8.1ReleaseNotesv5.8.1-BugFixes">
         <h2 class="heading "><span>Bug Fixes</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/ECA-6557">DSS-XXXX</a> - Bug Summary    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/ECA-6557">DSS-XXXX</a> - Bug Summary    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2382">DSS-2382</a> - Issue with overriding DIGESTALGORITHM in PDF    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2385">DSS-2385</a> - JUnit test MRTDSODSignerTest signer certificate expired    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2389">DSS-2389</a> - Security Issue    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2391">DSS-2391</a> - Regression: Client-side hashing on Windows fails with &quot;used by another process&quot;    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2396">DSS-2396</a> - Certain recent JRE versions breaks PKCS11CryptoToken    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2401">DSS-2401</a> - Security Issue    </p>
+    <p  >    </p>
     </div>
     </div>
         </div>
@@ -1794,7 +1814,7 @@ Severity    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_5.8.2_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1803,7 +1823,7 @@ Severity    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Release Notes</span>
+            <span>SignServer 5.8.2 Release Notes</span>
         </a>
                 <a href="SignServer_5.8_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

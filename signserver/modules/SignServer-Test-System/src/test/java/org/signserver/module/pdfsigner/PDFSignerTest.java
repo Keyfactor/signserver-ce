@@ -33,7 +33,6 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -163,7 +162,6 @@ public class PDFSignerTest extends ModulesTestCase {
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     @Test

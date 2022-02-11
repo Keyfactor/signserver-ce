@@ -37,7 +37,6 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.test.conf.SignerConfigurationBuilder;
 import org.signserver.test.conf.WorkerPropertiesBuilder;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.signserver.cli.spi.CommandContext;
@@ -83,7 +82,6 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         assertNotNull("Please set SIGNSERVER_HOME environment variable", SIGNSERVER_HOME);
         // Configure
         SignServerUtil.installBCProvider();
-        TestingSecurityManager.install();
         initSSLKeystore();
         // Worker 1
         addTestXMLSigner(
@@ -113,7 +111,6 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         for (int workerId : WORKERS) {
             removeWorkerById(workerId);
         }
-        TestingSecurityManager.remove();
     }
 
     // Tests that values for threads must be larger than 0.

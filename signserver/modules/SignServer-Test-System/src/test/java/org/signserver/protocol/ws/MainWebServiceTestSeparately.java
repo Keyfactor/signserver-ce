@@ -57,7 +57,6 @@ import org.signserver.protocol.ws.gen.SignServerWS;
 import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.protocol.ws.gen.WorkerStatusWS;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -99,7 +98,6 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     @Test

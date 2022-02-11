@@ -31,7 +31,6 @@ import org.signserver.client.cli.defaultimpl.ValidateDocumentCommand;
 import org.signserver.common.SignServerUtil;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -77,14 +76,12 @@ public class DocumentValidatorTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        TestingSecurityManager.install();
         signserverhome = PathUtil.getAppHome();
         keyPair = CryptoUtils.generateRSA(2048);
     }
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     private String getTruststorePassword() {

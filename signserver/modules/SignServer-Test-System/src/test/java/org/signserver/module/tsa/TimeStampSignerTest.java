@@ -67,7 +67,6 @@ import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
-import org.signserver.testutils.TestingSecurityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -138,7 +137,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     @Test

@@ -29,7 +29,6 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.ejb.interfaces.WorkerSession;
 
 import static org.junit.Assert.assertEquals;
@@ -66,7 +65,6 @@ public class SODSignerTest extends ModulesTestCase {
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     @Test

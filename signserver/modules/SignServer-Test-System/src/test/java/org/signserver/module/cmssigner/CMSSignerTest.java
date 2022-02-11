@@ -45,7 +45,6 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -84,7 +83,6 @@ public class CMSSignerTest  {
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     @Test

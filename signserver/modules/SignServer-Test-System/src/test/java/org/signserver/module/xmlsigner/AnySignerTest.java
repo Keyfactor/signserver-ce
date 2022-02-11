@@ -28,7 +28,6 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
@@ -67,7 +66,6 @@ public class AnySignerTest extends ModulesTestCase {
 
     @After
     public void tearDown() throws Exception {
-        TestingSecurityManager.remove();
     }
 
     @Test

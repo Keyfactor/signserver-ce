@@ -36,7 +36,6 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
@@ -72,7 +71,6 @@ public class ArchiveTestCase extends ModulesTestCase {
 
     @After
     public void tearDown() throws Exception {
-        TestingSecurityManager.remove();
     }
 
     private DataResponse processWithClientWS(WorkerIdentifier wi, byte[] document, final String xForwardedFor) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, InternalServerException_Exception, RequestFailedException_Exception {

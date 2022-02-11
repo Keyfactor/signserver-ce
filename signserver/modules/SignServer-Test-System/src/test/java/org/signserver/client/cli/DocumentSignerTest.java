@@ -32,7 +32,6 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
@@ -88,7 +87,6 @@ public class DocumentSignerTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        TestingSecurityManager.install();
         signserverhome = PathUtil.getAppHome();
         setupSSLKeystores();
         keyPair = CryptoUtils.generateRSA(2048);
@@ -96,7 +94,6 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     @After
     public void tearDown() throws Exception {
-        TestingSecurityManager.remove();
     }
 
     @Test

@@ -34,7 +34,6 @@ import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -90,7 +89,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
 
     @After
     public void tearDown() {
-        TestingSecurityManager.remove();
     }
 
     @Test

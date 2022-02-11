@@ -36,7 +36,6 @@ import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -124,8 +123,6 @@ public class ValidationCLITest extends ModulesTestCase {
         fos.write(revokedCert1.getBytes());
         fos.write("\n-----END CERTIFICATE-----\n".getBytes());
         fos.close();
-
-        TestingSecurityManager.remove();
     }
 
     @Test
@@ -171,7 +168,5 @@ public class ValidationCLITest extends ModulesTestCase {
     @Test
     public void test99RemoveDatabase() {
         removeWorker(16);
-
-        TestingSecurityManager.remove();
     }
 }

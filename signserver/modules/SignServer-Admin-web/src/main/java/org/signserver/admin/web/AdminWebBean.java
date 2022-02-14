@@ -67,6 +67,10 @@ public class AdminWebBean {
         return CesecoreConfiguration.getNodeIdentifier();
     }
 
+    public String getTheme() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+    }
+
     /**
      * Get the most relevant documentation link for the current page or use the
      * main page if no mapping exists.

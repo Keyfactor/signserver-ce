@@ -25,16 +25,16 @@
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="shortcut icon" type="image/png" href="#{resource['default/images/favicon.png']}"/>
-        <h:outputStylesheet library="default" name="css/default.css"/>
-        <h:outputStylesheet library="default" name="css/cssLayout.css"/>
+        <link rel="shortcut icon" type="image/png" href="#{resource['#{adminWebBean.theme}/images/favicon.png']}"/>
+        <h:outputStylesheet library="#{adminWebBean.theme}" name="css/default.css"/>
+        <h:outputStylesheet library="#{adminWebBean.theme}" name="css/cssLayout.css"/>
         <title><ui:insert name="title">Title</ui:insert><h:outputText value=" - #{text['SignServer_Admin_Web']}"/></title>
     </h:head>
 
     <h:body>
         
         <div id="top">
-            <div id="top-left"><h:outputLink value="../"><h:graphicImage library="default" name="images/logo.png" height="50"/></h:outputLink></div>
+            <div id="top-left"><h:outputLink value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.png" height="50"/></h:outputLink></div>
             <div id="top-right">
                 <h:panelGrid columns="2">
                     <h:outputText value="#{text['User_COLON']}" class="top-right-c1"/>

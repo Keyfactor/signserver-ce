@@ -69,6 +69,8 @@ public class CompileTimeSettings {
     public static final String DATABASE_NAME = "database.name";
     
     public static final String STATUSREPOSITORY_LOG = "statusrepository.log";
+
+    public static final String WEB_THEME = "web.theme";
     
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();

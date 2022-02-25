@@ -54,6 +54,16 @@ public class AdminWebBean {
     public String getVersion() {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION);
     }
+    
+    public String getProductName() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.APPNAME_CAP);
+    }
+    
+    public String getProductVersion() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)
+                + " "
+                + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+    }
 
     public String getCopyright() {
         return "Copyright © 2006–2021 PrimeKey Solutions AB";

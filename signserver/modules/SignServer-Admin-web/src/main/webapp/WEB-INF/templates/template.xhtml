@@ -55,7 +55,7 @@
                     <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
                     
                     <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{text['Version_COLON']}" class="top-right-c1"/>
-                    <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.version}" class="top-right-c2"/>
+                    <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.productName} #{adminWebBean.productVersion}" class="top-right-c2"/>
                 </h:panelGrid>
             </div>
             <div class="clearBoth"></div>

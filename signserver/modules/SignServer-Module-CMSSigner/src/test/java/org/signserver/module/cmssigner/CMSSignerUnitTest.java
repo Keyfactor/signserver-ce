@@ -686,7 +686,42 @@ public class CMSSignerUnitTest {
         CMSSignedData signedData = new CMSSignedData(cms);
         assertNotNull(signedData);
         
-        // Not in DER format by default
+        // expect DER format
+        final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
+        assertEquals("expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
+    }
+
+    /**
+     * Tests that setting DER_RE_ENCODE=true gives DER encoding for
+     * clientside.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testDERReEncodeTrueClientside() throws Exception {
+        LOG.info("testDERReEncodeTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DER_RE_ENCODE", "true");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+
+        RequestContext requestContext = new RequestContext();
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+        
+        SimplifiedResponse response = signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext);
+        
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertNotNull(signedData);
+        
+        // expect DER format
         final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
         assertEquals("expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
     }

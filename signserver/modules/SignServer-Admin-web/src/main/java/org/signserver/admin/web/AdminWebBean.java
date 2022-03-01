@@ -81,11 +81,6 @@ public class AdminWebBean {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
     }
 
-    public boolean isDefaultThemeEnabled() {
-        final String enabled = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
-        return enabled.equalsIgnoreCase("default");
-    }
-
     /**
      * Get the most relevant documentation link for the current page or use the
      * main page if no mapping exists.

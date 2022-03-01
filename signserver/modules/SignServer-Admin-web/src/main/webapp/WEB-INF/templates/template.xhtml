@@ -36,13 +36,7 @@
     <h:body>
         
         <div id="top">
-            <div id="top-left">
-                <h:outputLink value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.svg" height="50"/></h:outputLink>
-                    <h:panelGroup rendered="#{!adminWebBean.defaultThemeEnabled}" layout="block" id="top-left-product-version">
-                        <h:outputText value="#{adminWebBean.version}"/>
-                    </h:panelGroup>
-            </div>
-
+            <div id="top-left"><h:outputLink value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.png" height="50"/></h:outputLink></div>
             <div id="top-right">
                 <h:panelGrid columns="2">
                     <h:outputText value="#{text['User_COLON']}" class="top-right-c1"/>
@@ -55,7 +49,7 @@
                     <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
                     
                     <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{text['Version_COLON']}" class="top-right-c1"/>
-                    <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.productName} #{adminWebBean.productVersion}" class="top-right-c2"/>
+                    <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.version}" class="top-right-c2"/>
                 </h:panelGrid>
             </div>
             <div class="clearBoth"></div>

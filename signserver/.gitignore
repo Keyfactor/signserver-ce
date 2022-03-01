@@ -2,6 +2,9 @@
 # Compiled class file
 *.class
 
+# Skip copied web themes
+modules/SignServer-Admin-web/src/main/webapp/resources/keyfactor
+
 # Log file
 *.log
 

@@ -51,18 +51,18 @@ public class AdminWebBean {
         }
     }
 
-    public String getVersion() {
-        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION);
-    }
-    
     public String getProductName() {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.APPNAME_CAP);
     }
-    
+
     public String getProductVersion() {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)
-                + " "
-                + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+            + " "
+            + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+    }
+
+    public String getVersion() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION);
     }
 
     public String getCopyright() {
@@ -79,6 +79,11 @@ public class AdminWebBean {
 
     public String getTheme() {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+    }
+
+    public boolean isDefaultThemeEnabled() {
+        final String enabled = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+        return enabled.equalsIgnoreCase("default");
     }
 
     /**

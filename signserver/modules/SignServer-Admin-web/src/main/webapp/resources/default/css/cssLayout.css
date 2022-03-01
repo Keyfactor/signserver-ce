@@ -1,16 +1,16 @@
-
+/*
 #top {
     position: relative;
-    /*background-color: #036fab;*/
-    color: white;
-    /* padding: 5px; */
+    
+    color: black;
+    background-color: #390c72;
+    
     padding: 0px;
-    padding-bottom: 10px;
     margin: 0px 0px 0px 0px;
 }
 
 #top-left {
-    background: white;
+    background: #390c72;
     float: left;
     padding-top: 10px;
     padding-left: 15px;
@@ -18,13 +18,165 @@
     margin-right: 10px;
 }
 
+#top-left-product-version {
+    color: white;
+    font-family: "ProximaNova", "Roboto", sans-serif;
+    text-transform: capitalize;
+    font-size: 1.25rem;
+    padding-top: 0.5rem;
+}
+*/
+
+.SS_infoList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.SS_infoItem {
+    display: flex;
+    flex-wrap: nowrap;
+    font-family: "ProximaNova", "Roboto", sans-serif;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 400; /** Regular **/
+    color: black;
+}
+
+.SS_infoItem > label {
+    text-transform: capitalize;
+}
+
+.SS_infoItem > div {
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
+}
+
+.kfds-header-container {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    min-height: 4rem;
+    /*width: 100%;*/ /* Makes the menu bar act weird */
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    /*border-radius: 0.25rem;*/ /* Creates rounded edges on the header which makes the white background color show in the edges */
+    background-color: white;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+@media (min-width: 768px) {
+.kfds-header-container {
+    min-height: 6rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    }
+}
+
+.kfds-header-left {
+    display: grid;
+    min-width: -webkit-max-content;
+    min-width: max-content;
+    flex: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem;
+}
+
+
+.kfds-header-brand {
+    display: flex;
+    width: 10rem;
+    flex-direction: column;
+}
+
+@media (min-width: 768px) {
+.kfds-header-brand {
+    width: 25rem;
+    }
+}
+
+.kfds-header-logo {
+    width: 10rem;
+    padding: 0.5rem;
+}
+
+@media (min-width: 768px) {
+.kfds-header-logo {
+    width: 12rem;
+    }
+}
+
+.kfds-header-logo > a {
+    cursor: pointer;
+}
+
+.kfds-header-logo > a > img {
+    width: 100%;
+}
+
+.kfds-header-product {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-family: "ProximaNova", "Roboto", sans-serif;
+    color: black;
+}
+
+.kfds-header-product-name {
+    display: inline-block;
+    vertical-align: baseline;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    text-transform: capitalize;
+}
+
+@media (min-width: 768px) {
+.kfds-header-product-name {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    }
+}
+
+.kfds-header-product-version {
+    margin-left: 0px;
+    margin-right: 0px;
+    display: inline-block;
+    vertical-align: baseline;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+.kfds-header-product-version {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    }
+}
+
+.kfds-header-right {
+    display: flex;
+    flex: 1 1 0%;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/*
 #top-right {
-    background: white;
+    background: #390c72;
     float: right;
     padding-top: 10px;
     padding-right: 15px;
     padding-bottom: 5px;
-    color: black;
+    padding-left: 20px;
+    color: white;
     font-size: xx-small;
 }
 
@@ -39,6 +191,8 @@
 .top-right-c2 {
     font-style: italic;
 }
+*/
+
 
 #top-mid {
     margin: 10px;

@@ -428,10 +428,19 @@ public class CMSSigner extends BaseSigner {
         if (extendsCMSData()) {
             signedData = extendCMSData(signedData, requestContext);
         }
-        
-        responseData.getAsInMemoryOutputStream().write(signedData.getEncoded());
+
+        try (final OutputStream responseOutputStream = responseData.getAsInMemoryOutputStream();) {
+            if (derReEncode) {
+                final ASN1OutputStream derOut =
+                        ASN1OutputStream.create(responseOutputStream,
+                                                ASN1Encoding.DER);
+                derOut.writeObject(signedData.toASN1Structure());
+            } else {
+                responseOutputStream.write(signedData.getEncoded());
+            }
+        }
     }
-    
+
     @Override
     public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,

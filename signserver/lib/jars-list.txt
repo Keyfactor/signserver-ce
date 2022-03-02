@@ -145,4 +145,3 @@ a4269f803162eb468be84a15cc32cbdd557b6a8c776e0bcddbcec7b171dfbfdb  ./ext/xmlsec-2
 bfc90e9e32d0eab1f397fb974b5f150a815188382ac41f372a7149d5bc178008  ./ext/xpp3_min-1.1.4c.jar;                              "Xpp3"
                                                                   ./SignServer-Lib-ODFDOM.jar;                            "ODFDOM"
                                                                   ./SignServer-Lib-OpenXML4J.jar;                         "OpenXML4J"
-                                                                  ./SignServer-Lib-iText.jar;                             "iText"

@@ -109,7 +109,7 @@ d0d0636d41e116098d769dbe42fb7b7a0de6ba8fc43d9530c048aa511f5dc99b  ./ext/jetty-io
 8ce09575fd59fb03f2cbe83009424fab07466e0bcb44680eee43bb592c112dde  ./ext/jjwt-impl-0.11.0.jar;                             "Java JWT"
 8aacd4430c48eaec47a6af6f2d127e5a413c32355dc5c9c083e3963d518fbc45  ./ext/jjwt-jackson-0.11.0.jar;                          "Java JWT"
 74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    "OpenLDAP"
-7da7c61926fd9ecc5ea8511efb4687893410b75fe17d4815137b83e74e7648f5  ./ext/jna-3.3.0.jar;                                    "JNA"
+5557e235a8aa2f9766d5dc609d67948f2a8832c2d796cea9ef1d6cbe0b3b7eaf  ./ext/jna-5.6.0.jar;                                    "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
 5941b98baab198e29a62a71170026e91d995648a72ec8f65f8557a484bef8239  ./ext/jsign-core-3.1-signserver5.5.jar;                 "Jsign"
 108045c9675ebf6d6ec4d8dcc331693f9b944ac7c87de52dccff2c55e8dfa6f1  ./ext/json-simple-1.1.1.jar;                            "json-simple"

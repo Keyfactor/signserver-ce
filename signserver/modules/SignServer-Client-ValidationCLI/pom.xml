@@ -51,11 +51,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Lib-iText</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Client-CLI</artifactId>
             <version>${project.version}</version>
         </dependency>

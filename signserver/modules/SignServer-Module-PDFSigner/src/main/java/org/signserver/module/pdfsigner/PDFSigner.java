@@ -12,24 +12,25 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import org.signserver.lib.itext.text.pdf.PdfDictionary;
-import org.signserver.lib.itext.text.pdf.PdfStamper;
-import org.signserver.lib.itext.text.pdf.PdfDate;
-import org.signserver.lib.itext.text.pdf.TSAClient;
-import org.signserver.lib.itext.text.pdf.PdfString;
-import org.signserver.lib.itext.text.pdf.PRTokeniser;
-import org.signserver.lib.itext.text.pdf.PdfPKCS7;
-import org.signserver.lib.itext.text.pdf.PdfSignature;
-import org.signserver.lib.itext.text.pdf.TSAClientBouncyCastle;
-import org.signserver.lib.itext.text.pdf.PdfWriter;
-import org.signserver.lib.itext.text.pdf.AcroFields;
-import org.signserver.lib.itext.text.pdf.PdfName;
-import org.signserver.lib.itext.text.pdf.PdfSignatureAppearance;
-import org.signserver.lib.itext.text.pdf.OcspClientBouncyCastle;
-import org.signserver.lib.itext.text.pdf.PdfReader;
-import org.signserver.lib.itext.text.pdf.PdfTemplate;
-import org.signserver.lib.itext.text.DocumentException;
-import org.signserver.lib.itext.text.exceptions.BadPasswordException;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfDate;
+import com.lowagie.text.pdf.TSAClient;
+import com.lowagie.text.pdf.PdfString;
+import com.lowagie.text.pdf.PRTokeniser;
+import com.lowagie.text.pdf.PdfPKCS7;
+import com.lowagie.text.pdf.PdfSignature;
+import com.lowagie.text.pdf.TSAClientBouncyCastle;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.AcroFields;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
+import com.lowagie.text.pdf.OcspClientBouncyCastle;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.exceptions.BadPasswordException;
+import com.lowagie.text.pdf.PRIndirectReference;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -181,6 +182,8 @@ public class PDFSigner extends BaseSigner {
     private static final String DEFAULT_TSA_DIGESTALGORITHM = "SHA256";
 
     public static final String ALLOW_PROPERTY_OVERRIDE = "ALLOW_PROPERTY_OVERRIDE";
+    
+    private static final String SIGNSERVER_VERSION = "SignServer";
 
     /**
      * Set of properties that the PDFSigner implementation (actually
@@ -633,8 +636,7 @@ public class PDFSigner extends BaseSigner {
             throw new SignServerException("Error calculating signature", e);
         }
 
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp,
-                                                tsaDigestAlgo);
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
 
         return encodedSig;
     }
@@ -685,6 +687,9 @@ public class PDFSigner extends BaseSigner {
         }
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
+        // Defaults to false for backwards compatibility
+        reader.setModificationAllowedWithoutOwnerPassword(false);
+        
         String strPdfVersion = Character.toString(reader.getPdfVersion());
         PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, theDigestAlgorithm);
 
@@ -780,6 +785,8 @@ public class PDFSigner extends BaseSigner {
 
             PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);
             PdfSignatureAppearance sap = stp.getSignatureAppearance();
+            
+            modifyProducer(stp, reader);
 
             // Set PDF permissions/encryption if:
             // - there are new permissions or
@@ -840,7 +847,7 @@ public class PDFSigner extends BaseSigner {
                         float newHeight = positions[4] - positions[2];
                         params.getCustom_image().scaleToFit(newWidth, newHeight);
                     } else {
-                        sap.setVisibleSignature(new org.signserver.lib.itext.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
+                        sap.setVisibleSignature(new com.lowagie.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
                     }
 
                     // set custom image if requested
@@ -889,19 +896,12 @@ public class PDFSigner extends BaseSigner {
             // chain
             byte[] ocsp = null;
             if (params.isEmbed_ocsp_response() && certChain.length >= 2) {
-                String url;
-                try {
-                    url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
-                    if (url != null && url.length() > 0) {
-                        ocsp = new OcspClientBouncyCastle(
-                                (X509Certificate) certChain[0],
-                                (X509Certificate) certChain[1], url).getEncoded();
-                    }
-                } catch (CertificateParsingException e) {
-                    throw new SignServerException(
-                            "Error getting OCSP URL from certificate", e);
+                String url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
+                if (url != null && url.length() > 0) {
+                    ocsp = new OcspClientBouncyCastle(
+                            (X509Certificate) certChain[0],
+                            (X509Certificate) certChain[1], url).getEncoded();
                 }
-
             }
 
             PdfPKCS7 sgn;
@@ -1229,7 +1229,12 @@ public class PDFSigner extends BaseSigner {
     protected TSAClient getTimeStampClient(String url, String username,
                                              String password,
                                              ASN1ObjectIdentifier digestAlgo) {
-        return new TSAClientBouncyCastle(url, username, password, digestAlgo);
+        return new TSAClientBouncyCastle(url, username, password) {
+            @Override
+            public MessageDigest getMessageDigest() throws GeneralSecurityException {
+                return MessageDigest.getInstance(digestAlgo.toString(), "BC");
+            }
+        };
     }
 
     @Override
@@ -1259,6 +1264,46 @@ public class PDFSigner extends BaseSigner {
      */
     private boolean isOverrideNotSupported(String property) {
         return NOT_OVERRIDABLE_PROPERTIES.contains(property);
+    }
+
+    private void modifyProducer(PdfStamper stp, PdfReader reader) {
+        // Get info object if one
+        final PRIndirectReference iInfo = (PRIndirectReference) reader.getTrailer().get(PdfName.INFO);
+        final PdfDictionary oldInfo = (PdfDictionary) PdfReader.getPdfObject(iInfo);
+
+        String producer = null;
+        if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null) {
+            producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
+        }
+
+        if (producer == null) {
+            producer = SIGNSERVER_VERSION;
+        } else if (!producer.contains(SIGNSERVER_VERSION)) {
+            StringBuilder buf = new StringBuilder(producer);
+            buf.append("; modified using ");
+            buf.append(SIGNSERVER_VERSION);
+            producer = buf.toString();
+        }
+
+        // Get or create info dictionary
+        Map<String, String> info = stp.getInfoDictionary();
+        if (info == null) {
+            info = new HashMap<>();
+            stp.setInfoDictionary(info);
+        }
+
+        String infoProducer = info.get("Producer");
+        if (infoProducer == null) {
+            infoProducer = producer;
+        } else if (!infoProducer.contains(SIGNSERVER_VERSION)) {
+            StringBuilder buf = new StringBuilder(producer);
+            buf.append("; modified using ");
+            buf.append(SIGNSERVER_VERSION);
+            infoProducer = buf.toString();
+        }
+
+        // Put the final Producer field
+        info.put("Producer", infoProducer);
     }
 
 }

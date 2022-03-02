@@ -48,5 +48,9 @@
             <artifactId>SignServer-Lib-iText</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+        </dependency>
     </dependencies>
 </project>

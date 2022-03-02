@@ -44,18 +44,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.signserver.lib.itext.text.DocumentException;
-import org.signserver.lib.itext.text.exceptions.BadPasswordException;
-import org.signserver.lib.itext.text.pdf.PRIndirectReference;
-import org.signserver.lib.itext.text.pdf.PdfDate;
-import org.signserver.lib.itext.text.pdf.PdfDictionary;
-import org.signserver.lib.itext.text.pdf.PdfName;
-import org.signserver.lib.itext.text.pdf.PdfPKCS7;
-import org.signserver.lib.itext.text.pdf.PdfReader;
-import org.signserver.lib.itext.text.pdf.PdfSignature;
-import org.signserver.lib.itext.text.pdf.PdfSignatureAppearance;
-import org.signserver.lib.itext.text.pdf.PdfStamper;
-import org.signserver.lib.itext.text.pdf.TSAClient;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.exceptions.BadPasswordException;
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PdfDate;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSignature;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.TSAClient;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,8 +110,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.signserver.lib.itext.text.pdf.AcroFields;
-import org.signserver.lib.itext.text.pdf.PdfObject;
+import com.lowagie.text.pdf.AcroFields;
+import com.lowagie.text.pdf.PdfPKCS7;
+import com.lowagie.text.pdf.PdfObject;
 
 /**
  * Unit tests for PDFSigner.
@@ -597,6 +597,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         // Check that the document is protected by an permissions password
         PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes(StandardCharsets.ISO_8859_1));
+        reader.setModificationAllowedWithoutOwnerPassword(false); // Since change to OpenPDF, this is required otherwise permissions do not apply
         assertFalse("Should not be openned with full permissions",
                 reader.isOpenedWithFullPermissions());
     }
@@ -617,6 +618,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // If some permissions are removed, check that the document is protected by an permissions password
         if (!removePermissions.isEmpty()) {
             PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes(StandardCharsets.ISO_8859_1));
+            reader.setModificationAllowedWithoutOwnerPassword(false); // Since change to OpenPDF, this is required otherwise permissions do not apply
             assertFalse("Should not be openned with full permissions",
                     reader.isOpenedWithFullPermissions());
         }
@@ -1098,6 +1100,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
+     * 
+     * Note: Originally this test increased the size of the signature (CMS) by
+     * adding additional size to CRL. However, since the upgrade to OpenPDF 
+     * (DSS-2426) the CRL:s are not stored withing the CMS so they do not affect 
+     * the signature size. Instead this test has been modified to (also) put in 
+     * a time-stamp token of the same additional size.
      */
     @Test
     public void test14EstimatedP7Size_increaseCRLSize() throws Exception {
@@ -1131,7 +1139,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // Test 2: Increase the size of the CRL with 1 byte and test
         // that the final P7 does not increases with more than 1 byte
         extensionBytes = new byte[1];
-        crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
+        crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)}; // Note: NOP since OpenPDF upgrade
+        tsc.setFixedActualSize(1234 + extensionBytes.length); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         assertEquals("new size 1 byte larger", referenceSize + 1, actualP7Size);
 
@@ -1139,37 +1148,28 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // that the final P7 does not increases with more than 37 bytes
         extensionBytes = new byte[37];
         crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
+        tsc.setFixedActualSize(1234 + extensionBytes.length); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         assertTrue("new size 37 bytes larger", actualP7Size <= referenceSize + 37 + extraSpace);
 
 
-        // Test 2: Increase the size of the certificate with at least 10000 bytes and test
-        // that the final P7 does not increases more than the certificate
-        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger,
-        //  however that is not important in this case)
+        // Test 2: Increase the size of the TST with at least 10000 bytes and test
+        // that the final P7 does not increases more than 10000 bytes
         extensionBytes = new byte[10000];
         crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
-        int certIncrease = ((X509CRL) crlList[0]).getEncoded().length - referenceCRLSize;
-        LOG.debug("increased CRL size with: " + certIncrease);
-        if (certIncrease < 10000) {
-            throw new Exception("The test should have increased the certificate with at least 10000 bytes but was: " + certIncrease);
-        }
+        tsc.setFixedActualSize(1234 + extensionBytes.length); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
-        assertEquals("new larger size", referenceSize + certIncrease, actualP7Size);
+        assertEquals("new larger size", referenceSize + extensionBytes.length, actualP7Size);
         referenceSize = actualP7Size;
 
         // Test 3: Increase the size of the certificate with at least 30123 bytes and test
         // that the final P7 does not increases more than the certificate
         extensionBytes = new byte[30123];
         crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
-        certIncrease = ((X509CRL) crlList[0]).getEncoded().length - referenceCRLSize;
-        LOG.debug("increased CRL size with: " + certIncrease);
-        if (certIncrease < 30123) {
-            throw new Exception("The test should have increased the certificate with at least 30123 bytes but was: " + certIncrease);
-        }
+        tsc.setFixedActualSize(1234 + extensionBytes.length); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         // It turns out that the P7 might use less size than the increase in the certificate
-        assertTrue("new larger size", referenceSize + certIncrease >= actualP7Size);
+        assertTrue("new larger size", referenceSize + extensionBytes.length >= actualP7Size);
         //referenceSize = actualP7Size;
     }
 
@@ -1282,6 +1282,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
+     * 
+     * Note: Originally this test increased the size of the signature (CMS) by
+     * adding additional CRLs. However, since the upgrade to OpenPDF (DSS-2426)
+     * the CRL:s are not stored withing the CMS so they do not affect the
+     * signature size. Instead this test has been modified to (also) put in a
+     * time-stamp token of the same additional size.
+     * 
      */
     @Test
     public void test14EstimatedP7Size_increaseNumCRLs() throws Exception {
@@ -1309,6 +1316,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // Test 1: First test is the reference test
         crlList = new CRL[1];
         System.arraycopy(allCRLs, 0, crlList, 0, 1); // 1 CRL
+        tsc.setFixedActualSize(1234 + sumCRLSizes(crlList)); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
         referenceSize = actualP7Size;
@@ -1320,6 +1328,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // that the final P7 does not increases with more than the size of the certificate
         crlList = new CRL[2];
         System.arraycopy(allCRLs, 0, crlList, 0, 2); // 2 CRLs
+        tsc.setFixedActualSize(1234 + sumCRLSizes(crlList)); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         int diff = actualP7Size - referenceSize - sumCRLSizes(crlList, 1);
         LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
@@ -1329,6 +1338,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // that the final P7 does not increases with more than the size of the certificates
         crlList = new CRL[3];
         System.arraycopy(allCRLs, 0, crlList, 0, 3); // 3 CRLs
+        tsc.setFixedActualSize(1234 + sumCRLSizes(crlList)); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         diff = actualP7Size - referenceSize - sumCRLSizes(crlList, 1);
         LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
@@ -1338,6 +1348,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // that the final P7 does not increases with more than the size of the certificates
         crlList = new CRL[10];
         System.arraycopy(allCRLs, 0, crlList, 0, 10); // 10 CRLs
+        tsc.setFixedActualSize(1234 + sumCRLSizes(crlList)); // Note: this is the change
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         diff = actualP7Size - referenceSize - sumCRLSizes(crlList, 1);
         LOG.debug("actualP7Size=" + actualP7Size + ", sumCertSizes=" + sumCRLSizes(crlList));
@@ -2358,6 +2369,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         PdfStamper stp;
         try {
             reader = new PdfReader(pdfBytes, password == null ? null : password.getBytes(StandardCharsets.ISO_8859_1));
+            reader.setModificationAllowedWithoutOwnerPassword(false); // Since change to OpenPDF, this is required otherwise permissions do not apply
         } catch (BadPasswordException ex) {
             fail("Not a valid password: " + ex.getMessage());
             return;
@@ -2380,6 +2392,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private static void assertOwnerPassword(byte[] pdfBytes, String password) throws IOException, DocumentException {
         // This will fail unless password is owner or user
         PdfReader reader = new PdfReader(pdfBytes, password.getBytes(StandardCharsets.ISO_8859_1));
+        reader.setModificationAllowedWithoutOwnerPassword(false); // Since change to OpenPDF, this is required otherwise permissions do not apply
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null, false);
 

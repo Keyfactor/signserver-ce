@@ -12,8 +12,10 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import org.signserver.lib.itext.text.pdf.PdfPKCS7;
-import org.signserver.lib.itext.text.pdf.TSAClient;
+import com.lowagie.text.pdf.PdfPKCS7;
+import com.lowagie.text.pdf.TSAClient;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.tsp.TimeStampToken;
@@ -53,6 +55,11 @@ public class InternalTSAClient implements TSAClient {
         final byte[] encoded = token.getEncoded();
         tokenSizeEstimated = encoded.length;
         return encoded;
+    }
+
+    @Override
+    public MessageDigest getMessageDigest() throws GeneralSecurityException {
+        return MessageDigest.getInstance(digestAlgorithm.toString(), "BC");
     }
 
 }

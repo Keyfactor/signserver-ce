@@ -903,7 +903,25 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         return result;
     }
-    
+
+    /**
+     * Acquire crypto instances from each of the configured OTHER_SIGNERS and
+     * that are processable workers, 
+     * in order to perform crypto operations during a limited scope. 
+     * It is the caller's responsibility to make sure the call is followed up
+     * by a call to releaseCryptoInstance() for each instance. Use try-final.
+     * 
+     * @param purpose Key purpose
+     * @param request Process request
+     * @param params Additional parameters to pass to the crypto token
+     * @param context the request context
+     * @return list of all crypto instances
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalRequestException
+     * @throws SignServerException
+     * @throws java.security.InvalidAlgorithmParameterException
+     * @throws org.signserver.common.UnsupportedCryptoTokenParameter
+     */
     protected List<ICryptoInstance> acquireCryptoInstancesFromOtherSigners(final int purpose, final Request request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         List<ICryptoInstance> result;
         final IServices services = context.getServices();
@@ -920,6 +938,66 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             }
         }
         return result;
+    }
+
+    /**
+     * Acquire both crypto instances from each of the configured OTHER_SIGNERS
+     * that are processable workers and their signer certificate chains,
+     * in order to perform crypto operations during a limited scope. 
+     * It is the caller's responsibility to make sure the call is followed up
+     * by a call to releaseCryptoInstance() for each instance. Use try-final.
+     * 
+     * @param purpose Key purpose
+     * @param request Process request
+     * @param params Additional parameters to pass to the crypto token
+     * @param context the request context
+     * @return list of all crypto instances and signer certificate chains
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalRequestException
+     * @throws SignServerException
+     * @throws java.security.InvalidAlgorithmParameterException
+     * @throws org.signserver.common.UnsupportedCryptoTokenParameter
+     */
+    protected List<SignerCrypto> acquireCryptoInstanceAndCertChainFromOtherSigners(final int purpose, final Request request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+        List<SignerCrypto> result;
+        final IServices services = context.getServices();
+        List<IWorker> otherSigners = getSignServerContext().getOtherSigners(services);
+        if (log.isDebugEnabled()) {
+            log.debug("Got OTHER_SIGNERS workers: " + otherSigners);
+        }
+        result = new ArrayList<>(5);
+        if (otherSigners != null) {
+            for (IWorker next : otherSigners) {
+                if (next instanceof BaseProcessable) {
+                    final BaseProcessable bp = (BaseProcessable) next;                
+                    result.add(new SignerCrypto(BaseProcessable.acquireCryptoInstance(bp, purpose, request, params, context),
+                        bp.getConfig().getSignerCertificateChain()));
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Holder for both an acquired crypto instance and potentially also a 
+     * signer certificate chain.
+     */
+    public static class SignerCrypto {
+        private final ICryptoInstance cryptoInstance;
+        private final List<Certificate> signerCertificateChain;
+        
+        public SignerCrypto(ICryptoInstance cryptoInstance, List<Certificate> signerCertificateChain) {
+            this.cryptoInstance = cryptoInstance;
+            this.signerCertificateChain = signerCertificateChain;
+        }
+
+        public ICryptoInstance getCryptoInstance() {
+            return cryptoInstance;
+        }
+
+        public List<Certificate> getSignerCertificateChain() {
+            return signerCertificateChain;
+        }
     }
 
     protected ICryptoInstance acquireDefaultCryptoInstance(RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {

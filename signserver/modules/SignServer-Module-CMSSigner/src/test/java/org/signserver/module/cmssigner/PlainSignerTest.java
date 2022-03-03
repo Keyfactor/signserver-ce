@@ -637,6 +637,44 @@ public class PlainSignerTest {
     }
 
     /**
+     * Test that Signing would fail when trying to do client-side padding
+     * while using the client-side request parameters to indicate that
+     * server-side padding should be performed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA256_clientSidePaddingNotAccepted() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA256_structure");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        // Taken from RFC 3447, page 42 for SHA-256, create input for signing
+        byte[] modifierBytes = {0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(modifierBytes);
+        baos.write(hash);
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+
+        try {
+            final SimplifiedResponse resp =
+                    sign(baos.toByteArray(), tokenRSA,
+                         createConfig("NONEwithRSA", null, null, true,
+                                      "SHA-256"), context);
+        } catch (IllegalRequestException ex) {
+            assertEquals("Input length doesn't match hash digest algorithm specified through request metadata",
+                         ex.getMessage());
+        }
+    }
+
+    /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-256 hash digest.
      * Use server-side padding with the clientside request parameters.
      * 

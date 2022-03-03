@@ -315,6 +315,16 @@ public class PlainSignerTest {
     private WorkerConfig createConfig(final String signatureAlgorithm,
                                       final String logDigestAlgorithm,
                                       final String doLogRequestDigest) throws Exception {
+        return createConfig(signatureAlgorithm, logDigestAlgorithm,
+                            doLogRequestDigest, false, null);
+    }
+
+     private WorkerConfig createConfig(final String signatureAlgorithm,
+                                       final String logDigestAlgorithm,
+                                       final String doLogRequestDigest,
+                                       final boolean allowClientSideOverride,
+                                       final String acceptedHashDigestAlgorithms)
+             throws Exception {
         WorkerConfig config = new WorkerConfig();
         if (signatureAlgorithm != null) {
             config.setProperty("SIGNATUREALGORITHM", signatureAlgorithm);
@@ -324,6 +334,13 @@ public class PlainSignerTest {
         }
         if (doLogRequestDigest != null) {
             config.setProperty("DO_LOGREQUEST_DIGEST", doLogRequestDigest);
+        }
+        if (allowClientSideOverride) {
+            config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "true");
+        }
+        if (acceptedHashDigestAlgorithms != null) {
+            config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS",
+                               acceptedHashDigestAlgorithms);
         }
         return config;
     }
@@ -550,6 +567,33 @@ public class PlainSignerTest {
         SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"));
         assertSignedAndVerifiable(plainText, "SHA512withRSA", tokenRSA, resp);
     }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-512 hash digest.
+     * Use server-side padding with the clientside request parameters.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA512_serverSidePadding() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA512_serverSidePadding");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-512");
+
+        final SimplifiedResponse resp =
+                sign(hash, tokenRSA,
+                     createConfig("NONEwithRSA", null, null, true,
+                                  "SHA-512"), context);
+        assertSignedAndVerifiable(plainText, "SHA512withRSA", tokenRSA, resp);
+    }
     
     /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-512 hash digest.
@@ -590,7 +634,34 @@ public class PlainSignerTest {
 
         SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"));
         assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
-    } 
+    }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-256 hash digest.
+     * Use server-side padding with the clientside request parameters.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA256_serverSidePadding() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA256_serverSidePadding");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+
+        final SimplifiedResponse resp =
+                sign(hash, tokenRSA,
+                     createConfig("NONEwithRSA", null, null, true,
+                                  "SHA-256"), context);
+        assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
+    }
     
     /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-256 hash digest.
@@ -630,6 +701,33 @@ public class PlainSignerTest {
         baos.write(hash);
 
         SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"));
+        assertSignedAndVerifiable(plainText, "SHA384withRSA", tokenRSA, resp);
+    }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-384 hash digest.
+     * Use server-side padding with the clientside request parameters.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA384_serverSidePadding() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA384_serverSidePadding");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-384");
+
+        final SimplifiedResponse resp =
+                sign(hash, tokenRSA,
+                     createConfig("NONEwithRSA", null, null, true,
+                                  "SHA-384"), context);
         assertSignedAndVerifiable(plainText, "SHA384withRSA", tokenRSA, resp);
     }
     

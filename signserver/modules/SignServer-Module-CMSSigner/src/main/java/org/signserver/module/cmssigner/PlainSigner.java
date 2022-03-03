@@ -279,7 +279,7 @@ public class PlainSigner extends BaseSigner {
                             getModifierBytes(clientSideHashAlgorithm);
 
                     if (modifierBytes == null) {
-                        throw new IllegalArgumentException("RSA padding unknow for hash algorithm: " +
+                        throw new IllegalArgumentException("RSA padding unknown for hash algorithm: " +
                                                            clientSideHashAlgorithm);
                     }
 

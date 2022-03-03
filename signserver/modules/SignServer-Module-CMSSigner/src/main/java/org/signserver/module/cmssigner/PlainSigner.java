@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -64,6 +65,7 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import org.signserver.server.HashDigestUtils;
 
 /**
  * A Signer signing arbitrary content and produces a plain signature.
@@ -112,6 +114,30 @@ public class PlainSigner extends BaseSigner {
         HASH_ALGORITHM_AND_SALT_MAP.put("SHA-384", 48);
         HASH_ALGORITHM_AND_SALT_MAP.put("SHA512", 64);
         HASH_ALGORITHM_AND_SALT_MAP.put("SHA-512", 64);
+    }
+
+    private final static Map<String, byte[]> HASH_ALGORITHM_AND_MODIFIER_MAP = new HashMap<>();
+
+    // Taken from RFC 3447, page 42
+    private final static byte[] SHA1_MODIFIER_BYTES =
+            new byte[] {0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x05, 0x00, 0x04, 0x14};
+    private final static byte[] SHA256_MODIFIER_BYTES =
+            new byte[] {0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20};
+    private final static byte[] SHA384_MODIFIER_BYTES =
+            new byte[] {0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30};
+    private final static byte[] SHA512_MODIFIER_BYTES =
+            new byte[] {0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40};
+
+    // bind hash algorithm with corresponding RSA modifier bytes
+    static {
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA1", SHA1_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA-1", SHA1_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA256", SHA256_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA-256", SHA256_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA384", SHA384_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA-384", SHA384_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA512", SHA512_MODIFIER_BYTES);
+        HASH_ALGORITHM_AND_MODIFIER_MAP.put("SHA-512", SHA512_MODIFIER_BYTES);
     }
 
     @Override
@@ -203,10 +229,7 @@ public class PlainSigner extends BaseSigner {
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         ICryptoInstance crypto = null;
-        try (
-                InputStream in = requestData.getAsInputStream();
-                OutputStream out = responseData.getAsInMemoryOutputStream()
-            ) {
+        try (OutputStream out = responseData.getAsInMemoryOutputStream()) {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
             // Get certificate chain and signer certificate
             final List<Certificate> certs = this.getSigningCertificateChain(crypto);
@@ -233,6 +256,15 @@ public class PlainSigner extends BaseSigner {
                 // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
                 final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
 
+                final byte[] data = requestData.getAsByteArray();
+                final byte[] dataToSign;
+
+                // check that the digest is of the expected length
+                if (!HashDigestUtils.isSuppliedHashDigestLengthValid(clientSideHashAlgorithm,
+                                                                     data.length)) {
+                    throw new IllegalRequestException("Input length doesn't match hash digest algorithm specified through request metadata");
+                }
+
                 if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
                     final Integer saltLength = HASH_ALGORITHM_AND_SALT_MAP.get(clientSideHashAlgorithm);
                     if(saltLength == null) {
@@ -240,67 +272,79 @@ public class PlainSigner extends BaseSigner {
                     }
                     PSSParameterSpec params = new PSSParameterSpec(clientSideHashAlgorithm, "MGF1", new MGF1ParameterSpec(clientSideHashAlgorithm), saltLength, 1);
                     signature.setParameter(params);
+                }
+
+                if (sigAlgUpperCase.equals("NONEWITHRSA")) {
+                    final byte[] modifierBytes =
+                            getModifierBytes(clientSideHashAlgorithm);
+
+                    if (modifierBytes == null) {
+                        throw new IllegalArgumentException("RSA padding unknow for hash algorithm: " +
+                                                           clientSideHashAlgorithm);
+                    }
+
+                    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                    baos.write(modifierBytes);
+                    baos.write(data);
+
+                    dataToSign = baos.toByteArray();
                 } else {
-                    // Do not allow for RSASSA-PKCS1_v1.5 yet as we want to implement the encoding part here so it will work the same way as for PSS
-                    throw new IllegalRequestException("Client-side hashing through request metadata not supported for other algorithms than RSASSA-PSS yet");
+                    dataToSign = data;
                 }
-
+                
                 signature.initSign(privKey);
-
-                final byte[] buffer = new byte[4096];
-                int n;
-                while (-1 != (n = in.read(buffer))) {
-                    signature.update(buffer, 0, n);
-                }
-
+                signature.update(dataToSign);
                 signedbytes = signature.sign();
             } else {
-                // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
-                if (sigAlgUpperCase.startsWith("NONEWITH")) { 
-                    // We need PSS params for this
-                    if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
-                        throw new IllegalRequestException("NONEwithRSAandMGF1 is not supported without the request metadata properties for client-side hashing");
-                    }
-                    
-                    
-                    final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
-                    signature.initSign(privKey);
+                try (final InputStream in = requestData.getAsInputStream()) {
+                    // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
+                    if (sigAlgUpperCase.startsWith("NONEWITH")) { 
+                        // We need PSS params for this
+                        if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
+                            throw new IllegalRequestException("NONEwithRSAandMGF1 is not supported without the request metadata properties for client-side hashing");
+                        }
 
-                    final byte[] buffer = new byte[4096];
-                    int n;
-                    while (-1 != (n = in.read(buffer))) {
-                        signature.update(buffer, 0, n);
-                    }
 
-                    signedbytes = signature.sign();
-                } else {
-                    // Special handling to support the new Java names not handled by BC
-                    Map<String, String> algorithmNames = new HashMap<>();
-                    algorithmNames.put("SHA1withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA1withRSAandMGF1");
-                    algorithmNames.put("SHA224withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA224withRSAandMGF1");
-                    algorithmNames.put("SHA256withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA256withRSAandMGF1");
-                    algorithmNames.put("SHA384withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA384withRSAandMGF1");
-                    algorithmNames.put("SHA512withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA512withRSAandMGF1");
+                        final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
+                        signature.initSign(privKey);
 
-                    String effectiveSigAlgName = algorithmNames.get(sigAlgUpperCase);
-                    if (effectiveSigAlgName == null) {
-                        effectiveSigAlgName = sigAlg;
-                    }
-
-                    // Use BC for this as it supports the old algorithm names etc
-                    JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(effectiveSigAlgName);
-                    signerBuilder.setProvider(crypto.getProvider());
-                    ContentSigner signer = signerBuilder.build(privKey);
-
-                    try (OutputStream signerOut = signer.getOutputStream()) {
                         final byte[] buffer = new byte[4096];
                         int n;
                         while (-1 != (n = in.read(buffer))) {
-                            signerOut.write(buffer, 0, n);
+                            signature.update(buffer, 0, n);
                         }
-                    }
 
-                    signedbytes = signer.getSignature();
+                        signedbytes = signature.sign();
+                    } else {
+                        // Special handling to support the new Java names not handled by BC
+                        Map<String, String> algorithmNames = new HashMap<>();
+                        algorithmNames.put("SHA1withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA1withRSAandMGF1");
+                        algorithmNames.put("SHA224withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA224withRSAandMGF1");
+                        algorithmNames.put("SHA256withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA256withRSAandMGF1");
+                        algorithmNames.put("SHA384withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA384withRSAandMGF1");
+                        algorithmNames.put("SHA512withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA512withRSAandMGF1");
+
+                        String effectiveSigAlgName = algorithmNames.get(sigAlgUpperCase);
+                        if (effectiveSigAlgName == null) {
+                            effectiveSigAlgName = sigAlg;
+                        }
+
+                        // Use BC for this as it supports the old algorithm names etc
+                        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(effectiveSigAlgName);
+                        signerBuilder.setProvider(crypto.getProvider());
+                        ContentSigner signer = signerBuilder.build(privKey);
+
+                        try (OutputStream signerOut = signer.getOutputStream()) {
+                            final byte[] buffer = new byte[4096];
+                            int n;
+                            while (-1 != (n = in.read(buffer))) {
+                                signerOut.write(buffer, 0, n);
+                            }
+                        }
+
+                        signedbytes = signer.getSignature();
+                    }
                 }
             }
 
@@ -339,6 +383,16 @@ public class PlainSigner extends BaseSigner {
         }
     }
 
+    /**
+     * Get PKCS1 v1.5 padding bytes for RSA
+     *
+     * @param clientsideHashAlgorithm Hash digest algorithm to get bytes for
+     * @return modifier bytes, or null if unsupported/unknown algorithm
+     */
+    private byte[] getModifierBytes(final String clientsideHashAlgorithm) {
+        return HASH_ALGORITHM_AND_MODIFIER_MAP.get(clientsideHashAlgorithm);
+    }
+    
     private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
         final String result;
 

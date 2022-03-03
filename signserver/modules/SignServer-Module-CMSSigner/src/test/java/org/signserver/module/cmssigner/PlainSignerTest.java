@@ -651,44 +651,6 @@ public class PlainSignerTest {
     }
 
     /**
-     * Tests that we do not support/allow client-side flags for PKCS1 yet.
-     *
-     * TODO: This should be changed when we implement the PKCS1 encoding on server-side (DSS-1498).
-     *
-     * @throws Exception 
-     */
-    @Test
-    public void testNONESigning_RSASSA_PKCS1_notAllowed() throws Exception {
-        LOG.info("testNONESigning_RSASSA_PKCS1_notAllowed");
-        // code example includes MessageDigest for the sake of completeness
-        byte[] plainText = "some-data".getBytes("ASCII");
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(plainText);
-        byte[] hash = md.digest();
-
-        // Taken from RFC 3447, page 42 for SHA-256, create input for signing
-        byte[] modifierBytes = {0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20};
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(modifierBytes);
-        baos.write(hash);
-        
-        final RequestContext context = new RequestContext();
-        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
-        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
-
-        WorkerConfig config = createConfig("NONEwithRSA");
-        config.setProperty("CLIENTSIDEHASHING", "true");
-        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256, SHA-384, SHA-512");
-        
-        try {
-            sign(baos.toByteArray(), tokenRSA, config, context);
-            fail("Should have failed as suppliying request metadata properties is not supported yet with NONEwithRSA");
-        } catch (IllegalRequestException ex) {
-            assertEquals("Client-side hashing through request metadata not supported for other algorithms than RSASSA-PSS yet", ex.getMessage());
-        }
-    }
-
-    /**
      * Test that signing fails for NONEwithRSAandMGF1 when then request does 
      * not have the client-side request metadata properties.
      * 

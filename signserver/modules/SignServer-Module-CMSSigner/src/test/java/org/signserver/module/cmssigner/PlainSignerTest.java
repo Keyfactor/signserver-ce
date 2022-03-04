@@ -611,6 +611,32 @@ public class PlainSignerTest {
         SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
         assertSignedAndVerifiable(plainText, "SHA512withECDSA", tokenECDSA, resp);
     }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-512 hash digest.
+     * Using client-side request parameters.
+     * 
+     * @throws Exception 
+     */
+     @Test
+    public void testNONESigning_ECDSA_SHA512_clientSideParams() throws Exception {
+        LOG.info("testNONESigning_ECDSA_SHA512_clientSideParams");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-512");
+
+        SimplifiedResponse resp =
+                sign(hash, tokenECDSA, createConfig("NONEwithECDSA", null, null,
+                                                    true, "SHA-512"), context);
+        assertSignedAndVerifiable(plainText, "SHA512withECDSA", tokenECDSA, resp);
+    }
     
     /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-256 hash digest.
@@ -717,6 +743,32 @@ public class PlainSignerTest {
          SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
          assertSignedAndVerifiable(plainText, "SHA256withECDSA", tokenECDSA, resp);
     }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-256 hash digest.
+     * Using client-side request parameters.
+     * 
+     * @throws Exception 
+     */
+     @Test
+    public void testNONESigning_ECDSA_SHA256_clientSideParams() throws Exception {
+        LOG.info("testNONESigning_ECDSA_SHA256_clientSideParams");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+
+        SimplifiedResponse resp =
+                sign(hash, tokenECDSA, createConfig("NONEwithECDSA", null, null,
+                                                    true, "SHA-256"), context);
+        assertSignedAndVerifiable(plainText, "SHA256withECDSA", tokenECDSA, resp);
+    }
     
     /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-384 hash digest.
@@ -783,6 +835,32 @@ public class PlainSignerTest {
         md.update(plainText);
         byte[] hash = md.digest();
         SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
+        assertSignedAndVerifiable(plainText, "SHA384withECDSA", tokenECDSA, resp);
+    }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-384 hash digest.
+     * Using client-side request parameters.
+     * 
+     * @throws Exception 
+     */
+     @Test
+    public void testNONESigning_ECDSA_SHA384_clientSideParams() throws Exception {
+        LOG.info("testNONESigning_ECDSA_SHA384_clientSideParams");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-384");
+
+        SimplifiedResponse resp =
+                sign(hash, tokenECDSA, createConfig("NONEwithECDSA", null, null,
+                                                    true, "SHA-384"), context);
         assertSignedAndVerifiable(plainText, "SHA384withECDSA", tokenECDSA, resp);
     }
 

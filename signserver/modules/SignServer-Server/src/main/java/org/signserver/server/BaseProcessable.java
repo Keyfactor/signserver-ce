@@ -942,8 +942,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     /**
      * Acquire both crypto instances from each of the configured OTHER_SIGNERS
-     * that are processable workers and their signer certificate chains,
-     * in order to perform crypto operations during a limited scope. 
+     * that are processable workers and their signer certificate chains (from
+     * configuration), in order to perform crypto operations during a limited 
+     * scope.
+     *
+     * Note that the signer certificate chain from the configuration and/or
+     * the token may be null. Normally the chain from the configuration should
+     * be used if it exists and otherwise the chain from the token.
+     *
      * It is the caller's responsibility to make sure the call is followed up
      * by a call to releaseCryptoInstance() for each instance. Use try-final.
      * 

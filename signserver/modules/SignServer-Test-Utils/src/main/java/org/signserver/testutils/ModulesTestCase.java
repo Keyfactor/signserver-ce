@@ -32,6 +32,8 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.LinkedList;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -584,24 +586,24 @@ public class ModulesTestCase {
             final int signerId, final String signerName,
             final File keystore, final String password, final String alias
     ) {
-        getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
-        getWorkerSession().setWorkerProperty(signerId, KEY_IMPL_CLASS, className);
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put(WorkerConfig.TYPE,WorkerType.PROCESSABLE.name());
+        properties.put(KEY_IMPL_CLASS,className);
         if (cryptoTokenClassName != null) {
-            getWorkerSession().setWorkerProperty(signerId,
-                    KEY_CRYPTO_TOKEN_IMPL_CLASS,
-                                                 cryptoTokenClassName);
+            properties.put(KEY_CRYPTO_TOKEN_IMPL_CLASS,cryptoTokenClassName);
         }
-        getWorkerSession().setWorkerProperty(signerId, KEY_NAME, signerName);
-        getWorkerSession().setWorkerProperty(signerId, KEY_AUTH_TYPE, VALUE_NO_AUTH);
+        properties.put(KEY_NAME,signerName);
+        properties.put(KEY_AUTH_TYPE,VALUE_NO_AUTH);
         if (keystore != null) {
-            getWorkerSession().setWorkerProperty(signerId, KEY_KEYSTORE_PATH, keystore.getAbsolutePath());
+            properties.put(KEY_KEYSTORE_PATH,keystore.getAbsolutePath());
         }
         if (alias != null) {
-            getWorkerSession().setWorkerProperty(signerId, KEY_DEFAULT_KEY, alias);
+            properties.put(KEY_DEFAULT_KEY,alias);
         }
         if (password != null) {
-            getWorkerSession().setWorkerProperty(signerId, KEY_KEYSTORE_PASSWORD, password);
+            properties.put(KEY_KEYSTORE_PASSWORD,password);
         }
+        getWorkerSession().updateWorkerProperties(signerId,properties,new LinkedList<>());
 
         getWorkerSession().reloadConfiguration(signerId);
         try {

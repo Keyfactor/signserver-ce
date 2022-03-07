@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
@@ -88,7 +89,7 @@ public class CredentialUtils {
                 switch (parts[0].toLowerCase(Locale.ENGLISH)) {
                     case HTTP_AUTHORIZATION_BASIC:
                         final String decoded[] = new String(Base64.decode(
-                            parts[1])).split(":", 2);
+                            parts[1]), StandardCharsets.UTF_8).split(":", 2);
                         if (decoded.length < 2) {
                             LOG.warn("Malformed HTTP Authorization header");
                             credentialPassword = null;

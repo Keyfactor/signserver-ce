@@ -14,6 +14,7 @@ package org.signserver.admin.web;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
@@ -66,7 +67,7 @@ public class AdminWebBean {
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2021 PrimeKey Solutions AB";
+        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2021 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved.";
     }
 
     public String getCurrentTime() {

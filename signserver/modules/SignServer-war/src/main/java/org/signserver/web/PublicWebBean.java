@@ -178,11 +178,25 @@ public class PublicWebBean {
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2021 PrimeKey Solutions AB";
+        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2021 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved.";
     }
 
     public String getNode() {
         return CesecoreConfiguration.getNodeIdentifier();
+    }
+
+    public String getTheme() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+    }
+
+    public String getProductName() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.APPNAME_CAP);
+    }
+
+    public String getProductVersion() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)
+                + " "
+                + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
     }
 
 }

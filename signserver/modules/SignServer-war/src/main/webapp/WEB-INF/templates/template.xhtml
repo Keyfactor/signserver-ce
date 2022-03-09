@@ -24,9 +24,9 @@
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="shortcut icon" type="image/png" href="#{resource['default/images/favicon.png']}"/>
-        <h:outputStylesheet library="default" name="css/default.css"/>
-        <h:outputStylesheet library="default" name="css/cssLayout.css"/>
-        <h:outputStylesheet library="default" name="css/publicweb.css"/>
+        <h:outputStylesheet library="#{publicWebBean.theme}" name="css/default.css"/>
+        <h:outputStylesheet library="#{publicWebBean.theme}" name="css/cssLayout.css"/>
+        <h:outputStylesheet library="#{publicWebBean.theme}" name="css/publicweb.css"/>
         <title><ui:insert name="title">Title</ui:insert><h:outputText value=" - SignServer"/></title>
         <h:outputScript library="default" name="js/adminweb.js"/>
         <h:outputScript library="default" name="js/ejbca-common.js"/>
@@ -35,20 +35,40 @@
     <h:body>
         
         <div id="top">
-            <div id="top-left">
-                <h:graphicImage library="default"
-                                name="images/logo.png" height="50"
-                                rendered="#{startPage}"/>
-                <h:outputLink value="../" rendered="#{!startPage}">
-                    <h:graphicImage library="default" name="images/logo.png"
-                                    height="50"/>
-                </h:outputLink></div>
-            <div id="top-right">
-                <h:panelGrid columns="2">                   
-                    <h:outputText value="#{text['Node_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{publicWebBean.node}" class="top-right-c2"/>                 
-                </h:panelGrid>
-            </div>
+            <header class="kfds-header-container">
+                <div class="kfds-header-left">
+                  <div class="kfds-header-brand">
+                    <div class="kfds-header-logo">
+                        <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{publicWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
+                    </div>
+                    <div class="kfds-header-product">
+                      <div class="kfds-header-product-name">
+                        <h:panelGroup layout="block">
+                            <h:outputText value="#{publicWebBean.productName}"/>
+                        </h:panelGroup>
+                      </div>
+                      <div class="kfds-header-product-version">
+                        <h:panelGroup layout="block">
+                            <h:outputText value="#{publicWebBean.productVersion}"/>
+                        </h:panelGroup>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="kfds-header-right">
+                    <ul class="SS_infoList">
+                        <li class="SS_infoItem">
+                            <label>
+                                <h:outputText value="#{text['Node_COLON']}"/>
+                            </label>
+                            <div class="mx-0.5">
+                                <h:outputText value="#{publicWebBean.node}"/> 
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </header>
             <div class="clearBoth"></div>
 
             <h:panelGroup id="top-menu" layout="block" rendered="#{activeMenu != null and activeMenu != ''}"> 

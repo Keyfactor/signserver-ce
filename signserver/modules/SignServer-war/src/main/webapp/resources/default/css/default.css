@@ -1,22 +1,90 @@
+/** PrimeKey Fonts **/
+/* Roboto-Light */
+@font-face {
+  font-family: "Roboto";
+  src: url("fonts/Roboto/Roboto-Light.eot"); /* IE9 Compat Modes */
+  src: url("fonts/Roboto/Roboto-Light.eot?#iefix") format("embedded-opentype"),
+  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Light.woff") format("woff"),
+  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Light.woff2")
+  format("woff"),
+  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Light.ttf")
+  format("truetype"),
+  url("fonts/Roboto/Roboto-Light.svg#svgFontName") format("svg"); /* Legacy iOS */
+  font-weight: 300;
+  font-style: normal;
+ }
+ /* Roboto-Regular */
+ @font-face {
+  font-family: "Roboto";
+  src: url("fonts/Roboto/Roboto-Regular.eot"); /* IE9 Compat Modes */
+  src: url("fonts/Roboto/Roboto-Regular.eot?#iefix") format("embedded-opentype"),
+  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Regular.woff") format("woff"),
+  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Regular.woff2")
+  format("woff"),
+  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Regular.ttf")
+  format("truetype"),
+  url("fonts/Roboto/Roboto-Regular.svg#svgFontName") format("svg"); /* Legacy iOS */
+  font-weight: 400;
+  font-style: normal;
+ }
+ /* Roboto-Medium */
+ @font-face {
+  font-family: "Roboto";
+  src: url("fonts/Roboto/Roboto-Medium.eot"); /* IE9 Compat Modes */
+  src: url("fonts/Roboto/Roboto-Medium.eot?#iefix") format("embedded-opentype"),
+  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Medium.woff") format("woff"),
+  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Medium.woff2")
+  format("woff"),
+  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Medium.ttf")
+  format("truetype"),
+  url("fonts/Roboto/Roboto-Medium.svg#svgFontName") format("svg"); /* Legacy iOS */
+  font-weight: 500;
+  font-style: normal;
+ }
+ /* Roboto-Bold */
+ @font-face {
+  font-family: "Roboto";
+  src: url("fonts/Roboto/Roboto-Bold.eot"); /* IE9 Compat Modes */
+  src: url("fonts/Roboto/Roboto-Bold.eot?#iefix") format("embedded-opentype"),
+  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Bold.woff") format("woff"),
+  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Bold.woff2")
+  format("woff"),
+  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Bold.ttf")
+  format("truetype"),
+  url("fonts/Roboto/Roboto-Bold.svg#svgFontName") format("svg"); /* Legacy iOS */
+  font-weight: bold;
+  font-style: normal;
+ }
+
 body {
-    background-color: #ffffff;
-    font-size: 12px;
-    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-    color: #000000;  
+    background-color: #ffffff; 
     margin: 0px;
+    color: #323232;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-transform: none;
 }
 
-h1 {
-    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-    /*border-bottom: 1px solid #AFAFAF; */
-    font-size:  16px;
-    font-weight: bold;
-    margin: 0px;
-    padding: 0px;
-    margin-bottom: 10px;
-    /*color: #D20005;*/
-    /*color: #1F589F;*/
+@media (min-width: 768px) {
+  body {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    }
+ }
+ 
+ h1 {
+  /*border-bottom: 1px solid #AFAFAF; */
+  font-size:  16px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 10px;
+  /*color: #D20005;*/
+  /*color: #1F589F;*/
 }
+
 
 h2 {
     font-size: 14px;

@@ -34,24 +34,70 @@
     <h:body>
         
         <div id="top">
-            <div id="top-left"><h:outputLink value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.png" height="50"/></h:outputLink></div>
-            <div id="top-right">
-                <h:panelGrid columns="2">
-                    <h:outputText value="#{text['User_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{text['n/a']}" class="top-right-c2"/>
-                    
-                    <h:outputText value="#{text['Node_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{adminWebBean.node}" class="top-right-c2"/>
-                    
-                    <h:outputText value="#{text['Server_Time_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
-                    
-                    <h:outputText value="#{text['Version_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{adminWebBean.version}" class="top-right-c2"/>
-                </h:panelGrid>
-            </div>
-            <div class="clearBoth"></div>
+            <header class="kfds-header-container">
+                <div class="kfds-header-left">
+                  <div class="kfds-header-brand">
+                    <div class="kfds-header-logo">
+                        <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
+                    </div>
+                    <div class="kfds-header-product">
+                      <div class="kfds-header-product-name">
+                        <h:panelGroup rendered="#{!adminWebBean.defaultThemeEnabled}" layout="block">
+                            <h:outputText value="#{adminWebBean.productName}"/>
+                        </h:panelGroup>
+                      </div>
+                      <div class="kfds-header-product-version">
+                        <h:panelGroup rendered="#{!adminWebBean.defaultThemeEnabled}" layout="block">
+                            <h:outputText value="#{adminWebBean.productVersion}"/>
+                        </h:panelGroup>
+                      </div>
+                    </div>
+                  </div>
+               
+                </div>
+                <div class="kfds-header-right">
+                    <ul class="SS_infoList">
+                        <li class="SS_infoItem">
+                            <label>
+                                <h:outputText value="#{text['User_COLON']}"/>
+                            </label>
+                            <div class="mx-0.5">
+                                <h:outputText value="#{text['n/a']}"/>
+                            </div>
+                        </li>
+        
+                        <li class="SS_infoItem">
+                            <label>
+                                <h:outputText value="#{text['Node_COLON']}"/>
+                            </label>
+                            <div class="mx-0.5">
+                                <h:outputText value="#{adminWebBean.node}"/>
+                            </div>
+                        </li>
+        
+                        <li class="SS_infoItem">
+                            <label>
+                                <h:outputText value="#{text['Server_Time_COLON']}"/>
+                            </label>
+                            <div class="mx-0.5">
+                                <h:outputText value="#{adminWebBean.currentTime}"/>
+                            </div>
+                        </li>
+        
+                        <li class="SS_infoItem">
+                            <label>
+                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{text['Version_COLON']}"/>
+                            </label>                
+                            <div class="mx-0.5">
+                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.version}"/>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+              </header>   
 
+            <div class="clearBoth"></div>
+            
             <div id="top-menu">
                 <ul>
                     <li class="last">

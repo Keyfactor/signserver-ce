@@ -199,4 +199,9 @@ public class PublicWebBean {
                 + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
     }
 
+    public boolean isDefaultThemeEnabled() {
+        final String enabled = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+        return enabled.equalsIgnoreCase("default");
+    }
+
 }

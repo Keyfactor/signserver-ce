@@ -43,12 +43,12 @@
                     </div>
                     <div class="kfds-header-product">
                       <div class="kfds-header-product-name">
-                        <h:panelGroup layout="block">
+                        <h:panelGroup rendered="#{!publicWebBean.defaultThemeEnabled}" layout="block">
                             <h:outputText value="#{publicWebBean.productName}"/>
                         </h:panelGroup>
                       </div>
                       <div class="kfds-header-product-version">
-                        <h:panelGroup layout="block">
+                        <h:panelGroup rendered="#{!publicWebBean.defaultThemeEnabled}" layout="block">
                             <h:outputText value="#{publicWebBean.productVersion}"/>
                         </h:panelGroup>
                       </div>

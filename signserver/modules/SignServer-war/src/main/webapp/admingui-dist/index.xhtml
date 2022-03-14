@@ -5,6 +5,11 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
 
+    <h:head>
+        <h:outputStylesheet library="#{publicWebBean.theme}" name="css/default.css"/>
+        <h:outputStylesheet library="#{publicWebBean.theme}" name="css/cssLayout.css"/>
+    </h:head>
+
     <body>
         <ui:composition template="../WEB-INF/templates/template.xhtml">
 
@@ -21,7 +26,7 @@
 
                     <h2>#{text['AdminGUI_Download']}</h2>
 
-                    <div style="border: thin solid gray; background-color: lightgray; float:left; padding: 0.5em; border-radius: 4px; -webkit-border-radius: 4px;">
+                    <div class="alertBox">
                         Note: The AdminGUI is deprecated and will be removed in a future version.<br/>
                         Please, use the AdminWeb instead.
                     </div>

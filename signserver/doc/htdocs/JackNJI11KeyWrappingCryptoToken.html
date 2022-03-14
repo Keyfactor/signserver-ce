@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.2</p>
+                    <p>Version: 5.9.0</p>
                 </div>
             </header>
 
@@ -198,7 +198,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+        <a class="ht-nav-page-link" href="WildFly_24_and_JBoss_EAP_7.4.html">WildFly 24 and JBoss EAP 7.4</a>
 
             </li>
                                         <li class="leaf">
@@ -1712,7 +1712,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-99157343"> <span>JackNJI11KeyWrappingCryptoToken</span></h1>
+</div>            <h1 id="src-143724183"> <span>JackNJI11KeyWrappingCryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1720,7 +1720,7 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
-    <div class="section section-1" id="src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-Overview">
+    <div class="section section-1" id="src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >Crypto token generating keys in the token and exporting them wrapped with a symmetric key and stored in the database.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION_CLASS=<strong class=" ">org.signserver.p11ng.common.cryptotoken.JackNJI11KeyWrappingCryptoToken</strong>    </p>
@@ -1731,7 +1731,7 @@
         </div>
     </div>
     </div>
-    <div class="section section-1" id="src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-AvailableProperties">
+    <div class="section section-1" id="src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1796,7 +1796,7 @@
 <ul class=" "><li class=" ">    <p  >SLOT_NUMBER is the number (ID) of the slot    </p>
 </li><li class=" ">    <p  >SLOT_INDEX is the zero-base index of the slot in the list of available slots as returned by the PKCS#11 provider    </p>
 </li></ul>    <p  >Required.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  SLOT_LABEL is currently not supported.    </p>
             </td>
         </tr>
@@ -1805,7 +1805,7 @@
         <p  >WRAPPING_CIPHER_ALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Cipher algorithm used to wrap the keys by secret/symmetric key. The value can be provided as PKCS#11 mechanism name, long constant value, or hexadecimal constant value. See <a   href="#src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-WrappingCipherAlgorithm">Wrapping Cipher Algorithm</a> below. (Optional).    </p>
+        <p  >Cipher algorithm used to wrap the keys by secret/symmetric key. The value can be provided as PKCS#11 mechanism name, long constant value, or hexadecimal constant value. See <a   href="#src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-WrappingCipherAlgorithm">Wrapping Cipher Algorithm</a> below. (Optional).    </p>
     <p  >Default value is <strong class=" ">CKM_AES_CBC_PAD</strong>.    </p>
             </td>
         </tr>
@@ -1820,23 +1820,32 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-WrappingCipherAlgorithmWrappingCipherAlgorithm">
+    <div class="section section-1" id="src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-WrappingCipherAlgorithmWrappingCipherAlgorithm">
         <h1 class="heading "><span>Wrapping Cipher Algorithm </span></h1>
     <p  >The Wrapping Cipher Algorithm is used to wrap the keys by secret/symmetric key. Values can be supplied in the following ways:    </p>
-    <div class="section section-2" id="src-99157343_safe-id-aWQtLkphY2tOSkkxMUtleVdyYXBwaW5nQ3J5cHRvVG9rZW52NS41LjAtUEtDUyMxMW1lY2hhbmlzbW5hbWU">
+    <div class="section section-2" id="src-143724183_safe-id-aWQtLkphY2tOSkkxMUtleVdyYXBwaW5nQ3J5cHRvVG9rZW52NS45LjAtUEtDUyMxMW1lY2hhbmlzbW5hbWU">
         <h2 class="heading "><span>PKCS#11 mechanism name</span></h2>
     <p  >Stating with &quot;CKM_&quot;. Example: <strong class=" ">CKM_AES_CBC_PAD</strong>.    </p>
     </div>
-    <div class="section section-2" id="src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-CKMLongvalue">
+    <div class="section section-2" id="src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-CKMLongvalue">
         <h2 class="heading "><span>CKM Long value</span></h2>
     <p  >Example: <strong class=" ">4229</strong>. Here 4229 represents long value for CKM_AES_CBC_PAD constant, as per PKCS11 specification.    </p>
     </div>
-    <div class="section section-2" id="src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-CKMHexadecimalvalue">
+    <div class="section section-2" id="src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-CKMHexadecimalvalue">
         <h2 class="heading "><span>CKM Hexadecimal value</span></h2>
     <p  >Example: <strong class=" ">0x00001085. </strong>Here<strong class=" "> </strong>0x00001085 represents hexadecimal value for CKM_AES_CBC_PAD constant, as per PKCS11 specification.    </p>
+    <p  ><br/>    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >Which algorithm can be used depends on the underlying CryptoToken and the Hardware Security Module.    </p>
+    <p  >Specifically, SoftHSMv2 does not support CKM_AES_CBC_PAD. See <a  class="external-link" href="https://github.com/opendnssec/SoftHSMv2/issues/229">SoftHSMv2 issue #229</a> for more information. But as described above other mechanism can potentially be used and even using numeric value in case there is not yet a constant for it in SignServer. For instance it has been reported that CKM_AES_KEY_WRAP works if it is specified as value 8457.    </p>
+        </div>
+    </div>
+    <p  ><br/>    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-99157343_id-.JackNJI11KeyWrappingCryptoTokenv5.5.0-NoDBMode">
+    <div class="section section-1" id="src-143724183_id-.JackNJI11KeyWrappingCryptoTokenv5.9.0-NoDBMode">
         <h1 class="heading "><span>NoDB Mode</span></h1>
     <p  >Crypto token features like generate key, remove key, generate CSR, and import certificate are not supported by this token in NoDB mode since it requires a database connection.    </p>
     <p  ><br/>    </p>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.8.2</p>
+                    <p>Version: 5.9.0</p>
                 </div>
             </header>
 
@@ -198,7 +198,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="WildFly_24.html">WildFly 24</a>
+        <a class="ht-nav-page-link" href="WildFly_24_and_JBoss_EAP_7.4.html">WildFly 24 and JBoss EAP 7.4</a>
 
             </li>
                                         <li class="leaf">
@@ -1712,17 +1712,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221226"> <span>CMS Signer</span></h1>
+</div>            <h1 id="src-143726502"> <span>CMS Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The CMS signer has the fully qualified class name: <strong class=" ">org.signserver.module.cmssigner.CMSSigner</strong>.    </p>
-    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-Overview">
+    <div class="section section-1" id="src-143726502_id-.CMSSignerv5.9.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The CMS signer can sign arbitrary data and produces a CMS (RFC 3852) SignedData structure in binary format with or without the content encapsulated. Currently the signer certificate is always included.    </p>
     </div>
-    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-AvailableProperties">
+    <div class="section section-1" id="src-143726502_id-.CMSSignerv5.9.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1793,7 +1793,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Property specifying if the resulting data structure should be parsed and re-encoded using DER encoding. Default: <strong class=" ">false</strong>.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This option is performed in memory and thus does not support large files.    </p>
             </td>
         </tr>
@@ -1819,7 +1819,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Property specifying that the signature should be calculated directly over the content and not over signed attributes. Thus the signature would not contain any signed attributes if this property is set to true. Default: <strong class=" ">false</strong>.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/k34916/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Setting this to true is not allowed when CLIENTSIDEHASHING or ALLOW_CLIENTSIDEHASHING_OVERRIDE is configured.    </p>
             </td>
         </tr>
@@ -1858,7 +1858,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-Requestparameters">
+    <div class="section section-1" id="src-143726502_id-.CMSSignerv5.9.0-Requestparameters">
         <h1 class="heading "><span>Request parameters</span></h1>
     <p  >The following meta data parameters can be specified in a request    </p>
     <div  class="tablewrap">
@@ -1880,7 +1880,7 @@
         <p  >USING_CLIENTSUPPLIED_HASH    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If this property is set and defined as true, treat the request data as a pre-computed hash. This requires the CLIENTSIDE_HASHDIGEST_ALGORITHM meta data property to be set and is only allowed if either the signer is configured by default to assume client-side hashing, or if overriding is allowed.    </p>
+        <p  >If this property is set and defined as true, treat the request data as a pre-computed hash. This requires the CLIENTSIDE_HASHDIGESTALGORITHM meta data property to be set and is only allowed if either the signer is configured by default to assume client-side hashing, or if overriding is allowed.    </p>
             </td>
         </tr>
     <tr>
@@ -1901,9 +1901,9 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >    </p>
+    <p  ><br/>    </p>
     </div>
-    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-Signingapre-computedhash">
+    <div class="section section-1" id="src-143726502_id-.CMSSignerv5.9.0-Signingapre-computedhash">
         <h1 class="heading "><span>Signing a pre-computed hash</span></h1>
     <p  >For background and information on how to use this mode with CMS signatures, see <a   href="Client-Side_Hashing.html">Client Side Hashing</a>.    </p>
     <p  ><br/>    </p>

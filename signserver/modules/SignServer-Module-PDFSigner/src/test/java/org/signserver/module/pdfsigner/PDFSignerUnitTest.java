@@ -2202,7 +2202,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         dic.setLocation("Location...");
         dic.setDate(new PdfDate(Calendar.getInstance()));
         sap.setCryptoDictionary(dic);
-        byte[] encodedSig = instance.calculateSignature(new PdfPKCS7(signerPrivKey, certChain, crlList, "SHA1", null, false), estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap, "SHA-256");
+        byte[] encodedSig = instance.calculateSignature(signerPrivKey, crlList, "SHA1", "BC", estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap, "SHA-256");
 
         return encodedSig.length;
     }

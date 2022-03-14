@@ -613,7 +613,7 @@ public class PDFSigner extends BaseSigner {
     protected byte[] calculateSignature(final PrivateKey privKey,
                                         final CRL[] crlList,
                                         final String hashDigestAlgorithm,
-                                        final ICryptoInstance crypto,
+                                        final String provider,
                                         final int size,
                                         final MessageDigest messageDigest,
                                         final Calendar cal,
@@ -641,7 +641,7 @@ public class PDFSigner extends BaseSigner {
         final PdfPKCS7 sgn;
         try {
             sgn = new PdfPKCS7(privKey, certChain, crlList, hashDigestAlgorithm,
-                               crypto.getProvider().getName(), false);
+                               provider, false);
         } catch (InvalidKeyException | NoSuchProviderException | NoSuchAlgorithmException e) {
             throw new SignServerException("Error constructing PKCS7 package", e);
         }
@@ -938,7 +938,8 @@ public class PDFSigner extends BaseSigner {
 
             byte[] encodedSig =
                     calculateSignature(privKey, crlList, theDigestAlgorithm,
-                                       crypto, contentEstimated, messageDigest,
+                                       crypto.getProvider().getName(),
+                                       contentEstimated, messageDigest,
                                        cal, params, certChain, tsc, ocsp, sap,
                                        tsaDigestAlgoName);
 

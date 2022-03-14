@@ -8,7 +8,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/publicweb.css" type="text/css"/>
+        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/css/default.css.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" type="text/css"/>
+        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/css/cssLayout.css.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" type="text/css"/>
         <link rel="shortcut icon" href="<c:out value='${pageContext.servletContext.contextPath}'/>/favicon.png"/>
         <title>SignServer - Error report</title>
     </head>

@@ -1,3 +1,13 @@
+body {
+    background-color: #ffffff; 
+    margin: 0px;
+    color: #323232;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-transform: none;
+}
 
 h2 {
     margin-top: 2em;

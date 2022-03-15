@@ -117,7 +117,7 @@ ca3e9150f95c31d15b9680a609b8817f8549bd395591c5ca55957d1ef0f464d6  ./ext/log4j-1.
 b0d8a4c8ab4fb8b1888d0095822703b0e6d4793c419550203da9e69196161de4  ./ext/log4j-api-2.17.1.jar;                             "Log4j"
 c967f223487980b9364e94a7c7f9a8a01fd3ee7c19bdbf0b0f9f8cb8511f3d41  ./ext/log4j-core-2.17.1.jar;                            "Log4j"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
-99788ee3f386f55553f4b1c77c495a468beefc2a19e31a9648f1b3dad5a0f7c8  ./ext/openpdf-1.3.26.jar;                               "OpenPDF"
+47a02ed404dbbca8b0b53d70b429487b36e05a9e9f47fa3391ddb9f332e57a97  ./ext/openpdf-1.3.26.jar;                               "OpenPDF"
 cbe6a7bd0b38e4acf44ae25b11812de967c2f74ea105c89a074ffce5797cfc1e  ./ext/poi-4.1.2.jar;                                    "Apache POI"
 639c6a675bc472e1568df9d8c954ff702da6f83ed27da0ff9a7bd12ed73b8bf0  ./ext/quartz-2.3.2.jar;                                 "Quartz Scheduler"
 e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a  ./ext/serializer-2.7.2.jar;                             "Santuario"

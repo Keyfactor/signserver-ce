@@ -1,11 +1,8 @@
 <%@page import="java.util.Date"%>
 <%@page import="java.text.DateFormat"%>
 <%@ page pageEncoding="UTF-8" %>
-        <p class="bottomText">
-        <%! String theme = org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME); %>
-        <% if (theme.equalsIgnoreCase("default")) { %>
-            Copyright © 2006–2019 PrimeKey Solutions AB
-        <% } else { %>
-            © 2022 Keyfactor. All rights reserved.
-        <% } %>
-        </p>
+
+ <%String footerResult = org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "Copyright © 2006–2019 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved.";%>
+    <p class="bottomText">
+        <%=footerResult%>
+    </p>

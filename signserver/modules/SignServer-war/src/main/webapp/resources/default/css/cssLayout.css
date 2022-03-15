@@ -105,22 +105,22 @@
     }
 }
 
-.kfds-header-logo {
+.pkds-header-logo {
     width: 10rem;
     padding: 0.5rem;
 }
 
 @media (min-width: 768px) {
-.kfds-header-logo {
-    width: 12rem;
+.pkds-header-logo {
+    width: 20rem;
     }
 }
 
-.kfds-header-logo > a {
+.pkds-header-logo > a {
     cursor: pointer;
 }
 
-.kfds-header-logo > a > img {
+.pkds-header-logo > a > img {
     width: 100%;
 }
 
@@ -170,6 +170,15 @@
     align-items: center;
     justify-content: flex-end;
 }
+
+.kfds-header-container > .logo > .kfds-header-logo {
+    
+}
+
+.hide-element {
+    display: none;
+}
+
 /* #top-right td {
     padding-top: 2px;
 }

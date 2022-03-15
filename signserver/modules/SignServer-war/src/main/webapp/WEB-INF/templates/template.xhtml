@@ -38,10 +38,10 @@
             <header class="kfds-header-container">
                 <div class="kfds-header-left">
                   <div class="kfds-header-brand">
-                    <div class="kfds-header-logo">
+                    <div class="#{publicWebBean.defaultThemeEnabled ? 'pkds-header-logo' : 'kfds-header-logo'}">
                         <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{publicWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
                     </div>
-                    <div class="kfds-header-product">
+                    <div class="#{publicWebBean.defaultThemeEnabled ? 'hide-element' : 'kfds-header-product'}">
                       <div class="kfds-header-product-name">
                         <h:panelGroup rendered="#{!publicWebBean.defaultThemeEnabled}" layout="block">
                             <h:outputText value="#{publicWebBean.productName}"/>

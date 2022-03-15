@@ -38,7 +38,7 @@
 .SS_infoItem {
     display: flex;
     flex-wrap: nowrap;
-    font-family: "ProximaNova", "Roboto", sans-serif;
+    font-family: "Roboto", "ProximaNova", sans-serif;
     font-size: 0.75rem;
     line-height: 1rem;
     font-weight: 400; /** Regular **/
@@ -102,29 +102,29 @@
     }
 }
 
-.kfds-header-logo {
+.pkds-header-logo {
     width: 10rem;
     padding: 0.5rem;
 }
 
 @media (min-width: 768px) {
-.kfds-header-logo {
-    width: 12rem;
+.pkds-header-logo {
+    width: 20rem;
     }
 }
 
-.kfds-header-logo > a {
+.pkds-header-logo > a {
     cursor: pointer;
 }
 
-.kfds-header-logo > a > img {
+.pkds-header-logo > a > img {
     width: 100%;
 }
 
 .kfds-header-product {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    font-family: "ProximaNova", "Roboto", sans-serif;
+    font-family: "Roboto", "ProximaNova", sans-serif;
     color: black;
 }
 
@@ -166,6 +166,10 @@
     align-content: center;
     align-items: center;
     justify-content: flex-end;
+}
+
+.hide-element {
+    display: none;
 }
 
 /*

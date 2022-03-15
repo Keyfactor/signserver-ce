@@ -85,11 +85,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>

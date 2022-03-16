@@ -2,56 +2,48 @@
 /* Roboto-Light */
 @font-face {
   font-family: "Roboto";
-  src: url("fonts/Roboto/Roboto-Light.eot"); /* IE9 Compat Modes */
-  src: url("fonts/Roboto/Roboto-Light.eot?#iefix") format("embedded-opentype"),
-  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Light.woff") format("woff"),
-  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Light.woff2")
-  format("woff"),
-  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Light.ttf")
-  format("truetype"),
-  url("fonts/Roboto/Roboto-Light.svg#svgFontName") format("svg"); /* Legacy iOS */
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default");
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default?&#iefix") format("embedded-opentype"),
+       url("../fonts/Roboto/Roboto-Light.woff.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.woff2.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.ttf.xhtml?ln=default") format("truetype"),
+       url("../fonts/Roboto/Roboto-Light.svg.xhtml?ln=default#svgFontName") format("svg");
   font-weight: 300;
   font-style: normal;
  }
  /* Roboto-Regular */
  @font-face {
   font-family: "Roboto";
-  src: url("fonts/Roboto/Roboto-Regular.eot"); /* IE9 Compat Modes */
-  src: url("fonts/Roboto/Roboto-Regular.eot?#iefix") format("embedded-opentype"),
-  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Regular.woff") format("woff"),
-  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Regular.woff2")
-  format("woff"),
-  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Regular.ttf")
-  format("truetype"),
-  url("fonts/Roboto/Roboto-Regular.svg#svgFontName") format("svg"); /* Legacy iOS */
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default");
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default?&#iefix") format("embedded-opentype"),
+       url("../fonts/Roboto/Roboto-Light.woff.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.woff2.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.ttf.xhtml?ln=default") format("truetype"),
+       url("../fonts/Roboto/Roboto-Light.svg.xhtml?ln=default#svgFontName") format("svg");
   font-weight: 400;
   font-style: normal;
  }
  /* Roboto-Medium */
  @font-face {
   font-family: "Roboto";
-  src: url("fonts/Roboto/Roboto-Medium.eot"); /* IE9 Compat Modes */
-  src: url("fonts/Roboto/Roboto-Medium.eot?#iefix") format("embedded-opentype"),
-  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Medium.woff") format("woff"),
-  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Medium.woff2")
-  format("woff"),
-  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Medium.ttf")
-  format("truetype"),
-  url("fonts/Roboto/Roboto-Medium.svg#svgFontName") format("svg"); /* Legacy iOS */
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default");
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default?&#iefix") format("embedded-opentype"),
+       url("../fonts/Roboto/Roboto-Light.woff.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.woff2.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.ttf.xhtml?ln=default") format("truetype"),
+       url("../fonts/Roboto/Roboto-Light.svg.xhtml?ln=default#svgFontName") format("svg");
   font-weight: 500;
   font-style: normal;
  }
  /* Roboto-Bold */
  @font-face {
   font-family: "Roboto";
-  src: url("fonts/Roboto/Roboto-Bold.eot"); /* IE9 Compat Modes */
-  src: url("fonts/Roboto/Roboto-Bold.eot?#iefix") format("embedded-opentype"),
-  /* IE6-IE8 */ url("fonts/Roboto/Roboto-Bold.woff") format("woff"),
-  /* Super Modern Browsers */ url("fonts/Roboto/Roboto-Bold.woff2")
-  format("woff"),
-  /* Pretty Modern Browsers */ url("fonts/Roboto/Roboto-Bold.ttf")
-  format("truetype"),
-  url("fonts/Roboto/Roboto-Bold.svg#svgFontName") format("svg"); /* Legacy iOS */
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default");
+  src: url("../fonts/Roboto/Roboto-Light.eot.xhtml?ln=default?&#iefix") format("embedded-opentype"),
+       url("../fonts/Roboto/Roboto-Light.woff.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.woff2.xhtml?ln=default") format("woff"),
+       url("../fonts/Roboto/Roboto-Light.ttf.xhtml?ln=default") format("truetype"),
+       url("../fonts/Roboto/Roboto-Light.svg.xhtml?ln=default#svgFontName") format("svg");
   font-weight: bold;
   font-style: normal;
  }

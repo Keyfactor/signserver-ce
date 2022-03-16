@@ -497,6 +497,15 @@ table.dss1 {
     background-color: yellow;
 }
 
+.alertBox {
+    border: thin solid #B35E5E; 
+    background-color: #E5CFCF;
+    float:left; 
+    padding: 0.5em; 
+    /* border-radius: 4px;  */
+    /* -webkit-border-radius: 4px; */
+}
+
 .topOutsideLink {
     color: black;
 }

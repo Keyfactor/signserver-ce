@@ -44,14 +44,14 @@
                     <div class="#{adminWebBean.defaultThemeEnabled ? 'pkds-header-logo' : 'kfds-header-logo'}" >
                         <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
                     </div>
-                    <div class="#{adminWebBean.defaultThemeEnabled ? 'hide-element' : 'kfds-header-product'}">
+                    <div class="kfds-header-product">
                       <h:panelGroup class="kfds-header-product-name">
-                        <h:panelGroup rendered="#{!adminWebBean.defaultThemeEnabled}" layout="block">
+                        <h:panelGroup layout="block">
                             <h:outputText value="#{adminWebBean.productName}"/>
                         </h:panelGroup>
                       </h:panelGroup>
                       <div class="kfds-header-product-version">
-                        <h:panelGroup rendered="#{!adminWebBean.defaultThemeEnabled}" layout="block">
+                        <h:panelGroup layout="block">
                             <h:outputText value="#{adminWebBean.productVersion}"/>
                         </h:panelGroup>
                       </div>
@@ -85,15 +85,6 @@
                             </label>
                             <div class="mx-0.5">
                                 <h:outputText value="#{adminWebBean.currentTime}"/>
-                            </div>
-                        </li>
-        
-                        <li class="SS_infoItem">
-                            <label>
-                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{text['Version_COLON']}"/>
-                            </label>                
-                            <div class="mx-0.5">
-                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.version}"/>
                             </div>
                         </li>
                     </ul>

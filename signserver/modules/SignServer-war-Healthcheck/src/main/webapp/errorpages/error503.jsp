@@ -14,8 +14,8 @@
         <title>SignServer - Error report</title>
     </head>
     <body>
+        <%@include file="../WEB-INF/jspf/header.jspf" %>
         <div id="container1">
-            <%@include file="../WEB-INF/jspf/header.jspf" %>
 
             <h2>HTTP Status 503 - Service Temporally Unavailable</h2>
 

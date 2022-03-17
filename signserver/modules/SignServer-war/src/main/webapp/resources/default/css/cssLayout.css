@@ -534,3 +534,7 @@ table.dss1 {
 .titleCell {
     font-weight: bold;
 }
+
+#container1 {
+    margin: 10px;
+}

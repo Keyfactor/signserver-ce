@@ -105,22 +105,22 @@
     }
 }
 
-.pkds-header-logo {
+.kfds-header-logo {
     width: 10rem;
     padding: 0.5rem;
 }
 
 @media (min-width: 768px) {
-.pkds-header-logo {
+.kfds-header-logo {
     width: 20rem;
     }
 }
 
-.pkds-header-logo > a {
+.kfds-header-logo > a {
     cursor: pointer;
 }
 
-.pkds-header-logo > a > img {
+.kfds-header-logo > a > img {
     width: 100%;
 }
 

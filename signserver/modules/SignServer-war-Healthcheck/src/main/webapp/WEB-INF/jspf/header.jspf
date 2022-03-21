@@ -2,12 +2,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page pageEncoding="UTF-8" %>
 
-<% String headerLogoResult = org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "pkds-header-logo" : "kfds-header-logo";%>
-
 <div class="kfds-header-container">
     <div class="kfds-header-left">
         <div class="kfds-header-brand">
-            <div class="<%=headerLogoResult%>">
+            <div class="kfds-header-logo">
                 <a href="../">
                     <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/images/logo.svg.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" alt="SignServer - PKI by PrimeKey"/>        </a>
             </div>

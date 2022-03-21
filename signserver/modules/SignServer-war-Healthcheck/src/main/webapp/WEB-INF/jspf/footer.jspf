@@ -2,7 +2,6 @@
 <%@page import="java.text.DateFormat"%>
 <%@ page pageEncoding="UTF-8" %>
 
- <%String footerResult = org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "Copyright © 2006–2019 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved.";%>
     <p class="bottomText">
-        <%=footerResult%>
+        <%= org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "Copyright © 2006–2019 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved." %>
     </p>

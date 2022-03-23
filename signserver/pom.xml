@@ -253,7 +253,7 @@
             <dependency>
                 <groupId>org.signserver.jacknji11</groupId>
                 <artifactId>jacknji11</artifactId>
-                <version>1.2-pk2</version>
+                <version>1.2-pk3</version>
             </dependency>
             <dependency>
             <groupId>net.java.dev.jna</groupId>

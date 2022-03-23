@@ -2090,6 +2090,39 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
 
     /**
+     * Tests that signing a pdf protected by owner password fails when the password
+     * is not supplied and ALLOW_OPEN_WITHOUT_PASSWORD is not set (default = false)
+     * or it is set to false.
+     * Also tests that signing a pdf protected by owner password is successful when
+     * the password is not supplied and ALLOW_OPEN_WITHOUT_PASSWORD is set to true.
+     */
+    @Test
+    public void testAllowOpenWithoutPassword() throws Exception {
+
+        // Test signing the pdf is successful when the owner password is supplied.
+        signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
+
+        // Test signing the pdf fails when owner password is not supplied.
+        try {
+            signProtectedPDF(sampleOwner123, "");
+        } catch (IllegalRequestException exception) {
+            LOG.debug("Expected exception: " + exception.getMessage());
+            assertTrue("Should contain error", exception.getMessage().contains("A valid password is required to sign the document: PdfReader not opened with owner password"));
+        }
+
+        // When ALLOW_OPEN_WITHOUT_PASSWORD = true
+        workerSession.setWorkerProperty(WORKER1, "ALLOW_OPEN_WITHOUT_PASSWORD", "true");
+        workerSession.reloadConfiguration(WORKER1);
+
+        // Then test signing the pdf is successful when the owner password is not supplied.
+        signProtectedPDF(sampleOwner123, "");
+
+        // Remove the ALLOW_OPEN_WITHOUT_PASSWORD property from worker.
+        workerSession.removeWorkerProperty(WORKER1, "ALLOW_OPEN_WITHOUT_PASSWORD");
+        workerSession.reloadConfiguration(WORKER1);
+    }
+
+    /**
      * Helper method creating a mocked token, using DSA or RSA keys.
      *
      * @param useDSA True if DSA is to be used, otherwise RSA

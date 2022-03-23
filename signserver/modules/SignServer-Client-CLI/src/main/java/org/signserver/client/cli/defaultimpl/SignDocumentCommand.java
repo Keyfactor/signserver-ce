@@ -681,7 +681,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     protected boolean runBatch(TransferManager manager, final File inFile, final File outFile) {
         final byte[] bytes;
         final long size;
-
+        
         Map<String, Object> requestContext = new HashMap<>();
         if (inFile == null) {
             bytes = data.getBytes();
@@ -692,6 +692,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                                                inFile.getAbsolutePath()));
                 return false;
+            }
+            if (inFile.isDirectory()) {
+                LOG.warn("Skipping directory: " + inFile.getName());
+                return true;
             }
             requestContext.put("FILENAME", inFile.getName());
             bytes = null;

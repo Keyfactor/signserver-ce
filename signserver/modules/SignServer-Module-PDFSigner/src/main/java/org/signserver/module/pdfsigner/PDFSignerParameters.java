@@ -77,6 +77,8 @@ public class PDFSignerParameters {
 
     private boolean embed_crl = PDFSigner.EMBED_CRL_DEFAULT;
     private boolean embed_ocsp_response = PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT;
+
+    private boolean allowOpenWithoutPassword = PDFSigner.ALLOW_OPEN_WITHOUT_PASSWORD_DEFAULT;
     
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     private boolean refuseDoubleIndirectObjects;
@@ -290,7 +292,19 @@ public class PDFSignerParameters {
                 throw new IllegalRequestException("Overriding " + PDFSigner.SET_OWNERPASSWORD + " not permitted");
             }
         }
-        
+
+        // Allow open pdf without password
+        allowOpenWithoutPassword = Boolean.parseBoolean(config.getProperty(PDFSigner.ALLOW_OPEN_WITHOUT_PASSWORD, Boolean.toString(PDFSigner.ALLOW_OPEN_WITHOUT_PASSWORD_DEFAULT)).trim());
+        strMetadataValue = requestMetadata.get(PDFSigner.ALLOW_OPEN_WITHOUT_PASSWORD);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            if (isOverrideAllowed(PDFSigner.ALLOW_OPEN_WITHOUT_PASSWORD)) {
+                allowOpenWithoutPassword = Boolean.parseBoolean(strMetadataValue);
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.ALLOW_OPEN_WITHOUT_PASSWORD + " not permitted");
+            }
+        }
+        LOG.debug("Allow open pdf without password: " + allowOpenWithoutPassword);
+
         // if signature is choosen to be visible proceed with setting visibility
         // properties
         if (add_visible_signature) {
@@ -674,6 +688,13 @@ public class PDFSignerParameters {
      */
     public String getSetOwnerPassword() {
         return setOwnerPassword;
+    }
+
+    /**
+     * @return True if we allow open pdf without password.
+     */
+    public boolean isAllowOpenWithoutPassword() {
+        return allowOpenWithoutPassword;
     }
 
     /**

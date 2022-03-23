@@ -163,6 +163,10 @@ public class PDFSigner extends BaseSigner {
     /** Password to set as owner password. */
     public static final String SET_OWNERPASSWORD = "SET_OWNERPASSWORD";
 
+    /** Allow open pdf without password. */
+    public static final boolean ALLOW_OPEN_WITHOUT_PASSWORD_DEFAULT = false;
+    public static final String ALLOW_OPEN_WITHOUT_PASSWORD = "ALLOW_OPEN_WITHOUT_PASSWORD";
+
     // archivetodisk properties
     public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";
     public static final String PROPERTY_ARCHIVETODISK_PATH_BASE = "ARCHIVETODISK_PATH_BASE";
@@ -705,7 +709,7 @@ public class PDFSigner extends BaseSigner {
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
         // Defaults to false for backwards compatibility
-        reader.setModificationAllowedWithoutOwnerPassword(false);
+        reader.setModificationAllowedWithoutOwnerPassword(params.isAllowOpenWithoutPassword());
         
         String strPdfVersion = Character.toString(reader.getPdfVersion());
         PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, theDigestAlgorithm);

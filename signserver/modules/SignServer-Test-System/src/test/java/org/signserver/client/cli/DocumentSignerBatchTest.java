@@ -206,6 +206,24 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
 
     /**
+     *  Tests that the subdirectories are ignored
+     */
+    @Test
+    public void signOneDirFromInDir() throws Exception {
+        LOG.info("signOneDocumentFromInDir");
+        // given
+        inDir.newFolder("dir");
+        // when
+        final String res = new String(
+                execute("signdocument",
+                        "-workername", "TestXMLSigner",
+                        "-indir", inDir.getRoot().getAbsolutePath(),
+                        "-outdir", outDir.getRoot().getAbsolutePath())
+        );
+        //No JUnit assertions used here since it is expected to not throw any exception
+    }
+
+    /**
      * Tests the simple case of siging 2 documents from the input directory.
      * <pre>
      * signdocument -workername XMLSigner -indir /tmp/input -outdir /tmp/output

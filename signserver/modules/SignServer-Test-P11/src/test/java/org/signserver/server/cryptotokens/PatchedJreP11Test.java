@@ -21,8 +21,10 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.cesecore.authorization.AuthorizationDeniedException;
@@ -126,22 +128,25 @@ public class PatchedJreP11Test {
     
     @Before
     public void setUp() throws Exception {
+        Assume.assumeFalse("P11NG".equalsIgnoreCase(base.getConfig().getProperty("test.p11.provider")));
         SignServerUtil.installBCProvider();
     }
      
     private void setupCryptoTokenProperties(final int tokenId, final String signatureAlgorithm) throws Exception {
         // Setup token
-        workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
-        workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
-        workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
-        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
-        workerSession.setWorkerProperty(tokenId, "SLOTLABELTYPE", "SLOT_NUMBER");
-        workerSession.setWorkerProperty(tokenId, "SLOTLABELVALUE", slot);
-        workerSession.setWorkerProperty(tokenId, "PIN", pin);
-        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
-        workerSession.setWorkerProperty(tokenId, "SIGNATUREALGORITHM", signatureAlgorithm);
-        workerSession.setWorkerProperty(tokenId, "ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS", "CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS, CKM_SHA384_RSA_PKCS_PSS, CKM_SHA512_RSA_PKCS_PSS");
-        workerSession.setWorkerProperty(tokenId, "ATTRIBUTES",
+        final Map<String, String> properties = new HashMap<>();
+
+        properties.put(WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+        properties.put(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
+        properties.put("NAME", CRYPTO_TOKEN_NAME);
+        properties.put("SHAREDLIBRARYNAME", sharedLibraryName);
+        properties.put("SLOTLABELTYPE", "SLOT_NUMBER");
+        properties.put("SLOTLABELVALUE", slot);
+        properties.put("PIN", pin);
+        properties.put("DEFAULTKEY", existingKey1); // Test key
+        properties.put("SIGNATUREALGORITHM", signatureAlgorithm);
+        properties.put("ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS", "CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS, CKM_SHA384_RSA_PKCS_PSS, CKM_SHA512_RSA_PKCS_PSS");
+        properties.put("ATTRIBUTES",
             "attributes(generate,CKO_PUBLIC_KEY,*) = {\n" +
             "   CKA_TOKEN = false\n" +
             "   CKA_ENCRYPT = false\n" +
@@ -157,6 +162,9 @@ public class PatchedJreP11Test {
             "   CKA_SIGN = true\n" +
             "   CKA_UNWRAP = false\n" +
             "}");
+
+        workerSession.updateWorkerProperties(tokenId, properties,
+                                             Collections.emptyList());
     }
 
     @Test

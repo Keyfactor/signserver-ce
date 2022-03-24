@@ -210,7 +210,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void signOneDirFromInDir() throws Exception {
-        LOG.info("signOneDocumentFromInDir");
+        LOG.info("signOneDirFromInDir");
         // given
         inDir.newFolder("dir");
         // when

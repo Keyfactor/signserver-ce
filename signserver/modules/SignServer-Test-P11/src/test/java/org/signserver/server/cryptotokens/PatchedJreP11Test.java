@@ -59,7 +59,7 @@ import org.signserver.ejb.interfaces.WorkerSessionRemote;
  */
 public class PatchedJreP11Test {
     /** Logger for this class */
-    private static final Logger LOG = Logger.getLogger(P11CryptoTokenTest.class);
+    private static final Logger LOG = Logger.getLogger(PatchedJreP11Test.class);
     
     private static final String CRYPTO_TOKEN_NAME = "TestCryptoTokenP11";
     private static final int CRYPTO_TOKEN = 30100;

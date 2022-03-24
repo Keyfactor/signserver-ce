@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -37,6 +40,7 @@ import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.AbstractCertReqData;
@@ -89,32 +93,42 @@ public class OpenPGPP11SignTest {
 
     @Before
     public void setUp() throws Exception {
-        //Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
+        Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
         SignServerUtil.installBCProvider();
     }
 
     private void setupCryptoTokenProperties(final int tokenId, final boolean cache) throws Exception {
         // Setup token
-        workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
-        workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
-        workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
-        workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
-        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
-        workerSession.setWorkerProperty(tokenId, "SLOT", slot);
-        workerSession.setWorkerProperty(tokenId, "PIN", pin);
-        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
-        workerSession.setWorkerProperty(tokenId, "CACHE_PRIVATEKEY", String.valueOf(cache));
+        final Map<String, String> properties = new HashMap<>();
+
+        properties.put(WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
+        properties.put(WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+        properties.put(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
+        properties.put("NAME", CRYPTO_TOKEN_NAME);
+        properties.put("SHAREDLIBRARYNAME", sharedLibraryName);
+        properties.put("SLOT", slot);
+        properties.put("PIN", pin);
+        properties.put("DEFAULTKEY", existingKey1); // Test key
+        properties.put("CACHE_PRIVATEKEY", String.valueOf(cache));
+
+        workerSession.updateWorkerProperties(tokenId, properties,
+                                             Collections.emptyList());
     }
 
     private void setOpenPGPSignerOnlyProperties(final int workerId, String detachedSignature) throws Exception {
         // Setup worker
-        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
-        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.signer.OpenPGPSigner");
-        workerSession.setWorkerProperty(workerId, "NAME", "OpenPGPSignerP11");
-        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
-        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
-        workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", detachedSignature);
+        final Map<String, String> properties = new HashMap<>();
+
+        properties.put(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        properties.put(WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.signer.OpenPGPSigner");
+        properties.put("NAME", "OpenPGPSignerP11");
+        properties.put("AUTHTYPE", "NOAUTH");
+        properties.put("CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
+        properties.put("DEFAULTKEY", existingKey1);
+        properties.put("DETACHEDSIGNATURE", detachedSignature);
+
+        workerSession.updateWorkerProperties(workerId, properties,
+                                             Collections.emptyList());
     }
 
     /**

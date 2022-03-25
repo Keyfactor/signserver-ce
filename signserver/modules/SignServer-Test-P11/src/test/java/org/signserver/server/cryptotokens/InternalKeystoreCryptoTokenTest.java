@@ -113,17 +113,17 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
         return instance.searchTokenEntries(startIndex, max, qc, includeData, null, instance.getMockedServices());
     }
 
     @Override
-    protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException {
+    public void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException {
         instance.generateKey(keyType, keySpec, alias, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
     }
 
     @Override
-    protected boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         return instance.removeKey(alias, instance.getMockedServices());
     }
 

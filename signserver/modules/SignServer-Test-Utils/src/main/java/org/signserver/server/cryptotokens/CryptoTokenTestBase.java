@@ -75,11 +75,11 @@ public abstract class CryptoTokenTestBase {
     
     protected ModulesTestCase testCase = new ModulesTestCase();
     
-    protected abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
+    public abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
             throws InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter;
     
-    protected abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
-    protected abstract boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
+    public abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
+    public abstract boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
     
     protected abstract void importCertificateChain(List<Certificate> chain, String alias)
             throws CryptoTokenOfflineException, IllegalArgumentException,
@@ -130,15 +130,15 @@ public abstract class CryptoTokenTestBase {
 //    }
     public static final String FIELD_ALIAS = "alias";
 
-    protected Properties getConfig() {
+    public Properties getConfig() {
         return testCase.getConfig();
     }
     
-    protected WorkerSessionRemote getWorkerSession() {
+    public WorkerSessionRemote getWorkerSession() {
         return testCase.getWorkerSession();
     }
 
-    protected void removeWorker(int workerId) throws Exception {
+    public void removeWorker(int workerId) throws Exception {
         testCase.removeWorker(workerId);
     }
 
@@ -149,7 +149,7 @@ public abstract class CryptoTokenTestBase {
      * @param existingKey
      * @throws Exception 
      */
-    protected void searchTokenEntriesHelper(final String existingKey) throws Exception {
+    public void searchTokenEntriesHelper(final String existingKey) throws Exception {
         
         final String[] testAliases = new String[] { "alias-14", "alias-13", "alias-5", "alias-10", "alias-2", "alias-1" };
         

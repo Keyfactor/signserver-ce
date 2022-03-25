@@ -376,10 +376,6 @@ public class P11SignTest {
             workerSession.removeKey(new WorkerIdentifier(20020), key);
         }
     }
-    
-    private void plainSignerNoneWithEcdsa() throws Exception {
-        
-    }
 
     @Test
     public void testPlainSigner_SHA256withRSAandMGF1() throws Exception {

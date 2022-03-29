@@ -220,7 +220,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     public void signTwoDirectoriesFromInDir() throws Exception {
         LOG.info("signTwoDirectoriesFromInDir");
         inDir.newFolder("tempOne");
-        inDir.newFolder("tempOne");
+        inDir.newFolder("tempTwo");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
         assertEquals(1, result);
     }

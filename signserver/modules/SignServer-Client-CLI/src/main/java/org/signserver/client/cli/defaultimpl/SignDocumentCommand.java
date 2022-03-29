@@ -1060,7 +1060,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (inFile != null) {
                 LOG.debug("Will request for single file " + inFile);
                 if (!runBatch(null, inFile, outFile)) {
-                    throw new CommandFailureException("There was a failure", 1);
+                    throw new CommandFailureException("There was a failure");
                 }
             } else if(inDir != null) {
                 LOG.debug("Will request for each file in directory " + inDir);

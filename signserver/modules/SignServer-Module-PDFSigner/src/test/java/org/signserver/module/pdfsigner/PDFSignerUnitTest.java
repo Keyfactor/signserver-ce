@@ -2091,10 +2091,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests that signing a pdf protected by owner password fails when the password
-     * is not supplied and ALLOW_OPEN_WITHOUT_PASSWORD is not set (default = false)
+     * is not supplied and ALLOW_SIGNING_WITHOUT_OWNERPASSWORD is not set (default = false)
      * or it is set to false.
      * Also tests that signing a pdf protected by owner password is successful when
-     * the password is not supplied and ALLOW_OPEN_WITHOUT_PASSWORD is set to true.
+     * the password is not supplied and ALLOW_SIGNING_WITHOUT_OWNERPASSWORD is set to true.
      */
     @Test
     public void testAllowOpenWithoutPassword() throws Exception {
@@ -2110,15 +2110,15 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             assertTrue("Should contain error", exception.getMessage().contains("A valid password is required to sign the document: PdfReader not opened with owner password"));
         }
 
-        // When ALLOW_OPEN_WITHOUT_PASSWORD = true
-        workerSession.setWorkerProperty(WORKER1, "ALLOW_OPEN_WITHOUT_PASSWORD", "true");
+        // When ALLOW_SIGNING_WITHOUT_OWNERPASSWORD = true
+        workerSession.setWorkerProperty(WORKER1, "ALLOW_SIGNING_WITHOUT_OWNERPASSWORD", "true");
         workerSession.reloadConfiguration(WORKER1);
 
         // Then test signing the pdf is successful when the owner password is not supplied.
         signProtectedPDF(sampleOwner123, "");
 
-        // Remove the ALLOW_OPEN_WITHOUT_PASSWORD property from worker.
-        workerSession.removeWorkerProperty(WORKER1, "ALLOW_OPEN_WITHOUT_PASSWORD");
+        // Remove the ALLOW_SIGNING_WITHOUT_OWNERPASSWORD property from worker.
+        workerSession.removeWorkerProperty(WORKER1, "ALLOW_SIGNING_WITHOUT_OWNERPASSWORD");
         workerSession.reloadConfiguration(WORKER1);
     }
 

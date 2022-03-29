@@ -163,9 +163,9 @@ public class PDFSigner extends BaseSigner {
     /** Password to set as owner password. */
     public static final String SET_OWNERPASSWORD = "SET_OWNERPASSWORD";
 
-    /** Allow open pdf without password. */
-    public static final boolean ALLOW_OPEN_WITHOUT_PASSWORD_DEFAULT = false;
-    public static final String ALLOW_OPEN_WITHOUT_PASSWORD = "ALLOW_OPEN_WITHOUT_PASSWORD";
+    /** Allow signing the pdf without owner password. */
+    public static final boolean ALLOW_SIGNING_WITHOUT_OWNERPASSWORD_DEFAULT = false;
+    public static final String ALLOW_SIGNING_WITHOUT_OWNERPASSWORD = "ALLOW_SIGNING_WITHOUT_OWNERPASSWORD";
 
     // archivetodisk properties
     public static final String PROPERTY_ARCHIVETODISK = "ARCHIVETODISK";

@@ -29,8 +29,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
-import org.signserver.cli.spi.CommandFailureException;
-import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.cli.spi.*;
 import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.SignServerUtil;
@@ -39,8 +38,6 @@ import org.signserver.test.conf.WorkerPropertiesBuilder;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.signserver.cli.spi.CommandContext;
-import org.signserver.cli.spi.CommandFactoryContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -206,21 +203,26 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
 
     /**
-     *  Tests that the subdirectories are ignored
+     *  Tests that one subdirectory are ignored and that it returns 1
      */
     @Test
-    public void signOneDirFromInDir() throws Exception {
+    public void signOneDirectoryFromInDir() throws Exception {
         LOG.info("signOneDirFromInDir");
-        // given
-        inDir.newFolder("dir");
-        // when
-        final String res = new String(
-                execute("signdocument",
-                        "-workername", "TestXMLSigner",
-                        "-indir", inDir.getRoot().getAbsolutePath(),
-                        "-outdir", outDir.getRoot().getAbsolutePath())
-        );
-        //No JUnit assertions used here since it is expected to not throw any exception
+        inDir.newFolder("temp");
+        int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
+        assertEquals(1, result);
+    }
+
+    /**
+     * Tests that two subdirectories are ignored and that it
+     */
+    @Test
+    public void signTwoDirectoriesFromInDir() throws Exception {
+        LOG.info("signTwoDirsFromInDir");
+        inDir.newFolder("tempOne");
+        inDir.newFolder("tempOne");
+        int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
+        assertEquals(1, result);
     }
 
     /**
@@ -610,6 +612,25 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
             System.out.write(output);
         }
         return output;
+    }
+
+    private int executeReturnStatus(String... args) throws CommandFailureException, IllegalCommandArgumentsException {
+        return executeReturnStatus(new SignDocumentCommand(), args);
+    }
+
+    private int executeReturnStatus(SignDocumentCommand instance, String... args) throws CommandFailureException, IllegalCommandArgumentsException {
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final PrintStream out = new PrintStream(bout);
+        System.setOut(out);
+        instance.init(
+                new CommandContext(
+                        "group1",
+                        "signdocument",
+                        new CommandFactoryContext(new Properties(), out, System.err)
+                )
+        );
+
+        return instance.execute(args);
     }
 
     private ArrayList<File> createInputFiles(final int count) throws IOException {

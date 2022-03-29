@@ -693,10 +693,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                inFile.getAbsolutePath()));
                 return false;
             }
-            if (inFile.isDirectory()) {
-                LOG.warn("Skipping directory: " + inFile.getName());
-                return true;
-            }
             requestContext.put("FILENAME", inFile.getName());
             bytes = null;
             size = inFile.length();
@@ -1064,11 +1060,20 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (inFile != null) {
                 LOG.debug("Will request for single file " + inFile);
                 if (!runBatch(null, inFile, outFile)) {
-                    throw new CommandFailureException("There was a failure");
+                    throw new CommandFailureException("There was a failure", 1);
                 }
             } else if(inDir != null) {
                 LOG.debug("Will request for each file in directory " + inDir);
-                File[] inFiles = inDir.listFiles();
+                File[] inFiles = inDir.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        if (file.isDirectory()) {
+                            LOG.warn("Skipping directory: " + file.getName());
+                            return false;
+                        }
+                        return true;
+                    }
+                });
                 if (inFiles == null || inFiles.length == 0) {
                     LOG.error("No input files");
                     return 1;

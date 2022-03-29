@@ -23,16 +23,14 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import org.junit.Test;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
 import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
@@ -83,6 +81,9 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     // key pair used to generate test JWT token
     private static KeyPair keyPair;
+
+    @Rule
+    public TemporaryFolder inDir = new TemporaryFolder();
 
     @Before
     public void setUp() throws Exception {
@@ -275,6 +276,19 @@ public class DocumentSignerTest extends ModulesTestCase {
             execute("signdocument", "-workername", "TestXMLSigner", "-outdir", "imaginary_out_dir_path", "-infile", "imaginary_in_file_path");
             fail("Should have thrown exception about invalid combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+
+    /**
+     * Tests that it is not allowed to use a directory as -infile
+     */
+    @Test
+    public void test14InfilePointingToDirectory() throws Exception {
+        LOG.info("testInfileSigningOnDir");
+        try {
+            execute("signdocument", "-workername", "TestPDFSigner", "-infile", inDir.getRoot().getAbsolutePath());
+            fail("Should have thrown CommandFailureException");
+        } catch (CommandFailureException expected) {
         } // NOPMD
     }
 
@@ -1171,4 +1185,5 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
         return result;
     }
+
 }

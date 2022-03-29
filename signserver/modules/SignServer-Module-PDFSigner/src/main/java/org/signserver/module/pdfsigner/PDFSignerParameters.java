@@ -78,7 +78,7 @@ public class PDFSignerParameters {
     private boolean embed_crl = PDFSigner.EMBED_CRL_DEFAULT;
     private boolean embed_ocsp_response = PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT;
 
-    private boolean allowOpenWithoutPassword = PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD_DEFAULT;
+    private boolean allowSigningWithoutOwnerPassword = PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD_DEFAULT;
     
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     private boolean refuseDoubleIndirectObjects;
@@ -294,17 +294,17 @@ public class PDFSignerParameters {
         }
 
         // Allow signing the pdf without owner password
-        allowOpenWithoutPassword = Boolean.parseBoolean(config.getProperty(PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD, Boolean.toString(PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD_DEFAULT)).trim());
+        allowSigningWithoutOwnerPassword = Boolean.parseBoolean(config.getProperty(PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD, Boolean.toString(PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD_DEFAULT)).trim());
         strMetadataValue = requestMetadata.get(PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
             if (isOverrideAllowed(PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD)) {
-                allowOpenWithoutPassword = Boolean.parseBoolean(strMetadataValue);
+                allowSigningWithoutOwnerPassword = Boolean.parseBoolean(strMetadataValue);
             } else {
                 throw new IllegalRequestException("Overriding " + PDFSigner.ALLOW_SIGNING_WITHOUT_OWNERPASSWORD + " not permitted");
             }
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Allow signing the pdf without owner password: " + allowOpenWithoutPassword);
+            LOG.debug("Allow signing the pdf without owner password: " + allowSigningWithoutOwnerPassword);
         }
         // if signature is choosen to be visible proceed with setting visibility
         // properties
@@ -694,8 +694,8 @@ public class PDFSignerParameters {
     /**
      * @return True if we allow signing the pdf without owner password.
      */
-    public boolean isAllowOpenWithoutPassword() {
-        return allowOpenWithoutPassword;
+    public boolean isAllowSigningWithoutOwnerPassword() {
+        return allowSigningWithoutOwnerPassword;
     }
 
     /**

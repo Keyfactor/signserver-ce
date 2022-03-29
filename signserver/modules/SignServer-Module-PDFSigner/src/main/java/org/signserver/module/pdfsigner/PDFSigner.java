@@ -709,7 +709,7 @@ public class PDFSigner extends BaseSigner {
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
         // Defaults to false for backwards compatibility
-        reader.setModificationAllowedWithoutOwnerPassword(params.isAllowOpenWithoutPassword());
+        reader.setModificationAllowedWithoutOwnerPassword(params.isAllowSigningWithoutOwnerPassword());
         
         String strPdfVersion = Character.toString(reader.getPdfVersion());
         PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, theDigestAlgorithm);

@@ -2097,7 +2097,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * the password is not supplied and ALLOW_SIGNING_WITHOUT_OWNERPASSWORD is set to true.
      */
     @Test
-    public void testAllowOpenWithoutPassword() throws Exception {
+    public void testAllowSigningWithoutOwnerPassword() throws Exception {
 
         // Test signing the pdf is successful when the owner password is supplied.
         signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);

@@ -207,7 +207,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void signOneDirectoryFromInDir() throws Exception {
-        LOG.info("signOneDirFromInDir");
+        LOG.info("signOneDirectoryFromInDir");
         inDir.newFolder("temp");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
         assertEquals(1, result);
@@ -218,7 +218,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void signTwoDirectoriesFromInDir() throws Exception {
-        LOG.info("signTwoDirsFromInDir");
+        LOG.info("signTwoDirectoriesFromInDir");
         inDir.newFolder("tempOne");
         inDir.newFolder("tempOne");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());

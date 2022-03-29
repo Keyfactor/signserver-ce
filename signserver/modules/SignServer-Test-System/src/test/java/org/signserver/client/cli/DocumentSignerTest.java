@@ -284,7 +284,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      */
     @Test
     public void test14InfilePointingToDirectory() throws Exception {
-        LOG.info("testInfileSigningOnDir");
+        LOG.info("test14InfilePointingToDirectory");
         try {
             execute("signdocument", "-workername", "TestPDFSigner", "-infile", inDir.getRoot().getAbsolutePath());
             fail("Should have thrown CommandFailureException");

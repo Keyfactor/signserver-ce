@@ -204,18 +204,18 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
 
     /**
-     *  Tests that one subdirectory are ignored and that it returns status code 1
+     *  Tests that one subdirectory are ignored and that it returns status code 1.
      */
     @Test
     public void signOneDirectoryFromInDir() throws Exception {
         LOG.info("signOneDirectoryFromInDir");
         inDir.newFolder("temp");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
-        assertEquals("return code: " + result + " but expected 1", 1, result);
+        assertEquals("return code: ", 1, result);
     }
 
     /**
-     * Tests that two subdirectories are ignored and that it returns status code 1
+     * Tests that two subdirectories are ignored and that it returns status code 1.
      */
     @Test
     public void signTwoDirectoriesFromInDir() throws Exception {
@@ -223,9 +223,12 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         inDir.newFolder("tempOne");
         inDir.newFolder("tempTwo");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
-        assertEquals("return code: " + result + " but expected 1", 1, result);
+        assertEquals("return code: ", 1, result);
     }
 
+    /**
+     * Tests that signing one document with a directory present returns status code 0.
+     */
     @Test
     public void signDocumentFromInDirWithOneDirectoryPresent() throws Exception {
         LOG.info("signDocumentFromInDirWithOneDirectoryPresent");
@@ -235,7 +238,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
             tempFile = inDir.newFile("tempFile.xml");
             FileUtils.writeStringToFile(tempFile, "<root/>", StandardCharsets.UTF_8);
             int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
-            assertEquals("return code: " + result + " but expected 0", 0, result);
+            assertEquals("return code: ", 0, result);
         } finally {
             FileUtils.deleteQuietly(tempFile);
         }

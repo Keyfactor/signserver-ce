@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -203,18 +204,18 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
 
     /**
-     *  Tests that one subdirectory are ignored and that it returns 1
+     *  Tests that one subdirectory are ignored and that it returns status code 1
      */
     @Test
     public void signOneDirectoryFromInDir() throws Exception {
         LOG.info("signOneDirectoryFromInDir");
         inDir.newFolder("temp");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
-        assertEquals(1, result);
+        assertEquals("return code: " + result + " but expected 1", 1, result);
     }
 
     /**
-     * Tests that two subdirectories are ignored and that it
+     * Tests that two subdirectories are ignored and that it returns status code 1
      */
     @Test
     public void signTwoDirectoriesFromInDir() throws Exception {
@@ -222,7 +223,22 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         inDir.newFolder("tempOne");
         inDir.newFolder("tempTwo");
         int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
-        assertEquals("return code: 0 but expected 1", 1, result);
+        assertEquals("return code: " + result + " but expected 1", 1, result);
+    }
+
+    @Test
+    public void signDocumentFromInDirWithOneDirectoryPresent() throws Exception {
+        LOG.info("signDocumentFromInDirWithOneDirectoryPresent");
+        File tempFile = null;
+        try {
+            inDir.newFolder("tempDir");
+            tempFile = inDir.newFile("tempFile.xml");
+            FileUtils.writeStringToFile(tempFile, "<root/>", StandardCharsets.UTF_8);
+            int result = executeReturnStatus("signdocument", "-workername", "TestXMLSigner", "-indir", inDir.getRoot().getAbsolutePath(), "-outdir", outDir.getRoot().getAbsolutePath());
+            assertEquals("return code: " + result + " but expected 0", 0, result);
+        } finally {
+            FileUtils.deleteQuietly(tempFile);
+        }
     }
 
     /**

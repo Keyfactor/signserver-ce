@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.9_Release_Notes.html">SignServer 5.9 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
 
             </li>
@@ -1712,35 +1716,35 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-119933236"> <span>PDF Signer</span></h1>
+</div>            <h1 id="src-143728152"> <span>PDF Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The PDF signer has the class name: <strong class=" ">org.signserver.module.pdfsigner.PDFSigner</strong>.    </p>
-    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-Overview">
+    <div class="section section-1" id="src-143728152_id-.PDFSignerv5.9.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The main purpose of the PDF signer is to add digital signatures to PDF documents.    </p>
     <p  >The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when a visible signature is applied to a document, signature image (in the shape of a rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader).    </p>
-    <p  >On the other hand, when an invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as: custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see <a   href="#src-119933236_id-.PDFSignerv5.7.0-WorkerProperties">Worker Properties</a>).    </p>
+    <p  >On the other hand, when an invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as: custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see <a   href="#src-143728152_id-.PDFSignerv5.9.0-WorkerProperties">Worker Properties</a>).    </p>
     <p  >PDF Signer can also apply a timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that the document was signed before the time specified by the timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be trusted. It is strongly advised to apply a timestamp to a signature, and the TSA module can be used for this purpose.    </p>
     <p  >Also, CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate the signature even after the signer's certificate is expired. (Though it will not guarantee the long-term signature preservation. The topic of long-term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).    </p>
     <p  >The PDF Signer can also be configured to enforce that certain PDF permissions are not available in the signed document and/or that certain permissions should be removed.    </p>
     </div>
-    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-PDFPasswords">
+    <div class="section section-1" id="src-143728152_id-.PDFSignerv5.9.0-PDFPasswords">
         <h1 class="heading "><span>PDF Passwords</span></h1>
     <p  >PDF documents can optionally be protected by a password. There are two different types of passwords:    </p>
 <ul class=" "><li class=" ">    <p  >User password: Also sometimes referred to as &quot;open password&quot; or &quot;document password&quot;. Can be used for reading an encrypted document.    </p>
 </li><li class=" ">    <p  >Owner password: Also sometimes referred to as &quot;permission password&quot; or &quot;security restriction password&quot;. It can be used for reading an encrypted document and making changes to a document that has permissions.    </p>
 </li></ul>    <p  >If a document is protected by an Owner password, it has to be supplied with the request for SignServer to sign the document. If the document is protected by a User password, either the User password or the Owner password has to be supplied with the request for SignServer to sign the document.    </p>
     </div>
-    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-PDFSignerRequests">
+    <div class="section section-1" id="src-143728152_id-.PDFSignerv5.9.0-PDFSignerRequests">
         <h1 class="heading "><span>PDFSigner Requests</span></h1>
     <p  >PDF signing requests can be served using either web services or the web server interface (HTTP). See <a   href="SignServer_Integration.html">SignServer Integration</a> for general information about the different interfaces.    </p>
     <p  >For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field &quot;pdfPassword&quot; letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).    </p>
     <p  >For the old web services interface, the request should contain an encoded GenericProcessesRequest and the response will be a GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key &quot;pdfPassword&quot;.    </p>
     </div>
-    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-WorkerProperties">
+    <div class="section section-1" id="src-143728152_id-.PDFSignerv5.9.0-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
     <div  class="tablewrap">
@@ -1835,27 +1839,27 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL<span id="src-119933236_id-.PDFSignerv5.7.0-TSA_URL"></span>    </p>
+        <p  >TSA_URL<span id="src-143728152_id-.PDFSignerv5.9.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If we want to timestamp document signature, specify timestamp authority URL.<br/>This will cause time stamp requests to be issued via HTTP requests. Under high load, this can lead to thread deadlocks in the application server if using a localhost URL (using a time stamp signer running in the same server). In this case, use the internal mechanism described below). To not timestamp document signature, do not set the property.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  If path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;).    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-119933236_id-.PDFSignerv5.7.0-TSA_WORKER">TSA_WORKER</a>.    </p>
+ Cannot be set at the same time as <a   href="#src-143728152_id-.PDFSignerv5.9.0-TSA_WORKER">TSA_WORKER</a>.    </p>
     <p  >Default: not set (no timestamping).    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER<span id="src-119933236_id-.PDFSignerv5.7.0-TSA_WORKER"></span>    </p>
+        <p  >TSA_WORKER<span id="src-143728152_id-.PDFSignerv5.9.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer<br/>This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Use instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-119933236_id-.PDFSignerv5.7.0-TSA_URL">TSA_URL</a>.    </p>
+ Cannot be set at the same time as <a   href="#src-143728152_id-.PDFSignerv5.9.0-TSA_URL">TSA_URL</a>.    </p>
     <p  >Default: Not set (no timestamping).    </p>
             </td>
         </tr>
@@ -2048,14 +2052,25 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Comma-separated list of worker properties that are allowed to be overridden by request metadata properties with the same names.    </p>
-    <p  >See <a   href="#src-119933236_id-.PDFSignerv5.7.0-RequestMetadataProperties">Request Metadata Properties</a> for a list of properties that can be added to this property.    </p>
+    <p  >See <a   href="#src-143728152_id-.PDFSignerv5.9.0-RequestMetadataProperties">Request Metadata Properties</a> for a list of properties that can be added to this property.    </p>
     <p  >Default: not set (no properties are allowed to be overridden).    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #323232;">
+ALLOW_SIGNING_WITHOUT_OWNERPASSWORD    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >By default, the PDF Signer requires the owner's password to sign a PDF that has PDF permissions set.    </p>
+    <p  >Setting <strong class=" ">ALLOW_SIGNING_WITHOUT_OWNERPASSWORD</strong> to true allows signing a protected PDF without providing the owner's password. The property is by default set to false for backward compatibility.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-119933236_id-.PDFSignerv5.7.0-RequestMetadataProperties">
+    <div class="section section-1" id="src-143728152_id-.PDFSignerv5.9.0-RequestMetadataProperties">
         <h1 class="heading auto-cursor-target"><span>Request Metadata Properties</span></h1>
     <p  >The following properties can be sent by the client with the request:    </p>
     <div  class="tablewrap">

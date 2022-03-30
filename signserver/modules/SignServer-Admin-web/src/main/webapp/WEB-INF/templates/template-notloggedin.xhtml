@@ -40,7 +40,7 @@
                     <div class="kfds-header-logo">
                         <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
                     </div>
-                    <div class="kfds-header-product">
+                    <div class="#{adminWebBean.defaultThemeEnabled ? 'hide-element' : 'kfds-header-product'}">
                       <div class="kfds-header-product-name">
                         <h:panelGroup layout="block">
                             <h:outputText value="#{adminWebBean.productName}"/>
@@ -76,6 +76,15 @@
                             </label>
                             <div class="mx-0.5">
                                 <h:outputText value="#{adminWebBean.currentTime}"/>
+                            </div>
+                        </li>
+
+                        <li class="SS_infoItem">
+                            <label>
+                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{text['Version_COLON']}"/>
+                            </label>
+                            <div class="mx-0.5">
+                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.productName} #{adminWebBean.productVersion}"/>
                             </div>
                         </li>
                     </ul>

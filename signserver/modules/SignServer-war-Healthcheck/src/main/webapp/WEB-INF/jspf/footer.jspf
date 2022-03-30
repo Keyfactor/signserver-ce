@@ -3,5 +3,5 @@
 <%@ page pageEncoding="UTF-8" %>
 
     <p class="bottomText">
-        <%= org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "Copyright © 2006–2019 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved." %>
+        <%= org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "Copyright © 2006–2022 PrimeKey Solutions AB" : "Copyright © 2006–2022 Keyfactor" %>
     </p>

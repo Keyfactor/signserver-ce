@@ -655,3 +655,7 @@ tr.dss1_odd {
     margin-right: 0.5em;
     margin-left: 0.5em;
 }
+
+.hide-element {
+    display: none;
+}

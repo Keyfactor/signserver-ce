@@ -41,7 +41,7 @@
                     <div class="kfds-header-logo">
                         <h:outputLink class="logo-link" value="#{startPage ? '.' : '../'}"><h:graphicImage library="#{publicWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
                     </div>
-                    <div class="kfds-header-product">
+                    <div class="#{publicWebBean.defaultThemeEnabled ? 'hide-element' : 'kfds-header-product'}">
                       <div class="kfds-header-product-name">
                         <h:panelGroup layout="block">
                             <h:outputText value="#{publicWebBean.productName}"/>

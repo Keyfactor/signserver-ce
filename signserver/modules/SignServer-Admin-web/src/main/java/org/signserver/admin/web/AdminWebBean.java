@@ -66,7 +66,7 @@ public class AdminWebBean {
     }
 
     public String getCopyright() {
-        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2021 PrimeKey Solutions AB" : "© 2022 Keyfactor. All rights reserved.";
+        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2022 PrimeKey Solutions AB" : "Copyright © 2006–2022 Keyfactor";
     }
 
     public String getCurrentTime() {

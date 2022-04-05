@@ -10,7 +10,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/css/default.css.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" type="text/css"/>
         <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/css/cssLayout.css.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" type="text/css"/>
-        <link rel="shortcut icon" href="<c:out value='${pageContext.servletContext.contextPath}'/>/favicon.png"/>
+        <link rel="shortcut icon" href="${pageContext.servletContext.contextPath}'/>/../../javax.faces.resource/images/favicon.png.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>"/>
         <title>SignServer - Error report</title>
     </head>
     <body>

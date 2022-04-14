@@ -220,8 +220,8 @@ public class SignClientP11AuthTest {
      */
     @Test
     public void testPlainSigner_P11SignedRequestFixedKey() throws Exception {
+        Assume.assumeTrue("Signed Request Authorizer is an enterprise feature. Skip the test for Community Edition.","EE".equals(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)));
         LOG.info("testPlainSignerP11SignedRequest");
-        Assume.assumeTrue("Signed Request Authorizer is an enterprise feautre. Skip the test for Comunity Edition.","EE".equals(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)));
         File p11ConfigFile = null;
 
         try {

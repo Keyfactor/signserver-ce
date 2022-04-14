@@ -161,7 +161,6 @@ public class SignClientP11AuthTest {
     @Before
     public void setUp() throws Exception {
         Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
-        Assume.assumeTrue("EE".equals(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)));
         SignServerUtil.installBCProvider();
         }
 
@@ -222,6 +221,7 @@ public class SignClientP11AuthTest {
     @Test
     public void testPlainSigner_P11SignedRequestFixedKey() throws Exception {
         LOG.info("testPlainSignerP11SignedRequest");
+        Assume.assumeTrue("Signed Request Authorizer is an enterprise feautre. Skip the test for Comunity Edition.","EE".equals(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)));
         File p11ConfigFile = null;
 
         try {

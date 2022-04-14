@@ -77,6 +77,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ComplianceTestUtils;
@@ -160,6 +161,7 @@ public class SignClientP11AuthTest {
     @Before
     public void setUp() throws Exception {
         Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
+        Assume.assumeTrue("EE".equals(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)));
         SignServerUtil.installBCProvider();
         }
 

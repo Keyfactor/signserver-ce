@@ -77,6 +77,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ComplianceTestUtils;
@@ -219,6 +220,7 @@ public class SignClientP11AuthTest {
      */
     @Test
     public void testPlainSigner_P11SignedRequestFixedKey() throws Exception {
+        Assume.assumeTrue("Signed Request Authorizer is an enterprise feature. Skip the test for Community Edition.","EE".equals(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)));
         LOG.info("testPlainSignerP11SignedRequest");
         File p11ConfigFile = null;
 

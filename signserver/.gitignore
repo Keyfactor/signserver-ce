@@ -4,6 +4,7 @@
 
 # Skip copied web themes
 modules/SignServer-Admin-web/src/main/webapp/resources/keyfactor
+modules/SignServer-war/src/main/webapp/resources/keyfactor
 
 # Log file
 *.log
@@ -71,6 +72,7 @@ dist-*/
 /conf/timemonitor-log4j.properties
 /conf/signserver_build.properties
 /conf/admingui.properties
+/conf/timemonitor-log4j2.properties
 
 # Enterprise Edition sample configuration files
 /conf/cesecore.properties.sample
@@ -100,6 +102,7 @@ dist-*/
 /doc/sample-configs/appx*.properties
 /doc/sample-configs/apk_*.properties
 /doc/sample-configs/qos_*.properties
+/doc/sample-configs/ades.properties
 
 /indir*/
 /jarsigner-test-files/
@@ -122,6 +125,10 @@ dist-*/
 /lib/ext/jnr-ffi-*
 /lib/ext/apksig-*
 /lib/ext/jdbc/*.jar
+/lib/ext/dss-*
+/lib/ext/commons-lang3-*
+/lib/ext/specs-*
+/lib/ext/validation-*
 
 /modules/SignServer-Admin-web/nbproject
 /modules/SignServer-AdminCLI/nbproject

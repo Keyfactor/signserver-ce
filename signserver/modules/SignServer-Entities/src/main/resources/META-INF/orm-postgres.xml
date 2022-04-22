@@ -10,4 +10,18 @@
         </attributes>
     </entity>
 
+    <entity class="org.signserver.server.key.entities.KeyData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="keyAlias">
+                <column name="keyAlias" column-definition="TEXT"/>
+            </id>
+            <basic name="keyData">
+                <column name="keyData" column-definition="TEXT"/>
+            </basic>
+            <basic name="certData">
+                <column name="certData" column-definition="TEXT"/>
+            </basic>
+        </attributes>
+    </entity>
+
 </entity-mappings>

@@ -11,16 +11,16 @@
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
 
         <!-- BouncyCastle artifacts name, so we can easily switch to the debug ones -->
-        <bouncycastle.bcpg.artifact>bcpg-jdk15on</bouncycastle.bcpg.artifact>
-        <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
-        <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
-        <bouncycastle.bcutil.artifact>bcutil-jdk15on</bouncycastle.bcutil.artifact>
+        <bouncycastle.bcpg.artifact>bcpg-jdk18on</bouncycastle.bcpg.artifact>
+        <bouncycastle.bcpkix.artifact>bcpkix-jdk18on</bouncycastle.bcpkix.artifact>
+        <bouncycastle.bcprov.artifact>bcprov-jdk18on</bouncycastle.bcprov.artifact>
+        <bouncycastle.bcutil.artifact>bcutil-jdk18on</bouncycastle.bcutil.artifact>
 
         <!-- BouncyCastle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.70</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.70</bouncycastle.bcpkix.artifact.version>
-        <bouncycastle.bcprov.artifact.version>1.70</bouncycastle.bcprov.artifact.version>
-        <bouncycastle.bcutil.artifact.version>1.70</bouncycastle.bcutil.artifact.version>
+        <bouncycastle.bcpg.artifact.version>1.71</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.71</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcprov.artifact.version>1.71</bouncycastle.bcprov.artifact.version>
+        <bouncycastle.bcutil.artifact.version>1.71</bouncycastle.bcutil.artifact.version>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -196,6 +196,16 @@
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-entity</artifactId>
                 <version>7.0.0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>cesecore-common</artifactId>
@@ -206,6 +216,14 @@
                     <exclusion>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -218,6 +236,14 @@
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -229,6 +255,14 @@
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -236,6 +270,16 @@
                 <groupId>org.ejbca.cvc</groupId>
                 <type>jar</type>
                 <version>1.4.6</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>

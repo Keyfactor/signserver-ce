@@ -140,8 +140,11 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
             final Certificate[] chain = keystore.getCertificateChain(keyAlias);
             if (chain != null && chain.length > 0) {
                 final PublicKey pubKey = chain[0].getPublicKey();
-                final String keyAlgorithm =
+                String keyAlgorithm =
                         AlgorithmTools.getKeyAlgorithm(pubKey);
+                if (keyAlgorithm == null) {
+                    keyAlgorithm = pubKey.getAlgorithm();
+                }
                 info.put(INFO_KEY_ALGORITHM, keyAlgorithm);
                 info.put(INFO_KEY_SPECIFICATION,
                         AlgorithmTools.getKeySpecification(pubKey));
@@ -150,7 +153,9 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
 
                     info.put(INFO_KEY_PUBLIC_EXPONENT,
                             rsaKey.getPublicExponent().toString(10));
-                }
+                } /*else if (pubKey instanceof BCSPHINCSPlusPublicKey) {
+
+                }*/
                 info.put(INFO_KEY_SIGNINGS, String.valueOf(CryptoTokenHelper.getNoOfSignings(pubKey, services)));
             }
             try {

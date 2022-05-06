@@ -79,22 +79,35 @@ public class CMSSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(CMSSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
+    private static MockedCryptoToken tokenPQ;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        final KeyPair signerKeyPair;
-        final String signatureAlgorithm;
-        signerKeyPair = CryptoUtils.generateRSA(1024);
-        signatureAlgorithm = "SHA1withRSA";
+        {
+            final KeyPair signerKeyPair;
+            final String signatureAlgorithm;
+            signerKeyPair = CryptoUtils.generateRSA(1024);
+            signatureAlgorithm = "SHA1withRSA";
+            final Certificate[] certChain =
+                    new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                            setSelfSignKeyPair(signerKeyPair).
+                            setNotBefore(new Date()).
+                            setSignatureAlgorithm(signatureAlgorithm)
+                            .build())};
+            final Certificate signerCertificate = certChain[0];
+            tokenRSA = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+        }
+        final KeyPair signerKeyPair2 = CryptoUtils.generateSphincsPlus();
+        final String signatureAlgorithm = "SPHINCS+";
         final Certificate[] certChain =
-                new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPair).
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPair2).
                         setNotBefore(new Date()).
                         setSignatureAlgorithm(signatureAlgorithm)
                         .build())};
         final Certificate signerCertificate = certChain[0];
-        tokenRSA = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+        tokenPQ = new MockedCryptoToken(signerKeyPair2.getPrivate(), signerKeyPair2.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
     }
 
     /**
@@ -524,8 +537,48 @@ public class CMSSignerUnitTest {
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
-    }    
-    
+    }
+
+    @Test
+    public void testDetachedSignature_SPHINCSPlus() throws Exception {
+        LOG.info("testDetachedSignature_SPHINCSPlus");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "SPHINCS+");
+        CMSSigner instance = createMockSigner(tokenPQ);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQ, config, null, false);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_SPHINCSPlus() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_SPHINCSPlus");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "SPHINCS+");
+        CMSSigner instance = createMockSigner(tokenPQ);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenPQ, config, requestContext, true);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
     /**
      * Tests that specifying empty value for Signer parameters works.
      *
@@ -1642,10 +1695,12 @@ public class CMSSignerUnitTest {
                 Iterator              certIt = certCollection.iterator();
                 X509CertificateHolder cert = (X509CertificateHolder)certIt.next();
 
-                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)))
-                {
+                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert))) {
                     verified++;
-                }   
+                    LOG.debug("Verified");
+                } else {
+                    LOG.debug("Not verified");
+                }
             }
             
             assertTrue("verified", verified > 0);

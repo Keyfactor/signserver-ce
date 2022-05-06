@@ -36,6 +36,7 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
@@ -294,9 +295,11 @@ public class CMSSigner extends BaseSigner {
                     = new CMSSignedDataStreamGenerator();
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
-                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
-                 .setDirectSignature(directSignature).build(contentSigner, cert));
-        
+                new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+                .setDirectSignature(directSignature)
+                .setContentDigest(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256))
+                .build(contentSigner, cert));
+        // XXX: Note: the .setContentDigest call above is needed as of BC 1.71-b01 there is no entry for SPHINCS+ in the DefaultDigestAlgorithmIdentifierFinder
         generator.addCertificates(new JcaCertStore(certs));
         
         // Should the content be detached or not

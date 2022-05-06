@@ -348,7 +348,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     }
     
     protected Store getCertStoreWithChain(Certificate signingCert, List<Certificate> signingCertificateChain) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
-        if (signingCertificateChain == null) {
+        if (signingCertificateChain == null || signingCertificateChain.isEmpty()) {
             throw new CryptoTokenOfflineException("Certificate chain not available");
         } else {
             JcaCertStore certStore =

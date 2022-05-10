@@ -472,7 +472,20 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             if (signatureAlgorithm != null) {
                 params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_SIGNATUREALGORITHM, signatureAlgorithm);
             }
-        
+            
+            final String generateCertValue = (String) config.getProperty(CryptoTokenHelper.PROPERTY_GENERATE_CERTIFICATE_OBJECT);
+            if (generateCertValue != null) {
+                final boolean generate;
+                if (generateCertValue.trim().equalsIgnoreCase(Boolean.TRUE.toString())) {
+                    generate = true;
+                } else if (generateCertValue.trim().equalsIgnoreCase(Boolean.FALSE.toString())) {
+                    generate = false;
+                } else {
+                    throw new IllegalArgumentException("Incorrect boolean value for property " + CryptoTokenHelper.PROPERTY_GENERATE_CERTIFICATE_OBJECT);
+                }
+                params.put(CryptoTokenHelper.PROPERTY_GENERATE_CERTIFICATE_OBJECT, generate);
+            }
+
             signer.generateKey(keyAlgorithm, keySpec, alias, authCode, params,
                     servicesImpl);
 

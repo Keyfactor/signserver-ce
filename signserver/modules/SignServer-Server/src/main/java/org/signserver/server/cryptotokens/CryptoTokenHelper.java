@@ -114,6 +114,7 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SELFSIGNED_DN = "SELFSIGNED_DN";
     public static final String PROPERTY_SELFSIGNED_VALIDITY = "SELFSIGNED_VALIDITY";
     public static final String PROPERTY_SELFSIGNED_SIGNATUREALGORITHM = "SELFSIGNED_SIGNATUREALGORITHM";
+    public static final String PROPERTY_GENERATE_CERTIFICATE_OBJECT = "GENERATE_CERTIFICATE_OBJECT";
 
     public static final String INFO_KEY_SPECIFICATION = "Key specification";
     public static final String INFO_KEY_ALGORITHM = "Key algorithm";

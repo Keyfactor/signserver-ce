@@ -24,7 +24,12 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.interfaces.RSAPublicKey;
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javax.crypto.SecretKey;
 import org.apache.log4j.Logger;
 import org.cesecore.certificates.util.AlgorithmConstants;
@@ -141,8 +146,8 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
                     keyAlgorithm = pubKey.getAlgorithm();
                 }
                 info.put(INFO_KEY_ALGORITHM, keyAlgorithm);
-                String keySpecification = AlgorithmTools.getKeySpecification(pubKey);
-                info.put(INFO_KEY_SPECIFICATION, keySpecification == null ? "" : keySpecification);
+                info.put(INFO_KEY_SPECIFICATION,
+                        AlgorithmTools.getKeySpecification(pubKey));
                 if (AlgorithmConstants.KEYALGORITHM_RSA.equals(keyAlgorithm)) {
                     final RSAPublicKey rsaKey = (RSAPublicKey) pubKey;
 

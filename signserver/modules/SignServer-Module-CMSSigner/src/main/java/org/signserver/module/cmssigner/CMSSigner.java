@@ -36,7 +36,6 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;

@@ -95,7 +95,6 @@
         <module>SignServer-Test-Random</module>
         <module>SignServer-Test-Performance</module>
         <module>SignServer-Test-ClientWS</module>
-        <module>SignServer-PQ-Verifier</module>
 
         <!-- Documentation -->
         <module>SignServer-Doc-web</module>

@@ -153,9 +153,7 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
 
                     info.put(INFO_KEY_PUBLIC_EXPONENT,
                             rsaKey.getPublicExponent().toString(10));
-                } /*else if (pubKey instanceof BCSPHINCSPlusPublicKey) {
-
-                }*/
+                }
                 info.put(INFO_KEY_SIGNINGS, String.valueOf(CryptoTokenHelper.getNoOfSignings(pubKey, services)));
             }
             try {

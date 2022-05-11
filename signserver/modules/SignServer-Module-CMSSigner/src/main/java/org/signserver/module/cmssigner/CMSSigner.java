@@ -296,10 +296,7 @@ public class CMSSigner extends BaseSigner {
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
-                .setDirectSignature(directSignature)
-                .setContentDigest(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256))
-                .build(contentSigner, cert));
-        // XXX: Note: the .setContentDigest call above is needed as of BC 1.71-b01 there is no entry for SPHINCS+ in the DefaultDigestAlgorithmIdentifierFinder
+                .setDirectSignature(directSignature).build(contentSigner, cert));
         generator.addCertificates(new JcaCertStore(certs));
         
         // Should the content be detached or not

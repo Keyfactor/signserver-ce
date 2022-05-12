@@ -602,7 +602,7 @@ Installation Guide for details.
     </target>
     
     <target name="dist:p11ngcli">
-        <available file="${basedir}/lib/SignServer-P11NG-Common-${app.version.number}.jar" property="p11ng.jar" value="SignServer-P11NG-Common-${app.version.number}.jar"/>
+        <available file="${basedir}/lib/SignServer-P11NG-Common-${app.version.number}.jar" property="p11ng.jar" value="SignServer-P11NG-CLI-${app.version.number}.jar"/>
         <fail unless="p11ng.jar" message="Must build SignServer-P11NG-Common first"/>
         <antcall target="dist">
             <param name="dist.jars" value="${p11ng.jar}"/>

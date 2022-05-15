@@ -294,9 +294,8 @@ public class CMSSigner extends BaseSigner {
                     = new CMSSignedDataStreamGenerator();
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
-                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
-                 .setDirectSignature(directSignature).build(contentSigner, cert));
-        
+                new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+                .setDirectSignature(directSignature).build(contentSigner, cert));
         generator.addCertificates(new JcaCertStore(certs));
         
         // Should the content be detached or not

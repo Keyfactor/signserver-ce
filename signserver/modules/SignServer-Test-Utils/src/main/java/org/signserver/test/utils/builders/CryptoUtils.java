@@ -92,4 +92,9 @@ public class CryptoUtils {
         g.initialize(keySize, new SecureRandom());
         return g.generateKeyPair();
     }
+
+    public static KeyPair generateSphincsPlus() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("SPHINCS+", "BC");
+        return g.generateKeyPair();
+    }
 }

@@ -294,7 +294,8 @@ public class CryptoTokenBean {
                 keySpec = info.get(CryptoTokenHelper.INFO_KEY_SPECIFICATION);
             }
 
-            keyAlgoWithSpec = keyAlgo + SPACE + keySpec;
+            keyAlgoWithSpec =
+                    keySpec != null ? keyAlgo + SPACE + keySpec : keyAlgo;
             return keyAlgoWithSpec;
         }
 

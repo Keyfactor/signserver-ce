@@ -352,8 +352,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                         
             final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
 
+            String sigAlgName = null;
+
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
+            } else if ("SPHINCS+".equalsIgnoreCase(keyAlgorithm)) {
+                sigAlgName = "SPHINCS+";
+                // For now we just use the defaults, later we should use SPHINCSPlusParameterSpec
             } else {
                 if ("RSA".equals(keyAlgorithm) && keySpec.contains("exp")) {
                     final AlgorithmParameterSpec spec =
@@ -364,7 +369,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 }
             }
 
-            final String sigAlgName = "SHA1With" + keyAlgorithm;
+            if (sigAlgName == null) {
+                sigAlgName = "SHA1With" + keyAlgorithm;
+            }
 
             LOG.debug("generating...");
             final KeyPair keyPair = kpg.generateKeyPair();

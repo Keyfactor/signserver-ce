@@ -3,8 +3,8 @@
 Welcome to SignServer – the Open Source Signing Software. 
 
 There are two versions of SignServer: 
-* **SignServer Community** (SignServer CE) - free and open source, OSI Certified Open Source Software
-* **SignServer Enterprise** (SignServer EE) - commercial and Common Criteria certified 
+* **SignServer Community** (SignServer CE) - free and open source, OSI Certified Open Source Software, LGPL-licensed subset of SignServer Enterprise
+* **SignServer Enterprise** (SignServer EE) - developed and commercially supported by PrimeKey® Solutions
 
 OSI Certified is a certification mark of the Open Source Initiative.
 

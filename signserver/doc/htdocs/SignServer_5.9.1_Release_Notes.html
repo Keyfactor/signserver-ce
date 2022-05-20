@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Checking Out from Subversion - SignServer - Documentation Space</title> -->
-    <title>Checking Out from Subversion - SignServer Manual</title>
+    <!-- <title>SignServer 5.9.1 Release Notes - SignServer - Documentation Space</title> -->
+    <title>SignServer 5.9.1 Release Notes - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -1542,7 +1542,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="Checking_Out_from_Subversion.html">Checking Out from Subversion</a>
+        <a class="ht-nav-page-link" href="Checking_Out_from_Source_Code_Repository.html">Checking Out from Source Code Repository</a>
 
             </li>
                                         <li class="leaf">
@@ -1605,6 +1605,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link current" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9_Release_Notes.html">SignServer 5.9 Release Notes</a>
 
@@ -1712,35 +1716,74 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                     <li><a href="Developer_Reference.html">Developer Reference</a></li>
+                                        <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
+                                                                                     <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
                                                             </ul>
-</div>            <h1 id="src-16235603"> <span>Checking Out from Subversion</span></h1>
+</div>            <h1 id="src-143735158"> <span>SignServer 5.9.1 Release Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >After checking out from Subversion (SVN) you need to run any of the Ant targets for the workspace to recognize if it is the Community or Enterprise Edition, for example:    </p>
-    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
-<div class="line"><code class="plain">bin/ant init</code></div>
-</div>
+    <p  ><span class="status grey subtle">MAY 2022</span>    </p>
+    <p  >The SignServer team is pleased to announce the release of SignServer 5.9.1. This release includes improvements for integration with AWS CloudHSM as well as new versions of OpenPDF and Bouncy Castle and other minor improvements and corrections.    </p>
+    <p  >    <span style="color: #000000;">
+Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a> and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
+    </p>
+    <div class="section section-1" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-Highlights">
+        <h1 class="heading "><span>Highlights</span></h1>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-AWSCloudHSMImprovements">
+        <h2 class="heading "><span>AWS CloudHSM Improvements</span></h2>
+    <p  >New flexibility of the P11NG crypto token now allows P11NG to be used with SignServer for integration with AWS CloudHSM. A new setting on a worker or the crypto token can control if a certificate object is generated when a key pair is generated. When used for integration with AWS CloudHSM, the worker or crypto token must be configured not to generate certificates. A similar option is also available in the <a   href="P11NG_CLI.html">p11-ng tool</a> (using the nocertificateobject command).    </p>
+    <p  >Further improvements to the Android (APK) signers have been made in this release making the APK signers work fully without certificates in the token and thus function with AWS CloudHSM.    </p>
     </div>
-    <p  >This copies files into the right location and creates the <tt class=" ">res/edition.properties</tt> file to flag that this has been done.    </p>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >After checking out the project, there will be errors in the IDE as some source files (i.e. Web Services stubs) are not yet generated. The errors will disappear after configuring and building SignServer.    </p>
-        </div>
     </div>
-    <p  ><br/>    </p>
+    <div class="section section-1" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+    <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    <p  >SignServer 5.9.1 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.9.6</a> and    <span style="color: #000000;">
+ <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud X.Y</a>.    </span>
+    </p>
+    </div>
+    <div class="section section-1" id="src-143735158_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjkuMVJlbGVhc2VOb3Rlc3Y1LjkuMS1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+    <p  >For full details of fixed bugs and implemented features in SignServer 5.9.1, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.9.1.Final%20ORDER%20BY%20resolution%20DESC">Jira Issue Tracker</a>.    </p>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-IssuesResolvedin5.9.1">
+        <h2 class="heading "><span>Issues Resolved in 5.9.1</span></h2>
+    <p  >Released May 2022    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    <p  >    </p>
+    </div>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-NewFeatures">
+        <h2 class="heading "><span>New Features</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2380">DSS-2380</a> - Make key generation work with P11NG Tool with AWS CloudHSM    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2381">DSS-2381</a> - Support key entries without certificate with P11NG    </p>
+    </div>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2369">DSS-2369</a> - AdESSignerUnitTest fails in the build job    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2451">DSS-2451</a> - Add files that should not be tracked to .gitignore    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2456">DSS-2456</a> - Fix failing webtests    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2457">DSS-2457</a> - Do not fail parsing of PDF documents with negative indirect references    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2459">DSS-2459</a> - Upgrade BC to 1.71    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2462">DSS-2462</a> - Support for include certificate levels in APKHashSigner    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2465">DSS-2465</a> - Support in APK signers for certificate in config instead of import it into the token not only for other signers    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2466">DSS-2466</a> - Upgrade to OpenPDF 1.3.28    </p>
+    </div>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2453">DSS-2453</a> - Keywrapping is not working with PostgreSQL    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2463">DSS-2463</a> - Regression: P11NG tool not included in P11NG CLI dist    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2467">DSS-2467</a> - Fail to verify the MSIX file signed with SignServer    </p>
+    <p  >    </p>
+    </div>
+    </div>
         </div>
 
     </article>
 
 
             <nav id="ht-post-nav">
-                <a href="Developer_Reference.html" class="ht-post-nav-prev">
+                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1749,9 +1792,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Developer Reference</span>
+            <span>SignServer Release Notes</span>
         </a>
-                <a href="Building_SignServer_with_Maven.html" class="ht-post-nav-next">
+                <a href="SignServer_5.9_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1760,7 +1803,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Building SignServer with Maven</span>
+            <span>SignServer 5.9 Release Notes</span>
         </a>
     </nav>    
             

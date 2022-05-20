@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Client WS Interface - SignServer - Documentation Space</title> -->
-    <title>Client WS Interface - SignServer Manual</title>
+    <!-- <title>Checking Out from Source Code Repository - SignServer - Documentation Space</title> -->
+    <title>Checking Out from Source Code Repository - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -344,7 +344,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="Client_WS_Interface.html">Client WS Interface</a>
+        <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
                                         <li class="collapsed">
@@ -1542,7 +1542,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Checking_Out_from_Source_Code_Repository.html">Checking Out from Source Code Repository</a>
+        <a class="ht-nav-page-link current" href="Checking_Out_from_Source_Code_Repository.html">Checking Out from Source Code Repository</a>
 
             </li>
                                         <li class="leaf">
@@ -1715,180 +1715,27 @@
     <ul>
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
-                                                                                     <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
+                                                                                     <li><a href="Developer_Reference.html">Developer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-113780312"> <span>Client WS Interface</span></h1>
+</div>            <h1 id="src-143731531"> <span>Checking Out from Source Code Repository</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >    <span style="color: #000000;">
-The SignServer Client Web Services interface can be used to request signings from SignServer.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.    </span>
-    </p>
-    <div class="section section-1" id="src-113780312_id-.ClientWSInterfacev5.6.1-PriorityClientWS">
-        <h1 class="heading "><span>Priority Client WS</span></h1>
-    <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
-    <p  >    </p>
-    <p  >    <span style="color: #000000;">
-The SignServer Priority Client Web Services interface always prioritizes the requests to the high-priority Client WS.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-The URL is http://&lt;hostname&gt;:8080/signserver/ClientWSService/PriorityClientWS    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-When request prioritization is enabled, then the priority requests will be rejected if the worker is not configured with the highest priority. For more information, see    </span>
- <a   href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>.    </p>
+    <p  >After checking out from either the SignServer Community or SignServer Enterprise Git repository you need to run any of the Ant targets for the workspace to recognize if it is the Community or Enterprise Edition, for example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">bin/ant init</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-113780312_id-.ClientWSInterfacev5.6.1-Operations">
-        <h1 class="heading "><span>Operations</span></h1>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-<strong class=" ">processData</strong>    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Generic operation for request signing of any binary (or character) data.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-Parameters:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">worker</strong> (string)    </span>
-<br/>    <span style="color: #000000;">
-Name of worker in SignServer which should handle the request.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
-<br/>    <span style="color: #000000;">
-Optional additional request data. For instance the PDFSigner accepts the PDF password as a request data.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">data</strong> (base64Binary)    </span>
-<br/>    <span style="color: #000000;">
-The document/data to process.    </span>
-    </p>
-</li></ul>    <p  >    <span style="color: #000000;">
-Output:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">archiveId</strong> (string)     </span>
-<br/>    <span style="color: #000000;">
-Identifier for the request if archiving was used.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">data</strong> (base64Binary)    </span>
-<br/>    <span style="color: #000000;">
-The signed binary/document.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
-<br/>    <span style="color: #000000;">
-Any optional additional response data.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">requestId</strong> (integer)    </span>
-<br/>    <span style="color: #000000;">
-Identifier for the request/response.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">signerCertificate</strong> (base64Binary)    </span>
-<br/>    <span style="color: #000000;">
-The signer certificate in binary format if available.    </span>
-    </p>
-</li></ul>    <p  >    <span style="color: #000000;">
-Faults:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-RequestFailedException    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-InternalServerException    </span>
-    </p>
-</li></ul>            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-<strong class=" ">processSOD</strong>    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Operation for requesting an SOD to be created and signed.    </span>
-<br/>    <span style="color: #000000;">
-The ePassport production system calls this operation to get an SOD for the supplied data groups.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-Parameters:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">worker</strong> (string)    </span>
-<br/>    <span style="color: #000000;">
-Name of worker in SignServer which should be used for constructing the SOD.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
-<br/>    <span style="color: #000000;">
-Optional additional request data. Not used.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">sodData</strong> (a sodRequest structure)    </span>
-<br/>    <span style="color: #000000;">
-The sodRequest should contain a sequence of datagroups (id 1-16 and their values), optionally also the version of the LDS to use and the version of Unicode.    </span>
-    </p>
-</li></ul>    <p  >    <span style="color: #000000;">
-Output:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">archiveId</strong> (string)     </span>
-<br/>    <span style="color: #000000;">
-Identifier for the request if archiving was used.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">data</strong> (base64Binary)    </span>
-<br/>    <span style="color: #000000;">
-The SOD binary.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
-<br/>    <span style="color: #000000;">
-Any optional additional response data.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">requestId</strong> (integer)    </span>
-<br/>    <span style="color: #000000;">
-Identifier for the request/response.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">signerCertificate</strong> (base64Binary)    </span>
-<br/>    <span style="color: #000000;">
-The signer (DS) certificate in binary format if available.    </span>
-    </p>
-</li></ul>    <p  >    <span style="color: #000000;">
-Faults:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-RequestFailedException    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #000000;">
-InternalServerException    </span>
-    </p>
-</li></ul>            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <p  >This copies files into the right location and creates the <tt class=" ">res/edition.properties</tt> file to flag that this has been done.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >After checking out the project, there will be errors in the IDE as some source files (i.e. Web Services stubs) are not yet generated. The errors will disappear after configuring and building SignServer.    </p>
+        </div>
     </div>
         </div>
 
@@ -1896,7 +1743,7 @@ InternalServerException    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="Client_HTTP_Interface.html" class="ht-post-nav-prev">
+                <a href="Developer_Reference.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1905,9 +1752,9 @@ InternalServerException    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Client HTTP Interface</span>
+            <span>Developer Reference</span>
         </a>
-                <a href="Client_CLI.html" class="ht-post-nav-next">
+                <a href="Building_SignServer_with_Maven.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1916,7 +1763,7 @@ InternalServerException    </span>
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Client CLI</span>
+            <span>Building SignServer with Maven</span>
         </a>
     </nav>    
             

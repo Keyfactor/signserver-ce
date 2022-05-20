@@ -1542,7 +1542,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Checking_Out_from_Subversion.html">Checking Out from Subversion</a>
+        <a class="ht-nav-page-link" href="Checking_Out_from_Source_Code_Repository.html">Checking Out from Source Code Repository</a>
 
             </li>
                                         <li class="leaf">
@@ -1605,6 +1605,10 @@
             </span>
 
             <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
+
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9_Release_Notes.html">SignServer 5.9 Release Notes</a>
 
@@ -1716,7 +1720,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-143720578"> <span>JackNJI11CryptoToken</span></h1>
+</div>            <h1 id="src-143733087"> <span>JackNJI11CryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1724,12 +1728,12 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
-    <div class="section section-1" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-Overview">
+    <div class="section section-1" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >Crypto token using PKCS#11 for talking with the HSM but using a different provider than the SunPKCS11 provider used by for instance the regular <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION_CLASS=<strong class=" ">org.signserver.p11ng.common.cryptotoken.JackNJI11CryptoToken</strong>    </p>
     </div>
-    <div class="section section-1" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-AvailableProperties">
+    <div class="section section-1" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1818,33 +1822,62 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >GENERATE_CERTIFICATE_OBJECT    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #000000;">
+If true, when generating a key pair, creates a certificate object with a self-signed dummy certificate and defaults to not persist the public key object. The default value is 'true' for historical reasons and is the same as when generating a key pair with for instance the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> (or any other Java application using the SunPKCS11 provider).    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ This property can be set either in the crypto worker, on the worker that is going to use the key, or both, which means that different options can be used for different workers. Setting this property in the crypto token makes it the default setting for all workers using that crypto token. If the worker also includes this property, the property value of the worker will override this setting.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+    <img  class="emoticon emoticon-minus" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/forbidden.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/forbidden.svg"   />
+ Be cautious if you also set any of the ATTRIBUTE.PUBLIC.*.CKA_TOKEN property attributes since some combinations like GENERATE_CERTIFICATE_OBJECT=false and CKA_TOKEN=false may not be useful, and setting both properties to true might waste space in the HSM with an unnecessary object.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Optional. Default true.    </span>
+    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >USE_CACHE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specify if key and certificate search results from the HSM should be cached. This can prevent problems due to too many find object requests under high load with some PKCS#11 implementations. Optional: default true.    </p>
+        <p  >Specify if key and certificate search results from the HSM should be cached. This can prevent problems due to too many find object requests under high load with some PKCS#11 implementations.    </p>
+    <p  >Optional: default true.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-SecretKeygeneration">
+    <div class="section section-1" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-SecretKeygeneration">
         <h1 class="heading "><span>Secret Key generation</span></h1>
     <p  >If generating a secret key through the JackNJI11CryptoToken, the algorithm name can be supplied in the following ways. See also <a   href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>.    </p>
-    <div class="section section-2" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-StandardJavaName">
+    <div class="section section-2" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-StandardJavaName">
         <h2 class="heading "><span>Standard Java Name</span></h2>
     <p  >Example: <strong class=" ">AES, DES.</strong>    </p>
     <p  >If the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
     </div>
-    <div class="section section-2" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-CKMLongvalue">
+    <div class="section section-2" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-CKMLongvalue">
         <h2 class="heading "><span>CKM Long value</span></h2>
     <p  >Example: <strong class=" ">SEC:4224</strong>. Here 4224 represents the long value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
-    <div class="section section-2" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-CKMHexadecimalvalue">
+    <div class="section section-2" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-CKMHexadecimalvalue">
         <h2 class="heading "><span>CKM Hexadecimal value</span></h2>
     <p  >Example: <strong class=" ">SEC:0x00001080</strong>. Here 0x00001080 represents a hexadecimal value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-143720578_id-.JackNJI11CryptoTokenv5.8.2-KnownLimitations">
+    <div class="section section-1" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-HSMSpecificNotes">
+        <h1 class="heading "><span>HSM Specific Notes</span></h1>
+    <div class="section section-2" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-AWSCloudHSM">
+        <h2 class="heading "><span>AWS CloudHSM</span></h2>
+<ul class=" "><li class=" ">    <p  >Configure the worker or crypto token not to generate any certificate by setting <strong class=" ">GENERATE_CERTIFICATE_OBJECT=false</strong>. For details, see the GENERATE_CERTIFICATE_OBJECT property in <a   href="#src-143733087_id-.JackNJI11CryptoTokenv5.9.1-AvailableProperties">Available Properties</a>.    </p>
+</li></ul>    </div>
+    </div>
+    <div class="section section-1" id="src-143733087_id-.JackNJI11CryptoTokenv5.9.1-KnownLimitations">
         <h1 class="heading "><span>Known Limitations</span></h1>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Multiple different CA certificates with the same subject DN cannot be stored in the token (see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-1544">DSS-1544</a>).    </span>

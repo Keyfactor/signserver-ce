@@ -12,7 +12,7 @@ OSI Certified is a certification mark of the Open Source Initiative.
 
 To get started with SignServer Community, clone **[signserver-ce](https://github.com/Keyfactor/signserver-ce)** and build it yourself or download our **[binary distribution](https://signserver.org/download/)**, and install it, see **[SignServer Installation](https://doc.primekey.com/signserver/signserver-installation)**. 
 
-You can also easily run SignServer as a container from **[Docker Hub](https://hub.docker.com/r/primekey/signserver-ce)**.
+You can also easily run SignServer as a container from **[Docker Hub](https://hub.docker.com/r/keyfactor/signserver-ce)**.
 
 ## Community Support  
 

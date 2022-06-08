@@ -49,6 +49,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cms.CMSSignedGenerator;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.util.MessageDigestUtils;
 import org.bouncycastle.jce.ECGOST3410NamedCurveTable;
 import org.bouncycastle.jce.ECNamedCurveTable;
@@ -147,6 +148,8 @@ public abstract class AlgorithmTools {
             keyAlg  = AlgorithmConstants.KEYALGORITHM_RSA;
         } else if ( publickey instanceof DSAPublicKey ) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_DSA;
+        } else if( publickey instanceof EdDSAPublicKey)  {
+            keyAlg = "EdDDSA";
         } else if ( publickey instanceof ECPublicKey ) {
             final String algo = publickey.getAlgorithm();
             if (StringUtils.equals(algo, AlgorithmConstants.KEYALGORITHM_ECGOST3410)) {
@@ -352,7 +355,11 @@ public abstract class AlgorithmTools {
             keyspec = Integer.toString( ((RSAPublicKey) publicKey).getModulus().bitLength() );
         } else if ( publicKey instanceof DSAPublicKey ) {
             keyspec = Integer.toString( ((DSAPublicKey) publicKey).getParams().getP().bitLength() );
-        } else if ( publicKey instanceof ECPublicKey) {
+        } else if( publicKey instanceof  EdDSAPublicKey) {
+            final EdDSAPublicKey edPublickKey = (EdDSAPublicKey) publicKey;
+            keyspec = edPublickKey.getAlgorithm();
+        }
+        else if ( publicKey instanceof ECPublicKey) {
             final ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
             if ( ecPublicKey.getParams() instanceof ECNamedCurveSpec ) {
                 keyspec = ((ECNamedCurveSpec) ecPublicKey.getParams()).getName();

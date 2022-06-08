@@ -149,7 +149,7 @@ public abstract class AlgorithmTools {
         } else if ( publickey instanceof DSAPublicKey ) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_DSA;
         } else if( publickey instanceof EdDSAPublicKey)  {
-            keyAlg = "EdDDSA";
+            keyAlg = AlgorithmConstants.KEYALGORITHM_EDDSA;
         } else if ( publickey instanceof ECPublicKey ) {
             final String algo = publickey.getAlgorithm();
             if (StringUtils.equals(algo, AlgorithmConstants.KEYALGORITHM_ECGOST3410)) {

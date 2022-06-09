@@ -97,4 +97,14 @@ public class CryptoUtils {
         KeyPairGenerator g = KeyPairGenerator.getInstance("SPHINCS+", "BC");
         return g.generateKeyPair();
     }
+
+    public static KeyPair generateEd25519() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("Ed25519", "BC");
+        return g.generateKeyPair();
+    }
+
+    public static KeyPair generateEd448() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("Ed448", "BC");
+        return g.generateKeyPair();
+    }
 }

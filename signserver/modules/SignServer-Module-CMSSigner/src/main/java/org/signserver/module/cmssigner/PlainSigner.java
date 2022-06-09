@@ -395,15 +395,23 @@ public class PlainSigner extends BaseSigner {
     
     private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
         final String result;
-
-        if (publicKey instanceof ECPublicKey) {
-            result = "SHA256withECDSA";
-        }  else if (publicKey instanceof DSAPublicKey) {
-            result = "SHA256withDSA";
-        } else if (publicKey != null && publicKey.getAlgorithm().startsWith("Ed")) {
-            result = publicKey.getAlgorithm();
-        } else {
-            result = "SHA256withRSA";
+        switch (publicKey.getAlgorithm()) {
+            case "EC":
+            case "ECDSA":
+                result = "SHA256withECDSA";
+                break;
+            case "DSA":
+                result = "SHA256withDSA";
+                break;
+            case "Ed25519":
+                result = "Ed25519";
+                break;
+            case "Ed448":
+                result = "Ed448";
+                break;
+            case "RSA":
+            default:
+                result = "SHA256withRSA";
         }
 
         return result;

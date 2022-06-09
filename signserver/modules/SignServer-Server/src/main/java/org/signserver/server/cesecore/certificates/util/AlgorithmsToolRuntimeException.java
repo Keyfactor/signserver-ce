@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.cesecore;
+package org.signserver.server.cesecore.certificates.util;
 
 /**
  * Thrown by methods in @link {@link AlgorithmTools} when an error occurs that

@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.cesecore;
+package org.signserver.server.cesecore.certificates.util;
 
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;

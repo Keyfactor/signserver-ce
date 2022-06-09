@@ -76,7 +76,7 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("RSA", "RSA"));
         algMenuValues.add(new SelectItem("DSA", "DSA"));
         algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
-        algMenuValues.add(new SelectItem("EDDSA", "EDDSA"));
+        algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
 
         return algMenuValues;
@@ -111,7 +111,7 @@ public class KeyUtils {
                 }
                 break;
 
-            case "EDDSA":
+            case "EdDSA":
                 for (final String key : EDDSA_CURVES) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }

@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.cesecore;
+package org.signserver.server.cesecore.certificates.util;
 
 import java.util.Arrays;
 import java.util.List;
@@ -83,7 +83,7 @@ public final class AlgorithmConstants {
     public static final String KEYALGORITHM_DSA         = "DSA";
     public static final String KEYALGORITHM_ECGOST3410  = "ECGOST3410";
     public static final String KEYALGORITHM_DSTU4145    = "DSTU4145";
-    public static final String KEYALGORITHM_EDDSA       = "EDDSA";
+    public static final String KEYALGORITHM_EDDSA       = "EdDSA";
 
     public static final String KEYSPECPREFIX_ECGOST3410 = "GostR3410-";
 

@@ -400,6 +400,8 @@ public class PlainSigner extends BaseSigner {
             result = "SHA256withECDSA";
         }  else if (publicKey instanceof DSAPublicKey) {
             result = "SHA256withDSA";
+        } else if (publicKey != null && publicKey.getAlgorithm().startsWith("Ed")) {
+            result = publicKey.getAlgorithm();
         } else {
             result = "SHA256withRSA";
         }

@@ -72,7 +72,7 @@ import org.ejbca.cvc.OIDField;
  * added to EJBCA.
  *
  * NOTE: THIS IS A COPY FROM org.cesecore.certificates.util
- * THIS CLASS WILL BE REMOVED WHEN UPGRADING CESECORE (DSS-2473)
+ * THIS CLASS WILL BE REMOVED WHEN UPGRADING CESECORE (DSS-2129)
  *
  * @see AlgorithmConstants
  * @see KeyTools#getKeyLength

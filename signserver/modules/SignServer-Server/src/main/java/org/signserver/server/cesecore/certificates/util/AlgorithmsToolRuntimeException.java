@@ -16,7 +16,7 @@ package org.signserver.server.cesecore.certificates.util;
  * Thrown by methods in @link {@link AlgorithmTools} when an error occurs that
  * can not be handled.
  * NOTE: THIS IS A COPY FROM org.cesecore.certificates.util
- * THIS CLASS WILL BE REMOVED WHEN UPGRADING CESECORE (DSS-2473)
+ * THIS CLASS WILL BE REMOVED WHEN UPGRADING CESECORE (DSS-2129)
  */
 public class AlgorithmsToolRuntimeException extends RuntimeException {
     private static final long serialVersionUID = 1L;

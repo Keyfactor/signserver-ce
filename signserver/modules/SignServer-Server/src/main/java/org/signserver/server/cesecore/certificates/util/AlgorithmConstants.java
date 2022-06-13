@@ -17,7 +17,7 @@ import java.util.List;
 
 /** Constants for digital signature algorithms.
  * NOTE: THIS IS A COPY FROM org.cesecore.certificates.util
- * THIS CLASS WILL BE REMOVED WHEN UPGRADING CESECORE (DSS-2473)
+ * THIS CLASS WILL BE REMOVED WHEN UPGRADING CESECORE (DSS-2129)
  */
 public final class AlgorithmConstants {
 

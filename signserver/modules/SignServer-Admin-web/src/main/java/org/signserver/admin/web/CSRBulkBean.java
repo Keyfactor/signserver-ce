@@ -29,8 +29,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
-import org.cesecore.certificates.util.AlgorithmConstants;
-import org.cesecore.certificates.util.AlgorithmTools;
+import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;
+import org.signserver.server.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -384,6 +384,9 @@ public class CSRBulkBean extends BulkBean {
                 });
                 AlgorithmTools.SIG_ALGS_ECDSA.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
+                });
+                AlgorithmTools.SIG_ALG_EDDSA.forEach((alg) -> {
+                  signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_ECGOST3410.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));

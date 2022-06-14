@@ -513,15 +513,43 @@ public class CryptoTokenHelper {
      * @return One signature algorithm that should work with the key type
      */
     public static String suggestSigAlg(PublicKey key) {
-        final String alg;
-        if (key instanceof ECKey) {
-            alg = "SHA256withECDSA";
-        } else if (key instanceof RSAKey) {
-            alg = "SHA256withRSA";
-        } else if (key instanceof DSAKey) {
-            alg = "SHA256withDSA";
-        } else {
-            alg = null;
+        String alg = null;
+        if (key != null) {
+            switch (key.getAlgorithm()) {
+                case "EC":
+                case "ECDSA":
+                    alg = "SHA256withECDSA";
+                    break;
+                case "RSA":
+                    alg = "SHA256withRSA";
+                    break;
+                case "DSA":
+                    alg = "SHA256withDSA";
+                    break;
+                case "Ed25519":
+                    alg = "Ed25519";
+                    break;
+                case "Ed448":
+                    alg = "Ed448";
+                    break;
+                case "ED":
+                case "Ed":
+                case "EDDSA":
+                case "EdDSA":
+                    alg = "Ed25519";
+                    break;
+            }
+            if (alg == null) {
+                if (key instanceof ECKey) {
+                    alg = "SHA256withECDSA";
+                } else if (key instanceof RSAKey) {
+                    alg = "SHA256withRSA";
+                } else if (key instanceof DSAKey) {
+                    alg = "SHA256withDSA";
+                } else {
+                    alg = null;
+                }
+            }
         }
         return alg;
     }

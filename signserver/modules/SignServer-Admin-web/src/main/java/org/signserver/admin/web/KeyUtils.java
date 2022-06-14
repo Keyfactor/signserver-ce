@@ -34,6 +34,7 @@ public class KeyUtils {
     private static final int[] DSA_KEY_SIZES = {1024};
     private static final int[] AES_KEY_SIZES = {128, 192, 256};
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
+    private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};
@@ -75,6 +76,7 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("RSA", "RSA"));
         algMenuValues.add(new SelectItem("DSA", "DSA"));
         algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
+        algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
 
         return algMenuValues;
@@ -106,6 +108,12 @@ public class KeyUtils {
             case "ECDSA":
                 for (final String key : ECDSA_CURVES.keySet()) {
                     keySpecMenuValues.add(new SelectItem(ECDSA_CURVES.get(key), key));
+                }
+                break;
+
+            case "EdDSA":
+                for (final String key : EDDSA_CURVES) {
+                    keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;
 

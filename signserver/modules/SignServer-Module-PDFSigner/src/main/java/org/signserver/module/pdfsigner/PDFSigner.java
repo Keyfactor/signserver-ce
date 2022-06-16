@@ -702,9 +702,19 @@ public class PDFSigner extends BaseSigner {
 
         final PdfReader reader;
         if (pdfBytes != null) {
-            reader = new PdfReader(pdfBytes, password);
+            reader = new PdfReader(pdfBytes, password) {
+                @Override
+                public void eliminateSharedStreams() {
+                    // Do not eliminate shared streams
+                }
+            };
         } else {
-            reader = new PdfReader(pdfFile.getAbsolutePath(), password);
+            reader = new PdfReader(pdfFile.getAbsolutePath(), password) {
+                @Override
+                public void eliminateSharedStreams() {
+                    // Do not eliminate shared streams
+                }
+            };
         }
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 

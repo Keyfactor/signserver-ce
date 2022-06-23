@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
@@ -969,5 +970,36 @@ public abstract class AlgorithmTools {
         }
 
         return null;
+    }
+    
+    /**
+     * Returns a {@link java.security.MessageDigest} object given the name of a signature algorithm, e.g. "SHA256withECDSA".
+     * 
+     * <p>Signature algorithm names are defined in {@link AlgorithmConstants}.
+     * 
+     * @param signatureAlgorithm the name of the signature algorithm, e.g. "SHA256withECDSA".
+     * @return a message digest object able to compute digests with the hash algorithm specified.
+     * @throws NoSuchAlgorithmException if the signature algorithm uses an unsupported digest algorithm.
+     * @throws NoSuchProviderException if the Bouncy Castle provider is not installed.
+     */
+    public static MessageDigest getDigestFromAlgoName(final String signatureAlgorithm) throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (signatureAlgorithm.startsWith("SHA1")) {
+            return MessageDigest.getInstance("SHA1", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA224")) {
+            return MessageDigest.getInstance("SHA-224", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA256")) {
+            return MessageDigest.getInstance("SHA-256", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA384")) {
+            return MessageDigest.getInstance("SHA-384", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA512")) {
+            return MessageDigest.getInstance("SHA-512", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA3-256")) {
+            return MessageDigest.getInstance("SHA3-256", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA3-384")) {
+            return MessageDigest.getInstance("SHA3-384", "BC");
+        } else if (signatureAlgorithm.startsWith("SHA3-512")) {
+            return MessageDigest.getInstance("SHA3-512", "BC");
+        }
+        throw new NoSuchAlgorithmException("The signature algorithm " + signatureAlgorithm + " uses an unsupported digest algorithm.");
     }
 }

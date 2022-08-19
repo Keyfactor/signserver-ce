@@ -1,5 +1,3 @@
-–path
-–path 
-–path 
+Write-Host "Hello–PS1!"
 
     

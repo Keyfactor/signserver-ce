@@ -57,7 +57,11 @@ public class AdminWebBean {
     }
 
     public String getProductVersion() {
-        return "v" + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+        if (isDefaultThemeEnabled()) {
+            return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+        } else {
+            return "v" + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+        }
     }
 
     public String getVersion() {

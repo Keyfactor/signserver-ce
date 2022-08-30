@@ -14,6 +14,7 @@ package org.signserver.admin.web;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
@@ -56,9 +57,7 @@ public class AdminWebBean {
     }
 
     public String getProductVersion() {
-        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)
-            + " "
-            + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
     }
 
     public String getVersion() {

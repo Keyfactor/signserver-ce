@@ -10,10 +10,6 @@
                     <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/images/logo.svg.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" alt="SignServer - PKI by PrimeKey"/>
                 </a>
             </div>
-            <div class="<%= org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "hide-element" : "kfds-header-product" %>">
-                <div class="kfds-header-product-name">
-                    <%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.APPNAME_CAP)%>
-                </div>
             </div>
         </div>
     </div>

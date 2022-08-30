@@ -42,19 +42,7 @@
                 <div class="kfds-header-left">
                   <div class="kfds-header-brand">
                     <div class="kfds-header-logo">
-                        <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.svg"/></h:outputLink>  
-                    </div>
-                    <div class="#{adminWebBean.defaultThemeEnabled ? 'hide-element' : 'kfds-header-product'}">
-                      <h:panelGroup class="kfds-header-product-name">
-                        <h:panelGroup layout="block">
-                            <h:outputText value="#{adminWebBean.productName}"/>
-                        </h:panelGroup>
-                      </h:panelGroup>
-                      <div class="kfds-header-product-version">
-                        <h:panelGroup layout="block">
-                            <h:outputText value="#{adminWebBean.productVersion}"/>
-                        </h:panelGroup>
-                      </div>
+                        <h:outputLink class="logo-link" value="../"><h:graphicImage library="#{adminWebBean.theme}" name="images/logo.svg"/></h:outputLink>
                     </div>
                   </div>
                
@@ -89,10 +77,10 @@
                         </li>
                         <li class="SS_infoItem">
                             <label>
-                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{text['Version_COLON']}"/>
+                                <h:outputText value="#{text['Version_COLON']}"/>
                             </label>
                             <div class="mx-0.5">
-                                <h:outputText rendered="#{adminWebBean.defaultThemeEnabled}" value="#{adminWebBean.productName} #{adminWebBean.productVersion}"/>
+                                <h:outputText value="#{adminWebBean.productVersion}"/>
                             </div>
                         </li>
                     </ul>

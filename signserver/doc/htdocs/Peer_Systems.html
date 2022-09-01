@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1731,7 +1735,7 @@
 </li></ul>    <p  >Generally, the instance with higher security requirements (for example, an EJBCA acting as CA) initiates connections to a system with lower security requirements (for example, a SignServer instance or an EJBCA acting as VA or RA). SignServer currently only implements support for incoming peer connections.    </p>
     <div class="section section-1" id="src-128977521_id-.PeerSystemsv5.8.0-PeerSystemsforCertificateRenewal">
         <h1 class="heading "><span>Peer Systems for Certificate Renewal</span></h1>
-    <p  >SignServer can be configured to expose the worker's keys as Remote Key Bindings in EJBCA. This allows the EJBCA administrators to issue new certificates to workers in SignServer directly from within the EJBCA interface, without incoming network connections to the CA.    </p>
+    <p  >SignServer can be configured to expose the worker&#39;s keys as Remote Key Bindings in EJBCA. This allows the EJBCA administrators to issue new certificates to workers in SignServer directly from within the EJBCA interface, without incoming network connections to the CA.    </p>
     <p  >For instructions on how to set up the systems for certificate renewal using peer systems, see <a   href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>. Alternatively, see <a   href="RenewalWorker.html">Renewal Worker</a>, which instead of Peer Systems uses the EJBCA web services interface and connects to the CA.    </p>
     <div class="section section-2" id="src-128977521_id-.PeerSystemsv5.8.0-MappingSignServerWorkerstoRemoteKeyBindingsinEJBCA">
         <h2 class="heading "><span>Mapping SignServer Workers to Remote Key Bindings in EJBCA</span></h2>
@@ -1834,7 +1838,7 @@ enable processing of incoming requests:    </span>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Indicates that the current key has been issued by the peer system.    </p>
     <p  >When enabled, SignServer will include the fingerprint of the current certificate and EJBCA will only display the remote key binding if it has the issuer of the certificate. For that reason, before the worker has got its first certificate from the peer, this value should be <strong class=" ">false</strong> so that the key binding will be listed on the EJBCA side. After the certificate has been issued, the property will automatically be changed to <strong class=" ">true</strong>. Default: <strong class=" "><strong class=" ">false</strong>.<br/></strong>    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property should normally not have to be changed manually.    </p>
             </td>
         </tr>

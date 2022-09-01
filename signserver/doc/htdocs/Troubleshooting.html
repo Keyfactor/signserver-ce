@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1789,7 +1793,7 @@ common errors.<br/>    </span>
         <h2 class="heading "><span>UnsatisfiedLinkError</span></h2>
     <p  >There can be a conflict between the JNA implementation in SignServer and the one installed in the system. This can be seen as errors similar to the following:    </p>
 <ul class=" "><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: com.sun.jna.Native.malloc(J)J    </p>
-</li><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: Can't obtain static newInstance method for class com.sun.jna.Structure    </p>
+</li><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: Can&#39;t obtain static newInstance method for class com.sun.jna.Structure    </p>
 </li></ul>    <p  >The solution is to remove JNA from the system (i.e. apt-get remove libjna-java) or to run Java with:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1865,7 +1869,7 @@ The SignServer     </span>
     </div>
     <div class="section section-2" id="src-85920603_id-.Troubleshootingv5.3.0-AdminGUIloginusingsmartcardfailswithsomecards">
         <h2 class="heading "><span>AdminGUI login using smartcard fails with some cards</span></h2>
-    <p  >The card prompts for the PIN but then does not ask for which certificate to login with. Instead, the following error message is shown: <i class=" ">Received fatal alert: bad_certificate</i>. The error message indicates that the server did not accept the provided certificate (that is the issuer was not in the server's truststore). However, for certain types of smartcards, the issue is caused by an inability to read a certificate from the card.    </p>
+    <p  >The card prompts for the PIN but then does not ask for which certificate to login with. Instead, the following error message is shown: <i class=" ">Received fatal alert: bad_certificate</i>. The error message indicates that the server did not accept the provided certificate (that is the issuer was not in the server&#39;s truststore). However, for certain types of smartcards, the issue is caused by an inability to read a certificate from the card.    </p>
     <p  >As a workaround, do the following:    </p>
 <ol class=" "><li class=" ">    <p  >Start the GUI without the card inserted.    </p>
 </li><li class=" ">    <p  >Press <strong class=" ">Connect</strong> (without the card inserted).    </p>

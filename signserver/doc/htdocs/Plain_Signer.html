@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1720,17 +1724,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-143726017"> <span>Plain Signer</span></h1>
+</div>            <h1 id="src-143736738"> <span>Plain Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The Plain signer has the fully qualified class name: <strong class=" ">org.signserver.module.cmssigner.PlainSigner</strong>    </p>
-    <div class="section section-1" id="src-143726017_id-.PlainSignerv5.9.0-Overview">
+    <div class="section section-1" id="src-143736738_id-.PlainSignerv5.10.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The Plain signer can sign arbitrary data and simply produces a signature in the format determined by the configured signature algorithm.    </p>
     </div>
-    <div class="section section-1" id="src-143726017_id-.PlainSignerv5.9.0-AvailableProperties">
+    <div class="section section-1" id="src-143736738_id-.PlainSignerv5.10.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1751,7 +1755,7 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying the algorithm used to sign the data. Default value depends on the signing key: SHA256withDSA for DSA keys, SHA256withECDSA for ECDSA keys, otherwise SHA256withRSA.    </p>
+        <p  >Property specifying the algorithm used to sign the data. Default value depends on the signing key: SHA256withDSA for DSA keys, SHA256withECDSA for ECDSA keys, Ed25519 or Ed448 for EdDSA keys, otherwise SHA256withRSA.    </p>
     <p  ><strong class=" ">Client-Side Hashing:</strong>    </p>
     <p  >For <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>, use one of the <strong class=" ">NONEwith..</strong>. signature algorithm values and either use CLIENTSIDEHASHING=true or ALLOW_CLIENTSIDEHASHING_OVERRIDE=true, or alternatively make sure the input is encoded in the expected way for the chosen signature algorithm.    </p>
     <p  >Specifically for NONEwithRSA (RSASSA-PKCS1-v1.5) and if those properties are not set, then the input needs to be encoded according to <a  class="external-link" href="https://tools.ietf.org/html/rfc3447">RFC#3447</a>. Note that this is the legacy way of configuring client-side hashing with the plain signer. As of SignServer 5.9, it is recommended to instead use one of the CLIENTSIDEHASHING and ALLOW_CLIENTSIDEHASHING_OVERRIDE properties, as the client then does not have to care of any special encoding.    </p>
@@ -1809,7 +1813,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-143726017_id-.PlainSignerv5.9.0-RequestParameters">
+    <div class="section section-1" id="src-143736738_id-.PlainSignerv5.10.0-RequestParameters">
         <h1 class="heading "><span>Request Parameters</span></h1>
     <p  >The following meta data parameters can be specified in a request    </p>
     <div  class="tablewrap">
@@ -1836,7 +1840,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-143726017_id-.PlainSignerv5.9.0-WorkerLogFields">
+    <div class="section section-2" id="src-143736738_id-.PlainSignerv5.10.0-WorkerLogFields">
         <h2 class="heading "><span>Worker Log Fields</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

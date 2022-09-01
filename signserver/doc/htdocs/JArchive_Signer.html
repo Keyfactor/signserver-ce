@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1720,20 +1724,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-16229790"> <span>JArchive Signer</span></h1>
+</div>            <h1 id="src-143743004"> <span>JArchive Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
-    <p  >    </p>
     <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.jarchive.signer.JArchiveSigner</strong>    </p>
-    <div class="section section-1" id="src-16229790_id-.JArchiveSignerv4.3.0-Overview">
+    <div class="section section-1" id="src-143743004_id-.JArchiveSignerv5.10.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The signer signs Java Archives or ZIP files (.jar, .war, .ear, .apk and .zip etc) according to the JAR File Specification. The signature can optionally include a timestamp response from a TSA using the RFC#3161 format.    </p>
     </div>
-    <div class="section section-1" id="src-16229790_id-.JArchiveSignerv4.3.0-AvailableProperties">
+    <div class="section section-1" id="src-143743004_id-.JArchiveSignerv5.10.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1770,7 +1771,7 @@
         <p  >ZIPALIGN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >True if the offset at which each file entry's data starts should be aligned to 4 bytes. Optional, default: False.    </p>
+        <p  >True if the offset at which each file entry&#39;s data starts should be aligned to 4 bytes. Optional, default: False.    </p>
             </td>
         </tr>
     <tr>
@@ -1814,22 +1815,22 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER<span id="src-16229790_id-.JArchiveSignerv4.3.0-TSA_WORKER"></span>    </p>
+        <p  >TSA_WORKER<span id="src-143743004_id-.JArchiveSignerv5.10.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Worker ID or name of internal (RFC#3161) timestamp signer in the same SignServer. Optional, default: none.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
- Cannot be combined with <a   href="#src-16229790_id-.JArchiveSignerv4.3.0-TSA_URL">TSA_URL</a>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ Cannot be combined with <a   href="#src-143743004_id-.JArchiveSignerv5.10.0-TSA_URL">TSA_URL</a>.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL<span id="src-16229790_id-.JArchiveSignerv4.3.0-TSA_URL"></span>    </p>
+        <p  >TSA_URL<span id="src-143743004_id-.JArchiveSignerv5.10.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >URL of external (authenticode) timestamp authority. Optional, default: none.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
- Cannot be combined with <a   href="#src-16229790_id-.JArchiveSignerv4.3.0-TSA_WORKER">TSA_WORKER</a>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+ Cannot be combined with <a   href="#src-143743004_id-.JArchiveSignerv5.10.0-TSA_WORKER">TSA_WORKER</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1899,7 +1900,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-16229790_id-.JArchiveSignerv4.3.0-WorkerLogFields">
+    <div class="section section-1" id="src-143743004_id-.JArchiveSignerv5.10.0-WorkerLogFields">
         <h1 class="heading "><span>Worker Log Fields</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

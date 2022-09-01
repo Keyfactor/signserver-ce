@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1728,7 +1732,7 @@
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.renewal.worker.RenewalWorker</strong>.    </p>
     <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The RenewalWorker can be used for generating a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker, such as the EJBCA WS endpoint URL and truststore details, and other properties should be set on the worker to be renewed (the renewee) and some arguments are provided when the worker is invoked.    </p>
+    <p  >The RenewalWorker can be used for generating a new key-pair and renewing a worker&#39;s certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker, such as the EJBCA WS endpoint URL and truststore details, and other properties should be set on the worker to be renewed (the renewee) and some arguments are provided when the worker is invoked.    </p>
     <p  >Note the known limitation that it might not be possible to have multiple renewal workers using different crypto tokens, since the keys and certificates used by the TLS connection for the web service is setup globally.    </p>
     </div>
     <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-Requestingtheworker">
@@ -1751,7 +1755,7 @@
 <div class="line"><code class="plain">AUTHCODE=foo123"</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Note that the command is on two lines.    </p>
     <p  ><strong class=" ">Using the Admin CLI to initiate the renewal</strong>:    </p>
     <div  class="confbox programlisting">
@@ -1794,7 +1798,7 @@
         <p  >TRUSTSTOREPATH    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Path to the keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREVALUE. If this property is not specified, TRUSTSTOREVALUE must be set.    </p>
+        <p  >Path to the keystore containing the CA&#39;s SSL server certificate as a trusted entry. Used instead of TRUSTSTOREVALUE. If this property is not specified, TRUSTSTOREVALUE must be set.    </p>
             </td>
         </tr>
     <tr>
@@ -1802,7 +1806,7 @@
         <p  >TRUSTSTOREVALUE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM, the keystore is stored in the property in base64 encoding.    </p>
+        <p  >Keystore containing the CA&#39;s SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM, the keystore is stored in the property in base64 encoding.    </p>
             </td>
         </tr>
     <tr>

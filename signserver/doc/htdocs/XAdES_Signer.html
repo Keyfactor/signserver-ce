@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1773,7 +1777,7 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The algorithm used to sign the data. The same set of algorithms as for the same property in XMLSigner is supported. Optional. Default: depending on the signer's private key: SHA1withDSA for DSA keys, SHA256withRSA for RSA keys, and SHA256withECDSA for EC keys.    </p>
+        <p  >The algorithm used to sign the data. The same set of algorithms as for the same property in XMLSigner is supported. Optional. Default: depending on the signer&#39;s private key: SHA1withDSA for DSA keys, SHA256withRSA for RSA keys, and SHA256withECDSA for EC keys.    </p>
             </td>
         </tr>
     <tr>
@@ -1797,7 +1801,7 @@
         <p  >INCLUDE_CERTIFICATE_LEVELS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Number of certificate levels to include in the document's KeyInfo (also see <a   href="Common_Properties.html">Common Properties</a>). Minimum and default value is <strong class=" ">1</strong>, which includes only the signer certificate. The value <strong class=" ">2</strong> includes the signer certificate and its issuer. To include all certificates, specify at least the same value as number of certificates in the certificate chain.    </p>
+        <p  >Number of certificate levels to include in the document&#39;s KeyInfo (also see <a   href="Common_Properties.html">Common Properties</a>). Minimum and default value is <strong class=" ">1</strong>, which includes only the signer certificate. The value <strong class=" ">2</strong> includes the signer certificate and its issuer. To include all certificates, specify at least the same value as number of certificates in the certificate chain.    </p>
             </td>
         </tr>
     <tr>
@@ -1806,7 +1810,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >URL of Time-Stamping Authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Cannot be set at the same time as <a   href="#src-123207716_id-.XAdESSignerv5.7.0-TSA_WORKER">TSA_WORKER</a>.    </p>
             </td>
         </tr>
@@ -1816,7 +1820,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer. Required if XADESFORM=T and TSA_URL are not specified. This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Use this option instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load. Cannot be set at the same time as TSA_URL.    </p>
             </td>
         </tr>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1728,7 +1732,7 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
-    <p  >The Signed Request Authorizer requires signed signature requests and that there is a rule matching one of the fields of the client's certificate in the worker's authorization list. Signed signature requests enable signature requests to be signed by a remote client allowing an end-to-end authorization mechanism for deployment scenarios with proxies or similar between the client and the server.    </p>
+    <p  >The Signed Request Authorizer requires signed signature requests and that there is a rule matching one of the fields of the client&#39;s certificate in the worker&#39;s authorization list. Signed signature requests enable signature requests to be signed by a remote client allowing an end-to-end authorization mechanism for deployment scenarios with proxies or similar between the client and the server.    </p>
     <p  >AUTHTYPE=<strong class=" ">org.signserver.server.enterprise.signedrequest.SignedRequestAuthorizer</strong>    </p>
     <p  >For information on how to list, add, and remove rules, see the <a   href="Worker_Authorization_Page.html">Worker Authorization Page</a> in the AdminWeb, or the <tt class=" ">authorizedclients</tt> command in the <a   href="Administration_CLI.html">Administration CLI</a>. Note that this is handled the same way as for the <a   href="Client_Certificate_Authorizer.html">Client Certificate Authorizer</a>.    </p>
     <p  >Additionally, the authorizer can be configured to also require a TLS client certificate to be present. In that case, any valid client certificate (as verified by the web/application server) will be accepted since the authorization rules for this authorizer only applies to the signed request and not the TLS client certificate. This is different from the <a   href="Client_Certificate_Authorizer.html">Client Certificate Authorizer</a> which instead uses the authorization rules for the TLS client certificate.    </p>
@@ -1760,7 +1764,7 @@
         <p  >PEM encoded set of trusted certificates to use when verifying the certificate chain of the signed request.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-tick" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
     </p>
             </td>
         </tr>

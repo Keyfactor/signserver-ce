@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1725,7 +1729,7 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The validation service framework is used to validate certificates from one or more issuers. It can be used to have one central point of performing revokation statuses to simplify the integration of external PKIs within an enterprise.    </p>
-    <p  >The validation service framework also provides a validation cache that can be used to increase performance for those cases an application does multiple lookups of the same certificate within a short period of time.<br/>Out-of-the-Box, there exists a <strong class=" ">DefaultValidationService</strong> that should satisfy most use cases but it's possible to develop a custom <strong class=" ">ValidationService</strong>, if necessary.    </p>
+    <p  >The validation service framework also provides a validation cache that can be used to increase performance for those cases an application does multiple lookups of the same certificate within a short period of time.<br/>Out-of-the-Box, there exists a <strong class=" ">DefaultValidationService</strong> that should satisfy most use cases but it&#39;s possible to develop a custom <strong class=" ">ValidationService</strong>, if necessary.    </p>
     <p  >All Validation Services is configured by specifying the <strong class=" ">org.signserver.validationservice.server.ValidationServiceWorker</strong> in the global configuration. Then is the actual ValidationService configured in the worker configuration setting the class path in the property <strong class=" ">TYPE</strong> (not necessary for the <strong class=" ">DefaultValidationService</strong>). The validation service framework is mostly used with X509v3 certificates but other kinds of certificates is supported as well by design.    </p>
     <p  >Another concept in the Validation Service Framework is that the client also can ask the service to check the type of certificate that the certificate might be used for. A certificate type could be IDENTIFICATION or ELECTRONIC SIGNATURE.    </p>
     <p  >    </p>

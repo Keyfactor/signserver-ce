@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1794,13 +1798,13 @@
 </li><li class=" ">    <p  >SignServer generates the CSR and returns it to EJBCA.    </p>
 </li><li class=" ">    <p  >EJBCA processes the request, issues the certificate, and sends it to SignServer.    </p>
 </li><li class=" ">    <p  >SignServer installs the certificate to the worker and also adds the worker property PEERS_ISSUED=true to indicate that the certificate was issued by a peer.    </p>
-</li><li class=" ">    <p  >The new certificate(s) can now be seen when looking at the worker's status. In EJBCA, the remote key binding will now show the <strong class=" ">Bound</strong> <strong class=" ">certificate</strong> and the button will now instead be named <strong class=" ">Renew.</strong>    </p>
+</li><li class=" ">    <p  >The new certificate(s) can now be seen when looking at the worker&#39;s status. In EJBCA, the remote key binding will now show the <strong class=" ">Bound</strong> <strong class=" ">certificate</strong> and the button will now instead be named <strong class=" ">Renew.</strong>    </p>
 </li></ol>    <p  >The algorithm used for signing the CSR as well as subject DN to include etc was using the default values. To choose other values, see information on available worker properties on the <a   href="Peer_Systems.html">Peer Systems</a> page.    </p>
     </div>
     </div>
     <div class="section section-1" id="src-82938908_safe-id-aWQtLkNlcnRpZmljYXRlUmVuZXdhbHNVc2luZ1BlZXJTeXN0ZW1zdjUuMy4wLVN1YnNlcXVlbnRSZW5ld2Fscy9SZWtleWluZ3M">
         <h1 class="heading "><span>Subsequent Renewals/Rekeyings</span></h1>
-    <p  >The next time it is time to renew or rekey a worker's certificate, everything should already have been set-up as part of the previous steps and in EJBCA the <strong class=" ">Renew</strong> button should be available.    </p>
+    <p  >The next time it is time to renew or rekey a worker&#39;s certificate, everything should already have been set-up as part of the previous steps and in EJBCA the <strong class=" ">Renew</strong> button should be available.    </p>
     <p  >In order to also generate a new key-pair (i.e. to rekey), select the key pair in EJBCA to be rekeyed.    </p>
     </div>
         </div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1772,7 +1776,7 @@
 </li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Remove worker...</strong>:<br/>Removes the selected workers from the SignServer configuration.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Reload from database...</strong>:<br/>Reloads the global configuration or the selected workers from the database. This is only needed if the configuration was changed from an other node and the nodes uses a shared database.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Global configuration...</strong>:<br/>Opens the <strong class=" ">Global configuration</strong> window.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Administrators...</strong>:<br/>Opens the <strong class=" ">Administrators</strong> window.<br/>Allows adding webservice administrators, auditors, and archive auditors. The administrators can be added by explicitly entering the client certificate's serial number in hexadecimal (leading zeroes and letter case is not significant) and the issuer DN with space after each comma separating DN components. If DN components contains commas, these needs to be escaped with backslashes.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Administrators...</strong>:<br/>Opens the <strong class=" ">Administrators</strong> window.<br/>Allows adding webservice administrators, auditors, and archive auditors. The administrators can be added by explicitly entering the client certificate&#39;s serial number in hexadecimal (leading zeroes and letter case is not significant) and the issuer DN with space after each comma separating DN components. If DN components contains commas, these needs to be escaped with backslashes.    </p>
     <p  >An example using a certificate issued from EJBCA with the default (as specified by EJBCA) LDAP DN order:    </p>
     <p  >C=SE, O=TestOrganization, CN=IssuingCA    </p>
     <p  >This is the reversed order compared to how the issuer DN is stored in the certificate. An example using a certificate issued from EJBCA with the Use LDAP DN order option disabled:    </p>
@@ -1808,7 +1812,7 @@
 </li></ul>    </div>
     <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6Q29uZmlndXJhdGlvblRhYg">
         <h2 class="heading "><span>Main window: Configuration Tab</span></h2>
-    <p  >Lists all the selected worker's configuration properties and gives the ability to add, remove or edit properties.    </p>
+    <p  >Lists all the selected worker&#39;s configuration properties and gives the ability to add, remove or edit properties.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Add...</strong>:<br/>Adds a new property to the selected worker.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit</strong>:<br/>Edit the selected property.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Remove</strong>:<br/>Removes the selected property.    </p>
@@ -1833,7 +1837,7 @@
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
-    <p  >This dialog is different from the <strong class=" ">Renew key</strong> dialog as in this case the worker's next key property (<strong class=" ">NEXTCERTSIGNKEY</strong>) is not updated.    </p>
+    <p  >This dialog is different from the <strong class=" ">Renew key</strong> dialog as in this case the worker&#39;s next key property (<strong class=" ">NEXTCERTSIGNKEY</strong>) is not updated.    </p>
         </div>
     </div>
 </li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Test</strong>:<br/>Opens the <strong class=" ">Test key</strong> dialog for the selected entry.    </p>
@@ -1842,7 +1846,7 @@
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
-    <p  >Installing certificates this way it is only possible to store the certificates in the token and the worker's current key (<strong class=" ">DEFAULTKEY</strong>) and next key (<strong class=" ">NEXTCERTSIGNKEY</strong>) properties are not updated.    </p>
+    <p  >Installing certificates this way it is only possible to store the certificates in the token and the worker&#39;s current key (<strong class=" ">DEFAULTKEY</strong>) and next key (<strong class=" ">NEXTCERTSIGNKEY</strong>) properties are not updated.    </p>
         </div>
     </div>
 </li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Remove</strong>:<br/>Opens the <strong class=" ">Remove key</strong> dialog with the selected key aliases already filled in.    </p>
@@ -1886,7 +1890,7 @@
     </div>
     <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Renewkeydialog">
         <h2 class="heading "><span>Renew key dialog</span></h2>
-    <p  >Generates new keys for all the listed workers. For this to work all workers should have the same password. <strong class=" ">Key algorithm</strong>, <strong class=" ">Key specification</strong> and <strong class=" ">New key alias</strong> must be specified if it is not taken from the worker's configuration.    </p>
+    <p  >Generates new keys for all the listed workers. For this to work all workers should have the same password. <strong class=" ">Key algorithm</strong>, <strong class=" ">Key specification</strong> and <strong class=" ">New key alias</strong> must be specified if it is not taken from the worker&#39;s configuration.    </p>
     </div>
     <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Testkeydialog">
         <h2 class="heading "><span>Test key dialog</span></h2>
@@ -1894,19 +1898,19 @@
     </div>
     <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-GenerateCSRdialog">
         <h2 class="heading "><span>Generate CSR dialog</span></h2>
-    <p  >Generates certificate signing requests (CSR:s) in PKCS#10 format for all listed signers. In the key dropdown menu either the current key (<strong class=" ">DEFAULTKEY</strong>) or the next key can be selected. It is also possible to manually enter a value in the field to generate a CSR for a specific key alias in the crypto token. Signature algorithm, subject distinguished name (DN) and Filename must be specified if not already taken from the worker's configuration. The format of the request could either be a Standard CSR file or a CSR wrapped in PKCS#7/CMS signed object created by a RequestSigner. The with the last option is that at the CA the signature of the request can be verified.    </p>
+    <p  >Generates certificate signing requests (CSR:s) in PKCS#10 format for all listed signers. In the key dropdown menu either the current key (<strong class=" ">DEFAULTKEY</strong>) or the next key can be selected. It is also possible to manually enter a value in the field to generate a CSR for a specific key alias in the crypto token. Signature algorithm, subject distinguished name (DN) and Filename must be specified if not already taken from the worker&#39;s configuration. The format of the request could either be a Standard CSR file or a CSR wrapped in PKCS#7/CMS signed object created by a RequestSigner. The with the last option is that at the CA the signature of the request can be verified.    </p>
     </div>
     <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Installcertificates">
         <h2 class="heading "><span>Install certificates</span></h2>
     <p  >Installs signer certificate and certificate chains for the listed workers and if next key is chosen that key becomes the new default key.    </p>
     <p  >At least one of <strong class=" ">Signer certificate</strong> and <strong class=" ">Signer certificate chain</strong> columns needs to be filled in. If a file is chosen for <strong class=" ">Signer certificate</strong> then the first certificate from that file will be used as signer certificate. It will also be added to the beginning of the certificate chain (if it is not already there). If a file is chosen for <strong class=" ">Signer certificate chain</strong> then all of the certificates from that file will be included in the certificate chain. The first certificate will be used as signer certificate (if a <strong class=" ">Signer certificate</strong> was not chosen).    </p>
-    <p  >If the <strong class=" ">Install in token</strong> check box is selected, the certificate chain will be imported to the worker's crypto token (if the crypto token supports this operation). When this is selected, the key alias to import the chain to in the token can be manually entered in the key column. This is currently only supported for keystore and PKCS11 crypto tokens.    </p>
+    <p  >If the <strong class=" ">Install in token</strong> check box is selected, the certificate chain will be imported to the worker&#39;s crypto token (if the crypto token supports this operation). When this is selected, the key alias to import the chain to in the token can be manually entered in the key column. This is currently only supported for keystore and PKCS11 crypto tokens.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Signer certificate</strong>: Browse for the signer certificate file in PEM format.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Certificate chain</strong>: Browse for the signer certificate chain file (or CA certificate(s)) in PEM format.    </p>
 </li></ul>    </div>
     <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Renewsignerdialog">
         <h2 class="heading "><span>Renew signer dialog</span></h2>
-    <p  >Requests a Renewal worker to renew all the chosen and selected workers. The Renewal worker will generate a new key if there isn't already a next key available and then contact EJBCA using its web service interface to request a new certificate. After receiving the new certificate it is installed and the next key becomes the current default key. Notice how the <strong class=" ">Not valid after</strong> date and possibly also the <strong class=" ">Signings</strong> column changes and the <strong class=" ">Renewal</strong> checkbox gets unchecked after a successful renewal.    </p>
+    <p  >Requests a Renewal worker to renew all the chosen and selected workers. The Renewal worker will generate a new key if there isn&#39;t already a next key available and then contact EJBCA using its web service interface to request a new certificate. After receiving the new certificate it is installed and the next key becomes the current default key. Notice how the <strong class=" ">Not valid after</strong> date and possibly also the <strong class=" ">Signings</strong> column changes and the <strong class=" ">Renewal</strong> checkbox gets unchecked after a successful renewal.    </p>
     </div>
     <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Removekeydialog">
         <h2 class="heading "><span>Remove key dialog</span></h2>

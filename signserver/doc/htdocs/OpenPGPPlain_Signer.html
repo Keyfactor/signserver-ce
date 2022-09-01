@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1730,7 +1734,7 @@
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The OpenPGPPlain signer signs arbitrary hashed data and produces a signature using <strong class=" ">NONEwithX </strong>signature algorithms (NONEwithRSA, NONEwithECDSA or NONEwithDSA) and expects that hash digest is supplied for signing not the data itself.    </p>
     <p  >The signature algorithm is chosen depending on the signing key: NONEwithDSA for DSA keys, NONEwithECDSA for ECDSA keys, and otherwise NONEwithRSA. When using an RSA key, the input must be in an appropriate format, refer to <a  class="external-link" href="https://tools.ietf.org/html/rfc3447">RFC#3447</a> for details.    </p>
-    <p  >Note that this signer uses OpenPGP and not X.509 certificates. The OpenPGP public key can instead be obtained from the worker's status output. Additionally, the generate CSR functionality allows adding a user ID to the public key and storing the new public key in the PGPPUBLICKEY worker property.    </p>
+    <p  >Note that this signer uses OpenPGP and not X.509 certificates. The OpenPGP public key can instead be obtained from the worker&#39;s status output. Additionally, the generate CSR functionality allows adding a user ID to the public key and storing the new public key in the PGPPUBLICKEY worker property.    </p>
     <p  >The key management operations are the same as for the generic <a   href="OpenPGP_Signer.html">OpenPGP Signer</a>.    </p>
     </div>
     <div class="section section-1" id="src-85920689_id-.OpenPGPPlainSignerv5.2.1-AvailableProperties">

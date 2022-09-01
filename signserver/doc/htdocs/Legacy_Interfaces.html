@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1726,7 +1730,7 @@
         <h1 class="heading "><span>The old Web Services interface</span></h1>
     <p  >The SignServerWS is the old web services interface now replaced by SignServer <a   href="Client_WS_Interface.html">ClientWS</a>. It was new to version 3.0 and at the time replaced the RMI-SSL interface from version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.    </p>
     <p  >The SignServerWS WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/signserverws/signserverws?wsdl    </p>
-    <p  >The interface has two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.    </p>
+    <p  >The interface has two calls, the main one is &#39;process&#39; which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
@@ -1740,7 +1744,7 @@
     </div>
     <div class="section section-1" id="src-11574037_id-.LegacyInterfacesv4.2.1-JavaClientAPI">
         <h1 class="heading "><span>Java Client API</span></h1>
-    <p  >Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar (the old SignServerWS interface) and lib/SignServer-Client-ClientWS.jar (the ClientWS interface).    </p>
+    <p  >Built along with the WebService is a Java API that can be used by clients. It&#39;s available in the file lib/SignServer-Client-SignServerWS.jar (the old SignServerWS interface) and lib/SignServer-Client-ClientWS.jar (the ClientWS interface).    </p>
     <div class="section section-2" id="src-11574037_id-.LegacyInterfacesv4.2.1-SigningAndValidationAPI">
         <h2 class="heading "><span>SigningAndValidation API</span></h2>
     <p  >The SigningAndValidation API is a wrapper around the previous mentioned API in order to have a simplified interface that also is the same regardless if WebService or EJB Remote calls are used.    </p>

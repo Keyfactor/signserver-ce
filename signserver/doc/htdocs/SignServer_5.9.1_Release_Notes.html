@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1725,7 +1729,8 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  ><span class="status grey subtle">MAY 2022</span>    </p>
-    <p  >The SignServer team is pleased to announce the release of SignServer 5.9.1. This release includes improvements for integration with AWS CloudHSM as well as new versions of OpenPDF and Bouncy Castle and other minor improvements and corrections.    </p>
+    <p  >The SignServer team is pleased to announce the release of SignServer 5.9.1.    </p>
+    <p  >This release includes improvements for the integration with AWS CloudHSM. The release also brings new versions of OpenPDF and Bouncy Castle and other minor improvements and corrections.    </p>
     <p  >    <span style="color: #000000;">
 Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a> and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
     </p>
@@ -1733,15 +1738,31 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
         <h1 class="heading "><span>Highlights</span></h1>
     <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-AWSCloudHSMImprovements">
         <h2 class="heading "><span>AWS CloudHSM Improvements</span></h2>
-    <p  >New flexibility of the P11NG crypto token now allows P11NG to be used with SignServer for integration with AWS CloudHSM. A new setting on a worker or the crypto token can control if a certificate object is generated when a key pair is generated. When used for integration with AWS CloudHSM, the worker or crypto token must be configured not to generate certificates. A similar option is also available in the <a   href="P11NG_CLI.html">p11-ng tool</a> (using the nocertificateobject command).    </p>
+    <p  >New flexibility of the P11NG crypto token now allows P11NG to be used with SignServer for integration with AWS CloudHSM. A new setting on a worker or the crypto token can control if a certificate object is generated when a key pair is generated. When used for integration with AWS CloudHSM, the worker or crypto token must be configured not to generate certificates,     <span style="color: #0e101a;">
+using the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>     </span>
+    <span style="color: #0e101a;">
+property GENERATE_CERTIFICATE_OBJECT    </span>
+. A similar option is also available in the <a   href="P11NG_CLI.html">p11-ng tool</a> (using the nocertificateobject flag).    </p>
     <p  >Further improvements to the Android (APK) signers have been made in this release making the APK signers work fully without certificates in the token and thus function with AWS CloudHSM.    </p>
+    </div>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-BouncyCastleUpgradedtoLatestVersion">
+        <h2 class="heading "><span>Bouncy Castle Upgraded to Latest Version</span></h2>
+    <p  >    <span style="color: #0e101a;">
+<a  class="external-link" href="https://doc.primekey.com/bouncycastle">Bouncy Castle</a> is upgraded to version 1.71.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-OpenPDFUpgradedtoLatestVersion">
+        <h2 class="heading "><span>OpenPDF Upgraded to Latest Version</span></h2>
+    <p  >    <span style="color: #0e101a;">
+OpenPDF is upgraded to version 1.3.28.    </span>
+    </p>
     </div>
     </div>
     <div class="section section-1" id="src-143735158_id-.SignServer5.9.1ReleaseNotesv5.9.1-UpgradeInformation">
         <h1 class="heading "><span>Upgrade Information</span></h1>
     <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
     <p  >SignServer 5.9.1 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.9.6</a> and    <span style="color: #000000;">
- <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud X.Y</a>.    </span>
+ <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud 1.11.1</a>.    </span>
     </p>
     </div>
     <div class="section section-1" id="src-143735158_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjkuMVJlbGVhc2VOb3Rlc3Y1LjkuMS1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">
@@ -1783,7 +1804,7 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_5.10_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1792,7 +1813,7 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Release Notes</span>
+            <span>SignServer 5.10 Release Notes</span>
         </a>
                 <a href="SignServer_5.9_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

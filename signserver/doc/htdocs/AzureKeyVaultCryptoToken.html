@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1757,12 +1761,12 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >The key alias of the private key to be used for testing that this crypto token is working.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  If this key does not exist, the crypto token/worker will show as OFFLINE even if it has been activated. This is typically the case when the crypto token has been set up for the first time and the key has not yet been generated. To resolve, generate a key with the key alias name.    </p>
     <p  >A property with this name is typically also accepted by the worker using this crypto token and will then be the key to use for actual signing.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-tick" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
     </p>
             </td>
         </tr>
@@ -1793,10 +1797,10 @@
         <p  >KEY_VAULT_NAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The name of the key vault. If the name contains at least one dot, it's assumed to be the full host name of the vault (allowing for alternative endpoints), otherwise it's assumed to be the first part of a host name in the default namespace (&lt;KEY_VAULT_NAME&gt;.vault.azure.net).    </p>
+        <p  >The name of the key vault. If the name contains at least one dot, it&#39;s assumed to be the full host name of the vault (allowing for alternative endpoints), otherwise it&#39;s assumed to be the first part of a host name in the default namespace (&lt;KEY_VAULT_NAME&gt;.vault.azure.net).    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-tick" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
     </p>
             </td>
         </tr>
@@ -1808,7 +1812,7 @@
         <p  >Client ID, this is the &ldquo;AD user&rdquo; that is authorized to connect to and use the key vault.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-tick" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
     </p>
             </td>
         </tr>
@@ -1820,7 +1824,7 @@
         <p  >The type of key vault. Valid values: &ldquo;standard&rdquo; or &rdquo;premium&rdquo;.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-tick" src="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/dni64h/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/check.svg"   />
     </p>
             </td>
         </tr>
@@ -1833,7 +1837,7 @@
 <ul class=" "><li class=" ">    <p  >Import of certificate <strong class=" ">in token</strong> is not supported for this crypto token.    </p>
 </li><li class=" ">    <p  >The Azure Key Vault Crypto Token does not provide any certificates and cannot be used with signers that require a certificate from the token such as OpenPGP-based signers. For details on PGP signing support, refer to <a  class="external-link" href="https://jira.primekey.se/browse/DSS-2127">DSS-2127.</a>    </p>
 </li><li class=" ">    <p  >    <span style="color: #0e101a;">
-If the Key Vault has soft-delete enabled, the keys will not be completely deleted by SignServer and new keys cannot be created with the same name as keys that have been soft-deleted. For more information on the Key Vault's soft-delete feature, allowing recovery of the deleted vaults and vault objects, refer to the Microsoft <a  class="external-link" href="https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete">Azure Key Vault soft-delete overview</a>.    </span>
+If the Key Vault has soft-delete enabled, the keys will not be completely deleted by SignServer and new keys cannot be created with the same name as keys that have been soft-deleted. For more information on the Key Vault&#39;s soft-delete feature, allowing recovery of the deleted vaults and vault objects, refer to the Microsoft <a  class="external-link" href="https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete">Azure Key Vault soft-delete overview</a>.    </span>
     </p>
 </li></ul>    </div>
         </div>

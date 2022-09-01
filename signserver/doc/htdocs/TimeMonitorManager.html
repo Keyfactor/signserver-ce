@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.9.1</p>
+                    <p>Version: 5.10.0</p>
                 </div>
             </header>
 
@@ -1606,6 +1606,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
 
             </li>
@@ -1802,13 +1806,13 @@
     <div class="section section-1" id="src-11573650_id-.TimeMonitorManagerv4.2.1-Statusoutput">
         <h1 class="heading "><span>Status output</span></h1>
     <p  >Detailed information about the state of the TimeMonitor is available in the getstatus output of the TimeMonitorManager:    </p>
-<ul class=" "><li class=" ">    <p  >Time monitor: Indicates if the application is detected to be 'Running', 'Disabled', 'Not running?' or 'Unavailabe'. The state is determined by if the manager has seen an update from the TimeMonitor before the status properties are starting to expire.    </p>
+<ul class=" "><li class=" ">    <p  >Time monitor: Indicates if the application is detected to be &#39;Running&#39;, &#39;Disabled&#39;, &#39;Not running?&#39; or &#39;Unavailabe&#39;. The state is determined by if the manager has seen an update from the TimeMonitor before the status properties are starting to expire.    </p>
 </li><li class=" ">    <p  >Last update: The last time the TimeMonitor contacted the manager.    </p>
 </li><li class=" ">    <p  >Current time: Current time of the server.    </p>
 </li><li class=" ">    <p  >Time state: The last time state from the TimeMonitor.    </p>
 </li><li class=" ">    <p  >Report state: The last report state from the TimeMonitor.    </p>
 </li><li class=" ">    <p  >Leap state: The last leap state from the TimeMonitor.    </p>
-</li><li class=" ">    <p  >Configuration: Either 'out of sync' or 'up to date' depending on if the current configuration has been read by the TimeMonitor or not. After changing a property in the TimeMonitorManager it is normal that the configuration is marked as 'out of sync' until the TimeMonitor fetches it.    </p>
+</li><li class=" ">    <p  >Configuration: Either &#39;out of sync&#39; or &#39;up to date&#39; depending on if the current configuration has been read by the TimeMonitor or not. After changing a property in the TimeMonitorManager it is normal that the configuration is marked as &#39;out of sync&#39; until the TimeMonitor fetches it.    </p>
 </li><li class=" ">    <p  >Status properties values: Prints the current value and possibly the expiration time for the TIMESOURCE0_INSYNC and LEAPSECOND status properties.    </p>
 </li><li class=" ">    <p  >Timings: Prints the current time values from the TimeMonitor.    </p>
 </li><li class=" ">    <p  >Configuration: Prints the configuration values in the manager (not necessarily read by the TimeMonitor yet).    </p>

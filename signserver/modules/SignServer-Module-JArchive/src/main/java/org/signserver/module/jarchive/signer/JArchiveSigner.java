@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipException;
 import javax.persistence.EntityManager;
-import net.jsign.DigestAlgorithm;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
@@ -49,6 +48,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -83,6 +83,7 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.tsa.InternalTimeStampTokenFetcher;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import org.signserver.module.jarchive.utils.DigestAlgorithm;
 
 /**
  * Signer for JAR files.

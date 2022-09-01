@@ -30,7 +30,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
-import net.jsign.DigestAlgorithm;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -49,6 +48,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
+import org.signserver.module.jarchive.utils.DigestAlgorithm;
 
 /**
  * Signer implementation using the SignApk as backend.

@@ -646,7 +646,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     result.add("Missing extended key usage timeStamping");
                 }
                 if (cert.getCriticalExtensionOIDs() == null
-                        || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
+                        || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.Extension.extendedKeyUsage.getId())) {
                     result.add("The extended key usage extension must be present and marked as critical");
                 }
                 // if extended key usage contains timeStamping and also other

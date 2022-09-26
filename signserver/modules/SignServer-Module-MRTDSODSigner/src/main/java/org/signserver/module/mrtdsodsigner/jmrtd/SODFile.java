@@ -28,11 +28,14 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -189,12 +192,15 @@ public class SODFile extends PassportFile
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
      * @throws java.io.IOException
+     * @throws java.security.InvalidKeyException if Encryption Algorithm does not match Private Key
+     * @throws java.security.SignatureException if unable to sign data
+     * @throws java.security.NoSuchProviderException if provider parameter is not recognized
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
             PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider)
-    throws NoSuchAlgorithmException, CertificateException, IOException {
+    throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         signedData = createSignedData(digestAlgorithm,
                 digestEncryptionAlgorithm,
                 dataGroupHashes,
@@ -217,13 +223,16 @@ public class SODFile extends PassportFile
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
      * @throws java.io.IOException
+     * @throws java.security.InvalidKeyException if Encryption Algorithm does not match Private Key
+     * @throws java.security.SignatureException if unable to sign data
+     * @throws java.security.NoSuchProviderException if provider parameter is not recognized
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
             PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider,
             String ldsVersion, String unicodeVersion)
-    throws NoSuchAlgorithmException, CertificateException, IOException {
+    throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         signedData = createSignedData(digestAlgorithm,
                 digestEncryptionAlgorithm,
                 dataGroupHashes,
@@ -243,12 +252,15 @@ public class SODFile extends PassportFile
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
      * @throws java.io.IOException
+     * @throws java.security.InvalidKeyException if Encryption Algorithm does not match Private Key
+     * @throws java.security.SignatureException if unable to sign data
+     * @throws java.security.NoSuchProviderException if provider parameter is not recognized
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
             PrivateKey privateKey,
             X509Certificate docSigningCertificate)
-    throws NoSuchAlgorithmException, CertificateException, IOException {
+    throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         signedData = createSignedData(digestAlgorithm,
                 digestEncryptionAlgorithm,
                 dataGroupHashes,
@@ -731,7 +743,7 @@ public class SODFile extends PassportFile
             String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes, PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider)
-            throws NoSuchAlgorithmException, CertificateException, IOException {
+            throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         return createSignedData(digestAlgorithm, digestEncryptionAlgorithm,
                 dataGroupHashes, privateKey, docSigningCertificate, provider,
                 null, null);
@@ -742,7 +754,7 @@ public class SODFile extends PassportFile
             Map<Integer, byte[]> dataGroupHashes, PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider,
             String ldsVersion, String unicodeVersion)
-            throws NoSuchAlgorithmException, CertificateException, IOException {
+            throws NoSuchAlgorithmException, CertificateException, InvalidKeyException, SignatureException, NoSuchProviderException, IOException {
         ASN1Set digestAlgorithmsSet = createSingletonSet(createDigestAlgorithms(digestAlgorithm));
         ContentInfo contentInfo = createContentInfo(digestAlgorithm,
                         dataGroupHashes, ldsVersion, unicodeVersion);
@@ -781,10 +793,8 @@ public class SODFile extends PassportFile
         }
         catch (NoSuchAlgorithmException e) {
             throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        } 
+        
         ASN1Set certificates = createSingletonSet(createCertificate(docSigningCertificate));
         ASN1Set crls = null;
         ASN1Set signerInfos = createSingletonSet(createSignerInfo(

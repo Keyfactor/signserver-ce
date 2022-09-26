@@ -16,9 +16,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -83,11 +86,8 @@ public class MRTDSODSigner extends BaseSigner {
     /** Default value for the digestAlgorithm property */
     private static final String DEFAULT_DIGESTALGORITHM = "SHA256";
     
-    /** The signature algorithm, for example SHA1withRSA, SHA256withRSA, SHA256withECDSA. Defaults to SHA256withRSA. */
+    /** The signature algorithm, for example SHA1withRSA, SHA256withRSA, SHA256withECDSA.*/
     private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
-    
-    /** Default value for the signature algorithm property */
-    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
     
     /** Determines if the the data group values should be hashed by the signer. If false we assume they are already hashed. */
     private static final String PROPERTY_DODATAGROUPHASHING = "DODATAGROUPHASHING";
@@ -107,6 +107,7 @@ public class MRTDSODSigner extends BaseSigner {
     private static final Object syncObj = new Object();
     
     private List<String> configErrors;
+    private String signatureAlgorithm;
 
     @Override
     public void init(int workerId, WorkerConfig config,
@@ -114,6 +115,9 @@ public class MRTDSODSigner extends BaseSigner {
         super.init(workerId, config, workerContext, workerEM);
 
         configErrors = new LinkedList<>();
+        
+        // Get the signature algorithm
+        signatureAlgorithm = config.getProperty(PROPERTY_SIGNATUREALGORITHM, DEFAULT_NULL);
 
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
@@ -191,7 +195,8 @@ public class MRTDSODSigner extends BaseSigner {
 
             // Create the SODFile using the data group hashes that was sent to us in the request.
             final String digestAlgorithm = config.getProperty(PROPERTY_DIGESTALGORITHM, DEFAULT_DIGESTALGORITHM);
-            final String digestEncryptionAlgorithm = config.getProperty(PROPERTY_SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
+            final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(crypto.getPublicKey()) : signatureAlgorithm;
+            final String digestEncryptionAlgorithm = config.getProperty(PROPERTY_SIGNATUREALGORITHM, sigAlg);
             if (log.isDebugEnabled()) {
                 log.debug("Using algorithms " + digestAlgorithm + ", " + digestEncryptionAlgorithm);
             }
@@ -279,6 +284,10 @@ public class MRTDSODSigner extends BaseSigner {
 
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
             throw new SignServerException("Problem constructing SOD as configured algorithm not supported", ex);
+        } catch(InvalidKeyException ex) {
+            throw new SignServerException("Problem constructing SOD as key could not be used", ex);
+        } catch(SignatureException ex) {
+            throw new SignServerException("Problem constructing SOD as signature could not be made", ex);
         } catch (CertificateException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (IOException ex) {
@@ -401,5 +410,36 @@ public class MRTDSODSigner extends BaseSigner {
         
         errors.addAll(configErrors);
         return errors;
+    }
+    
+    /**
+     * Return the default signature algorithm name given the public key.
+     *
+     * @param publicKey
+     * @return
+     */
+    private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
+        String result;
+
+        switch (publicKey.getAlgorithm()) {
+            case "EC":
+            case "ECDSA":
+                result = "SHA256withECDSA";
+                break;
+            case "DSA":
+                result = "SHA256withDSA";
+                break;
+            case "Ed25519":
+                result = "Ed25519";
+                break;
+            case "Ed448":
+                result = "Ed448";
+                break;
+            case "RSA":
+            default:
+                result = "SHA256withRSA";    
+        }
+
+        return result;
     }
 }

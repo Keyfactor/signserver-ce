@@ -134,22 +134,34 @@ public class TestKeyBulkBean extends BulkBean {
                     worker.setError("(No key found, token offline?)");
                     worker.setSuccess(null);
                 } else {
-                    final StringBuilder sb = new StringBuilder();
+                    final StringBuilder sbSuccess = new StringBuilder();
+                    final StringBuilder sbError = new StringBuilder();
                     for (KeyTestResult key : result) {
-                        sb.append("  ");
-                        sb.append(key.getAlias());
-                        sb.append(", ");
-                        sb.append(key.isSuccess()
-                                ? "SUCCESS" : "FAILURE");
-                        sb.append(", ");
-                        sb.append(key.getPublicKeyHash());
-                        sb.append(", ");
-                        sb.append(key.getStatus());
-                        sb.append("\n");
+                        if (key.isSuccess()) {
+                            sbSuccess.append("  ");
+                            sbSuccess.append(key.getAlias());
+                            sbSuccess.append(", ");
+                            sbSuccess.append("SUCCESS");
+                            sbSuccess.append(", ");
+                            sbSuccess.append(key.getPublicKeyHash());
+                            sbSuccess.append(", ");
+                            sbSuccess.append(key.getStatus());
+                            sbSuccess.append("\n");
+                        } else {
+                            sbError.append("  ");
+                            sbError.append(key.getAlias());
+                            sbError.append(", ");
+                            sbError.append("FAILURE");
+                            sbError.append(", ");
+                            sbError.append(key.getPublicKeyHash());
+                            sbError.append(", ");
+                            sbError.append(key.getStatus());
+                            sbError.append("\n");
+                        }
                     }
-                    worker.setError(null);
-                    worker.setSuccess(sb.toString());
-
+                    worker.setSuccess(sbSuccess.toString());
+                    worker.setError(sbError.toString());
+                    
                     if (!worker.isFixedAlias()) {
                         getSelectedIds().remove(worker.getId());
                     }

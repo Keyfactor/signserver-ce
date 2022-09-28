@@ -93,8 +93,8 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{text['Result_(key_alias,_status,_public_key_hash)']}" />
                                 </f:facet>
-                                <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
-                                <span class="successMessage"><pre><h:outputText value="#{item.success}"/></pre></span>
+                                <span class="errorMessage"><pre><h:outputText value="  #{item.error}" rendered="#{not empty item.error}"/></pre></span> 
+                                <span class="successMessage"><pre><h:outputText value="  #{item.success}" rendered="#{not empty item.success}"/></pre></span>
                             </h:column>
                             <f:facet name="footer">
                             </f:facet>

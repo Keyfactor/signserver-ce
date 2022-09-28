@@ -485,9 +485,10 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
      */
     private ITimeSource getTimeSource() throws SignServerException {
         if (timeSource == null) {
+            String classpath = null;
             try {
-                String classpath
-                        = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE);
+                classpath
+                        = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE).trim();
 
                 final Class<?> implClass = Class.forName(classpath);
                 final Object obj = implClass.newInstance();
@@ -495,7 +496,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 timeSource.init(config.getProperties());
 
             } catch (ClassNotFoundException e) {
-                throw new SignServerException("Class not found", e);
+                throw new SignServerException("Class not found" + " \"" + classpath + "\"", e);
             } catch (IllegalAccessException iae) {
                 throw new SignServerException("Illegal access", iae);
             } catch (InstantiationException ie) {

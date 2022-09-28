@@ -101,8 +101,9 @@
                         <h:commandButton class="buttonNeutral" value="#{text['Previous']}" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
                         <h:commandButton class="buttonFeatured" value="#{text['Reload']}" action="#{auditLogBean.reloadAction()}"/> 
                         <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
-                        <h:outputText value="#{text['Displaying_results']} "/><h:inputText value="#{auditLogBean.fromIndex}" size="3"/><h:outputText value=" #{text['to']} "/><h:outputText value="#{auditLogBean.queryingToIndex}"/>.
-                        <h:outputText value="#{text['Entries_per_page']}: "/><h:inputText value="#{auditLogBean.maxEntries}" size="3"/>
+                        <h:outputText value="#{text['Displaying_results']} "/><h:inputText id="index" value="#{auditLogBean.fromIndex}" size="3" required="true" requiredMessage="*"/><h:message for="index" class="errorMessage"/>
+                        <h:outputText value=" #{text['to']} "/><h:outputText value="#{auditLogBean.queryingToIndex}"/>.
+                        <h:outputText value="#{text['Entries_per_page']}: "/><h:inputText id="entries" value="#{auditLogBean.maxEntries}" size="3" required="true" requiredMessage="*"/><h:message for="entries" class="errorMessage"/>
 
                         <p class="errorMessage">
                             <h:outputText value="#{auditLogBean.queryErrorMain}" rendered="#{auditLogBean.queryError != null}"/>

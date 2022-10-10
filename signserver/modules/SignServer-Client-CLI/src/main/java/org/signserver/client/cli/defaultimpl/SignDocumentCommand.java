@@ -362,7 +362,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
         host = line.getOptionValue(HOST);
-        
+                
         if (line.hasOption(HOSTS)) {
             final String hostsString = line.getOptionValue(HOSTS);
             
@@ -621,6 +621,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             hosts = Collections.singletonList(host);
         } else if (hosts == null && host == null) {
             hosts = Collections.singletonList(KeyStoreOptions.DEFAULT_HOST);
+            host = KeyStoreOptions.DEFAULT_HOST;
         }
         
         if (hosts.isEmpty()) {

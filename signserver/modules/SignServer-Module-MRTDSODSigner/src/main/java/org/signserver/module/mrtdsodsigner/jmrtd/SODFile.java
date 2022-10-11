@@ -111,8 +111,8 @@ public class SODFile extends PassportFile
 	private static final ASN1ObjectIdentifier PKCS1_MD4_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.3");
 	private static final ASN1ObjectIdentifier PKCS1_MD5_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.4");
 	private static final ASN1ObjectIdentifier PKCS1_SHA1_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.5");
-    private static final ASN1ObjectIdentifier PKCS1_MGF1_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.8");
-    private static final ASN1ObjectIdentifier PKCS1_RSA_PSS_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.10");
+        private static final ASN1ObjectIdentifier PKCS1_MGF1_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.8");
+        private static final ASN1ObjectIdentifier PKCS1_RSA_PSS_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.10");
 	private static final ASN1ObjectIdentifier PKCS1_SHA256_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.11");
 	private static final ASN1ObjectIdentifier PKCS1_SHA384_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.12");
 	private static final ASN1ObjectIdentifier PKCS1_SHA512_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.13");
@@ -120,6 +120,8 @@ public class SODFile extends PassportFile
 	private static final ASN1ObjectIdentifier X9_SHA1_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.1");
 	private static final ASN1ObjectIdentifier X9_SHA224_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.1");
 	private static final ASN1ObjectIdentifier X9_SHA256_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.2");
+        private static final ASN1ObjectIdentifier X9_SHA384_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.3");
+        private static final ASN1ObjectIdentifier X9_SHA512_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.4");
 	private static final ASN1ObjectIdentifier IEEE_P1363_SHA1_OID = new ASN1ObjectIdentifier("1.3.14.3.2.26");
 
     private static final HashMap<String, ASN1Encodable> algorithmParameters =
@@ -919,7 +921,9 @@ public class SODFile extends PassportFile
 		if(oid.equals(NISTObjectIdentifiers.id_sha512)) { return "SHA512"; }
 		if (oid.equals(X9_SHA1_WITH_ECDSA_OID)) { return "SHA1withECDSA"; }
 		if (oid.equals(X9_SHA224_WITH_ECDSA_OID)) { return "SHA224withECDSA"; }
-		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }		
+		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }
+                if (oid.equals(X9_SHA384_WITH_ECDSA_OID)) { return "SHA384withECDSA"; }
+                if (oid.equals(X9_SHA512_WITH_ECDSA_OID)) { return "SHA512withECDSA"; }
                 if (oid.equals(PKCS1_MGF1_OID)) { return "MGF1"; }
 		if (oid.equals(PKCS1_RSA_OID)) { return "RSA"; }
 		if (oid.equals(PKCS1_MD2_WITH_RSA_OID)) { return "MD2withRSA"; }
@@ -959,6 +963,8 @@ public class SODFile extends PassportFile
 		if (name.equalsIgnoreCase("SHA1withECDSA")) { return X9_SHA1_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("SHA224withECDSA")) { return X9_SHA224_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("SHA256withECDSA")) { return X9_SHA256_WITH_ECDSA_OID; }
+                if (name.equalsIgnoreCase("SHA384withECDSA")) { return X9_SHA384_WITH_ECDSA_OID; }
+                if (name.equalsIgnoreCase("SHA512withECDSA")) { return X9_SHA512_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("MGF1")) { return  PKCS1_MGF1_OID; }
                 if (name.equalsIgnoreCase("SHA1withRSAandMGF1")) { return  PKCS1_RSA_PSS_OID; }
                 if (name.equalsIgnoreCase("SHA224withRSAandMGF1")) { return PKCS1_RSA_PSS_OID; }

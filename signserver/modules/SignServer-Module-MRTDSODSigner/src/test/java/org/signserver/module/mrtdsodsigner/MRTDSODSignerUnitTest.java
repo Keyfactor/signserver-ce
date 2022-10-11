@@ -122,6 +122,12 @@ public class MRTDSODSignerUnitTest extends TestCase {
     
     /** Worker7920: SHA256WithRSAandMGF1 Capital W in signature algorithm */
     private static final int WORKER21 = 7921;
+    
+    /** Worker7922: SHA384withECDSA */
+    private static final int WORKER22 = 7922;
+    
+    /** Worker7923: SHA512withECDSA */
+    private static final int WORKER23 = 7923;
 
     private static final String KEYSTOREPATH = "KEYSTOREPATH";
     private static final String KEYSTOREPASSWORD = "KEYSTOREPASSWORD";
@@ -493,6 +499,32 @@ public class MRTDSODSignerUnitTest extends TestCase {
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA512"));
         signHelper(WORKER14, 12, dataGroups1, false, "SHA512",
                 "SHA512withRSAandMGF1");
+    }
+    
+    /**
+     * Requests signing of some data group hashes and verifies the result.
+     * @throws Exception
+     */
+    public void test06SignData_SHA384withECDSA() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA384"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA384"));
+        signHelper(WORKER22, 12, dataGroups1, false, "SHA384",
+                "SHA384withECDSA");
+    }
+    
+    /**
+     * Requests signing of some data group hashes and verifies the result.
+     * @throws Exception
+     */
+    public void test06SignData_SHA512withECDSA() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA512"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA512"));
+        signHelper(WORKER23, 12, dataGroups1, false, "SHA512",
+                "SHA512withECDSA");
     }
 
     /**
@@ -955,6 +987,36 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
+        
+        // WORKER22 - Using SHA384withECDSA
+        {
+            final int workerId = WORKER22;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner22");
+            config.setProperty(KEYSTOREPATH, keystore4.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA384");
+            config.setProperty("SIGNATUREALGORITHM", "SHA384withECDSA");
+            config.setProperty(DEFAULTKEY, keystore4DefaultKey);
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
+            workerSession.reloadConfiguration(workerId);
+        }
+        
+        // WORKER23 - Using SHA512withECDSA
+        
+        {
+            final int workerId = WORKER23;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestMRTDSODSigner23");
+            config.setProperty(KEYSTOREPATH, keystore4.getAbsolutePath());
+            config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty("DIGESTALGORITHM", "SHA512");
+            config.setProperty("SIGNATUREALGORITHM", "SHA512withECDSA");
+            config.setProperty(DEFAULTKEY, keystore4DefaultKey);
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
+            workerSession.reloadConfiguration(workerId);
+        }
     }
-
 }

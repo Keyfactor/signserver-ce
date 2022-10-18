@@ -60,7 +60,7 @@ public class SetPropertiesHelper {
         Enumeration<?> iter = properties.keys();
         while (iter.hasMoreElements()) {
             String key = (String) iter.nextElement();
-            processKey(key.toUpperCase(), properties.getProperty(key));
+            processKey(key.toUpperCase(Locale.ENGLISH), properties.getProperty(key));
         }
         
         // Check if all Gen2 auth client rules valid
@@ -409,7 +409,7 @@ public class SetPropertiesHelper {
         while (iter.hasMoreElements()) {
             String key = (String) iter.nextElement();
             String value = properties.getProperty(key);
-            key = key.toUpperCase();
+            key = key.toUpperCase(Locale.ENGLISH);
             if (!isRemoveKey(key) && (key.startsWith(WORKER_PREFIX) || key.startsWith(OLDWORKER_PREFIX))) {
                 final int dotIndex = key.indexOf('.');
                 String propertykey = key.substring(dotIndex + 1);

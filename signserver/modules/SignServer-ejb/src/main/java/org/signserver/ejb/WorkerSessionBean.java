@@ -695,7 +695,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             }
         }
         WorkerConfig config = getWorkerConfig(workerId);
-        config.setProperty(key.toUpperCase(), value);
+        config.setProperty(key.toUpperCase(Locale.ENGLISH), value);
         setWorkerConfig(adminInfo, workerId, config, null, null);
         auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId), config, key, value);
     }
@@ -744,7 +744,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         final boolean result;
         WorkerConfig config = getWorkerConfig(workerId);
 
-        result = config.removeProperty(key.toUpperCase());
+        result = config.removeProperty(key.toUpperCase(Locale.ENGLISH));
         if (config.getProperties().size() <= config.getVirtualPropertiesNumber()) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");

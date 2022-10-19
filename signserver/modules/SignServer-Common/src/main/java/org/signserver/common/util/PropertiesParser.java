@@ -166,7 +166,7 @@ public class PropertiesParser {
         Enumeration<?> iter = properties.keys();
         while (iter.hasMoreElements()) {
             String key = (String) iter.nextElement();
-            processKey(key.toUpperCase(), properties.getProperty(key));
+            processKey(key.toUpperCase(Locale.ENGLISH), properties.getProperty(key));
         }
 
         // Process Gen2 auth client rules if exist

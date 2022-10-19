@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Locale;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -72,7 +73,7 @@ public class RemoveWorkerCommand extends AbstractAdminCommand {
         Enumeration<String> en = gc.getKeyEnumeration();
         while (en.hasMoreElements()) {
             String key = en.nextElement();
-            if (key.toUpperCase().startsWith("GLOB.WORKER" + workerId)) {
+            if (key.toUpperCase(Locale.ENGLISH).startsWith("GLOB.WORKER" + workerId)) {
 
                 key = key.substring("GLOB.".length());
                 if (getGlobalConfigurationSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, key)) {

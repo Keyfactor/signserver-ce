@@ -14,7 +14,7 @@ if "%SIGNSERVER_HOME%" == "" (
 )  
 
 rem Check if SIGNSRV_HOME points to valid path
-if not exist %SIGNSRV_HOME%\\bin\\signclient.cmd (
+if not exist "%SIGNSRV_HOME%\bin\signclient.cmd" (
     echo You must run signclient from ONE of following directories: $SIGNSERVER_HOME, $SIGNSERVER_HOME\bin, OR set ONE of following environment variables: SIGNCLIENT_HOME, SIGNSERVER_HOME
     goto end
 )
@@ -25,10 +25,10 @@ if not "%APPSRV_HOME%" == "" (
 )
 
 rem find the JAR
-for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-CLI-*.jar') do set JAR=%%a
+for /f "tokens=*" %%a in ('dir /b /s "%SIGNSRV_HOME%"\lib\SignServer-Client-CLI-*.jar') do set JAR=%%a
 
 rem check that we have built the classes
-if not exist %JAR%  (
+if not exist "%JAR%"  (
     echo You must build SignServer Client CLI first.
     goto end
 )
@@ -60,8 +60,8 @@ rem set JAVA_OPTS=%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=
 rem set JAVA_OPTS=%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y
 
 if "%JAVA_HOME%" == "" (
-  java %JAVA_OPTS% -cp %CLASSPATH%  org.signserver.client.cli.ClientCLI %*
+  java %JAVA_OPTS% -cp "%CLASSPATH%"  org.signserver.client.cli.ClientCLI %*
 ) else (
-  "%JAVA_HOME%\bin\java" %JAVA_OPTS% -cp %CLASSPATH% org.signserver.client.cli.ClientCLI %*
+  %JAVA_HOME%\bin\java %JAVA_OPTS% -cp "%CLASSPATH%" org.signserver.client.cli.ClientCLI %*
 )
 :end

@@ -31,7 +31,7 @@ if [ -n "${SIGNCLIENT_HOME}" ]; then
 elif [ -n "${SIGNSERVER_HOME}" ]; then
   SIGNSRV_HOME=$SIGNSERVER_HOME
 else
-  if [ -f $DIR/signclient ]; then
+  if [ -f "$DIR/signclient" ]; then
     SIGNSRV_HOME=$DIR/..
   fi
   if [ -f /etc/signserver/signservermgmt.env ]; then

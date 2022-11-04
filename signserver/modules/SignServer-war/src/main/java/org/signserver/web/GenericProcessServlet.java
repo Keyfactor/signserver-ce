@@ -15,6 +15,7 @@ package org.signserver.web;
 import org.signserver.web.common.ServletUtils;
 import org.signserver.server.data.impl.BinaryFileUpload;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -342,7 +343,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         sendBadRequest(res, "Missing field 'data' in request");
                         return;
                     }
-                    byte[] bytes = req.getParameter(DATA_PROPERTY_NAME).getBytes();
+                    byte[] bytes = req.getParameter(DATA_PROPERTY_NAME).getBytes(StandardCharsets.US_ASCII);
 
                     String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
                     if (encoding != null && !encoding.isEmpty()) {

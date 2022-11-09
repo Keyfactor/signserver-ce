@@ -62,6 +62,6 @@ rem set JAVA_OPTS=%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=
 if "%JAVA_HOME%" == "" (
   java %JAVA_OPTS% -cp "%CLASSPATH%"  org.signserver.client.cli.ClientCLI %*
 ) else (
-  %JAVA_HOME%\bin\java %JAVA_OPTS% -cp "%CLASSPATH%" org.signserver.client.cli.ClientCLI %*
+  "%JAVA_HOME%\bin\java" %JAVA_OPTS% -cp "%CLASSPATH%" org.signserver.client.cli.ClientCLI %*
 )
 :end

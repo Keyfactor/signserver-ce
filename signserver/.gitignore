@@ -127,6 +127,7 @@ dist-*/
 /lib/ext/jdbc/*.jar
 /lib/ext/dss-*
 /lib/ext/commons-lang3-*
+/lib/ext/commons-net-*
 /lib/ext/specs-*
 /lib/ext/validation-*
 

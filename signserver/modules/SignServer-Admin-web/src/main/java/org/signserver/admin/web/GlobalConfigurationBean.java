@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.io.UnsupportedEncodingException;
+import static java.net.URLEncoder.encode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -193,13 +195,13 @@ public class GlobalConfigurationBean {
         return "global-configuration?faces-redirect=true";
     }
 
-    public String bulkAction(String page) {
+    public String bulkAction(String page) throws UnsupportedEncodingException {
         StringBuilder sb = new StringBuilder();
         sb.append(page);
         sb.append("?faces-redirect=true&amp;includeViewParams=true&amp;property=");
         for (Map.Entry<Object, Boolean> entry : getSelectedProperties().entrySet()) {
             if (entry.getValue()) {
-                sb.append(entry.getKey()).append(",");
+                sb.append(encode(entry.getKey().toString(), "UTF-8")).append(",");
             }
         }
         return sb.toString();

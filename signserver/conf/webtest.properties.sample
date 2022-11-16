@@ -1,10 +1,19 @@
 # Configuration for the SignServer WebTest module
+# Please note that the webtests will be run using this properties file AND test-config.properties.
 # $Id$
 
 # Basic configuration for connecting to SignServer
 webtest.appserver.domainname = localhost
 webtest.appserver.port = 8080
 webtest.appserver.secureport = 8443
+
+# Configuration for running webtest against remote instance of SignServer
+# If webtest.remote.enabled is set to true the tests would know it runs against a remote instance and would therefore
+# not assume that the path to the keystore is not relative to the location of the tests, and will also disable the methods
+# that is copying and moving files around.
+#webtest.remote.enabled = false
+#webtest.remote.keystore = /opt/signserver/res/test/dss10/dss10_keystore.p12
+#webtest.remote.commonname = Admin One
 
 # Local temporary directory for files used in test
 webtest.execution.tmpdir = /tmp

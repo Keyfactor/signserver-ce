@@ -318,6 +318,10 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 throw new CryptoTokenOfflineException("Signtoken isn't active.");
             }
         }
+        if (purposeOrAlias == null) {
+            LOG.error("Alias or Purpose is null");
+            throw new CryptoTokenOfflineException("Alias or Purpose is null");
+        }
         KeyEntry entry = entries.get(purposeOrAlias);
         if (entry == null || entry.getCertificate() == null) {
             throw new CryptoTokenOfflineException(

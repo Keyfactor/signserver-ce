@@ -84,6 +84,7 @@
         <module>SignServer-Module-XMLValidator</module>
         <module>SignServer-Module-XMLSigner</module>
         <module>SignServer-Module-XAdES</module>
+        <module>SignServer-Module-DpkgSig</module>
 
         <!-- System test and test tools -->
         <module>SignServer-Test-Utils</module>

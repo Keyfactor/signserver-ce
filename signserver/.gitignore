@@ -96,7 +96,7 @@ dist-*/
 /doc/sample-configs/extended_timestamp.properties
 /doc/sample-configs/openpgpplainsigner*.properties
 /doc/sample-configs/p11ng-*
-/doc/sample-configs/debian*.properties
+/doc/sample-configs/debiandpkgsigsigner_1.properties
 /doc/sample-configs/zone*.properties
 /doc/sample-configs/appx*.properties
 /doc/sample-configs/apk_*.properties

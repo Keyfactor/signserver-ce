@@ -80,7 +80,7 @@ d03d5c3c8f292529fe235138756431cf1fc32ef9d0f76131c09b5366de4b3d99  ./ext/ext/sele
 a080af79f5c0bfd431ad337f28ad4e17d6f7e983235aa10dd0ea1dc355938d0c  ./ext/guice-multibindings-2.0.jar;                      "Guice"
 1e3bfcfe9efdb40e9d3c084c9bcf8597e492e30294c7e40b56ed18a67c2838cd  ./ext/hibernate-commons-annotations-5.1.0.Final.jar;    "Hibernate"
 568b6212aacbc04b57b1ea55a193e9d09ba2f8802286a64270d71baa782d9ddc  ./ext/hibernate-core-5.4.21.Final.jar;                  "Hibernate"
-807e9c73f27a4b19dd04b1b67126532fc74b0a37bd8d13fbad073ad74d078330  ./ext/httpclient-4.5.7.jar;                             "Apache HttpComponents"
+6fe9026a566c6a5001608cf3fc32196641f6c1e5e1986d1037ccdbd5f31ef743  ./ext/httpclient-4.5.13.jar;                            "Apache HttpComponents"
 d799522d579aac06b170603f8f080f6e3248dadc01f9652cdd7ea7bc318c21ce  ./ext/httpcore-4.4.11.jar;                              "Apache HttpComponents"
 fc19576301e39f7f8854ca7f718c0b6b794fc52a650b62bf316c0ff99efce7bd  ./ext/httpmime-4.5.7.jar;                               "Apache HttpComponents"
 4ffabb06be454a05e4398e20c77fa2b6308d4b88dfbef7ca30a76b5b7d5505ef  ./ext/istack-commons-runtime-3.0.8.jar;                 "Hibernate dependencies"

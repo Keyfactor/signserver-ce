@@ -86,7 +86,6 @@ dist-*/
 
 /doc/sample-configs/ms_authcode_cms_signer.properties
 /doc/sample-configs/jarchive_cms_signer.properties
-/doc/sample-configs/jarchive_signer.properties
 /doc/sample-configs/ms_authcode_signer.properties
 /doc/sample-configs/timemonitormanager.properties
 /doc/sample-configs/keywrapping-*

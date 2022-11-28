@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.signserver</groupId>
-        <artifactId>SignServer-Enterprise-Modules</artifactId>
+        <artifactId>SignServer-Modules</artifactId>
         <version>5.11.0.Beta1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Module-DpkgSig</artifactId>

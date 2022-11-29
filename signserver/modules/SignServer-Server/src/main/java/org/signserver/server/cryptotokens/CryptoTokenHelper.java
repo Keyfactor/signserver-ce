@@ -808,15 +808,23 @@ public class CryptoTokenHelper {
             throw new InvalidAlgorithmParameterException("Invalid specification of public exponent");
         }
 
-        final int keyLength = Integer.parseInt(parts[0].trim());
+        final int keyLength;
+        try {
+            keyLength = Integer.parseInt(parts[0].trim());
+        } catch (NumberFormatException ex) {
+            throw new InvalidAlgorithmParameterException("Invalid key length " + ex.getMessage(), ex);
+        }
+
         final String exponentString = parts[1].trim();
         final BigInteger exponent;
-
-        if (exponentString.startsWith("0x")) {
-            exponent =
-                    new BigInteger(exponentString.substring(2), 16);
-        } else {
-            exponent = new BigInteger(exponentString);
+        try {
+            if (exponentString.startsWith("0x")) {
+                exponent = new BigInteger(exponentString.substring(2), 16);
+            } else {
+                exponent = new BigInteger(exponentString);
+            }
+        } catch (NumberFormatException ex) {
+            throw new InvalidAlgorithmParameterException("Invalid exponent " + ex.getMessage(), ex);
         }
 
         return new RSAKeyGenParameterSpec(keyLength, exponent);

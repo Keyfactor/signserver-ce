@@ -239,11 +239,6 @@
 #web.clientcli.dist.file=${basedir}/lib/signserver-clientcli.zip
 #web.clientcli.dist.file=/tmp/signserver-clientcli.zip
 
-
-# Theme to use for the admin web
-# Default: "default"
-#web.theme=custom
-
 # -------------- Status And Health Check Configuration -------------------------
 #
 # Parameters configuring how health check and status should be

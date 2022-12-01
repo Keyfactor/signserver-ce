@@ -14,7 +14,6 @@ package org.signserver.admin.web;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
@@ -23,6 +22,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
+import org.signserver.web.common.ThemeHelper;
 
 /**
  * Managed beam providing static information to the templates.
@@ -64,8 +64,12 @@ public class AdminWebBean {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION);
     }
 
+    public String getEdition() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION);
+    }
+
     public String getCopyright() {
-        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2022 PrimeKey Solutions AB" : "Copyright © 2006–2022 Keyfactor";
+        return "Copyright © 2006–2022 Keyfactor";
     }
 
     public String getCurrentTime() {
@@ -77,12 +81,7 @@ public class AdminWebBean {
     }
 
     public String getTheme() {
-        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
-    }
-
-    public boolean isDefaultThemeEnabled() {
-        final String enabled = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
-        return enabled.equalsIgnoreCase("default");
+        return ThemeHelper.getInstance().getTheme();
     }
 
     /**

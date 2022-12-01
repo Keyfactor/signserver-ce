@@ -20,6 +20,8 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
+import org.signserver.web.common.ThemeHelper;
+
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.inject.Named;
@@ -178,15 +180,19 @@ public class PublicWebBean {
     }
 
     public String getCopyright() {
-        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2022 PrimeKey Solutions AB" : "Copyright © 2006–2022 Keyfactor";
+        return "Copyright © 2006–2022 Keyfactor";
     }
 
     public String getNode() {
         return CesecoreConfiguration.getNodeIdentifier();
     }
 
+    public String getEdition() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION);
+    }
+
     public String getTheme() {
-        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+        return ThemeHelper.getInstance().getTheme();
     }
 
     public String getProductName() {
@@ -197,11 +203,6 @@ public class PublicWebBean {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)
                 + " "
                 + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
-    }
-
-    public boolean isDefaultThemeEnabled() {
-        final String enabled = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
-        return enabled.equalsIgnoreCase("default");
     }
 
 }

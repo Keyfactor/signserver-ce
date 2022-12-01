@@ -41,11 +41,11 @@
 .SS_infoItem {
     display: flex;
     flex-wrap: nowrap;
-    font-family: "ProximaNova", "Roboto", sans-serif;
+    font-family: "Roboto", sans-serif;
     font-size: 0.75rem;
     line-height: 1rem;
     font-weight: 400; /** Regular **/
-    color: black;
+    color: white;
 }
 
 .SS_infoItem > label {
@@ -68,13 +68,13 @@
     align-items: center;
     justify-content: space-between;
     /*border-radius: 0.25rem;*/ /* Creates rounded edges on the header which makes the white background color show in the edges */
-    background-color: white;
+    background-color: #1E589F;
     padding-left: 1rem;
     padding-right: 1rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
   }
-  
+
 @media (min-width: 768px) {
 .kfds-header-container {
     min-height: 6rem;
@@ -127,7 +127,7 @@
 .kfds-header-product {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    font-family: "ProximaNova", "Roboto", sans-serif;
+    font-family: "Roboto", sans-serif;
     color: black;
 }
 
@@ -203,7 +203,7 @@
 
 #top-menu {
     margin-left: 0px;
-    background-color: #53983C;
+    background-color: #F0F1F6;
     padding: 0px;
     border-radius: 3px;
 }
@@ -232,15 +232,16 @@
 }
 
 #top-menu li a:hover {
-    background-color: black;
+    background-color: rgba(0, 12, 114, 0.15);
 }
 
 li a.active {
-    background-image: url(../images/selected-menu.png.xhtml?ln=default);
+    background-image: url(../images/selected-menu.png.xhtml?ln=community);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 10px;
     color: red;
+    background-color: rgba(0, 12, 114, 0.15);
 }
 
 
@@ -249,7 +250,7 @@ li a.active {
     /*width: 12em;*/
     
     margin-left: 0px;
-    background-color: gray;
+    background-color: #008D7D;
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 3px;
@@ -305,20 +306,26 @@ input[type="file"]:hover {
 }
 
 .buttonNeutral {
-    background-color: lightgray;
-    border: none;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 4px;
+    border-color: #1E589F;
+
     color: black;
+    background-color: white;
+
     padding: 5px 10px;
+    margin: 2px;
+    display: inline-block;
+
     text-align: center;
     text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
+    text-transform: uppercase;
 
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
+
 .buttonNeutral:hover {
     background-color: black;
     color: white;
@@ -332,54 +339,71 @@ input[type="file"]:hover {
 }
 
 .buttonFeatured {
-    background-color: #1F589F;
-    border: none;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 4px;
+    border-color: #1E589F;
+
     color: white;
+    background-color: #1E589F;
+
     padding: 5px 10px;
+    margin: 2px;
+    display: inline-block;
+
     text-align: center;
     text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
+    text-transform: uppercase;
 
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
+
 .buttonFeatured:hover {
     background-color: black;
 }
 
 .buttonPositive {
-    background-color: #53983C;
-    border: none;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 4px;
+    border-color: #53983C;
+
     color: white;
+    background-color: #53983C;
+
     padding: 5px 10px;
+    margin: 2px;
+    display: inline-block;
+
     text-align: center;
     text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
+    text-transform: uppercase;
 
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
+
 .buttonPositive:hover {
     background-color: black;
 }
 
 .buttonNegative {
-    background-color: #E73D35;
-    border: none;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 4px;
+    border-color: #E73D35;
+
     color: white;
+    background-color: #E73D35;
+
     padding: 5px 10px;
+    margin: 2px;
+    display: inline-block;
+
     text-align: center;
     text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
+    text-transform: uppercase;
 
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
@@ -451,14 +475,16 @@ input[type="file"]:hover {
 }
 
 #top a:link, #top a:visited {
-  color: white;
-  font-weight : bold;
-  text-decoration: none;
+    color: #1E589F;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-transform: capitalize;
+    font-weight: 400;
 }
 
 #top a:link:hover, #top a:visited:hover  {
   /*color: black;*/
-  font-weight : bold;
+  /*font-weight : bold;*/
   /*text-decoration : underline;*/
 }
 

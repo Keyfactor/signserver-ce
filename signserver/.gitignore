@@ -3,8 +3,8 @@
 *.class
 
 # Skip copied web themes
-modules/SignServer-Admin-web/src/main/webapp/resources/keyfactor
-modules/SignServer-war/src/main/webapp/resources/keyfactor
+modules/SignServer-Admin-web/src/main/webapp/resources/enterprise
+modules/SignServer-war/src/main/webapp/resources/enterprise
 
 # Log file
 *.log

@@ -2179,7 +2179,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         PDFSigner instance = new PDFSigner() {
 
             @Override
-            protected TSAClient getTimeStampClient(String url, String username, String password, ASN1ObjectIdentifier digestAlgo) {
+            protected TSAClient getTimeStampClient(String url, String username, String password, ASN1ObjectIdentifier digestAlgo, String digestAlgoName) {
                 return tsc;
             }
 

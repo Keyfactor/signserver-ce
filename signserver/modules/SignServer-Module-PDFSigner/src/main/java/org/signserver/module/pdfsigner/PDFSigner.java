@@ -913,7 +913,7 @@ public class PDFSigner extends BaseSigner {
 
                 if (tsaUrl != null) {
                     tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password(),
-                                             tsaDigestAlgo);
+                                             tsaDigestAlgo, tsaDigestAlgoName);
                 } else {
                     tsc = new InternalTSAClient(getProcessSession(context.getServices()),
                             WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password(),
@@ -1253,13 +1253,15 @@ public class PDFSigner extends BaseSigner {
 
     protected TSAClient getTimeStampClient(String url, String username,
                                              String password,
-                                             ASN1ObjectIdentifier digestAlgo) {
-        return new TSAClientBouncyCastle(url, username, password) {
+                                             ASN1ObjectIdentifier digestAlgo, String tsaDigestAlgoName) {
+        TSAClientBouncyCastle tsc = new TSAClientBouncyCastle(url, username, password) {
             @Override
             public MessageDigest getMessageDigest() throws GeneralSecurityException {
                 return MessageDigest.getInstance(digestAlgo.toString(), "BC");
             }
         };
+        tsc.setDigestName(tsaDigestAlgoName);
+        return tsc;
     }
 
     @Override

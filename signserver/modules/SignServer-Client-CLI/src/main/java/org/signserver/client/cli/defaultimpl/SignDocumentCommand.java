@@ -729,7 +729,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (rejectedFileType) {
             throw new CommandFailureException("Could not find file handler factory supporting file type: " + fileType);
         } else {
-            throw new CommandFailureException("Client-side hashing and contruction is not supported");
+            throw new CommandFailureException("Client-side hashing and construction is not supported");
         }
     }
 

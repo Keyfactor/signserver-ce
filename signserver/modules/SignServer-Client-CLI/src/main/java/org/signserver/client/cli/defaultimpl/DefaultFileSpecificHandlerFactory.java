@@ -31,7 +31,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final boolean clientSide, Map<String, String> extraOptions)
             throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile), inFile.length());
     }
@@ -43,7 +43,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final String workerName)
             throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile), inFile.length());
     }
@@ -58,7 +58,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final Map<String, String> metadata)
             throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile), inFile.length());
     }
@@ -70,7 +70,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final int workerId)
             throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile), inFile.length());
     }
@@ -85,7 +85,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final Map<String, String> metadata)
             throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile), inFile.length());
     }
@@ -93,7 +93,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     @Override
     public FileSpecificHandler createHandler(final byte[] inData, final File outFile, final boolean clientSide, Map<String, String> extraOptions) {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler(inData);
     }
@@ -105,7 +105,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final boolean clientSide, Map<String, String> extraOptions)
         throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler(inFile,
                                                inFile.length());
@@ -120,7 +120,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final String workerName)
         throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler(inFile,
                                                inFile.length());
@@ -138,7 +138,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final Map<String, String> metadata)
         throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile),
                                                inFile.length());
@@ -153,7 +153,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final int workerId)
         throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile),
                                                inFile.length());
@@ -171,7 +171,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final Map<String, String> metadata)
         throws IOException {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler((inFile),
                                                inFile.length());
@@ -183,7 +183,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final File outFile,
                                              final boolean clientSide, Map<String, String> extraOptions) {
         if (clientSide) {
-            throw new IllegalArgumentException("Client-side contruction is not supported");
+            throw new IllegalArgumentException("Client-side construction is not supported");
         }
         return new StraightFileSpecificHandler(inData);
     }

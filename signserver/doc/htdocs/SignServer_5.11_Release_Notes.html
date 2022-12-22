@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.0</p>
+                    <p>Version: 5.11.2</p>
                 </div>
             </header>
 
@@ -1706,6 +1706,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_5.11_Release_Notes.html">SignServer 5.11 Release Notes</a>
 
             </li>
@@ -1827,105 +1831,121 @@
                                         <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
                                                                                      <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
                                                             </ul>
-</div>            <h1 id="src-143750966"> <span>SignServer 5.11 Release Notes</span></h1>
+</div>            <h1 id="src-176291847"> <span>SignServer 5.11 Release Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The SignServer team is pleased to announce the release of SignServer 5.11. This release includes a new OS-independent TimeMonitor mechanism and Google Cloud KMS support among other features. Starting with this release, the P11NG crypto token is recommended for all use cases on all platforms. This release also upgrades Bouncy Castle to 1.72.    </p>
+    <p  ><span class="status grey subtle">DECEMBER 2022</span>    </p>
+    <p  >The SignServer team is pleased to announce the release of SignServer 5.11.1.     <span style="color: #000000;">
+(SignServer 5.11.0 was an internal release, not generally available for customers).    </span>
+    </p>
+    <p  >This release includes a new OS-independent TimeMonitor mechanism and Google Cloud KMS support among other features. Starting with this release, the P11NG crypto token is recommended for all use cases on all platforms. This release also upgrades Bouncy Castle to 1.72.    </p>
     <p  >    <span style="color: #000000;">
 Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a>, <a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance</a>, and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
     </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-Highlights">Highlights</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-Announcements">Announcements</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143750966_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMC1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">Change Log: Resolved Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-Highlights">Highlights</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-Announcements">Announcements</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-176291847_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMS1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">Change Log: Resolved Issues</a>    </p>
 </li></ul>    <p  >    </p>
-    <div class="section section-1" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-Highlights">
+    <div class="section section-1" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-Highlights">
         <h1 class="heading "><span>Highlights</span></h1>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-OSIndependentTimeMonitor">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-OSIndependentTimeMonitor">
         <h2 class="heading "><span>OS Independent TimeMonitor</span></h2>
     <p  >SignServer TimeMonitor is utilized in time-stamping use cases to monitor the difference between the local time and the time of an external NTP server to avoid issuing timestamps if the time difference exceeds a configured value. With SignServer 5.11, SNTP is by default supported natively, enabling using the SignServer TimeMonitor feature without the need for ntpdate and ntpq commands in the operating system. This new mode of operation for TimeMonitor also supports the use of multiple time servers for redundancy. For customers running SignServer on operating systems with the ntpdate and ntpq commands, it is still possible to configure SignServer to use these as per the legacy functionality. For more information, see <a   href="SignServer_TimeMonitor_Overview.html">SignServer TimeMonitor Overview</a>.    </p>
     </div>
-    <div class="section section-2" id="src-143750966_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMC1GdWxsLWZlYXR1cmVkUDExTkdhc3JlY29tbWVuZGVkUEtDUyMxMUNyeXB0b1Rva2VuZm9ybmV3ZGVwbG95bWVudHM">
+    <div class="section section-2" id="src-176291847_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMS1GdWxsLWZlYXR1cmVkUDExTkdhc3JlY29tbWVuZGVkUEtDUyMxMUNyeXB0b1Rva2VuZm9ybmV3ZGVwbG95bWVudHM">
         <h2 class="heading "><span>Full-featured P11NG as recommended PKCS#11 Crypto Token for new deployments</span></h2>
     <p  >As of SignServer 5.11, P11NG is the recommended crypto token for new deployments of all use cases on all deployment types. P11NG was first introduced in SignServer 4.3 as an alternative PKCS#11 crypto token for certain functionality not supported by the Java SunPKCS11 provider. The functionality supported by the P11NG provider has evolved over time and now includes key wrapping, EdDSA algorithm support, and various Cloud HSM options. For more information, see the documentation on how to <a   href="Migrate_from_SunPKCS11_to_P11NG.html">Migrate from SunPKCS11 to P11NG</a>.    </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-GoogleCloudKMSSupport">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-GoogleCloudKMSSupport">
         <h2 class="heading "><span>Google Cloud KMS Support</span></h2>
     <p  >SignServer 5.11 includes support for Google Cloud KMS as HSM, expanding the SignServer Cloud HSM support beyond the previously supported AWS and Azure Cloud HSM options. The support for Google Cloud KMS is based on the use of the P11NG PKCS#11 crypto token.    </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-Keyfactorbrandeduserinterface">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-Keyfactorbrandeduserinterface">
         <h2 class="heading "><span>Keyfactor branded user interface</span></h2>
     <p  >The Keyfactor branded web user interface is now available per default for all new deployments and all existing deployments upgraded to SignServer 5.11.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-Announcements">
+    <div class="section section-1" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-Announcements">
         <h1 class="heading "><span>Announcements</span></h1>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-DeprecationofoldWildFlyversions">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-DeprecationofoldWildFlyversions">
         <h2 class="heading "><span>Deprecation of old WildFly versions</span></h2>
     <p  >    <span style="color: #000000;">
 As of SignServer 5.11, the use of WildFly versions 9, 10, and 11 is deprecated.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143750966_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMC1EZXByZWNhdGlvbm9mU2lnblNlcnZlcldTL1ZhbGlkYXRpb25XUw">
+    <div class="section section-2" id="src-176291847_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMS1EZXByZWNhdGlvbm9mU2lnblNlcnZlcldTL1ZhbGlkYXRpb25XUw">
         <h2 class="heading "><span>Deprecation of SignServerWS/ValidationWS</span></h2>
     <p  >    <span style="color: #000000;">
 As of SignServer 5.11, the use of SignServerWS/ValidationWS is deprecated.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-DeprecationofXAdESSigner">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-DeprecationofXAdESSigner">
         <h2 class="heading "><span>Deprecation of XAdESSigner</span></h2>
     <p  >    <span style="color: #000000;">
 As of SignServer 5.11, the use of XAdESSigner is deprecated. Use of AdES Signer is recommended for XAdES signatures.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-DeprecationofOOXMLSigner">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-DeprecationofOOXMLSigner">
         <h2 class="heading "><span>Deprecation of OOXML Signer</span></h2>
     <p  >    <span style="color: #000000;">
 As of SignServer 5.11, the use of OOXML Signer is deprecated.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-DeprecationofODFSigner">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-DeprecationofODFSigner">
         <h2 class="heading "><span>Deprecation of ODF Signer</span></h2>
     <p  >    <span style="color: #000000;">
 As of SignServer 5.11, the use of ODF Signer is deprecated.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-DeprecationofCertificateValidationFramework">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-DeprecationofCertificateValidationFramework">
         <h2 class="heading "><span>Deprecation of Certificate Validation Framework</span></h2>
     <p  >    <span style="color: #000000;">
 As of SignServer 5.11, the use of Certificate Validation Framework is deprecated.<br/>    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-DeprecationofCryptoTokendefinitioninSigners">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-DeprecationofCryptoTokendefinitioninSigners">
         <h2 class="heading "><span>Deprecation of Crypto Token definition in Signers</span></h2>
     <p  >As of SignServer 5.11, the use of Crypto Token definitions in Signers is deprecated. Customers with legacy Signer configurations including Crypto Token definitions are advised to separate the Crypto Token configuration into a Crypto Token worker and update the Signer configurations with a reference to the Crypto Token worker.    </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-UpgradeInformation">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-UpgradeInformation">
         <h2 class="heading "><span>Upgrade Information</span></h2>
     <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
-    <p  >SignServer 5.11 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.11.0</a>,     <span style="color: #000000;">
-<a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance 2.3.0</a>,     </span>
+    <p  >SignServer 5.11 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.11</a>,     <span style="color: #000000;">
+<a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance 2.3</a>,     </span>
 and    <span style="color: #000000;">
- <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud 1.13.0</a>.    </span>
+ <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud 1.13</a>.    </span>
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-143750966_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMC1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">
+    <div class="section section-1" id="src-176291847_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExUmVsZWFzZU5vdGVzdjUuMTEuMS1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">
         <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
     <p  >    <span style="color: #000000;">
-For full details of fixed bugs and implemented features in SignServer 5..11, refer to our     </span>
-<a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.11.0.Final%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.    </p>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-IssuesResolvedin5.11">
+For full details of fixed bugs and implemented features in SignServer 5.11, refer to our     </span>
+<a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20in%20(5.11.1.Final%2C%205.11.0.Final)%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.    </p>
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-IssuesResolvedin5.11.1">
+        <h2 class="heading "><span>Issues Resolved in 5.11.1</span></h2>
+    <p  >Released December 2022    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    <p  >    </p>
+    </div>
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2533">DSS-2533</a> - Regression: TSA_URL is not working in PDFSigner    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2534">DSS-2534</a> - Regression: Error page about connecting using certificate displayed blank    </p>
+    <p  >    </p>
+    </div>
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-IssuesResolvedin5.11">
         <h2 class="heading "><span>Issues Resolved in 5.11</span></h2>
     <p  >    <span style="color: #000000;">
-Released December 2022    </span>
+Internal Release December 2022    </span>
     </p>
     <p  >    </p>
 <ul class="toc-indentation "></ul>    <p  >    </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-NewFeatures">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-NewFeatures">
         <h2 class="heading "><span>New Features</span></h2>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-825">DSS-825</a> - Implement internal SNTP client instead of executing the NTP commands in TimeMonitor    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1902">DSS-1902</a> - Support for building on Java 11    </p>
@@ -1937,7 +1957,7 @@ Released December 2022    </span>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2500">DSS-2500</a> - Add support for SHA384withECDSA and SHA512withECDSA in MRTDSODSigner    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2517">DSS-2517</a> - Rebranded SignServer CE UI theme    </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-Improvements">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-Improvements">
         <h2 class="heading "><span>Improvements</span></h2>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1942">DSS-1942</a> - Remove WildFly remoting output from when running AdminCLI    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2289">DSS-2289</a> - Include class name in error message for incorrect time source    </p>
@@ -1954,7 +1974,7 @@ Released December 2022    </span>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2516">DSS-2516</a> - Upgrade BC to 1.72    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2525">DSS-2525</a> - Upgrade dependencies    </p>
     </div>
-    <div class="section section-2" id="src-143750966_id-.SignServer5.11ReleaseNotesv5.11.0-BugFixes">
+    <div class="section section-2" id="src-176291847_id-.SignServer5.11ReleaseNotesv5.11.1-BugFixes.1">
         <h2 class="heading "><span>Bug Fixes</span></h2>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1681">DSS-1681</a> - Confusing error message with alias selector, noauth and key wrapping    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1811">DSS-1811</a> - SignClient can not be run from directory having a space character in its file name    </p>
@@ -1981,7 +2001,7 @@ Released December 2022    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_5.11.2_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1990,7 +2010,7 @@ Released December 2022    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Release Notes</span>
+            <span>SignServer 5.11.2 Release Notes</span>
         </a>
                 <a href="SignServer_5.10_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.0</p>
+                    <p>Version: 5.11.2</p>
                 </div>
             </header>
 
@@ -1706,6 +1706,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11_Release_Notes.html">SignServer 5.11 Release Notes</a>
 
             </li>
@@ -1828,7 +1832,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="Authorizers.html">Authorizers</a></li>
                                                             </ul>
-</div>            <h1 id="src-132448868"> <span>JWT Authorizer</span></h1>
+</div>            <h1 id="src-177963188"> <span>JWT Authorizer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1844,7 +1848,7 @@ The JWT Authorizer is used to authorize signature requests based on the provided
     <p  >    <span style="color: #000000;">
 AUTHTYPE=<strong class=" ">org.signserver.server.jwtauth.JwtAuthorizer</strong>    </span>
     </p>
-    <div class="section section-1" id="src-132448868_id-.JWTAuthorizerv5.8.0-Introduction">
+    <div class="section section-1" id="src-177963188_id-.JWTAuthorizerv5.11.2-Introduction">
         <h1 class="heading "><span>Introduction</span></h1>
     <p  >    <span style="color: #000000;">
 JSON Web Token (JWT) is an internet standard for JSON-based token authentication. JWTs allow you to digitally sign information (referred to as claims) with a signature and can be verified at a later time with the public key of the issuer. JWT claims are typically used to pass the identity of authenticated users between an     <span style="color: #0e101a;">
@@ -1853,7 +1857,7 @@ authorization server    </span>
 resource server    </span>
 . The JWT Authorizer allows having the authorization server separate from the SignServer application.    </span>
     </p>
-    <div class="section section-2" id="src-132448868_id-.JWTAuthorizerv5.8.0-UseCaseExample">
+    <div class="section section-2" id="src-177963188_id-.JWTAuthorizerv5.11.2-UseCaseExample">
         <h2 class="heading "><span>Use Case Example</span></h2>
     <p  >    <span style="color: #0e101a;">
 There are several authorization servers available and this implementation has been tested with     </span>
@@ -1890,7 +1894,7 @@ OpenID Connect    </span>
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-132448868_id-.JWTAuthorizerv5.8.0-Configuration">
+    <div class="section section-1" id="src-177963188_id-.JWTAuthorizerv5.11.2-Configuration">
         <h1 class="heading "><span>Configuration</span></h1>
     <p  >    <span style="color: #0e101a;">
 Several trusted authorization servers can be set up using indexed worker properties starting with an AUTHSERVER prefix.    </span>
@@ -1960,7 +1964,13 @@ It is also possible to configure a list of accepted audiences that are checked a
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 ACCEPTED_AUDIENCES=&lt;comma-separated list of audience names&gt;    </span>
     </p>
-</li></ul>    <div class="section section-2" id="src-132448868_id-.JWTAuthorizerv5.8.0-Examples">
+</li></ul>    <p  >    <span style="color: #000000;">
+There is an option to remove the obligation of typ=JWT being set in the header by setting OPTIONAL_TYPE. When OPTIONAL_TYPE is not set the default is false and then requires typ to be set and to be set to JWT. If OPTIONAL_TYPE is set to true the typ can be left out of the header but if it is set it has to be set to JWT.    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+OPTIONAL_TYPE=&lt;default:false&gt;    </span>
+    </p>
+</li></ul>    <div class="section section-2" id="src-177963188_id-.JWTAuthorizerv5.11.2-Examples">
         <h2 class="heading "><span>Examples</span></h2>
     <p  >The following displays an example JWT token:    </p>
     <div  class="confbox programlisting">
@@ -2012,7 +2022,7 @@ The following displays an example (using curl) that sends a request authenticati
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-132448868_id-.JWTAuthorizerv5.8.0-Logging">
+    <div class="section section-1" id="src-177963188_id-.JWTAuthorizerv5.11.2-Logging">
         <h1 class="heading "><span>Logging</span></h1>
     <p  >If the request is allowed, the provided subject claim <tt class=" ">(sub)</tt> is logged in the AUTHORIZED_USERNAME field.    </p>
     <p  ><br/>    </p>

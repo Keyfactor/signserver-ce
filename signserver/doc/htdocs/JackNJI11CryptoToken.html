@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.0</p>
+                    <p>Version: 5.11.2</p>
                 </div>
             </header>
 
@@ -1706,6 +1706,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11_Release_Notes.html">SignServer 5.11 Release Notes</a>
 
             </li>
@@ -1936,11 +1940,11 @@
 If true, when generating a key pair, creates a certificate object with a self-signed dummy certificate and defaults to not persist the public key object. The default value is &#39;true&#39; for historical reasons and is the same as when generating a key pair with for instance the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> (or any other Java application using the SunPKCS11 provider).    </span>
     </p>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property can be set either in the crypto worker, on the worker that is going to use the key, or both, which means that different options can be used for different workers. Setting this property in the crypto token makes it the default setting for all workers using that crypto token. If the worker also includes this property, the property value of the worker will override this setting.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-minus" src="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/forbidden.svg" alt="images/s/-2y7bau/8703/189cb2l/_/images/icons/emoticons/forbidden.svg"   />
+    <img  class="emoticon emoticon-minus" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/forbidden.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/forbidden.svg"   />
  Be cautious if you also set any of the ATTRIBUTE.PUBLIC.*.CKA_TOKEN property attributes since some combinations like GENERATE_CERTIFICATE_OBJECT=false and CKA_TOKEN=false may not be useful, and setting both properties to true might waste space in the HSM with an unnecessary object.    </span>
     </p>
     <p  >    <span style="color: #000000;">

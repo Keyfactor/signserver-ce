@@ -6,6 +6,7 @@
 webtest.appserver.domainname = localhost
 webtest.appserver.port = 8080
 webtest.appserver.secureport = 8443
+webtest.appserver.pubhttps = 8442
 
 # Configuration for running webtest against remote instance of SignServer
 # If webtest.remote.enabled is set to true the tests would know it runs against a remote instance and would therefore

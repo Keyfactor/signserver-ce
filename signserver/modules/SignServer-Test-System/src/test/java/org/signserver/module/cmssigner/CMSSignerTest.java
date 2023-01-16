@@ -15,14 +15,21 @@ package org.signserver.module.cmssigner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.security.KeyPair;
+import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformation;
@@ -31,8 +38,8 @@ import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -44,6 +51,9 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
+import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -68,7 +78,7 @@ public class CMSSignerTest  {
 
     private final WorkerSession workerSession;
     private final ProcessSessionRemote processSession;
-    private final ModulesTestCase mt = new ModulesTestCase();
+    private static final ModulesTestCase mt = new ModulesTestCase();
 
     public CMSSignerTest() {
         workerSession = mt.getWorkerSession();
@@ -76,13 +86,81 @@ public class CMSSignerTest  {
     }
 
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         SignServerUtil.installBCProvider();
+
+        final String signatureAlgorithm = "SHA256withRSA";
+
+        // Create CA
+        final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
+        final KeyPair caKeyPairEC = CryptoUtils.generateEcCurve("prime256v1");
+        final String caDN = "CN=Test CA";
+        long currentTime = System.currentTimeMillis();
+        final X509Certificate caCertificate
+                = new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                .setSelfSignKeyPair(caKeyPair)
+                .setNotBefore(new Date(currentTime - 120000))
+                .setSignatureAlgorithm(signatureAlgorithm)
+                .setIssuer(caDN)
+                .setSubject(caDN)
+                .build());
+
+        // Create signer key-pair (DSA) and issue certificate
+        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
+        final Certificate[] certChainDSA =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPair.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm(signatureAlgorithm)
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer DSA 2")
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+
+        // Create signer key-pair (ECDSA) and issue certificate
+        final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
+        final Certificate[] certChainECDSA =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPairEC.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairECDSA.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm("SHA256withECDSA")
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer ECDSA 3")
+                                .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairECDSA.getPublic())))
+                                .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+
+        KeyStore ks = KeyStore.getInstance("pkcs12");
+        char[] password = "foo123".toCharArray();
+
+        ks.load(null, password);
+        ks.setKeyEntry("mykeydsa", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
+        ks.setKeyEntry("mykeyec", signerKeyPairECDSA.getPrivate(),"foo123".toCharArray(), certChainECDSA);
+
+        // Store away the keystore.
+        try (FileOutputStream fos = new FileOutputStream("tmp/CMSSignerTest.p12")) {
+            ks.store(fos, password);
+        }
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() throws FileNotFoundException {
+        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
+        keystore.delete();
     }
 
     @Test
@@ -121,12 +199,12 @@ public class CMSSignerTest  {
     @Test
     public void test03BasicCMSSignSHA1withECDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
+        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
         mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
-            "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
+                "TestCMSSignerP12ECDSA", keystore, "foo123", "mykeyec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
 
         helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1", null, 1);
@@ -140,11 +218,11 @@ public class CMSSignerTest  {
     @Test
     public void test04BasicCMSSignSHA1withDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        mt.addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
+        mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerP12DSA", keystore, "foo123", "mykeydsa");
         workerSession.reloadConfiguration(WORKERID_DSA);
 
         helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3", null, 1);
@@ -158,11 +236,11 @@ public class CMSSignerTest  {
     @Test
     public void test08BasicCMSSignSHA256withDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        mt.addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
+        mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerP12DSA", keystore, "foo123", "mykeydsa");
         workerSession.reloadConfiguration(WORKERID_DSA);
 
         helperBasicCMSSign(WORKERID_DSA, "SHA256withDSA", "2.16.840.1.101.3.4.2.1", "2.16.840.1.101.3.4.3.2", null, 1);
@@ -176,12 +254,12 @@ public class CMSSignerTest  {
     @Test
     public void test09BasicCMSSignSHA256withECDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
+        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
         mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
-            "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
+                "TestCMSSignerP12ECDSA", keystore, "foo123", "mykeyec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
 
         helperBasicCMSSign(WORKERID_ECDSA, "SHA256withECDSA", "2.16.840.1.101.3.4.2.1", "1.2.840.10045.4.3.2", null, 1);
@@ -214,8 +292,8 @@ public class CMSSignerTest  {
     }
 
     private void helperBasicCMSSign(final int workerId, final String sigAlg, final String expectedDigAlgOID,
-            final String expectedEncAlgOID, final String includedCertificateLevelsProperty,
-            final int expectedIncludedCertificateLevels) throws Exception {
+                                    final String expectedEncAlgOID, final String includedCertificateLevelsProperty,
+                                    final int expectedIncludedCertificateLevels) throws Exception {
         final int reqid = 37;
 
         final String testDocument = "Something to sign...123";
@@ -248,9 +326,9 @@ public class CMSSignerTest  {
         assertSame("Request ID", reqid, res.getRequestID());
 
         try ( // Output for manual inspection
-                FileOutputStream fos = new FileOutputStream(
-                        new File(mt.getSignServerHome(),
-                                "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"))) {
+              FileOutputStream fos = new FileOutputStream(
+                      new File(mt.getSignServerHome(),
+                              "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"))) {
             fos.write(data);
         }
 
@@ -280,7 +358,7 @@ public class CMSSignerTest  {
         final SignerId sid = signer.getSID();
         final Selector certSelector =
                 new AttributeCertificateHolder(sid.getIssuer(),
-                                               sid.getSerialNumber());
+                        sid.getSerialNumber());
 
         Collection<? extends X509CertificateHolder> signerCerts = certStore.getMatches(certSelector);
         assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());

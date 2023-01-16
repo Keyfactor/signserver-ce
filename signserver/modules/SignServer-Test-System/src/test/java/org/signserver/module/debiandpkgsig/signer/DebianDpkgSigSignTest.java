@@ -18,13 +18,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyStore;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Date;
+import java.util.Locale;
+
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import org.apache.commons.io.FileUtils;
@@ -32,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
@@ -39,14 +48,22 @@ import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import static org.junit.Assert.assertTrue;
+
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.module.openpgp.signer.OpenPGPUtils;
 import org.signserver.openpgp.utils.ClearSignedFileProcessorUtils;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -66,7 +83,7 @@ public class DebianDpkgSigSignTest {
     private static final int WORKER_DEBIANDPKGSIGSIGNER = 40000;
     private static final int WORKER_OPENPGPPLAINSIGNER = 41000;
     
-    private final ModulesTestCase helper = new ModulesTestCase();
+    private static final ModulesTestCase helper = new ModulesTestCase();
     private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
     
     private static final String WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME = "org.signserver.module.debiandpkgsig.signer.DebianDpkgSigSigner";
@@ -76,14 +93,73 @@ public class DebianDpkgSigSignTest {
     private static final String ECDSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
     private static final String DSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.DSA);
     
-    private static final String MYKEY_KEYID = "1FBDD942533B1793";
-    private static final String MYKEY_KEY_FINGERPRINT = "1398A0B6CA0807EEB39CC2A11FBDD942533B1793";
+    private static String MYKEY_KEYID;
+    private static String MYKEY_KEY_FINGERPRINT;
     private static final String TS40003_KEYID = "019B2B04267FE968";
     private static final String TS40003_KEY_FINGERPRINT = "5D165C36B0B019BBF2D40E44019B2B04267FE968";
     private static final String SIGNER00002_KEYID = "E3091F74636A925E";
     private static final String SIGNER00002_KEY_FINGERPRINT = "4C1EAD9A968EC39AB9A2F7F5E3091F74636A925E";
     private static final String SIGNER00001_KEYID = "4B821662F54A5923";    
     private static final String SIGNER00001_KEY_FINGERPRINT = "23C0B776EEE6A30D6530ACD44B821662F54A5923";
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        SignServerUtil.installBCProvider();
+
+        final String signatureAlgorithm = "SHA256withRSA";
+
+        // Create CA
+        final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
+        final String caDN = "CN=Test CA";
+        long currentTime = System.currentTimeMillis();
+        final X509Certificate caCertificate
+                = new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                .setSelfSignKeyPair(caKeyPair)
+                .setNotBefore(new Date(currentTime - 120000))
+                .setSignatureAlgorithm(signatureAlgorithm)
+                .setIssuer(caDN)
+                .setSubject(caDN)
+                .build());
+
+        // Create signer key-pair (DSA) and issue certificate
+        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
+        final Certificate[] certChainDSA =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPair.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm(signatureAlgorithm)
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer DSA 2")
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+
+        final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
+        PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm((X509Certificate) certChainDSA[0]), certChainDSA[0].getPublicKey(), ((X509Certificate) certChainDSA[0]).getNotBefore());
+        MYKEY_KEYID = Long.toHexString(pgpPublicKey.getKeyID());
+        MYKEY_KEY_FINGERPRINT = Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH);
+
+        KeyStore ks = KeyStore.getInstance("pkcs12");
+        char[] password = "foo123".toCharArray();
+        ks.load(null, password);
+        ks.setKeyEntry("mykeyDSA", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
+
+        // Store away the keystore.
+        try (FileOutputStream fos = new FileOutputStream("tmp/DebianDpkgSigSignTest.p12")) {
+            ks.store(fos, password);
+        }
+    }
+
+    @AfterClass
+    public static void tearDown() throws FileNotFoundException {
+        final File keystore = new File(helper.getSignServerHome(), "tmp/DebianDpkgSigSignTest.p12");
+        keystore.delete();
+    }
 
     @Test
     public void testSigning_RSA_SHA256_ServerSide() throws Exception {
@@ -326,10 +402,10 @@ public class DebianDpkgSigSignTest {
                     break;
                 }
                 case "dsa1024": {
-                    final File keystore = new File(helper.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+                    final File keystore = new File(helper.getSignServerHome(), "tmp/DebianDpkgSigSignTest.p12");
                     helper.getWorkerSession().setWorkerProperty(workerId, PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
                     helper.getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystore.getAbsolutePath());
-                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykey");
+                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykeydsa");
                     keyId = MYKEY_KEYID;
                     keyFingerPrint = MYKEY_KEY_FINGERPRINT;
                     break;

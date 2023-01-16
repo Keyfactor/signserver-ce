@@ -13,15 +13,29 @@
 package org.signserver.module.openpgp.signer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,8 +44,12 @@ import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PropertiesConstants;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertBuilderException;
+import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ComplianceTestUtils;
 import org.signserver.testutils.ModulesTestCase;
@@ -53,7 +71,7 @@ public class OpenPGPSignerGpgComplianceTest {
     private static final Logger LOG = Logger.getLogger(OpenPGPSignerGpgComplianceTest.class);
     private static final String GPG_ENABLED = "test.gpg.enabled";
 
-    private final ModulesTestCase helper = new ModulesTestCase();
+    private static final ModulesTestCase helper = new ModulesTestCase();
     private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
     private static final CLITestHelper AdminCLI = new CLITestHelper(AdminCLI.class);
     
@@ -66,7 +84,7 @@ public class OpenPGPSignerGpgComplianceTest {
     private static boolean ecdsaSupported;
 
     @BeforeClass
-    public static void setUpClass() throws IOException {
+    public static void setUpClass() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, CertBuilderException, CertificateException, KeyStoreException {
         enabled = Boolean.valueOf(new ModulesTestCase().getConfig().getProperty(GPG_ENABLED));
         if (enabled) {
             final ComplianceTestUtils.ProcResult res =
@@ -75,11 +93,61 @@ public class OpenPGPSignerGpgComplianceTest {
             LOG.info("GPG version output: " + output);
             ecdsaSupported = output.contains("ECDSA");
         }
+        
+        SignServerUtil.installBCProvider();
+        final String signatureAlgorithm = "SHA256withRSA";
+
+        // Create CA
+        final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
+        final String caDN = "CN=Test CA";
+        long currentTime = System.currentTimeMillis();
+        final X509Certificate caCertificate
+                = new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                .setSelfSignKeyPair(caKeyPair)
+                .setNotBefore(new Date(currentTime - 120000))
+                .setSignatureAlgorithm(signatureAlgorithm)
+                .setIssuer(caDN)
+                .setSubject(caDN)
+                .build());
+
+        // Create signer key-pair (DSA) and issue certificate
+        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
+        final Certificate[] certChainDSA =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPair.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm(signatureAlgorithm)
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer DSA 2")
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+
+        char[] password = "foo123".toCharArray();
+        KeyStore ks = KeyStore.getInstance("pkcs12");
+        ks.load(null, password);
+        ks.setKeyEntry("mykeyDSA", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
+
+        // Store away the keystore.
+        try (FileOutputStream fos = new FileOutputStream("tmp/OpenPGPSignerGpgComplianceTest.p12")) {
+            ks.store(fos, password);
+        }
     }
     
     @Before
     public void setUpTest() {
         Assume.assumeTrue("GPG enabled", enabled);
+    }
+
+    @AfterClass
+    public static void tearDown() throws FileNotFoundException {
+        final File keystore = new File(helper.getSignServerHome(), "tmp/OpenPGPSignerGpgComplianceTest.p12");
+        keystore.delete();
     }
 
     /**
@@ -418,10 +486,10 @@ public class OpenPGPSignerGpgComplianceTest {
                     break;
                 }
                 case "dsa1024": {
-                    final File keystore = new File(helper.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+                    final File keystore = new File(helper.getSignServerHome(), "tmp/OpenPGPSignerGpgComplianceTest.p12");
                     helper.getWorkerSession().setWorkerProperty(workerId, PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
                     helper.getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystore.getAbsolutePath());
-                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykey");                    
+                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykeydsa");
                     break;
                 }
                 case "dsa2048": {

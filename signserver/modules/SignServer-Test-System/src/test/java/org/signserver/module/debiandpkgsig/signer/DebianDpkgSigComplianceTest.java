@@ -362,6 +362,7 @@ public class DebianDpkgSigComplianceTest {
                 case "dsa1024": {
                     final File keystore = new File(helper.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
                     helper.getWorkerSession().setWorkerProperty(workerId, PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
+                    helper.getWorkerSession().setWorkerProperty(workerId, "CHECKCERTVALIDITY", "false");
                     helper.getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystore.getAbsolutePath());
                     helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykey");
                     keyId = MYKEY_KEYID;

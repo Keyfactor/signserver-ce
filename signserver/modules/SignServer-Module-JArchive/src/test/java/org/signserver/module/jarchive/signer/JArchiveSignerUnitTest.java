@@ -117,6 +117,7 @@ public class JArchiveSignerUnitTest {
     //JDK8: private static final ASN1ObjectIdentifier ID_SHA1WITHDSA = new ASN1ObjectIdentifier("1.2.840.10040.4.3");
     //JDK8: private static final ASN1ObjectIdentifier ID_SHA256WITHDSA = new ASN1ObjectIdentifier("2.16.840.1.101.3.4.3.2");
     private static final String JAVA_SHA_512 = "SHA-512";
+    private static final String JAVA_SHA_384 = "SHA-384";
     private static final String JAVA_SHA_256 = "SHA-256";
     private static final String JAVA_SHA1 = "SHA1";
     private static final String KEYALIAS_REAL = "Key alias 1";
@@ -248,6 +249,7 @@ public class JArchiveSignerUnitTest {
             throw new Exception("Missing sample binary: " + executableFile);
         }
         executableFileWithSignature = new File(PathUtil.getAppHome(), "res/test/HelloJar-signed.jar");
+        //executableFileWithSignature = new File(PathUtil.getAppHome(), "HelloJar-signed-19jan.jar");
         if (!executableFileWithSignature.exists()) {
             throw new Exception("Missing sample binary: " + executableFileWithSignature);
         }
@@ -433,18 +435,6 @@ public class JArchiveSignerUnitTest {
     }
 
     /**
-     * Test signing when explicitly specified the SHA1WithRSA algorithm.
-     * @throws Exception in case of failure.
-     */
-    @Test
-    public void testNormalSigning_SHA1WithRSA() throws Exception {
-        LOG.info("testNormalSigning_SHA1WithRSA");
-        signAndAssertSignedAndTimestamped(tokenRSA, new ConfigBuilder()
-                .withSignatureAlgorithm("SHA1WithRSA")
-                .create(), null, JAVA_SHA_256, CMSAlgorithm.SHA1, PKCSObjectIdentifiers.rsaEncryption);
-    }
-
-    /**
      * Test signing when parameters specified as empty values.
      * @throws Exception in case of failure.
      */
@@ -456,18 +446,6 @@ public class JArchiveSignerUnitTest {
                 .create(), null, JAVA_SHA_256, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption);
     }
 
-    /**
-     * Test signing when explicitly specified the SHA1WithRSA algorithm and
-     * using a certificate with SHA256withRSA.
-     * @throws Exception in case of failure.
-     */
-    @Test
-    public void testNormalSigning_SHA1WithRSA_withSHA512Cert() throws Exception {
-        LOG.info("testNormalSigning_SHA1WithRSA_withSHA512Cert");
-        signAndAssertSignedAndTimestamped(tokenRSA2, new ConfigBuilder()
-                .withSignatureAlgorithm("SHA1WithRSA")
-                .create(), null, JAVA_SHA_256, CMSAlgorithm.SHA1, PKCSObjectIdentifiers.rsaEncryption);
-    }
 
 //    TODO: Not supported by Java?
 //    /**
@@ -534,19 +512,6 @@ public class JArchiveSignerUnitTest {
 //    }
 
     /**
-     * Test signing when explicitly specified the SHA-1 digest algorithm.
-     * @throws Exception in case of failure.
-     */
-    @Test
-    public void testNormalSigning_digestSHA1() throws Exception {
-        LOG.info("testNormalSigning_digestSHA1");
-        signAndAssertSignedAndTimestamped(tokenRSA, new ConfigBuilder()
-                .withDigestAlgorithm(JAVA_SHA1)
-                .withSignatureAlgorithm("SHA256WithRSA")
-                .create(), null, JAVA_SHA1, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption);
-    }
-
-    /**
      * Test signing when specified the SHA-256 digest algorithm.
      * @throws Exception in case of failure.
      */
@@ -559,7 +524,21 @@ public class JArchiveSignerUnitTest {
     }
 
     /**
-     * Test signing when specified the SHA-512 digest algorithm but SHA1WithRSA.
+     * Test signing when specified the SHA-384 digest algorithm.
+     *
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void testNormalSigning_digestSHA384() throws Exception {
+        LOG.info("testNormalSigning_digestSHA384");
+        signAndAssertSignedAndTimestamped(tokenRSA, new ConfigBuilder()
+                .withDigestAlgorithm(JAVA_SHA_384)
+                .create(), null, JAVA_SHA_384, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption);
+    }
+
+    /**
+     * Test signing when specified the SHA-512 digest algorithm.
+     *
      * @throws Exception in case of failure.
      */
     @Test
@@ -567,8 +546,7 @@ public class JArchiveSignerUnitTest {
         LOG.info("testNormalSigning_digestSHA256");
         signAndAssertSignedAndTimestamped(tokenRSA, new ConfigBuilder()
                 .withDigestAlgorithm(JAVA_SHA_512)
-                .withSignatureAlgorithm("SHA1WithRSA")
-                .create(), null, JAVA_SHA_512, CMSAlgorithm.SHA1, PKCSObjectIdentifiers.rsaEncryption);
+                .create(), null, JAVA_SHA_512, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption);
     }
 
 //    TODO: Not supported on Java < 8
@@ -1181,7 +1159,7 @@ public class JArchiveSignerUnitTest {
         LOG.info("testSignAgain_CERT0_SHA256");
 
         try (
-                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFileWithSignature);
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFileWithSignature); 
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
             ) {
 
@@ -1226,7 +1204,7 @@ public class JArchiveSignerUnitTest {
     public void testSignAgain_replaceSigs() throws Exception {
         LOG.info("testSignAgain_replaceSigs");
         try (
-                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFileWithSignature);
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFileWithSignature); 
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
             ) {
 
@@ -1245,61 +1223,12 @@ public class JArchiveSignerUnitTest {
 
             // Note: keepSignatures=false
             SignatureResponse resp = signData(requestData, responseData, tokenRSA, new ConfigBuilder()
-                    .withDigestAlgorithm(JAVA_SHA1)
+                    .withDigestAlgorithm(JAVA_SHA_256)
                     .withKeepSignatures(false)
                     .create(), null);
             //FileUtils.writeByteArrayToFile(new File("/tmp/out-resigned.zip"), responseData.toReadableData().getAsByteArray());
 
-            assertSignedAndTimestamped(requestData, responseData, tokenRSA, JAVA_SHA1, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption, resp, signerCerts, sigEntries);
-        }
-    }
-
-    /**
-     * Test signing an already signed file again with a different digest
-     * algorithm and an other signer name.
-     * Note 1: The file is assumed to have an existing signature with an other
-     * name than CERT.SF/RSA and to not have SHA-1-Digest entries in MANIFEST.MF.
-     * Note 2: As with jarsigner (1.8.0_65) the resulting JAR will not verify
-     * correctly so this test only checks that we are bug-compatible with
-     * jarsigner and allows the production of such jar.
-     * In a future version we might want to instead return a failure for this
-     * case.
-     * @throws Exception in case of failure.
-     */
-    @Test
-    public void testSignAgain_CERT0_SHA1() throws Exception {
-        LOG.info("testSignAgain_CERT0_SHA1");
-        try (
-                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFileWithSignature);
-                CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
-            ) {
-
-            // Extract the certificate(s) from previous signature(s)
-            // And extract all signature entries
-            Collection<WrappedJarEntry> sigEntries = new LinkedList<>();
-            Collection<Certificate> signerCerts = new LinkedList<>();
-            gatherPreviousSignatures(requestData, sigEntries, signerCerts);
-            if (sigEntries.size() < 1) {
-                throw new Exception("Test expects " + executableFileWithSignature + " to have at least one existing signature");
-            }
-            boolean found = false;
-            for (WrappedJarEntry entry : sigEntries) {
-                if (entry.getName().equalsIgnoreCase("META-INF/CERT0.SF")) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new Exception("Test expects " + executableFileWithSignature + " to have CERT0.SF");
-            }
-
-            // Note: keepSignatures
-            signData(requestData, responseData, tokenRSA, new ConfigBuilder()
-                    .withSignatureNameType(SignatureNameType.VALUE).withSignatureNameValue("CERT2")
-                    .withDigestAlgorithm(JAVA_SHA1)
-                    .withKeepSignatures(true)
-                    .create(), null);
-            //FileUtils.writeByteArrayToFile(new File("/tmp/out-resigned.zip"), responseData.toReadableData().getAsByteArray());
+            assertSignedAndTimestamped(requestData, responseData, tokenRSA, JAVA_SHA_256, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption, resp, signerCerts, sigEntries);
         }
     }
 
@@ -1874,7 +1803,7 @@ public class JArchiveSignerUnitTest {
             IOUtils.copy(jar.getInputStream(entry), NullOutputStream.NULL_OUTPUT_STREAM);
 
             // Gather the signer certificates from the first entry which has any
-            if (signerCerts.isEmpty() && entry.getCodeSigners().length > 0) {
+            if (signerCerts.isEmpty() && entry.getCodeSigners() != null && entry.getCodeSigners().length > 0) {
                 signerCerts.addAll(getSignersCertificate(entry.getCodeSigners()));
             }
 

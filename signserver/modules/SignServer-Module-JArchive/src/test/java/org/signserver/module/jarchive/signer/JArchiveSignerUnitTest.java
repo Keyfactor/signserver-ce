@@ -249,7 +249,6 @@ public class JArchiveSignerUnitTest {
             throw new Exception("Missing sample binary: " + executableFile);
         }
         executableFileWithSignature = new File(PathUtil.getAppHome(), "res/test/HelloJar-signed.jar");
-        //executableFileWithSignature = new File(PathUtil.getAppHome(), "HelloJar-signed-19jan.jar");
         if (!executableFileWithSignature.exists()) {
             throw new Exception("Missing sample binary: " + executableFileWithSignature);
         }

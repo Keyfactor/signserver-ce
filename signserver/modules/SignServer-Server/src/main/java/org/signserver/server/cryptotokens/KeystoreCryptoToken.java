@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.io.*;
@@ -146,6 +148,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 activate(keystorepassword, services);
             } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException ex) {
                 LOG.error("Auto activation failed: " + ex.getLocalizedMessage());
+            }
+        }
+
+        if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
+            Security.removeProvider("BCPQC");
+            if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
+                LOG.error("Cannot even install BCPQCprovider again!");
             }
         }
     }
@@ -300,8 +309,12 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         return true;
     }
 
-    private String getProvider(int providerUsage) {
-        return "BC";
+    private String getProvider(String keyAlgorithm) {
+        if ("Dilithium".equalsIgnoreCase(keyAlgorithm)) {
+            return "BCPQC";
+        } else {
+            return "BC";
+        }
     }
 
     private KeyEntry getKeyEntry(final Object purposeOrAlias, IServices services) throws CryptoTokenOfflineException {
@@ -353,8 +366,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             final KeyStore keystore = getKeyStore();
-                        
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
+
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, getProvider(keyAlgorithm));
 
             String sigAlgName = null;
 
@@ -362,6 +375,36 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
             } else if ("SPHINCS+".equalsIgnoreCase(keyAlgorithm)) {
                 sigAlgName = "SPHINCS+";
+            } else if ("DILITHIUM".equalsIgnoreCase(keyAlgorithm)) {
+                AlgorithmParameterSpec algorithmParameterSpec;
+                switch (keySpec.toUpperCase()) {
+                    case "DILITHIUM2":
+                        algorithmParameterSpec = DilithiumParameterSpec.dilithium2;
+                        sigAlgName = "DILITHIUM2";
+                        break;
+                    case "DILITHIUM5":
+                        algorithmParameterSpec = DilithiumParameterSpec.dilithium5;
+                        sigAlgName = "DILITHIUM5";
+                        break;
+                    case "DILITHIUM2_AES":
+                        algorithmParameterSpec = DilithiumParameterSpec.dilithium2_aes;
+                        sigAlgName = "dilithium2-aes";
+                        break;
+                    case "DILITHIUM3_AES":
+                        algorithmParameterSpec = DilithiumParameterSpec.dilithium3_aes;
+                        sigAlgName = "dilithium3-aes";
+                        break;
+                    case "DILITHIUM5_AES":
+                        algorithmParameterSpec = DilithiumParameterSpec.dilithium5_aes;
+                        sigAlgName = "dilithium5-aes";
+                        break;
+                    default:
+                        algorithmParameterSpec = DilithiumParameterSpec.dilithium3;
+                        sigAlgName = "DILITHIUM3";
+                        break;
+                }
+                    kpg.initialize(algorithmParameterSpec, new SecureRandom());
+
                 // For now we just use the defaults, later we should use SPHINCSPlusParameterSpec
             } else {
                 if ("RSA".equals(keyAlgorithm) && keySpec.contains("exp")) {
@@ -380,14 +423,18 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             LOG.debug("generating...");
             final KeyPair keyPair = kpg.generateKeyPair();
             Certificate[] chain = new Certificate[1];
-            chain[0] = CryptoTokenHelper.createDummyCertificate(alias, sigAlgName, keyPair, getProvider(PROVIDERUSAGE_SIGN));
+            chain[0] = CryptoTokenHelper.createDummyCertificate(alias, sigAlgName, keyPair, getProvider(keyAlgorithm));
             LOG.debug("Creating certificate with entry "+alias+'.');
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authenticationCode, chain);
-            
+
             // TODO: Future optimization: we don't need to regenerate if we create it right from the beginning a few lines up!
             if (params != null) {
-                CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, keystore.getProvider().getName());
+                if ("Dilithium".equalsIgnoreCase(keyAlgorithm)) {
+                    CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BCPQC");
+                } else {
+                    CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, keystore.getProvider().getName());
+                }
             }
             
             final OutputStream os;
@@ -599,7 +646,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             LOG.debug("Alias: " + keyAlias);
         }
         try {
-            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias, services), getProvider(ICryptoTokenV4.PROVIDERUSAGE_SIGN), getPublicKey(keyAlias, services), explicitEccParameters);
+            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias, services), getProvider(getPrivateKey(keyAlias, services).getAlgorithm()), getPublicKey(keyAlias, services), explicitEccParameters);
         } catch (IllegalArgumentException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.error("Certificate request error", ex);
@@ -676,10 +723,16 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             IllegalRequestException {
         final boolean includeDummyCertificate = params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE);
         final KeyEntry entry = getKeyEntry(alias, context.getServices());
-        if ((entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) && !includeDummyCertificate) {
-            return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain().get(0).getPublicKey());
+        final Provider provider;
+        if (entry != null && entry.getPrivateKey().getAlgorithm().toUpperCase().contains("DILITHIUM")) {
+            provider = new BouncyCastlePQCProvider();
         } else {
-            return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());
+            provider = ks.getProvider();
+        }
+        if ((entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) && !includeDummyCertificate) {
+            return new DefaultCryptoInstance(alias, context, provider, entry.getPrivateKey(), entry.getCertificateChain().get(0).getPublicKey());
+        } else {
+            return new DefaultCryptoInstance(alias, context, provider, entry.getPrivateKey(), entry.getCertificateChain());
         }
     }
 

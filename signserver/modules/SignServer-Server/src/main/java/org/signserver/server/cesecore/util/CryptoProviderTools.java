@@ -26,6 +26,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jcajce.provider.config.ConfigurableProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.config.CesecoreConfiguration;
 import org.ejbca.cvc.CVCProvider;
@@ -109,7 +110,16 @@ public final class CryptoProviderTools {
         } else {
             installImplicitlyCA = true;
         }
-        
+
+        // Install the post quantum provider
+        if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
+            if (CesecoreConfiguration.isDevelopmentProviderInstallation()) {
+                removeBCProvider();
+                if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
+                    log.error("Cannot even install BC PQC provider again!");
+                }
+            }
+        }
     	// Also install the CVC provider
     	try {
         	Security.addProvider(new CVCProvider());    		

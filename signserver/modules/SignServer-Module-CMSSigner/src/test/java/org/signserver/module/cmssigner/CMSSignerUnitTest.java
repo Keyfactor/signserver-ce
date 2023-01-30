@@ -33,6 +33,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -43,6 +44,7 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.AlgorithmNameFinder;
 import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Hex;
 import static org.junit.Assert.*;
@@ -80,10 +82,15 @@ public class CMSSignerUnitTest {
 
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenPQ;
+    private static MockedCryptoToken tokenPQCDilithium2;
+    private static MockedCryptoToken tokenPQCDilithium3;
+    private static MockedCryptoToken tokenPQCDilithium5;
+
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastlePQCProvider());
         {
             final KeyPair signerKeyPair;
             final String signatureAlgorithm;
@@ -108,6 +115,39 @@ public class CMSSignerUnitTest {
                         .build())};
         final Certificate signerCertificate = certChain[0];
         tokenPQ = new MockedCryptoToken(signerKeyPair2.getPrivate(), signerKeyPair2.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+
+        final KeyPair signerKeyPairDilithium2 = CryptoUtils.generateDilithium2();
+        final String signatureAlgorithmDilithium2 = "DILITHIUM";
+        final Certificate[] certChainDilithium2 =
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPairDilithium2).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithmDilithium2)
+                        .build())};
+        final Certificate signerCertificateDilithium2 = certChainDilithium2[0];
+        tokenPQCDilithium2 = new MockedCryptoToken(signerKeyPairDilithium2.getPrivate(), signerKeyPairDilithium2.getPublic(), signerCertificateDilithium2, Arrays.asList(certChainDilithium2), "BCPQC");
+
+        final KeyPair signerKeyPairDilithium3 = CryptoUtils.generateDilithium3();
+        final String signatureAlgorithmDilithium3 = "DILITHIUM";
+        final Certificate[] certChainDilithium3 =
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPairDilithium3).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithmDilithium3)
+                        .build())};
+        final Certificate signerCertificateDilithium3 = certChainDilithium3[0];
+        tokenPQCDilithium3 = new MockedCryptoToken(signerKeyPairDilithium3.getPrivate(), signerKeyPairDilithium3.getPublic(), signerCertificateDilithium3, Arrays.asList(certChainDilithium3), "BCPQC");
+
+        final KeyPair signerKeyPairDilithium5 = CryptoUtils.generateDilithium5();
+        final String signatureAlgorithmDilithium5 = "DILITHIUM";
+        final Certificate[] certChainDilithium5 =
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPairDilithium5).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithmDilithium5)
+                        .build())};
+        final Certificate signerCertificateDilithium5 = certChainDilithium5[0];
+        tokenPQCDilithium5 = new MockedCryptoToken(signerKeyPairDilithium5.getPrivate(), signerKeyPairDilithium5.getPublic(), signerCertificateDilithium5, Arrays.asList(certChainDilithium5), "BCPQC");
     }
 
     /**
@@ -388,7 +428,7 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         LogMap logMap = LogMap.getInstance(requestContext);
         assertNull("no request digest", logMap.get("REQUEST_DIGEST_ALGORITHM"));
         assertNull("no response digest", logMap.get("RESPONSE_DIGEST_ALGORITHM"));
@@ -409,7 +449,7 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         assertRequestDigestMatches(data, "SHA256", requestContext);
     }
     
@@ -430,7 +470,7 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         assertRequestDigestMatches(data, "SHA512", requestContext);
     }
     
@@ -449,7 +489,7 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         assertResponseDigestMatches(response.getProcessedData(), "SHA256", requestContext);
     }
 
@@ -470,7 +510,7 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         assertResponseDigestMatches(response.getProcessedData(), "SHA512", requestContext);
     }
 
@@ -530,7 +570,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -539,6 +579,11 @@ public class CMSSignerUnitTest {
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
 
+    /**
+     * Tests sign and verify by Post-Quantum SPHINCS+ algorithm.
+     *
+     * @throws java.lang.Exception
+     */
     @Test
     public void testDetachedSignature_SPHINCSPlus() throws Exception {
         LOG.info("testDetachedSignature_SPHINCSPlus");
@@ -548,7 +593,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQ, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQ, config, null, false, "SPHINCS+");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -557,6 +602,11 @@ public class CMSSignerUnitTest {
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
 
+    /**
+     * Tests sign and verify detached signature by Post-Quantum SPHINCS+ algorithm.
+     *
+     * @throws java.lang.Exception
+     */
     @Test
     public void testDetachedSignatureTrueRequestTrue_SPHINCSPlus() throws Exception {
         LOG.info("testDetachedSignatureTrueRequestTrue_SPHINCSPlus");
@@ -571,7 +621,160 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenPQ, config, requestContext, true);
+        SimplifiedResponse response = signAndVerify(data, tokenPQ, config, requestContext, true, "SPHINCS+");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum DILITHIUM2 algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignature_DILITHIUM2() throws Exception {
+        LOG.info("testDetachedSignature_DILITHIUM2");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM2");
+        CMSSigner instance = createMockSigner(tokenPQCDilithium2);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQCDilithium2, config, null, false, "DILITHIUM2");
+
+        byte[] cms = response.getProcessedData();
+
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
+     * Tests sign and verify detached signature by Post-Quantum DILITHIUM2 algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_DILITHIUM2() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_DILITHIUM2");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM2");
+        CMSSigner instance = createMockSigner(tokenPQCDilithium2);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenPQCDilithium2, config, requestContext, true, "DILITHIUM2");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum DILITHIUM3 algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignature_DILITHIUM3() throws Exception {
+        LOG.info("testDetachedSignature_DILITHIUM3");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM3");
+        CMSSigner instance = createMockSigner(tokenPQCDilithium3);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQCDilithium3, config, null, false, "DILITHIUM3");
+
+        byte[] cms = response.getProcessedData();
+
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
+     * Tests sign and verify detached signature by Post-Quantum DILITHIUM3 algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_DILITHIUM3() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_DILITHIUM3");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM3");
+        CMSSigner instance = createMockSigner(tokenPQCDilithium3);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenPQCDilithium3, config, requestContext, true, "DILITHIUM3");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum DILITHIUM5 algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignature_DILITHIUM5() throws Exception {
+        LOG.info("testDetachedSignature_DILITHIUM5");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM5");
+        CMSSigner instance = createMockSigner(tokenPQCDilithium5);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQCDilithium5, config, null, false, "DILITHIUM5");
+
+        byte[] cms = response.getProcessedData();
+
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
+     * Tests sign and verify detached signature by Post-Quantum DILITHIUM5 algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_DILITHIUM5() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_DILITHIUM5");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM5");
+        CMSSigner instance = createMockSigner(tokenPQCDilithium5);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenPQCDilithium5, config, requestContext, true, "DILITHIUM5");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -597,7 +800,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -627,7 +830,7 @@ public class CMSSignerUnitTest {
         String errorMessage = "Client-side hashing data length must match with the length of client specified digest algorithm";
 
         try {
-            signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA-256", tokenRSA, config, requestContext);
+            signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA-256", tokenRSA, config, requestContext, "RSA");
             fail("Should throw IllegalRequestException");
         } catch (IllegalRequestException e) {
             // expected since CLIENTSIDE_HASHDIGESTALGORITHM is SHA-512 but digest generated from SHA-256
@@ -685,7 +888,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -709,7 +912,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -733,7 +936,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -767,9 +970,8 @@ public class CMSSignerUnitTest {
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
-        
-        SimplifiedResponse response = signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext);
-        
+
+        SimplifiedResponse response = signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext, "RSA");
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertNotNull(signedData);
@@ -865,7 +1067,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -892,7 +1094,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -919,7 +1121,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -944,8 +1146,8 @@ public class CMSSignerUnitTest {
         
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true);
+
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true, "RSA");
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
@@ -969,8 +1171,8 @@ public class CMSSignerUnitTest {
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
-        
-        signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext);
+
+        signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext, "RSA");
     }
     
     /**
@@ -991,7 +1193,7 @@ public class CMSSignerUnitTest {
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
         
-        signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext);
+        signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext,"RSA");
     }
     
     /**
@@ -1017,7 +1219,7 @@ public class CMSSignerUnitTest {
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-512");
         
-        signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA512", tokenRSA, config, requestContext);
+        signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA512", tokenRSA, config, requestContext, "RSA");
     }
     
     /**
@@ -1040,7 +1242,7 @@ public class CMSSignerUnitTest {
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-1");
 
         try {
-            signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA1", tokenRSA, config, requestContext);
+            signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA1", tokenRSA, config, requestContext, "RSA");
             fail("Should throw IllegalRequestException");
         } catch (IllegalRequestException e) {
             // expected
@@ -1109,7 +1311,7 @@ public class CMSSignerUnitTest {
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
         
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1137,7 +1339,7 @@ public class CMSSignerUnitTest {
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "false");
         
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1163,7 +1365,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1188,7 +1390,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENSUPPLIED_HASH", "");
-        signAndVerify(data, tokenRSA, config, requestContext, false);
+        signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
     }
     
     /**
@@ -1203,7 +1405,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1224,7 +1426,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1248,7 +1450,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.4");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1274,7 +1476,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.5");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1352,7 +1554,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.840.113549.1.7.1");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1377,7 +1579,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.4");
-        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false);
+        SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1484,7 +1686,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1505,7 +1707,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1527,7 +1729,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false, "RSA");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1607,11 +1809,12 @@ public class CMSSignerUnitTest {
                                                      final String digestAlgo,
                                                      final MockedCryptoToken token,
                                                      final WorkerConfig config,
-                                                     final RequestContext requestContext)
+                                                     final RequestContext requestContext,
+                                                     final String signatureAlg)
             throws Exception {
         final MessageDigest digest = MessageDigest.getInstance(digestAlgo);
         final byte[] hash = digest.digest(data);
-        final SimplifiedResponse response = signAndVerify(hash, data, token, config, requestContext, true);
+        final SimplifiedResponse response = signAndVerify(hash, data, token, config, requestContext, true, signatureAlg);
         
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -1636,9 +1839,12 @@ public class CMSSignerUnitTest {
         
         return response;
     }
-    
+
+    private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, String signatureAlg) throws Exception {
+        return signAndVerify(data, data, token, config, requestContext, detached, signatureAlg);
+    }
     private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached) throws Exception {
-        return signAndVerify(data, data, token, config, requestContext, detached);
+        return signAndVerify(data, data, token, config, requestContext, detached, "");
     }
 
     /**
@@ -1656,7 +1862,7 @@ public class CMSSignerUnitTest {
      * @return
      * @throws Exception 
      */
-    private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached) throws Exception {
+    private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, String signatureAlg) throws Exception {
         final CMSSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -1674,7 +1880,7 @@ public class CMSSignerUnitTest {
 
             byte[] signedBytes = responseData.toReadableData().getAsByteArray();
             Certificate signerCertificate = response.getSignerCertificate();
-            
+
             final CMSSignedData signedData;
             if (detached) {
                 signedData = new CMSSignedData(new CMSProcessableByteArray(originalData), signedBytes);
@@ -1695,14 +1901,16 @@ public class CMSSignerUnitTest {
                 Iterator              certIt = certCollection.iterator();
                 X509CertificateHolder cert = (X509CertificateHolder)certIt.next();
 
-                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert))) {
+                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
                     verified++;
                     LOG.debug("Verified");
                 } else {
                     LOG.debug("Not verified");
                 }
             }
-            
+
+            assertEquals("Matching signature algorithm", signerCertificate.getPublicKey().getAlgorithm(), signatureAlg);
+
             assertTrue("verified", verified > 0);
             
             return new SimplifiedResponse(signedBytes, signerCertificate);

@@ -69,7 +69,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
 import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
-import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
+//import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
@@ -630,7 +630,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         // NOP
     }
 
-    private CK_ATTRIBUTE[] convert(List<AttributeProperties.Attribute> attributes) {
+    /*private CK_ATTRIBUTE[] convert(List<AttributeProperties.Attribute> attributes) {
         if (attributes == null) {
             return new CK_ATTRIBUTE[0];
         }
@@ -639,7 +639,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             result.add(new CK_ATTRIBUTE(attribute.getId(), attribute.getValue()));
         }
         return result.toArray(new CK_ATTRIBUTE[0]);
-    }
+    }*/
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {
 

@@ -474,27 +474,8 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 // Generate the old way without support for attributes
                 delegate.generateKeyPair(keySpec, alias);
             } else {
-                if (CryptoTokenHelper.isJREPatched()) {
-                    final CK_ATTRIBUTE[] publicTemplate = convert(attributeProperties.getPublicTemplate(keyAlgorithm));
-                    final CK_ATTRIBUTE[] privateTemplate = convert(attributeProperties.getPrivateTemplate(keyAlgorithm));
-
-                    // TODO: Later on we could override attribute properties from the params parameter
-
-                    // Use different P11AsymmetricParameterSpec classes as the underlaying library assumes the spec contains the string "RSA" or "EC"
-                    final AlgorithmParameterSpec specWithAttributes;
-                    if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
-                        specWithAttributes = new RSAP11AsymmetricParameterSpec(publicTemplate, privateTemplate, spec);
-                    } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
-                        specWithAttributes = new ECP11AsymmetricParameterSpec(publicTemplate, privateTemplate, spec);
-                    } else {
-                        throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
-                    }
-                    
-                    delegate.generateKeyPair(specWithAttributes, alias);
-                } else {
-                    // Generate without support for attributes
-                    delegate.generateKeyPair(spec, alias);
-                }
+                // Generate without support for attributes
+                delegate.generateKeyPair(spec, alias);
             }
 
             if (params != null) {

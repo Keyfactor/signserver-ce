@@ -163,44 +163,6 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
             }
 
-            if (CryptoTokenHelper.isJREPatched()) {
-                final PKCS11Utils p11 = PKCS11Utils.getInstance();
-
-                Key key = null;
-                String keyError = null;
-                try {
-                    key = keystore.getKey(keyAlias, null);
-                } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | ProviderException ex) {
-                    keyError = ex.getMessage();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Unable to get key to query P11 info", ex);
-                    }
-                }
-                final String providerName = keystore.getProvider().getName();
-
-                // Modifiable
-                if (key == null) {
-                    info.put(INFO_KEY_MODIFIABLE, "Error: " + keyError);
-                } else {
-                    final boolean modifiable = p11.isKeyModifiable(key, providerName);
-                    info.put(INFO_KEY_MODIFIABLE, String.valueOf(modifiable));
-                }
-
-                // Security Info
-                if (key != null) {
-                    try {
-                        final StringBuilder sb = new StringBuilder();
-                        p11.securityInfo(key, providerName, sb);
-                        info.put(INFO_KEY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
-                    } catch (P11RuntimeException ex) {
-                        info.put(INFO_KEY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Unable to query security info for key", ex);
-                        }
-                    }
-                }
-
-            }
         } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
             Certificate certificate = keystore.getCertificate(keyAlias);
             try {

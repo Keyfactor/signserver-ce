@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
@@ -46,6 +47,9 @@ public class WorkersBean {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @ManagedProperty(value = "#{globalConfigurationBean}")
+    private GlobalConfigurationBean globalConfigurationBean;
 
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
@@ -75,6 +79,14 @@ public class WorkersBean {
         this.authBean = authBean;
     }
 
+    public GlobalConfigurationBean getGlobalConfigurationBean() {
+        return globalConfigurationBean;
+    }
+
+    public void setGlobalConfigurationBean(GlobalConfigurationBean globalConfigurationBean) {
+        this.globalConfigurationBean = globalConfigurationBean;
+    }
+
     public String getWorkersRequestedSelected() {
         return workersRequestedSelected;
     }
@@ -85,23 +97,30 @@ public class WorkersBean {
 
     @SuppressWarnings("UseSpecificCatch")
     public List<Worker> getWorkers() throws AdminNotAuthorizedException {
+        GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(authBean.getAdminCertificate());
+        boolean workerPageStatusCheckDisabled = Boolean.parseBoolean(globalConfiguration.getConfig().getProperty("GLOB.DISABLE_WORKERS_PAGE_STATUS_CHECK"));
+
         if (workers == null) {
             workers = new ArrayList<>();
             for (int id : workerSessionBean.getAllWorkers(authBean.getAdminCertificate())) {
                 Properties config = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id).getProperties();
                 final String name = config.getProperty("NAME", String.valueOf(id));
                 Worker w = new Worker(id, true, name, config);
-                try {
-                    boolean workerSetAsDisabled = config.getProperty(DISABLED, "FALSE").equalsIgnoreCase("TRUE");
-                    if (workerSetAsDisabled) {
-                        w.setStatus(text.getString("DISABLED"));
-                    } else {
-                        w.setStatus(workerSessionBean.getStatus(authBean.getAdminCertificate(),
-                                new WorkerIdentifier(id)).getFatalErrors().isEmpty()
-                                        ? text.getString("ACTIVE") : text.getString("OFFLINE"));
+                if (!workerPageStatusCheckDisabled) {
+                    try {
+                        boolean workerSetAsDisabled = config.getProperty(DISABLED, "FALSE").equalsIgnoreCase("TRUE");
+                        if (workerSetAsDisabled) {
+                            w.setStatus(text.getString("DISABLED"));
+                        } else {
+                            w.setStatus(workerSessionBean.getStatus(authBean.getAdminCertificate(),
+                                    new WorkerIdentifier(id)).getFatalErrors().isEmpty()
+                                    ? text.getString("ACTIVE") : text.getString("OFFLINE"));
+                        }
+                    } catch (Throwable ignored) { // NOPMD: We safe-guard for bugs in worker implementations and don't want the GUI to fail for those.
+                        w.setStatus(text.getString("OFFLINE"));
                     }
-                } catch (Throwable ignored) { // NOPMD: We safe-guard for bugs in worker implementations and don't want the GUI to fail for those.
-                    w.setStatus(text.getString("OFFLINE"));
+                } else {
+                    w.setStatus("");
                 }
 
                 workers.add(w);

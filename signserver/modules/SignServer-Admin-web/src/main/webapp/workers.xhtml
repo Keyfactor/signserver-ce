@@ -82,7 +82,8 @@
                                         <h:link outcome="worker" value="#{item.name} (#{item.id})">
                                             <f:param name="id" value="#{item.id}"/>
                                         </h:link>
-                                        <h:outputText value="#{item.status}"/>
+                                        <h:outputText rendered="#{item.status != ''}" value="#{item.status}"/>
+                                        <h:outputText rendered="#{item.status == ''}" value="&#160;"/>
                                     </h:panelGrid>
                                 </h:panelGrid>                            
                             </h:column>

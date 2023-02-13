@@ -928,23 +928,6 @@ public class CryptoTokenHelper {
         }
         return keyUsageCounterValue;
     }
-    
-    /**
-     * @return True if the JRE has been patched with additional PKCS#11 features
-     */
-    public static boolean isJREPatched() {
-        boolean result = true;
-        try {
-            Class.forName("sun.security.pkcs11.P11AsymmetricParameterSpec");
-            LOG.debug("JRE patched");
-        } catch (ClassNotFoundException ex) {
-            result = false;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("JRE not patched: " + ex.getMessage());
-            }
-        }
-        return result;
-    }  
         
     /**
      * Identifies whether KeyPair or Key should be generated for provided keyAlgorithm.

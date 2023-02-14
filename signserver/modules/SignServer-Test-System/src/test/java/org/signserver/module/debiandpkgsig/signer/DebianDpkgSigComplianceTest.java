@@ -54,10 +54,8 @@ public class DebianDpkgSigComplianceTest {
     private static final String HELLO_DEB = "res/test/HelloDeb.deb";
     
     private static final int WORKER_DEBIANDPKGSIGSIGNER = 40000;
-    private static final int WORKER_OPENPGPPLAINSIGNER = 41000;
-    
+
     private static final String WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME = "org.signserver.module.debiandpkgsig.signer.DebianDpkgSigSigner";
-    private static final String WORKER_OPENPGPPLAINSIGNER_CLASS_NAME = "org.signserver.module.openpgp.enterprise.signer.OpenPGPPlainSigner";
 
     private static final String MYKEY_KEYID = "1FBDD942533B1793";
     private static final String MYKEY_KEY_FINGERPRINT = "1398A0B6CA0807EEB39CC2A11FBDD942533B1793";
@@ -67,10 +65,6 @@ public class DebianDpkgSigComplianceTest {
     private static final String SIGNER00002_KEY_FINGERPRINT = "4C1EAD9A968EC39AB9A2F7F5E3091F74636A925E";
     private static final String SIGNER00001_KEYID = "4B821662F54A5923";    
     private static final String SIGNER00001_KEY_FINGERPRINT = "23C0B776EEE6A30D6530ACD44B821662F54A5923";
-    
-    private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);
-    private static final String ECDSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
-    private static final String DSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.DSA);
 
     private final ModulesTestCase helper = new ModulesTestCase();
     private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
@@ -114,22 +108,12 @@ public class DebianDpkgSigComplianceTest {
 
     @Test
     public void testSigning_RSA_SHA256_ServerSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-256", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA256_ClientSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-256", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa2048", "SHA-256", HELLO_DEB);
     }
 
     @Test
     public void testSigning_RSA_SHA1_ServerSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-1", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA1_ClientSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-1", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa2048", "SHA-1", HELLO_DEB);
     }
 
     // Not supported by BC/ArmoredOutputStream
@@ -140,34 +124,18 @@ public class DebianDpkgSigComplianceTest {
 
     @Test
     public void testSigning_RSA_SHA384_ServerSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-384", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA384_ClientSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-384", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa2048", "SHA-384", HELLO_DEB);
     }
 
     @Test
     public void testSigning_RSA_SHA512_ServerSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-512", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA512_ClientSide() throws Exception {
-        signAndVerify("rsa2048", "SHA-512", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa2048", "SHA-512", HELLO_DEB);
     }
 
     @Test
     public void testSigning_ECDSA_SHA256_ServerSide() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-256", ECDSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_ECDSA_SHA256_ClientSide() throws Exception {
-        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-256", ECDSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("nistp256", "SHA-256", HELLO_DEB);
     }
 
     // Note: GPG won't accept SHA-1 with a 256-bit curve
@@ -187,45 +155,23 @@ public class DebianDpkgSigComplianceTest {
     @Test
     public void testSigning_ECDSA_SHA384_ServerSide() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-384", ECDSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_ECDSA_SHA384_ClientSide() throws Exception {
-        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-384", ECDSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("nistp256", "SHA-384", HELLO_DEB);
     }
 
     @Test
     public void testSigning_ECDSA_SHA512_ServerSide() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-512", ECDSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_ECDSA_SHA512_ClientSide() throws Exception {
-        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-512", ECDSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("nistp256", "SHA-512", HELLO_DEB);
     }
 
     @Test
     public void testSigning_RSA4096_SHA256_ServerSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-256", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA256_ClientSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-256", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa4096", "SHA-256", HELLO_DEB);
     }
 
     @Test
     public void testSigning_RSA4096_SHA1_ServerSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-1", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA1_ClientSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-1", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa4096", "SHA-1", HELLO_DEB);
     }
 
     // Not supported by BC/ArmoredOutputStream
@@ -236,43 +182,22 @@ public class DebianDpkgSigComplianceTest {
 
     @Test
     public void testSigning_RSA4096_SHA384_ServerSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-384", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA384_ClientSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-384", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa4096", "SHA-384", HELLO_DEB);
     }
 
     @Test
     public void testSigning_RSA4096_SHA512_ServerSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-512", RSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA512_ClientSide() throws Exception {
-        signAndVerify("rsa4096", "SHA-512", RSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("rsa4096", "SHA-512", HELLO_DEB);
     }
 
     @Test
     public void testSigning_DSA1024_SHA256_ServerSide() throws Exception {
-        signAndVerify("dsa1024", "SHA-256", DSA_KEY_ALGORITHM, HELLO_DEB, false);
+        signAndVerify("dsa1024", "SHA-256", HELLO_DEB);
     }
-    
-    // for DSA signatures in client-side mode, other algorithms than SHA1 may not be supported due to the underlying implementation.
-//    @Test
-//    public void testSigning_DSA1024_SHA256_ClientSide() throws Exception {
-//        signAndVerify("dsa1024", "SHA-256", RSA_KEY_ALGORITHM, HELLO_DEB, true);
-//    }
 
     @Test
     public void testSigning_DSA1024_SHA1_ServerSide() throws Exception {
-        signAndVerify("dsa1024", "SHA-1", DSA_KEY_ALGORITHM, HELLO_DEB, false);
-    }
-    
-    @Test
-    public void testSigning_DSA1024_SHA1_ClientSide() throws Exception {
-        signAndVerify("dsa1024", "SHA-1", DSA_KEY_ALGORITHM, HELLO_DEB, true);
+        signAndVerify("dsa1024", "SHA-1", HELLO_DEB);
     }
 
     // Not supported by BC/ArmoredOutputStream
@@ -324,10 +249,10 @@ public class DebianDpkgSigComplianceTest {
      * @param revokeAfter if true, issue and import a revocation certificate afterwards
      * @throws Exception
      */
-    private void signAndVerify(final String expectedKeyAlgorithm, final String digestAlgorithm, String keyAlgorithm, String inputFile, boolean clientSide) throws Exception {
-        final int workerId = clientSide ? WORKER_OPENPGPPLAINSIGNER : WORKER_DEBIANDPKGSIGSIGNER;
+    private void signAndVerify(final String expectedKeyAlgorithm, final String digestAlgorithm, String inputFile) throws Exception {
+        final int workerId = WORKER_DEBIANDPKGSIGSIGNER;
         final String workerName = workerId + expectedKeyAlgorithm + "-" + digestAlgorithm;
-        final String signerClassName = clientSide ? WORKER_OPENPGPPLAINSIGNER_CLASS_NAME : WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME;
+        final String signerClassName = WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME;
         final File inFile = new File(helper.getSignServerHome(), inputFile);
         final File outFile = File.createTempFile("HelloDeb", "-signed.deb");
         final File gpgHome = Files.createTempDirectory("debiandpkgsigsigner-gnupghome").toFile();
@@ -396,25 +321,11 @@ public class DebianDpkgSigComplianceTest {
             assertEquals("gpg2 --edit-key: " + res.getErrorMessage(), 0, res.getExitValue());
 
             // Sign
-            if (clientSide) {
-                assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
-                        CLI.execute("signdocument", "-workername",
-                                workerName,
-                                "-infile", inFile.getAbsolutePath(),
-                                "-outfile", outFile.getAbsolutePath(),
-                                "-clientside",
-                                "-filetype", "DPKG_SIG",
-                                "-digestalgorithm", digestAlgorithm,
-                                "-extraoption", "KEY_ID=" + keyId,
-                                "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm,
-                                "-extraoption", "KEY_FINGERPRINT=" + keyFingerPrint));
-            } else {
-                assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
-                        CLI.execute("signdocument", "-workername",
-                                workerName,
-                                "-infile", inFile.getAbsolutePath(),
-                                "-outfile", outFile.getAbsolutePath()));
-            }
+            assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
+                    CLI.execute("signdocument", "-workername",
+                            workerName,
+                            "-infile", inFile.getAbsolutePath(),
+                            "-outfile", outFile.getAbsolutePath()));
 
             // Verify
             res = ComplianceTestUtils.executeWithEnv(envp, "dpkg-sig",

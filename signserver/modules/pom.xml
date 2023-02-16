@@ -181,7 +181,6 @@
                     <configuration>
                         <additionalparam>-Xdoclint:none</additionalparam>
                         <source>11</source>
-                        <detectJavaApiLink>false</detectJavaApiLink>
                     </configuration>
                 </plugin>
             <plugin>

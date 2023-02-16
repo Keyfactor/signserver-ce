@@ -119,7 +119,6 @@ public class JArchiveSignerUnitTest {
     private static final String JAVA_SHA_512 = "SHA-512";
     private static final String JAVA_SHA_384 = "SHA-384";
     private static final String JAVA_SHA_256 = "SHA-256";
-    private static final String JAVA_SHA1 = "SHA1";
     private static final String KEYALIAS_REAL = "Key alias 1";
     private static final String KEYALIAS_CONVERTED = "KEY_ALIA";
 
@@ -339,25 +338,7 @@ public class JArchiveSignerUnitTest {
     }
 
     /**
-     * Tests that setting TSA_DIGESTALGORITHM to "SHA1" doesn't give
-     * any error.
-     */
-    @Test
-    public void testInit_tsaDigestAlgorithmSHA1() {
-        LOG.info("testInit_TSA_PASSWORD");
-        WorkerConfig config = createConfig();
-        config.setProperty("TSA_DIGESTALGORITHM", "SHA1");
-        JArchiveSigner instance = new MockedJArchiveSigner(KEYALIAS_REAL, tokenRSA);
-        instance.init(1, config, new SignServerContext(), null);
-
-        String actualErrors = instance.getFatalErrors(null).toString();
-        assertFalse("fatalErrors: " + actualErrors,
-                    actualErrors.contains("Illegal timestamping digest algorithm"));
-    }
-
-    /**
-     * Tests that setting TSA_DIGESTALGORITHM to "SHA-256" doesn't give
-     * any error.
+     * Tests that setting TSA_DIGESTALGORITHM to "SHA256" doesn't give     * any error.
      */
     @Test
     public void testInit_tsaDigestAlgorithmSHA256() {
@@ -373,8 +354,7 @@ public class JArchiveSignerUnitTest {
     }
 
     /**
-     * Tests that setting TSA_DIGESTALGORITHM to "SHA-384" doesn't give
-     * any error.
+     * Tests that setting TSA_DIGESTALGORITHM to "SHA384" doesn't give     * any error.
      */
     @Test
     public void testInit_tsaDigestAlgorithmSHA384() {
@@ -387,6 +367,23 @@ public class JArchiveSignerUnitTest {
         String actualErrors = instance.getFatalErrors(null).toString();
         assertFalse("fatalErrors: " + actualErrors,
                     actualErrors.contains("Illegal timestamping digest algorithm"));
+    }
+
+    /**
+     * Tests that setting TSA_DIGESTALGORITHM to "SHA512" doesn't give any
+     * error.
+     */
+    @Test
+    public void testInit_tsaDigestAlgorithmSHA512() {
+        LOG.info("testInit_TSA_PASSWORD");
+        WorkerConfig config = createConfig();
+        config.setProperty("TSA_DIGESTALGORITHM", "SHA-512");
+        JArchiveSigner instance = new MockedJArchiveSigner(KEYALIAS_REAL, tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String actualErrors = instance.getFatalErrors(null).toString();
+        assertFalse("fatalErrors: " + actualErrors,
+                actualErrors.contains("Illegal timestamping digest algorithm"));
     }
 
     /**
@@ -777,7 +774,6 @@ public class JArchiveSignerUnitTest {
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
             ) {
             signData(requestData, responseData, tokenRSA, new ConfigBuilder()
-                    .withDigestAlgorithm(JAVA_SHA1)
                     .withSignatureAlgorithm("SHA256WithRSA")
                     .create(), context);
             assertRequestDigestMatches(executableFile, "SHA256", context);
@@ -786,21 +782,60 @@ public class JArchiveSignerUnitTest {
 
     /**
      * Tests logging of the request digest and request digest algorithm using
-     * SHA1.
+     * SHA-256.
+     *
      * @throws Exception in case of failure.
      */
     @Test
-    public void testLogRequestDigestSHA1() throws Exception {
-        LOG.info("testLogRequestDigestSHA1");
+    public void testLogRequestDigestSHA256() throws Exception {
+        LOG.info("testLogRequestDigestSHA256");
         final RequestContext context = new RequestContext();
         try (
                 CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile);
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
             ) {
             signData(requestData, responseData, tokenRSA, new ConfigBuilder()
-                    .withLogRequestDigest("SHA1")
+                    .withLogRequestDigest("SHA256")
                     .create(), context);
-            assertRequestDigestMatches(executableFile, "SHA1", context);
+            assertRequestDigestMatches(executableFile, "SHA256", context);
+        }
+    }
+
+    /**
+     * Tests logging of the request digest and request digest algorithm using
+     * SHA384.
+     *
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void testLogRequestDigestSHA384() throws Exception {
+        LOG.info("testLogRequestDigestSHA384");
+        final RequestContext context = new RequestContext();
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile); CloseableWritableData responseData = ModulesTestCase.createResponseData(true)) {
+            signData(requestData, responseData, tokenRSA, new ConfigBuilder()
+                    .withLogRequestDigest("SHA384")
+                    .create(), context);
+            assertRequestDigestMatches(executableFile, "SHA384", context);
+        }
+    }
+
+    /**
+     * Tests logging of the request digest and request digest algorithm using
+     * SHA512.
+     *
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void testLogRequestDigestSHA512() throws Exception {
+        LOG.info("testLogRequestDigestSHA512");
+        final RequestContext context = new RequestContext();
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile); CloseableWritableData responseData = ModulesTestCase.createResponseData(true)) {
+            signData(requestData, responseData, tokenRSA, new ConfigBuilder()
+                    .withLogRequestDigest("SHA512")
+                    .create(), context);
+            assertRequestDigestMatches(executableFile, "SHA512", context);
         }
     }
 
@@ -825,21 +860,57 @@ public class JArchiveSignerUnitTest {
 
     /**
      * Tests logging of the response digest and response digest algorithm using
-     * SHA1.
+     * SHA256.
+     *
      * @throws Exception in case of failure.
      */
     @Test
-    public void testLogResponseDigestSHA1() throws Exception {
-        LOG.info("testLogResponseDigestSHA1");
+    public void testLogResponseDigestSHA256() throws Exception {
+        LOG.info("testLogResponseDigestSHA256");
         final RequestContext context = new RequestContext();
         try (
                 CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile);
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
             ) {
             signData(requestData, responseData, tokenRSA, new ConfigBuilder()
-                        .withLogResponseDigest("SHA1")
-                        .create(), context);
-            assertResponseDigestMatches(responseData.toReadableData().getAsByteArray(), "SHA1", context);
+                    .withLogResponseDigest("SHA256")                        .create(), context);
+            assertResponseDigestMatches(responseData.toReadableData().getAsByteArray(), "SHA256", context);
+        }
+    }
+
+    /**
+     * Tests logging of the response digest and response digest algorithm using
+     * SHA384.
+     *
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void testLogResponseDigestSHA384() throws Exception {
+        LOG.info("testLogResponseDigestSHA384");
+        final RequestContext context = new RequestContext();
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile); CloseableWritableData responseData = ModulesTestCase.createResponseData(true)) {
+            signData(requestData, responseData, tokenRSA, new ConfigBuilder()
+                    .withLogResponseDigest("SHA384").create(), context);
+            assertResponseDigestMatches(responseData.toReadableData().getAsByteArray(), "SHA384", context);
+        }
+    }
+
+    /**
+     * Tests logging of the response digest and response digest algorithm using
+     * SHA512.
+     *
+     * @throws Exception in case of failure.
+     */
+    @Test
+    public void testLogResponseDigestSHA512() throws Exception {
+        LOG.info("testLogResponseDigestSHA512");
+        final RequestContext context = new RequestContext();
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile); CloseableWritableData responseData = ModulesTestCase.createResponseData(true)) {
+            signData(requestData, responseData, tokenRSA, new ConfigBuilder()
+                    .withLogResponseDigest("SHA512").create(), context);
+            assertResponseDigestMatches(responseData.toReadableData().getAsByteArray(), "SHA512", context);
         }
     }
 

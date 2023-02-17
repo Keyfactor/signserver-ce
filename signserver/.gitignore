@@ -59,6 +59,7 @@ dist-*/
 /bin/p11ng-tool.cmd
 /bin/signserver-db
 /bin/signserver-db.cmd
+/bin/sntp-tool
 /bin/timemonitor-in-background.sh
 /bin/signserver-gui
 /bin/signserver-gui.cmd

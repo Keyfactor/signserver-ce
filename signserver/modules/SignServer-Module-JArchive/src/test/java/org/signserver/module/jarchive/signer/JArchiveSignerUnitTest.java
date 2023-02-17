@@ -58,6 +58,7 @@ import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
@@ -126,7 +127,7 @@ public class JArchiveSignerUnitTest {
     private static MockedCryptoToken tokenRSA2;
     private static MockedCryptoToken tokenRSAwithIntermediate;
     //JDK8: private static MockedCryptoToken tokenDSA;
-    //JDK8: private static MockedCryptoToken tokenECDSA;
+    private static MockedCryptoToken tokenECDSA;
     private static File executableFile;
 
     /** File HelloJar-signed.jar containing CERT0.SF and CERT0.RSA using SHA-256 digest. */
@@ -221,7 +222,7 @@ public class JArchiveSignerUnitTest {
         */
 
         // Create signer key-pair (ECDSA) and issue certificate
-        /* JDK8: final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
+        final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
         final Certificate[] certChainECDSA =
                 new Certificate[] {
                     // Code Signer
@@ -232,15 +233,14 @@ public class JArchiveSignerUnitTest {
                         .setSignatureAlgorithm(signatureAlgorithm)
                         .setIssuer(caDN)
                         .setSubject("CN=Code Signer ECDSA 3")
-                        .addExtension(new CertExt(X509Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairECDSA.getPublic())))
-                        .addExtension(new CertExt(X509Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
-                        .build()),
+                            .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairECDSA.getPublic())))
+                            .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
+                            .build()),
 
                     // CA
                     caCertificate
                 };
         tokenECDSA = new MockedCryptoToken(signerKeyPairECDSA.getPrivate(), signerKeyPairECDSA.getPublic(), certChainECDSA[0], Arrays.asList(certChainECDSA), "BC");
-        */
 
         // Sample binaries to test with
         executableFile = new File(PathUtil.getAppHome(), "res/test/HelloJar.jar");
@@ -574,42 +574,42 @@ public class JArchiveSignerUnitTest {
 //
 //    /**
 //     * Test signing with a ECDSA key-pair.
+//     *
 //     * @throws Exception
 //     */
 //    @Test
 //    public void testNormalSigning_ECDSA() throws Exception {
 //        LOG.info("testNormalSigning_ECDSA");
-//        SignatureResponse resp = sign(tokenECDSA, new ConfigBuilder()
-//                .create(), null);
-//        assertSignedAndTimestamped(tokenECDSA, "SHA1", CMSAlgorithm.SHA1, X9ObjectIdentifiers.ecdsa_with_SHA1, resp);
-//    }
+//        try (
+//                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile);
+//                CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
+//            ) {
 //
-//    /**
-//     * Test signing when explicitly specified the SHA1WithECDSA algorithm.
-//     * @throws Exception
-//     */
-//    @Test
-//    public void testNormalSigning_SHA1WithECDSA() throws Exception {
-//        LOG.info("testNormalSigning_SHA1WithECDSA");
-//        SignatureResponse resp = sign(tokenECDSA, new ConfigBuilder()
-//                .withSignatureAlgorithm("SHA1WithECDSA")
-//                .create(), null);
-//        assertSignedAndTimestamped(tokenECDSA, "SHA1", CMSAlgorithm.SHA1, X9ObjectIdentifiers.ecdsa_with_SHA1, resp);
+//            SignatureResponse resp = signData(requestData, responseData, tokenECDSA, new ConfigBuilder()
+//                    //.withSignatureAlgorithm("SHA256WithECDSA")
+//                    .create(), null);
+//            assertSignedAndTimestamped(requestData, responseData, tokenECDSA, JAVA_SHA_256, CMSAlgorithm.SHA256, X9ObjectIdentifiers.ecdsa_with_SHA256, resp);
+//        }
 //    }
-//
-//    /**
-//     * Test signing when specified the SHA256WithECDSA algorithm.
-//     * @throws Exception
-//     */
-//    @Test
-//    public void testNormalSigning_SHA256WithECDSA() throws Exception {
-//        LOG.info("testNormalSigning_SHA256WithECDSA");
-//        File file = null;
-//        SignatureResponse resp = sign(tokenECDSA, new ConfigBuilder()
-//                .withSignatureAlgorithm("SHA256WithECDSA")
-//                .create(), null);
-//        assertSignedAndTimestamped(tokenECDSA, "SHA1", CMSAlgorithm.SHA256, X9ObjectIdentifiers.ecdsa_with_SHA256, resp);
-//    }
+    /**
+     * Test signing when specified the SHA256WithECDSA algorithm.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigning_SHA256WithECDSA() throws Exception {
+        LOG.info("testNormalSigning_SHA256WithECDSA");
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(executableFile);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(true)
+            ) {
+
+            SignatureResponse resp = signData(requestData, responseData, tokenECDSA, new ConfigBuilder()
+                    .withSignatureAlgorithm("SHA256WithECDSA")
+                    .create(), null);
+            assertSignedAndTimestamped(requestData, responseData, tokenECDSA, JAVA_SHA_256, CMSAlgorithm.SHA256, X9ObjectIdentifiers.ecdsa_with_SHA256, resp);
+            }
+    }
 
     /**
      * Tests that submitting an empty document gives an error.
@@ -2015,7 +2015,10 @@ public class JArchiveSignerUnitTest {
         }
     }
 
-
+    /*private SignatureResponse signData(MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
+        final byte[] data = FileUtils.readFileToByteArray(executableFile);
+        return signData(data, token, config, requestContext);
+    }*/
 
     private SignatureResponse signData(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
         try (
@@ -2038,11 +2041,6 @@ public class JArchiveSignerUnitTest {
         SignatureRequest request = new SignatureRequest(100, requestData, responseData);
         return  (SignatureResponse) instance.processData(request, requestContext);
     }
-
-    /*private GenericSignResponse sign(MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
-        final byte[] data = FileUtils.readFileToByteArray(executableFile);
-        return signData(data, token, config, requestContext);
-    }*/
 
     private void signAndAssertSignedAndTimestamped(MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, String sfDigestAlg, ASN1ObjectIdentifier cmsDigestAlgOID, ASN1ObjectIdentifier sigAlgOID) throws Exception {
         try (

@@ -417,21 +417,6 @@ public class JArchiveSignerUnitTest {
                 .create(), null, JAVA_SHA_256, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.sha256WithRSAEncryption);
     }
 
-
-//    TODO: Not supported by Java?
-//    /**
-//     * Test signing when specified the SHA256WithRSAandMGF1 algorithm.
-//     * @throws Exception
-//     */
-//    @Test
-//    public void testNormalSigning_SHA256WithRSAandMGF1() throws Exception {
-//        LOG.info("testNormalSigning_SHA256WithRSAandMGF1");
-//        SignatureResponse resp = sign(tokenRSA, new ConfigBuilder()
-//                .withSignatureAlgorithm("SHA256WithRSAandMGF1")
-//                .create(), null);
-//        assertSignedAndTimestamped(tokenRSA, JAVA_SHA_256, CMSAlgorithm.SHA256, PKCSObjectIdentifiers.id_RSASSA_PSS, resp);
-//    }
-
     /**
      * Test signing when specified the SHA256WithRSA algorithm.
      * @throws Exception in case of failure.
@@ -616,80 +601,6 @@ public class JArchiveSignerUnitTest {
             // OK
         }
     }
-
-//    @Test
-//    public void testSigningAlreadySigned() throws Exception {
-//        LOG.info("testSigningAlreadySigned");
-//
-//        // Fist check that test file already has a signature
-//        PEFile peOriginal = new PEFile(executableFileWithSignature);
-//        try {
-//            if (peOriginal.getSignatures().size() != 1) {
-//                throw new Exception("Test expect the test file already have one signature but was " + peOriginal.getSignatures().size());
-//            }
-//        } finally {
-//            peOriginal.close();
-//        }
-//
-//        final byte[] data = FileUtils.readFileToByteArray(executableFileWithSignature);
-//
-//        File file = null;
-//        PEFile pe = null;
-//        try {
-//            SignatureResponse resp = signData(data, tokenRSA, createConfig(null, null, "SignServer-JUnit-Test-åäö", "http://www.signserver.org/junit/test.html", null, null), null, null);
-//            file = createFile(responseData.toReadableData().getAsByteArray());
-//            pe = new PEFile(file);
-//            assertSignedAndTimestamped(tokenRSA, "SHA1", CMSAlgorithm.SHA1, PKCSObjectIdentifiers.rsaEncryption, resp, pe);
-//        } finally {
-//            if (pe != null) {
-//                pe.close();
-//            }
-//            if (file != null) {
-//                file.delete();
-//            }
-//        }
-//    }
-
-//    /**
-//     * Tests that already signed files are rejected with an error.
-//     * @throws Exception
-//     */
-//    @Test
-//    public void testSigningAlreadySigned() throws Exception {
-//        LOG.info("testSigningAlreadySigned");
-//
-//        // Fist check that test file already has a signature
-//        PEFile peOriginal = new PEFile(executableFileWithSignature);
-//        try {
-//            if (peOriginal.getSignatures().size() != 1) {
-//                throw new Exception("Test expect the test file already have one signature but was " + peOriginal.getSignatures().size());
-//            }
-//        } finally {
-//            peOriginal.close();
-//        }
-//
-//        final byte[] data = FileUtils.readFileToByteArray(executableFileWithSignature);
-//
-//        File file = null;
-//        PEFile pe = null;
-//        try {
-//            signData(data, tokenRSA, new ConfigBuilder()
-//                    .withProgramName("SignServer-JUnit-Test-åäö")
-//                    .withProgramURL("http://www.signserver.org/junit/test.html")
-//                    .create(), null, null, null);
-//            fail("Expected IllegalRequestException");
-//        } catch(IllegalRequestException expected) { // NOPMD
-//            // OK
-//        } finally {
-//            if (pe != null) {
-//                pe.close();
-//            }
-//            if (file != null) {
-//                file.delete();
-//            }
-//        }
-//    }
-
 
     private void assertRequestDigestMatches(File file, String digestAlgorithm, RequestContext context) throws NoSuchAlgorithmException, IOException {
         final LogMap logMap = LogMap.getInstance(context);

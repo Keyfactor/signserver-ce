@@ -151,6 +151,8 @@ public class PDFSigner extends BaseSigner {
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     public static final String REFUSE_DOUBLE_INDIRECT_OBJECTS = "REFUSE_DOUBLE_INDIRECT_OBJECTS";
 
+    public static String APPEND_SIGNATURE = "APPEND_SIGNATURE";
+
     // Permissions properties
     /** List of permissions for which SignServer will refuse to sign the document if present. **/
     public static final String REJECT_PERMISSIONS = "REJECT_PERMISSIONS";
@@ -812,6 +814,11 @@ public class PDFSigner extends BaseSigner {
                 appendMode = false;
             } else {
                 updatedPdfVersion = '\0';
+            }
+
+            // If worker property APPEND_SIGNATURE is set to TRUE, it overwrites the previous value.
+            if (Boolean.parseBoolean(config.getProperty(APPEND_SIGNATURE))) {
+                appendMode = true;
             }
 
             PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);

@@ -81,13 +81,11 @@ public class DebianDpkgSigSignTest {
 
     
     private static final int WORKER_DEBIANDPKGSIGSIGNER = 40000;
-    private static final int WORKER_OPENPGPPLAINSIGNER = 41000;
-    
+
     private static final ModulesTestCase helper = new ModulesTestCase();
     private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
     
     private static final String WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME = "org.signserver.module.debiandpkgsig.signer.DebianDpkgSigSigner";
-    private static final String WORKER_OPENPGPPLAINSIGNER_CLASS_NAME = "org.signserver.module.openpgp.enterprise.signer.OpenPGPPlainSigner";
 
     private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);
     private static final String ECDSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
@@ -164,130 +162,55 @@ public class DebianDpkgSigSignTest {
     @Test
     public void testSigning_RSA_SHA256_ServerSide() throws Exception {
         LOG.info("testSigning_RSA_SHA256_ServerSide");
-        signAndVerify("rsa2048", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA256_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA256_ClientSide");
-        signAndVerify("rsa2048", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA256_InvalidFingerPrint_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA256_InvalidFingerPrint_ClientSide");
-        signAndVerify("INVALIDFINGERPRINT", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_ERROR);
-        // It should cause error "Failed to parse fingerprint"
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA256_IncorrectFingerPrint_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA256_IncorrectFingerPrint_ClientSide");
-        signAndVerify("INCORRECTFINGERPRINT", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_ERROR);
-        // It should cause error "Mismatch between PGP key parameters sent in request and configured in signer...."
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA256_IncorrectFingerPrintAndKeyId_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA256_IncorrectFingerPrintAndKeyId_ClientSide");
-        signAndVerify("INCORRECTFINGERPRINTKEYID", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_ERROR);
-        // It should cause error "Mismatch between PGP key parameters sent in request and configured in signer...."
+        signAndVerify("rsa2048", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_RSA_SHA1_ServerSide() throws Exception {
         LOG.info("testSigning_RSA_SHA1_ServerSide");
-        signAndVerify("rsa2048", "SHA-1", HashAlgorithmTags.SHA1, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA1_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA1_ClientSide");
-        signAndVerify("rsa2048", "SHA-1", HashAlgorithmTags.SHA1, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa2048", "SHA-1", HashAlgorithmTags.SHA1, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
     
     @Test
     public void testSigning_RSA_SHA384_ServerSide() throws Exception {
         LOG.info("testSigning_RSA_SHA384_ServerSide");
-        signAndVerify("rsa2048", "SHA-384", HashAlgorithmTags.SHA384, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA384_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA384_ClientSide");
-        signAndVerify("rsa2048", "SHA-384", HashAlgorithmTags.SHA384, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa2048", "SHA-384", HashAlgorithmTags.SHA384, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_RSA_SHA512_ServerSide() throws Exception {
         LOG.info("testSigning_RSA_SHA512_ServerSide");
-        signAndVerify("rsa2048", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA_SHA512_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA_SHA512_ClientSide");
-        signAndVerify("rsa2048", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa2048", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
     
     @Test
     public void testSigning_ECDSA_SHA256_ServerSide() throws Exception {
         LOG.info("testSigning_ECDSA_SHA256_ServerSide");
-        signAndVerify("nistp256", "SHA-256", HashAlgorithmTags.SHA256, ECDSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_ECDSA_SHA256_ClientSide() throws Exception {
-        LOG.info("testSigning_ECDSA_SHA256_ClientSide");
-        signAndVerify("nistp256", "SHA-256", HashAlgorithmTags.SHA256, ECDSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("nistp256", "SHA-256", HashAlgorithmTags.SHA256, ECDSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
     
     @Test
     public void testSigning_ECDSA_SHA384_ServerSide() throws Exception {
         LOG.info("testSigning_ECDSA_SHA384_ServerSide");
-        signAndVerify("nistp256", "SHA-384", HashAlgorithmTags.SHA384, ECDSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_ECDSA_SHA384_ClientSide() throws Exception {
-        LOG.info("testSigning_ECDSA_SHA384_ClientSide");
-        signAndVerify("nistp256", "SHA-384", HashAlgorithmTags.SHA384, ECDSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("nistp256", "SHA-384", HashAlgorithmTags.SHA384, ECDSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_ECDSA_SHA512_ServerSide() throws Exception {
         LOG.info("testSigning_ECDSA_SHA512_ServerSide");
-        signAndVerify("nistp256", "SHA-512", HashAlgorithmTags.SHA512, ECDSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_ECDSA_SHA512_ClientSide() throws Exception {
-        LOG.info("testSigning_ECDSA_SHA512_ClientSide");
-        signAndVerify("nistp256", "SHA-512", HashAlgorithmTags.SHA512, ECDSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("nistp256", "SHA-512", HashAlgorithmTags.SHA512, ECDSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_RSA4096_SHA256_ServerSide() throws Exception {
         LOG.info("testSigning_RSA4096_SHA256_ServerSide");
-        signAndVerify("rsa4096", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA256_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA4096_SHA256_ClientSide");
-        signAndVerify("rsa4096", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa4096", "SHA-256", HashAlgorithmTags.SHA256, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_RSA4096_SHA1_ServerSide() throws Exception {
         LOG.info("testSigning_RSA4096_SHA1_ServerSide");
-        signAndVerify("rsa4096", "SHA-1", HashAlgorithmTags.SHA1, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA1_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA4096_SHA1_ClientSide");
-        signAndVerify("rsa4096", "SHA-1",  HashAlgorithmTags.SHA1, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa4096", "SHA-1", HashAlgorithmTags.SHA1, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     // Not supported by BC/ArmoredOutputStream
@@ -300,50 +223,25 @@ public class DebianDpkgSigSignTest {
     @Test
     public void testSigning_RSA4096_SHA384_ServerSide() throws Exception {
         LOG.info("testSigning_RSA4096_SHA384_ServerSide");
-        signAndVerify("rsa4096", "SHA-384", HashAlgorithmTags.SHA384, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA384_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA4096_SHA384_ClientSide");
-        signAndVerify("rsa4096", "SHA-384", HashAlgorithmTags.SHA384, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa4096", "SHA-384", HashAlgorithmTags.SHA384, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_RSA4096_SHA512_ServerSide() throws Exception {
         LOG.info("testSigning_RSA4096_SHA512_ServerSide");
-        signAndVerify("rsa4096", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_RSA4096_SHA512_ClientSide() throws Exception {
-        LOG.info("testSigning_RSA4096_SHA512_ClientSide");
-        signAndVerify("rsa4096", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("rsa4096", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     @Test
     public void testSigning_DSA1024_SHA256_ServerSide() throws Exception {
         LOG.info("testSigning_DSA1024_SHA256_ServerSide");
-        signAndVerify("dsa1024", "SHA-256", HashAlgorithmTags.SHA256, DSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("dsa1024", "SHA-256", HashAlgorithmTags.SHA256, DSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
-    
-    // for DSA signatures in client-side mode, other algorithms than SHA1 may not be supported due to the underlying implementation.
-//    @Test
-//    public void testSigning_DSA1024_SHA256_ClientSide() throws Exception {
-//        LOG.info("testSigning_DSA1024_SHA256_ClientSide");
-//        signAndVerify("dsa1024", "SHA-256", HashAlgorithmTags.SHA256, DSA_KEY_ALGORITHM, HELLO_DEB, true);
-//    }
 
     @Test
     public void testSigning_DSA1024_SHA1_ServerSide() throws Exception {
         LOG.info("testSigning_DSA1024_SHA1_ServerSide");
-        signAndVerify("dsa1024", "SHA-1", HashAlgorithmTags.SHA1, DSA_KEY_ALGORITHM, HELLO_DEB, false, ClientCLI.RETURN_SUCCESS);
-    }
-    
-    @Test
-    public void testSigning_DSA1024_SHA1_ClientSide() throws Exception {
-        LOG.info("testSigning_DSA1024_SHA1_ClientSide");
-        signAndVerify("dsa1024", "SHA-1", HashAlgorithmTags.SHA1, DSA_KEY_ALGORITHM, HELLO_DEB, true, ClientCLI.RETURN_SUCCESS);
+        signAndVerify("dsa1024", "SHA-1", HashAlgorithmTags.SHA1, DSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
 
     // Not supported by BC/ArmoredOutputStream
@@ -365,13 +263,12 @@ public class DebianDpkgSigSignTest {
      * @param expectedHashAlgorithm
      * @param keyAlgorithm
      * @param inputFile
-     * @param clientSide
      * @throws Exception
      */
-    private void signAndVerify(final String chosenKeyAlgorithm, final String digestAlgorithm, final int expectedHashAlgorithm, String keyAlgorithm, String inputFile, boolean clientSide, final int expectedOutcome) throws Exception {
-        final int workerId = clientSide ? WORKER_OPENPGPPLAINSIGNER : WORKER_DEBIANDPKGSIGSIGNER;
+    private void signAndVerify(final String chosenKeyAlgorithm, final String digestAlgorithm, final int expectedHashAlgorithm, String keyAlgorithm, String inputFile, final int expectedOutcome) throws Exception {
+        final int workerId = WORKER_DEBIANDPKGSIGSIGNER;
         final String workerName = workerId + chosenKeyAlgorithm + "-" + digestAlgorithm;
-        final String signerClassName = clientSide ? WORKER_OPENPGPPLAINSIGNER_CLASS_NAME : WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME;
+        final String signerClassName = WORKER_DEBIANDPKGSIGSIGNER_CLASS_NAME;
         final File inFile = new File(helper.getSignServerHome(), inputFile);
         final File outFile = File.createTempFile("HelloDeb", "-signed.deb");
         String keyId;
@@ -445,25 +342,11 @@ public class DebianDpkgSigSignTest {
             assertTrue("public key footer: " + publicKeyArmored, publicKeyArmored.contains("-----END PGP PUBLIC KEY BLOCK-----"));                                              
 
             // Sign
-            if (clientSide) {
-                assertEquals("Status code", expectedOutcome,
-                        CLI.execute("signdocument", "-workername",
-                                workerName,
-                                "-infile", inFile.getAbsolutePath(),
-                                "-outfile", outFile.getAbsolutePath(),
-                                "-clientside",
-                                "-filetype", "DPKG_SIG",
-                                "-digestalgorithm", digestAlgorithm,
-                                "-extraoption", "KEY_ID=" + keyId,
-                                "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm,
-                                "-extraoption", "KEY_FINGERPRINT=" + keyFingerPrint));
-            } else {
-                assertEquals("Status code", expectedOutcome,
-                        CLI.execute("signdocument", "-workername",
-                                workerName,
-                                "-infile", inFile.getAbsolutePath(),
-                                "-outfile", outFile.getAbsolutePath()));
-            }
+            assertEquals("Status code", expectedOutcome,
+                    CLI.execute("signdocument", "-workername",
+                            workerName,
+                            "-infile", inFile.getAbsolutePath(),
+                            "-outfile", outFile.getAbsolutePath()));
 
             // Verify signature if signing was successful
             if (expectedOutcome == 0) {

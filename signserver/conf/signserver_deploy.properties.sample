@@ -105,10 +105,6 @@
 # Default: true
 #module.odfsigner.enabled=true
 
-# Module OOXMLSigner
-# Default: true
-#module.ooxmlsigner.enabled=true
-
 # Module PDFSigner
 # Default: true
 #module.pdfsigner.enabled=true

@@ -62,7 +62,6 @@
         <module>SignServer-Client-ValidationCLI</module>
 
         <!-- Dependencies -->
-        <module>SignServer-Lib-OpenXML4J</module>
         <module>SignServer-Lib-ODFDOM</module>
 
         <!-- Modules -->

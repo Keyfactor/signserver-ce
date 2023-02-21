@@ -71,7 +71,6 @@
         <module>SignServer-Module-MRTDSigner</module>
         <module>SignServer-Module-MRTDSODSigner</module>
         <module>SignServer-Module-ODFSigner</module>
-        <module>SignServer-Module-OOXMLSigner</module>
         <module>SignServer-Module-OpenPGP</module>
         <module>SignServer-Module-PDFSigner</module>
         <module>SignServer-Module-Renewal-interface</module>

@@ -12,8 +12,8 @@
         </dependencies>
         <resources>
             <!-- This is needed for BC when OracleJDK is used on JBoss AS 7+. See DSS-606. -->
-            <resource-root path="lib/bcprov-jdk18on-1.72.jar" use-physical-code-source="true"/>
-            <resource-root path="lib/bcutil-jdk18on-1.72.jar" use-physical-code-source="true"/>
+            <resource-root path="lib/bcprov-jdk18on-1.73b.12.jar" use-physical-code-source="true"/>
+            <resource-root path="lib/bcutil-jdk18on-1.73b.12.jar" use-physical-code-source="true"/>
         </resources>
     </deployment>
 </jboss-deployment-structure>

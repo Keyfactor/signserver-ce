@@ -794,6 +794,10 @@ public class PDFSigner extends BaseSigner {
 
             // increase PDF version if needed by digest algorithm
             final char updatedPdfVersion;
+            // Get a list of signature names from the document.
+            final AcroFields af = reader.getAcroFields();
+            final List<String> sigNames = af.getSignatureNames();
+
             if (pdfVersionCompatibilityChecker.isVersionUpgradeRequired()) {
                 updatedPdfVersion = Character.forDigit(pdfVersionCompatibilityChecker.getMinimumCompatiblePdfVersion(), 10);
                 if (LOG.isDebugEnabled()) {
@@ -802,9 +806,6 @@ public class PDFSigner extends BaseSigner {
 
                 // check that the document isn't already signed
                 // when trying to upgrade version
-                final AcroFields af = reader.getAcroFields();
-                final List<String> sigNames = af.getSignatureNames();
-
                 if (!sigNames.isEmpty()) {
                     // TODO: in the future we might want to support
                     // a fallback option in this case to allow re-signing using the same version (using append)
@@ -816,9 +817,12 @@ public class PDFSigner extends BaseSigner {
                 updatedPdfVersion = '\0';
             }
 
-            // If worker property APPEND_SIGNATURE is set to TRUE, it overwrites the previous value.
-            if (Boolean.parseBoolean(config.getProperty(APPEND_SIGNATURE))) {
-                appendMode = true;
+            // If this is the first signature and worker property APPEND_SIGNATURE is set to False,
+            // it overwrites the previous value of appendMode.
+            if (sigNames.isEmpty()) {
+                if (config.getProperty(APPEND_SIGNATURE) != null && config.getProperty(APPEND_SIGNATURE).trim().equalsIgnoreCase("false")) {
+                    appendMode = false;
+                }
             }
 
             PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);

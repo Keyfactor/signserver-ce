@@ -41,19 +41,21 @@ public class TimeStamp implements Task {
 
     /** Logger for this class */
     Logger LOG = Logger.getLogger(TimeStamp.class);
-    
+
     private final String tsaUrl;
     private final Random random;
     private final byte[] hashValue;
     private final ASN1ObjectIdentifier hashAlgorithm;
+    private final boolean requestCertificate;
 
-    public TimeStamp(final String url, final Random random, final byte[] hashValue, final ASN1ObjectIdentifier hashAlgorithm) {
+    public TimeStamp(final String url, final Random random, final byte[] hashValue, final ASN1ObjectIdentifier hashAlgorithm, boolean requestCertificate) {
         this.tsaUrl = url;
         this.random = random;
         this.hashValue = hashValue;
         this.hashAlgorithm = hashAlgorithm;
+        this.requestCertificate = requestCertificate;
     }
-    
+
     @Override
     public long run() throws FailedException {
         try {
@@ -71,78 +73,80 @@ public class TimeStamp implements Task {
 
     /**
      * Issue a time stamp request.
-     * 
+     *
      * @return Run time (in ms).
      * @throws TSPException
      * @throws IOException
      * @throws FailedException
      */
     private long tsaRequest() throws TSPException, IOException, FailedException {
-    	final TimeStampRequestGenerator timeStampRequestGenerator =
-    			new TimeStampRequestGenerator();
-    	final int nonce = random.nextInt();
+        final TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        final int nonce = random.nextInt();
+        if (requestCertificate) {
+            timeStampRequestGenerator.setCertReq(true);
+        }
+        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                hashAlgorithm, hashValue, BigInteger.valueOf(nonce));
+        final byte[] requestBytes = timeStampRequest.getEncoded();
 
-    	final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-    			hashAlgorithm, hashValue, BigInteger.valueOf(nonce));
-    	final byte[] requestBytes = timeStampRequest.getEncoded();
+        URL url;
+        URLConnection urlConn;
+        DataOutputStream printout;
+        DataInputStream input;
 
-    	URL url;
-    	URLConnection urlConn;
-    	DataOutputStream printout;
-    	DataInputStream input;
+        url = new URL(tsaUrl);
 
-    	url = new URL(tsaUrl);
+        // Take start time
+        final long startMillis = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sending request at: " + startMillis);
+        }
 
-    	// Take start time
-    	final long startMillis = System.currentTimeMillis();
-    	final long startTime = System.nanoTime();
-    	if (LOG.isDebugEnabled()) {
-    		LOG.debug("Sending request at: " + startMillis);
-    	}
+        urlConn = url.openConnection();
 
-    	urlConn = url.openConnection();
+        urlConn.setDoInput(true);
+        urlConn.setDoOutput(true);
+        urlConn.setUseCaches(false);
+        urlConn.setRequestProperty("Content-Type",
+                "application/timestamp-query");
 
-    	urlConn.setDoInput(true);
-    	urlConn.setDoOutput(true);
-    	urlConn.setUseCaches(false);
-    	urlConn.setRequestProperty("Content-Type",
-    			"application/timestamp-query");
+        // Send POST output.
+        printout = new DataOutputStream(urlConn.getOutputStream());
+        printout.write(requestBytes);
+        printout.flush();
+        printout.close();
 
-    	// Send POST output.
-    	printout = new DataOutputStream(urlConn.getOutputStream());
-    	printout.write(requestBytes);
-    	printout.flush();
-    	printout.close();
+        // Get response data.
+        input = new DataInputStream(urlConn.getInputStream());
 
-    	// Get response data.
-    	input = new DataInputStream(urlConn.getInputStream());
+        byte[] ba = null;
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        do {
+            if (ba != null) {
+                baos.write(ba);
+            }
+            ba = new byte[input.available()];
 
-    	byte[] ba = null;
-    	final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	do {
-    		if (ba != null) {
-    			baos.write(ba);
-    		}
-    		ba = new byte[input.available()];
+        } while (input.read(ba) != -1);
 
-    	} while (input.read(ba) != -1);
+        // Take stop time
+        final long estimatedTime = System.nanoTime() - startTime;
+        final long timeInMillis = TimeUnit.NANOSECONDS.toMillis(estimatedTime);
 
-    	// Take stop time
-    	final long estimatedTime = System.nanoTime() - startTime;
-    	final long timeInMillis = TimeUnit.NANOSECONDS.toMillis(estimatedTime);
-    	
         if (LOG.isDebugEnabled()) {
             LOG.debug("Got reply after " + timeInMillis + " ms");
         }
 
-    	final byte[] replyBytes = baos.toByteArray();
+        final byte[] replyBytes = baos.toByteArray();
 
 
-    	final TimeStampResponse timeStampResponse = new TimeStampResponse(
-    			replyBytes);
-    	timeStampResponse.validate(timeStampRequest);
-    	LOG.debug("TimeStampResponse validated");
-        
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                replyBytes);
+        timeStampResponse.validate(timeStampRequest);
+        LOG.debug("TimeStampResponse validated");
+
         // TODO: Maybe in the future we would like to make the below failure 
         // check configurable or count the failure but without failing the test
         if (timeStampResponse.getStatus() != PKIStatus.GRANTED
@@ -152,7 +156,7 @@ public class TimeStamp implements Task {
         } else {
             LOG.debug("TimeStampResponse granted");
         }
-    	
-    	return timeInMillis;
+
+		return timeInMillis;
     }
 }

@@ -34,10 +34,11 @@ public class TimeStampThread extends WorkerThread {
     		int seed, long warmupTime, final long limitedTime,
                 final File statFile, final byte[] hashValue,
                 final ASN1ObjectIdentifier hashAlgorithm,
-                final boolean continueOnFailure) {
+                final boolean continueOnFailure,
+                final boolean requestCertificate) {
         super(name, failureCallback, maxWaitTime, seed, warmupTime, limitedTime,
               statFile, continueOnFailure);
-        this.task = new TimeStamp(url, random, hashValue, hashAlgorithm);
+        this.task = new TimeStamp(url, random, hashValue, hashAlgorithm, requestCertificate);
     }
 
 }

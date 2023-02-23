@@ -21,6 +21,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.test.performance.FailureCallback;
@@ -43,6 +44,7 @@ public class Main {
     private static final String TIME_LIMIT = "timelimit";
     private static final String THREADS = "threads";
     private static final String TSA_URL = "tsaurl";
+    private static final String HASH_ALGORITHM = "hashalgorithm";
     private static final String PROCESS_URL = "processurl";
     private static final String WORKER_URL = "workerurl";
     private static final String WORKER_NAME_OR_ID = "worker";
@@ -57,6 +59,7 @@ public class Main {
     private static final String USERSUFFIXMAX = "usersuffixmax";
     private static final String CONTINUE_ON_FAILURE = "continueonfailure";
 
+    private static final String REQUEST_CERTIFICATE = "requestcertificate";
     private static final String NL = System.getProperty("line.separator");
     private static final String COMMAND = "stresstest";
 
@@ -86,6 +89,8 @@ public class Main {
         OPTIONS.addOption(TIME_LIMIT, true, "Optional. Only run for the specified time (in milliseconds).");
         OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
         OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
+        OPTIONS.addOption(HASH_ALGORITHM, true, "Optional. Hash algorithm for Time Stamping testsuites");
+        OPTIONS.addOption(REQUEST_CERTIFICATE, false, "Optional. Add the certificate in the Time Stamp response");
         OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the DocumentSigner/Validator1 test suites).");
         OPTIONS.addOption(WORKER_URL, true, "URL to worker servlet (for the DocumentSigner/Validator1 test suites).");
         OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use (with the DocumentSigner/Validator1 test suites).");
@@ -110,9 +115,9 @@ public class Main {
         footer.append(NL)
                 .append("Sample usages:").append(NL)
                 .append("a) ").append(COMMAND)
-                .append(" -testsuite TimeStamp2 -threads 4 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
+                .append(" -testsuite TimeStamp1 -threads 4 -tsaurl http://localhost:8080/signserver/tsa?workerId=1 -hashalgorithm SHA384").append(NL)
                 .append("b) ").append(COMMAND)
-                .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -statoutputdir ./statistics/ -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
+                .append(" -testsuite TimeStamp2 -threads 4 -maxwaittime 100 -statoutputdir ./statistics/ -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
                 .append("c) ").append(COMMAND)
                 .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker PDFSigner -infile test.pdf").append(NL)
                 .append("d) ").append(COMMAND)
@@ -198,6 +203,22 @@ public class Main {
                 } else {
                     throw new ParseException("Missing option: -" + PROCESS_URL);
                 }
+            }
+
+            final String hashAlg;
+            if (commandLine.hasOption(HASH_ALGORITHM)) {
+                hashAlg = commandLine.getOptionValue(HASH_ALGORITHM);
+            } else if (ts.equals(TestSuites.TimeStamp1)) {
+                hashAlg = "SHA1";
+            } else {
+                hashAlg = "SHA256";
+            }
+
+            final boolean requestCertificate;
+            if (commandLine.hasOption(REQUEST_CERTIFICATE)) {
+                requestCertificate = true;
+            } else {
+                requestCertificate = false;
             }
 
             String workerNameOrId = null;
@@ -313,10 +334,10 @@ public class Main {
             try {
                 switch (ts) {
                 case TimeStamp1:
-                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder, continueOnFailure);
+                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder, continueOnFailure, hashAlg, requestCertificate);
                     break;
                 case TimeStamp2:
-                    timeStamp2(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder, continueOnFailure);
+                    timeStamp2(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder, continueOnFailure, hashAlg, requestCertificate);
                     break;
                 case DocumentSigner1:
                     documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax, continueOnFailure);
@@ -354,6 +375,9 @@ public class Main {
                         LOG.debug("Interupted when waiting for thread: " + ex.getMessage());
                     }
                 }
+            } catch (IllegalArgumentException ex) {
+                LOG.error("Failed: " + ex.getMessage());
+                exitCode = -1;
             } catch (Exception ex) {
                 LOG.error("Failed: " + ex.getMessage(), ex);
                 exitCode = -1;
@@ -454,7 +478,7 @@ public class Main {
     }
 
     /**
-     * Initialize the worker thread list for the time stamp test suite.
+     * Initialize the worker thread list for the time stamp test suite. Default hash algorithm is SHA1
      *
      * @param threads A list to hold the worker threads. This list is filled by the method.
      * @param numThreads Number of threads to create.
@@ -464,11 +488,13 @@ public class Main {
      * @param warmupTime Warmup time, if set to > 0, will add a warmup period where no stats are collected.
      * @param limitedTime Maximum run time, if set to -1, threads will run until interrupted.
      * @param statFolder Output folder for statistics.
+     * @param hashAlg Hash algorithm.
+     * @param requestCertificate If it is true adds the certificate in the time stamp response.
      * @throws Exception
      */
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
             final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder,
-            final boolean continueOnFailure) throws Exception {
+            final boolean continueOnFailure, final String hashAlg, final boolean requestCertificate) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = "TimeStamp1-" + i;
@@ -479,13 +505,13 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile, new byte[32], TSPAlgorithms.SHA256,
-                    continueOnFailure));
+                    warmupTime, limitedTime, statFile, new byte[getDigestAlgorithmLength(hashAlg)], getDigestAlgorithmFromString(hashAlg),
+                    continueOnFailure, requestCertificate));
         }
     }
 
     /**
-     * Initialize the worker thread list for the time stamp test suite using SHA-256.
+     * Initialize the worker thread list for the time stamp test suite. Default hash algorithm is SHA-256.
      *
      * @param threads A list to hold the worker threads. This list is filled by the method.
      * @param numThreads Number of threads to create.
@@ -495,11 +521,13 @@ public class Main {
      * @param warmupTime Warmup time, if set to > 0, will add a warmup period where no stats are collected.
      * @param limitedTime Maximum run time, if set to -1, threads will run until interrupted.
      * @param statFolder Output folder for statistics.
+     * @param hashAlg Hash algorithm.
+     * @param requestCertificate If it is true adds the certificate in the time stamp response.
      * @throws Exception
      */
     private static void timeStamp2(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
             final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder,
-            final boolean continueOnFailure) throws Exception {
+            final boolean continueOnFailure, final String hashAlg, final boolean requestCertificate) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = "TimeStamp2-" + i;
@@ -510,8 +538,8 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile, new byte[32], TSPAlgorithms.SHA256,
-                    continueOnFailure));
+                    warmupTime, limitedTime, statFile, new byte[getDigestAlgorithmLength(hashAlg)], getDigestAlgorithmFromString(hashAlg),
+                    continueOnFailure, requestCertificate));
         }
     }
 
@@ -580,6 +608,62 @@ public class Main {
             threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, bytes, infile, workerNameOrId, processType, maxWaitTime,
                     random.nextInt(), warmupTime, limitedTime, statFile,
                     userPrefix, userSuffixMin, userSuffixMax, continueOnFailure));
+        }
+    }
+
+    /**
+     * Helper method to return Digest Algorithms from String to ASN1ObjectIdentifier.
+     *
+     * @param digestAlg Digest algorithm in string format.
+     * @return ASN1ObjectIdentifier format of the digest algorithm.
+     */
+    private static ASN1ObjectIdentifier getDigestAlgorithmFromString(final String digestAlg) throws IllegalArgumentException {
+        switch (digestAlg) {
+            case "SHA1":
+            case "SHA-1":
+                return TSPAlgorithms.SHA1;
+            case "SHA224":
+            case "SHA-224":
+                return TSPAlgorithms.SHA224;
+            case "SHA256":
+            case "SHA-256":
+                return TSPAlgorithms.SHA256;
+            case "SHA384":
+            case "SHA-384":
+                return TSPAlgorithms.SHA384;
+            case "SHA512":
+            case "SHA-512":
+                return TSPAlgorithms.SHA512;
+            default:
+                throw new IllegalArgumentException("Unsupported digest algorithm: " + digestAlg);
+        }
+    }
+
+    /**
+     * Helper method to return the size of Digest Algorithms.
+     *
+     * @param digestAlg Digest algorithm in string format.
+     * @return Size of the digest algorithm.
+     */
+    private static int getDigestAlgorithmLength(final String digestAlg) throws IllegalArgumentException {
+        switch (digestAlg) {
+            case "SHA1":
+            case "SHA-1":
+                return 20;
+            case "SHA224":
+            case "SHA-224":
+                return 28;
+            case "SHA256":
+            case "SHA-256":
+                return 32;
+            case "SHA384":
+            case "SHA-384":
+                return 48;
+            case "SHA512":
+            case "SHA-512":
+                return 64;
+            default:
+                throw new IllegalArgumentException("Unsupported digest algorithm: " + digestAlg);
         }
     }
 }

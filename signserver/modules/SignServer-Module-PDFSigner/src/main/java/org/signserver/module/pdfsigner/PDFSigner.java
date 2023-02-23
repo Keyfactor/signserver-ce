@@ -151,6 +151,8 @@ public class PDFSigner extends BaseSigner {
     /** Used to mitigate a collision signature vulnerability described in http://pdfsig-collision.florz.de/ */
     public static final String REFUSE_DOUBLE_INDIRECT_OBJECTS = "REFUSE_DOUBLE_INDIRECT_OBJECTS";
 
+    public static String APPEND_SIGNATURE = "APPEND_SIGNATURE";
+
     // Permissions properties
     /** List of permissions for which SignServer will refuse to sign the document if present. **/
     public static final String REJECT_PERMISSIONS = "REJECT_PERMISSIONS";
@@ -792,6 +794,10 @@ public class PDFSigner extends BaseSigner {
 
             // increase PDF version if needed by digest algorithm
             final char updatedPdfVersion;
+            // Get a list of signature names from the document.
+            final AcroFields af = reader.getAcroFields();
+            final List<String> sigNames = af.getSignatureNames();
+
             if (pdfVersionCompatibilityChecker.isVersionUpgradeRequired()) {
                 updatedPdfVersion = Character.forDigit(pdfVersionCompatibilityChecker.getMinimumCompatiblePdfVersion(), 10);
                 if (LOG.isDebugEnabled()) {
@@ -800,9 +806,6 @@ public class PDFSigner extends BaseSigner {
 
                 // check that the document isn't already signed
                 // when trying to upgrade version
-                final AcroFields af = reader.getAcroFields();
-                final List<String> sigNames = af.getSignatureNames();
-
                 if (!sigNames.isEmpty()) {
                     // TODO: in the future we might want to support
                     // a fallback option in this case to allow re-signing using the same version (using append)
@@ -812,6 +815,14 @@ public class PDFSigner extends BaseSigner {
                 appendMode = false;
             } else {
                 updatedPdfVersion = '\0';
+            }
+
+            // If this is the first signature and worker property APPEND_SIGNATURE is set to False,
+            // it overwrites the previous value of appendMode.
+            if (sigNames.isEmpty()) {
+                if (config != null && config.getProperty(APPEND_SIGNATURE) != null && config.getProperty(APPEND_SIGNATURE).trim().equalsIgnoreCase("false")) {
+                    appendMode = false;
+                }
             }
 
             PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);

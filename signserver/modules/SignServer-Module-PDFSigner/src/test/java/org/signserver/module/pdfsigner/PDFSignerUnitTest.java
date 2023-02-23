@@ -258,6 +258,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private File sampleSigned;
     private File sampleSignedSHA256;
     private File sampleWithSubsectionInXref;
+    private File sampleSignedVersion16;
 //    private File sampleLowprintingOwner123;
 
     private final JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
@@ -282,6 +283,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         sampleSigned = new File(home, "res/test/pdf/sample-signed.pdf");
         sampleSignedSHA256 = new File(home, "res/test/pdf/sample-signed256.pdf");
         sampleWithSubsectionInXref = new File(home, "res/test/pdf/sample-with-subsection-in-xref.pdf");
+        sampleSignedVersion16 = new File(home, "res/test/pdf/sample-signed-version-16.pdf");
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
 
@@ -929,7 +931,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         try {
             workerSession.setWorkerProperty(WORKER1, "APPEND_SIGNATURE", "False");
             workerSession.reloadConfiguration(WORKER1);
-            String response = new String(signPDF(sampleSigned, WORKER1));
+            String response = new String(signPDF(sampleSignedVersion16, WORKER1));
             assertEquals(StringUtils.countMatches(response, "xref"), 6);
         } finally {
             workerSession.removeWorkerProperty(WORKER1, "APPEND_SIGNATURE");

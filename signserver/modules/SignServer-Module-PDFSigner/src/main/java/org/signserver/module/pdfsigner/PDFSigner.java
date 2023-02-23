@@ -820,7 +820,7 @@ public class PDFSigner extends BaseSigner {
             // If this is the first signature and worker property APPEND_SIGNATURE is set to False,
             // it overwrites the previous value of appendMode.
             if (sigNames.isEmpty()) {
-                if (config.getProperty(APPEND_SIGNATURE) != null && config.getProperty(APPEND_SIGNATURE).trim().equalsIgnoreCase("false")) {
+                if (config != null && config.getProperty(APPEND_SIGNATURE) != null && config.getProperty(APPEND_SIGNATURE).trim().equalsIgnoreCase("false")) {
                     appendMode = false;
                 }
             }

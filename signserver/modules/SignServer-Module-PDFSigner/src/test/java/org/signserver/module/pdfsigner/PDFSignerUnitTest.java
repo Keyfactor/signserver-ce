@@ -59,6 +59,7 @@ import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -256,6 +257,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private File sampleCertifiedFormFillingAllowed256;
     private File sampleSigned;
     private File sampleSignedSHA256;
+    private File sampleWithSubsectionInXref;
+    private File sampleSignedVersion16;
 //    private File sampleLowprintingOwner123;
 
     private final JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
@@ -279,6 +282,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         sampleCertifiedFormFillingAllowed256 = new File(home, "res/test/pdf/sample-certified-formfillingallowed256.pdf");
         sampleSigned = new File(home, "res/test/pdf/sample-signed.pdf");
         sampleSignedSHA256 = new File(home, "res/test/pdf/sample-signed256.pdf");
+        sampleWithSubsectionInXref = new File(home, "res/test/pdf/sample-with-subsection-in-xref.pdf");
+        sampleSignedVersion16 = new File(home, "res/test/pdf/sample-signed-version-16.pdf");
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
 
@@ -860,6 +865,76 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             signPDF(sampleSigned, WORKER1);
         } finally {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+
+    /**
+     * Tests signing a pdf document with version 1.7. By default, uses an append signature.
+     * Note: To check the signature appended or embedded, we count the number of xref table in the file.
+     * For each xref table we expect to find two "xref" words in the document.
+     */
+    @Test
+    public void testSignPDFContainsXrefWithSubsection() throws Exception {
+        String response = new String(signPDF(sampleWithSubsectionInXref, WORKER1));
+        assertEquals(StringUtils.countMatches(response, "xref"), 4);
+    }
+
+    /**
+     * Tests signing a pdf document with version 1.7 and worker property APPEND_SIGNATURE = False.
+     * Regardless of the pdf version, for the first signature we expect to get an embedded (not append) signature.
+     * Note: To check the signature appended or embedded, we count the number of xref table in the file.
+     * For each xref table we expect to find two "xref" words in the document.
+     */
+    @Test
+    public void testSignPDFContainsXrefWithSubsectionAppendSignature() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKER1, "APPEND_SIGNATURE", "False");
+
+            workerSession.reloadConfiguration(WORKER1);
+            String response = new String(signPDF(sampleWithSubsectionInXref, WORKER1));
+            assertEquals(StringUtils.countMatches(response, "xref"), 2);
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, "APPEND_SIGNATURE");
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+
+    /**
+     * Tests signing a pdf document with version 1.7 and worker property APPEND_SIGNATURE is set to an invalid value.
+     * For an invalid APPEND_SIGNATURE property we expect to skip the APPEND_SIGNATURE value and get an appended signature.
+     * Note: To check the signature appended or embedded, we count the number of xref table in the file.
+     * For each xref table we expect to find two "xref" words in the document.
+     */
+    @Test
+    public void testSignPDFContainsXrefWithSubsectionInvalidAppendSignature() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKER1, "APPEND_SIGNATURE", "DummyValue");
+            workerSession.reloadConfiguration(WORKER1);
+            String response = new String(signPDF(sampleWithSubsectionInXref, WORKER1));
+            assertEquals(StringUtils.countMatches(response, "xref"), 4);
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, "APPEND_SIGNATURE");
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+
+    /**
+     * Tests signing an already signed pdf document with version 1.6 and worker property APPEND_SIGNATURE = False.
+     * For the documents already contains a signature we expect to skip the APPEND_SIGNATURE property and get an appended signature.
+     * <p>
+     * Note: To check the signature appended or embedded, we count the number of xref table in the file.
+     * For each xref table we expect to find two "xref" words in the document.
+     */
+    @Test
+    public void testSignAlreadySignedPDFAppendSignature() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKER1, "APPEND_SIGNATURE", "False");
+            workerSession.reloadConfiguration(WORKER1);
+            String response = new String(signPDF(sampleSignedVersion16, WORKER1));
+            assertEquals(StringUtils.countMatches(response, "xref"), 6);
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, "APPEND_SIGNATURE");
             workerSession.reloadConfiguration(WORKER1);
         }
     }

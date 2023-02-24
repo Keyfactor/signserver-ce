@@ -101,10 +101,6 @@
 # Default: true
 #module.cmssigner.enabled=true
 
-# Module ODFSigner
-# Default: true
-#module.odfsigner.enabled=true
-
 # Module PDFSigner
 # Default: true
 #module.pdfsigner.enabled=true

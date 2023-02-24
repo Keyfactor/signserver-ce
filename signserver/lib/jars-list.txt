@@ -143,4 +143,3 @@ a840968176645684bb01aed376e067ab39614885f9eee44abe35a5f20ebe7fad  ./ext/xml-apis
 ffa13d70e827653d93dff3c76598a0821b29c7450538e139989f79fb2c5b4e65  ./ext/xmlschema-core-2.2.3.jar;                         "Apache XmlSchema Core"
 a4269f803162eb468be84a15cc32cbdd557b6a8c776e0bcddbcec7b171dfbfdb  ./ext/xmlsec-2.1.7.jar;                                 "Santuario"
 bfc90e9e32d0eab1f397fb974b5f150a815188382ac41f372a7149d5bc178008  ./ext/xpp3_min-1.1.4c.jar;                              "Xpp3"
-                                                                  ./SignServer-Lib-ODFDOM.jar;                            "ODFDOM"

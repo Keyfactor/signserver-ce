@@ -61,16 +61,12 @@
         <module>SignServer-Client-SigningAndValidationAPI</module>
         <module>SignServer-Client-ValidationCLI</module>
 
-        <!-- Dependencies -->
-        <module>SignServer-Lib-ODFDOM</module>
-
         <!-- Modules -->
         <module>SignServer-Module-Log4j</module>
         <module>SignServer-Module-CMSSigner</module>
         <module>SignServer-Module-JArchive</module>
         <module>SignServer-Module-MRTDSigner</module>
         <module>SignServer-Module-MRTDSODSigner</module>
-        <module>SignServer-Module-ODFSigner</module>
         <module>SignServer-Module-OpenPGP</module>
         <module>SignServer-Module-PDFSigner</module>
         <module>SignServer-Module-Renewal-interface</module>

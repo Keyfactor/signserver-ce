@@ -180,7 +180,7 @@ public class PublicWebBean {
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2022 Keyfactor";
+        return "Copyright © 2006–2023 Keyfactor";
     }
 
     public String getNode() {

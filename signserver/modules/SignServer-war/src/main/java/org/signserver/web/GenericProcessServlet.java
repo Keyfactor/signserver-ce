@@ -15,6 +15,7 @@ package org.signserver.web;
 import org.signserver.web.common.ServletUtils;
 import org.signserver.server.data.impl.BinaryFileUpload;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -555,10 +556,12 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     final Response response = processSession.process(new AdminInfo("Client user", null, null), wi,
                             new SignatureRequest(requestId, data, responseData), context);
 
-
                     Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
                     if (responseFileName instanceof String) {
-                        res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
+                        // Use percentage encoding for filename* according to RFC 5987
+                        res.setHeader("Content-Disposition", "attachment; filename=\""
+                                + responseFileName + "\"; filename*=UTF-8''"
+                                + URLEncoder.encode((String) responseFileName, "UTF-8").replaceAll("\\+", "%20"));
                     }
 
                     if (response instanceof SignatureResponse) {

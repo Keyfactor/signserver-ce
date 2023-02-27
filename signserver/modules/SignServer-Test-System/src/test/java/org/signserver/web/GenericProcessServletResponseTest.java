@@ -16,6 +16,7 @@ import org.signserver.testutils.WebTestCase;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,6 @@ import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.junit.Test;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.server.signers.EchoRequestMetadataSigner;
 import org.signserver.testutils.ModulesTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -219,9 +219,42 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("data", "Something to sign...");
 
         final String expectedResponseFilename = "mydocument.dat.p7s";
-        final String expected = "attachment; filename=\"" + expectedResponseFilename + "\"";
+        final String expected = "attachment; filename=\""
+                + expectedResponseFilename + "\"; filename*=UTF-8''"
+                + "mydocument.dat.p7s";
 
         HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "mydocument.dat");
+        assertEquals(200, con.getResponseCode());
+
+        final String actual = con.getHeaderField("Content-Disposition");
+        assertEquals("Returned filename", expected, actual);
+
+        con.disconnect();
+    }
+
+    /**
+     * <pre>
+     * Tests filename containing a special character that looks
+     * like an 'ä' but is actually just an 'a' with two dots over it.
+     * Character 'a' with two dots hex: 61 CC 88
+     * Character 'ä' hex:               C3 A4
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    public void test06AttachmentFileNameAsterisk() throws Exception {
+        Map<String, String> fields = new HashMap<>();
+        fields.put("workerName", getSignerNameCMSSigner1());
+        fields.put("data", "Something to sign...");
+
+        final String expectedResponseFilename = "xa\bx.dat.p7s";
+        final String expectedResponseFilenameAsterisk = "xa%CC%88x.dat.p7s";
+        final String expected = "attachment; filename=\""
+                + expectedResponseFilename + "\"; filename*=UTF-8''"
+                + expectedResponseFilenameAsterisk;
+
+        // NOTE: the "a" character with two dots are not an actual "ä"
+        HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "xäx.dat");
         assertEquals(200, con.getResponseCode());
 
         final String actual = con.getHeaderField("Content-Disposition");

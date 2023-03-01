@@ -15,6 +15,7 @@ package org.signserver.admin.web;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +30,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.server.RenewalUtils;
 import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;
 import org.signserver.server.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.common.GenericSignRequest;
@@ -110,10 +113,20 @@ public class CSRBulkBean extends BulkBean {
                     fixedAlias = true;
                 }
 
-                String signatureAlgorithm = config.getProperty("SIGNATUREALGORITHM", "");
+                final String requestSignatureAlgorithm = config.getProperty(RenewalUtils.PROPERTY_REQUESTSIGNATUREALGORITHM, "");
+                final String signatureAlgorithm = config.getProperty(RenewalUtils.PROPERTY_SIGNATUREALGORITHM, "");
+                Certificate signerCert;
+                try {
+                    signerCert = getWorkerSessionBean().getSignerCertificateChain(getAuthBean().getAdminCertificate(), id).get(0);
+                } catch (CryptoTokenOfflineException ex) {
+                    signerCert = null;
+                }
+
+                final String sigAlg = RenewalUtils.getRequestSignatureAlgorithm(requestSignatureAlgorithm, signatureAlgorithm, signerCert);
+
                 String requestDN = config.getProperty("REQUESTDN", "");
 
-                myWorkers.add(new CSRWorker(id, exists, name, config.getProperties(), alias, signatureAlgorithm, requestDN, index++, fixedAlias));
+                myWorkers.add(new CSRWorker(id, exists, name, config.getProperties(), alias, sigAlg, requestDN, index++, fixedAlias));
 
                 // Select checkbox
                 getSelectedIds().put(id, exists);
@@ -121,7 +134,7 @@ public class CSRBulkBean extends BulkBean {
         }
         return myWorkers;
     }
-
+    
     public String getKeys() {
         return keys;
     }

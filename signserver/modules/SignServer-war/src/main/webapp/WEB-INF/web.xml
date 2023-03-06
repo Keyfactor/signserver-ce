@@ -69,14 +69,10 @@
         <servlet-class>org.signserver.web.Validation31Dispatcher</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdminGUIDistServlet</servlet-name>
-        <servlet-class>org.signserver.web.AdminGUIDistServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ClientCLIDistServlet</servlet-name>
         <servlet-class>org.signserver.web.ClientCLIDistServlet</servlet-class>
     </servlet>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
@@ -123,10 +119,6 @@
         </web-resource-collection>
         <auth-constraint/>
     </security-constraint>
-    <servlet-mapping>
-        <servlet-name>AdminGUIDistServlet</servlet-name>
-        <url-pattern>/admingui-dist/signserver-admingui.zip</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ClientCLIDistServlet</servlet-name>
         <url-pattern>/clientcli-dist/signserver-clientcli.zip</url-pattern>

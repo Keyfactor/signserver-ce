@@ -90,10 +90,6 @@ to work on Windows. -->
     <!-- Properties with paths to all module projects -->
     <property file="${res}/modules-project.properties"/>
     
-    <condition property="web.admingui.dist.conditionenabled">
-        <istrue value="${web.admingui.dist.enabled}"/>
-    </condition>
-    
     <condition property="web.clientcli.dist.conditionenabled">
         <istrue value="${web.clientcli.dist.enabled}"/>
     </condition>
@@ -182,10 +178,10 @@ Installation Guide for details.
 
     <!-- Create bundle with sample configs to display in the admin web. -->
     <target name="-pre-configure-ear" depends="-create-sample-configs-dist"/>
-
-    <!-- We also create an AdminGUI dist. -->
+    
+    <!-- We also create an ClientCLI dist. -->
     <target name="-post-configure-ear"
-            depends="-create-admingui-dist,-create-clientcli-dist"/>
+            depends="-create-clientcli-dist"/>
 
     <!-- Allow the old name for configure-ear to still be working. -->
     <target name="compose-ear" depends="configure-ear"/>
@@ -482,8 +478,8 @@ Installation Guide for details.
     </target>
     
     <target name="dist:zip" description="Create a zip file from the dist output">
-        <fail unless="dist.zipdest" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
-        <fail unless="dist.zipprefix" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
+                <fail unless="dist.zipdest" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/clientcli-bin.zip -Ddist.zipprefix=clientcli"/>
+        <fail unless="dist.zipprefix" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/clientcli-bin.zip -Ddist.zipprefix=clientcli"/>
         <property name="dist.zipsrc" location="${tmp}/dist"/>
 
         <delete file="${dist.zipdest}" failonerror="false"/>
@@ -492,41 +488,6 @@ Installation Guide for details.
             <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="700" dirmode="700" includes="bin/*"/>
         </zip>
         <echo>Wrote ${dist.zipdest}</echo>
-    </target>
-
-    <target name="dist:admingui">
-        <available file="${basedir}/lib/SignServer-AdminGUI.jar" property="admingui.jar" value="SignServer-AdminGUI.jar"/>
-        <available file="${basedir}/lib/SignServer-AdminGUI-${app.version.number}.jar" property="admingui.jar" value="SignServer-AdminGUI-${app.version.number}.jar"/>
-        <fail unless="admingui.jar" message="Must build SignServer-AdminGUI first if this is enterprise edition (AdminGUI has been removed from community edition)"/>
-        <antcall target="dist">
-            <param name="dist.jars" value="${admingui.jar}"/>
-            <param name="dist.includes" value="
-                bin/signserver-gui,
-                bin/signserver-gui.cmd,
-                conf/admingui_default.properties,
-                conf/log4j.properties,
-                res/admingui-splash.png,
-                doc/sample-configs/*.properties,
-                ${dist.includes.extra}
-                "/>
-        </antcall>
-    </target>
-    <target name="dist:admingui-zip" description="Create a binary ZIP distribution of the Admin GUI">
-        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
-        <antcall target="dist:admingui"/>
-        <antcall target="dist:zip">
-            <param name="dist.zipdest" value="${web.admingui.dist.file}"/>
-            <param name="dist.zipprefix" value="signserver"/>
-        </antcall>
-    </target>
-
-    <target name="-create-admingui-dist" if="web.admingui.dist.conditionenabled">
-        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
-        <antcall target="dist:admingui"/>
-        <antcall target="dist:zip">
-            <param name="dist.zipdest" value="${web.admingui.dist.file}"/>
-            <param name="dist.zipprefix" value="signserver"/>
-        </antcall>
     </target>
     
     <target name="dist:clientcli" depends="-dist-clientcli-standard,-dist-clientcli-enterprise,-dist-clientcli-stresstest,-dist-clientcli-validation"/>
@@ -700,7 +661,6 @@ mvn install
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
 	    <exclude name="bin/signserver-db"/>
-            <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
             <exclude name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
@@ -713,7 +673,6 @@ mvn install
             <exclude name="mods-available/**" />
             <exclude name="**/dist/**" />
             <exclude name="**/build/**" />
-            <exclude name="SignServer-AdminGUI/lib/**" />
             <exclude name="out/**" />
             <exclude name="eclipseBuild/**" />
             <exclude name="**/*.class" />
@@ -736,7 +695,6 @@ mvn install
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
 	    <include name="bin/signserver-db"/>
-            <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
             <include name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
@@ -752,14 +710,12 @@ mvn install
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
 	    <exclude name="bin/signserver-db"/>
-            <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
             <exclude name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
 
             <exclude name="signserver_deploy.properties" />
             <exclude name="conf/signserver_deploy.properties" />
-            <exclude name="conf/admingui.properties" />
             <exclude name="modules/**" />
             <exclude name="p12/**" />
             <exclude name="tmp/**" />
@@ -789,7 +745,6 @@ mvn install
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
 	    <include name="bin/signserver-db"/>
-            <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
             <include name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
@@ -806,7 +761,6 @@ mvn install
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
 	    <exclude name="bin/signserver-db"/>
-            <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
             <exclude name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
@@ -1039,7 +993,7 @@ SHA-512 checksum: ${signclient.zip.bin.sha512}
                 <!-- Bouncycastle (all) -->
                 <include name="ext/bc*.jar"/>
                 
-                <!-- EJB/Servlet (cli, gui) -->
+                <!-- EJB/Servlet (cli) -->
                 <include name="ext/ext/jboss*.jar"/>
                 
                 <!-- CLI (both client and admin) -->
@@ -1088,7 +1042,6 @@ SHA-512 checksum: ${signclient.zip.bin.sha512}
                 <exclude name="nblibraries.properties"/>
                 <exclude name="SignServer-Common.jar"/>     <!-- libsignserver-common -->
                 <exclude name="SignServer-ejb-interfaces.jar"/>      <!-- libsignserver-common -->
-                <exclude name="SignServer-AdminGUI.jar"/> <!-- signserver-admingui -->
                 <exclude name="SignServer-Client-CLI.jar"/> <!-- signserver-client -->
                 <exclude name="SignServer-Client-SignServerWS.jar"/> <!-- signserver-client -->
                 <exclude name="SignServer-Client-SigningAndValidationAPI.jar"/> <!-- signserver-client -->
@@ -1125,7 +1078,6 @@ SHA-512 checksum: ${signclient.zip.bin.sha512}
             <fileset dir="${base}/res">
                 <exclude name="install/**"/>
                 <exclude name="test/**"/>
-                <exclude name="admingui-splash.png"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}">
@@ -1136,36 +1088,6 @@ SHA-512 checksum: ${signclient.zip.bin.sha512}
             </fileset>
         </copy>
         <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
-        
-        <!-- signserver-admingui -->
-        <mkdir dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}"/>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/bin">
-            <fileset dir="${base}/bin">
-                <include name="signserver-gui"/>
-            </fileset>
-        </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/res">
-            <fileset dir="${base}/res">
-                <include name="admingui-splash.png"/>
-            </fileset>
-        </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/conf">
-            <fileset dir="${base}/conf">
-                <include name="admingui_default.properties"/>
-            </fileset>
-        </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib/ext">
-            <fileset dir="${base}/lib/ext">
-                <include name="swing-app-framework/**"/>
-                <include name="beans-binding/**"/>
-            </fileset>
-        </copy>
-        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
-            <fileset dir="${base}/lib">
-                <include name="SignServer-AdminGUI.jar"/>
-            </fileset>
-        </copy>
-        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
         
         <!-- signserver-client -->
         <mkdir dir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}"/>

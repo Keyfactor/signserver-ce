@@ -62,8 +62,6 @@ dist-*/
 /bin/sntp-tool
 /bin/sntp-tool.cmd
 /bin/timemonitor-in-background.sh
-/bin/signserver-gui
-/bin/signserver-gui.cmd
 
 /conf/signserver_deploy.properties
 /conf/signserver_cli.properties
@@ -73,7 +71,6 @@ dist-*/
 /conf/cesecore.properties
 /conf/timemonitor-log4j.properties
 /conf/signserver_build.properties
-/conf/admingui.properties
 /conf/timemonitor-log4j2.properties
 
 # Enterprise Edition sample configuration files
@@ -143,8 +140,6 @@ dist-*/
 /modules/SignServer-Test-System/src/jndi.properties
 /modules/SignServer-Test-System/src/test/java/org/signserver/client/api/EightCA-use.crl
 /modules/SignServer-ejb/.ant-targets-build.xml
-/modules/mod-enterprise/SignServer-AdminGUI/connect.properties
-/modules/mod-enterprise/SignServer-AdminGUI/.~lock.admingui-splash.odg*
 /modules/mod-enterprise/SignServer-Module-TimeMonitorManager/.jacocoverage
 /modules/mod-enterprise/SignServer-Test-Enterprise/nbproject
 /modules/mod-enterprise/SignServer-TimeMonitor/.jacocoverage

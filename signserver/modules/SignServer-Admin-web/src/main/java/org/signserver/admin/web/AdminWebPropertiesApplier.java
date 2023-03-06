@@ -27,7 +27,7 @@ import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.InvalidWorkerIdException;
 
 /**
- * Implementation of the properties applier using WS for the Admin GUI.
+ * Implementation of the properties applier using WS.
  *
  * @author Marcus Lundblad
  * @version $Id$

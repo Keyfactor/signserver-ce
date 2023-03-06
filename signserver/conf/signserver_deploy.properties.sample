@@ -151,10 +151,6 @@
 # Default: true
 #signingandvalidationapi.enabled=true
 
-# Set to enable build of the AdminGUI
-# Default: true
-#admingui.enabled=true
-
 # Set to enable deployment of the AdminWeb
 # Default: true
 #adminweb.enabled=true
@@ -198,23 +194,6 @@
 #
 # Default: true
 #webdoc.enabled=true
-
-# Offer the AdminGUI binary dist for download from the public web
-# Note: If enabled the following configuration files will also be part of the 
-# download:
-# - conf/admingui_default.properties
-# - conf/log4.properties
-# - doc/sample-configs/*.properties
-#
-# The ZIP file is created as part of the compose-ear (deploy) Ant target.
-#
-# Default: false
-#web.admingui.dist.enabled=false
-
-# Path to the AdminGUI binary dist file
-# Default: ${basedir}/lib/signserver-admingui.zip
-#web.admingui.dist.file=${basedir}/lib/signserver-admingui.zip
-#web.admingui.dist.file=/tmp/signserver-admingui.zip
 
 # Offer the ClientCLI binary dist for download from the public web
 # Note: If enabled the following configuration files will also be part of the 

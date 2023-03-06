@@ -155,8 +155,6 @@ public class ArchiveMetadata implements Serializable {
     
     /**
      * Get a suggested output file name given an archiveId and type.
-     * This is used by the admin GUI that gets entries through the generated
-     * WS objects, and don't have access to actual ArchiveMetadata instances.
      * 
      * @param archiveId
      * @param type

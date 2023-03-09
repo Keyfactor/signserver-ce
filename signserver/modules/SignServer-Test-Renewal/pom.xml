@@ -48,8 +48,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -81,9 +81,6 @@
                         <additionalClasspathElement>${appserver.home}/bin/client/jboss-client.jar</additionalClasspathElement>
                         <additionalClasspathElement>${appserver.home}/client/jbossall-client.jar</additionalClasspathElement>
                     </additionalClasspathElements>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>org.apache.tomee:javaee-api</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

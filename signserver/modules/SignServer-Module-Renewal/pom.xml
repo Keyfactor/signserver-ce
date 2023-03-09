@@ -49,6 +49,10 @@
             <artifactId>SignServer-Module-Renewal-interfaces</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.jws</groupId>
+            <artifactId>javax.jws-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

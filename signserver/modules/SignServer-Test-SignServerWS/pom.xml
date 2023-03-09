@@ -104,9 +104,6 @@
                         <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
                         <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
                     </additionalClasspathElements>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>org.apache.tomee:javaee-api</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

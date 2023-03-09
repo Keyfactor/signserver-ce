@@ -48,8 +48,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -129,9 +129,6 @@
                         <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
                         <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
                     </additionalClasspathElements>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>org.apache.tomee:javaee-api</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

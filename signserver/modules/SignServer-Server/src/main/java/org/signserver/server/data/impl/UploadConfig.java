@@ -33,11 +33,18 @@ public class UploadConfig {
     public static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
     private static final long DEFAULT_MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
 
+    /**
+     * Global configuration property for the maximum field count.
+     */
+    private static final String HTTP_MAX_UPLOAD_FIELD_COUNT = "HTTP_MAX_UPLOAD_FIELD_COUNT";
+    private static final long DEFAULT_MAX_UPLOAD_FIELD_COUNT = 16;
+
     /** Global configuration property for the file size threshold. */
     public static final String FILE_SIZE_THRESHOLD = "FILE_SIZE_THRESHOLD";
     private static final int DEFAULT_FILE_SIZE_THRESHOLD = 1 * 1024 * 1024; // 1 MB
     
     private long maxUploadSize;
+    private long maxUploadCount;
     private int sizeThreshold;
     private File repository;
 
@@ -45,17 +52,19 @@ public class UploadConfig {
      * Creates an instance of UploadConfig with the default configuration.
      */
     public UploadConfig() {
-        this(DEFAULT_MAX_UPLOAD_SIZE, DEFAULT_FILE_SIZE_THRESHOLD, new File(System.getProperty("java.io.tmpdir")));
+        this(DEFAULT_MAX_UPLOAD_SIZE, DEFAULT_MAX_UPLOAD_FIELD_COUNT, DEFAULT_FILE_SIZE_THRESHOLD, new File(System.getProperty("java.io.tmpdir")));
     }
 
     /**
      * Creates an instance of UploadConfig with the provided configuration.
      * @param maxUploadSize
+     * @param maxUploadCount
      * @param sizeThreshold
      * @param repository 
      */
-    public UploadConfig(long maxUploadSize, int sizeThreshold, File repository) {
+    public UploadConfig(long maxUploadSize, long maxUploadCount, int sizeThreshold, File repository) {
         this.maxUploadSize = maxUploadSize;
+        this.maxUploadCount = maxUploadCount;
         this.sizeThreshold = sizeThreshold;
         this.repository = repository;
     }
@@ -88,6 +97,24 @@ public class UploadConfig {
             }
         }
 
+        // Max upload field count
+        confValue = globalConfiguration.getProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_FIELD_COUNT);
+        long maxUploadCount = DEFAULT_MAX_UPLOAD_FIELD_COUNT;
+        if (confValue != null) {
+            try {
+                maxUploadCount = Long.parseLong(confValue);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using " + HTTP_MAX_UPLOAD_FIELD_COUNT + ": " + maxUploadCount);
+                }
+            } catch (NumberFormatException ex) {
+                LOG.error("Incorrect value for global configuration property " + HTTP_MAX_UPLOAD_FIELD_COUNT + ": " + ex.getLocalizedMessage());
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using default max upload field count as no " + HTTP_MAX_UPLOAD_FIELD_COUNT + " configured");
+            }
+        }
+
         // Max upload size
         confValue = globalConfiguration.getProperty(GlobalConfiguration.SCOPE_GLOBAL, FILE_SIZE_THRESHOLD);
         int sizeThreshold = DEFAULT_FILE_SIZE_THRESHOLD;
@@ -106,7 +133,7 @@ public class UploadConfig {
             }
         }
 
-        return new UploadConfig(maxUploadSize, sizeThreshold, repository);
+        return new UploadConfig(maxUploadSize, maxUploadCount, sizeThreshold, repository);
     }
 
     public long getMaxUploadSize() {
@@ -115,6 +142,14 @@ public class UploadConfig {
 
     public void setMaxUploadSize(long maxUploadSize) {
         this.maxUploadSize = maxUploadSize;
+    }
+
+    public long getMaxUploadCount() {
+        return maxUploadCount;
+    }
+
+    public void setMaxUploadCount(long maxUploadCount) {
+        this.maxUploadCount = maxUploadCount;
     }
 
     public int getSizeThreshold() {

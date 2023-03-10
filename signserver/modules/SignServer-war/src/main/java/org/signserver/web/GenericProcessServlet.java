@@ -60,6 +60,7 @@ import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.Loggable;
 import org.signserver.validationservice.common.Validation;
 import javax.servlet.http.Cookie;
+import org.apache.commons.fileupload.FileCountLimitExceededException;
 import org.signserver.common.RequestContext;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 
@@ -92,6 +93,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
     private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
     private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
+    private static final String HTTP_MAX_UPLOAD_FIELD_COUNT = "HTTP_MAX_UPLOAD_FIELD_COUNT";
 
     private enum ProcessType {
         signDocument,
@@ -160,6 +162,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             if (ServletFileUpload.isMultipartContent(req)) {
                 final ServletFileUpload upload = new ServletFileUpload(factory);
                 upload.setSizeMax(uploadConfig.getMaxUploadSize());
+                upload.setFileCountMax(uploadConfig.getMaxUploadCount());
 
                 try {
                     final List<FileItem> items = upload.parseRequest(req);
@@ -276,6 +279,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage(), ex);
                     res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                         "Maximum content length is " + uploadConfig.getMaxUploadSize() + " bytes");
+                    return;
+                } catch (FileCountLimitExceededException ex) {
+                    LOG.error(HTTP_MAX_UPLOAD_FIELD_COUNT + " exceeded: " + ex.getLocalizedMessage(), ex);
+                    res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Maximum field count is " + uploadConfig.getMaxUploadCount());
                     return;
                 } catch (FileUploadException ex) {
                     throw new ServletException("Upload failed", ex);

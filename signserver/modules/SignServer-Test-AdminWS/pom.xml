@@ -61,6 +61,10 @@
             <groupId>javax.jws</groupId>
             <artifactId>javax.jws-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

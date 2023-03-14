@@ -16,15 +16,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.junit.Assert;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.signserver.common.util.PathUtil;
-import org.signserver.module.jarchive.signer.JArchiveSignerTest;
 import org.signserver.server.FixedTimeSource;
 import org.signserver.testutils.ComplianceTestUtils;
 import org.signserver.testutils.ModulesTestCase;
@@ -136,7 +137,8 @@ public class JArchiveJarsignerComplianceTest {
             LOG.debug("Errors:\n" + res.getErrorMessage());
             LOG.debug("Output:\n" + output);
             Assert.assertEquals("result: " + res.getErrorMessage() + "\n" + output, 0, res.getExitValue());
-            Assert.assertFalse("Warning in output:\n" + output, output.contains("Warning"));
+
+            assertWarning(output);
         } finally {
             if (signedFile != null) {
                 signedFile.delete();
@@ -155,5 +157,35 @@ public class JArchiveJarsignerComplianceTest {
      */
     private void signThenVerifyClientHashing() throws Exception {
         
+    }
+
+    /**
+     * Assert that if warnings appear in the output, only the expected
+     * warning about POSIX file permission appears.
+     *
+     * @param output Command putput
+     * @throws Exception 
+     */
+    protected void assertWarning(final String output) throws Exception {
+        final String[] lines = output.split("\\R");
+        final int numLines = lines.length;
+
+        for (int i = 0; i < numLines; i++) {
+            /* if the line starts with "Warning" and the next line doesn't
+             * start with the warning about POSIX file permissions that is
+             * expected on recent JDKs, fail (including the case the Warning wa
+             * the last line.
+             */
+            if (lines[i].contains("Warning")) {
+                // check following lines until empty line, or end of output
+                for (int j = i + 1;
+                     j < numLines && StringUtils.isBlank(lines[j]);
+                     j++) {
+                    if (!lines[j].startsWith("POSIX file permission and/or symlink attributes detected.")) {
+                        fail("Warning in output: " + output);
+                    }
+                }
+            }
+        }
     }
 }

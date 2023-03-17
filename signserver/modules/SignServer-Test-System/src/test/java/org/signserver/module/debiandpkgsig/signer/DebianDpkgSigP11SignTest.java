@@ -45,6 +45,7 @@ import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.util.encoders.Hex;
 import static org.junit.Assert.assertTrue;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.AbstractCertReqData;
@@ -103,7 +104,7 @@ public class DebianDpkgSigP11SignTest {
 
     @Before
     public void setUp() throws Exception {
-        //Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
+        Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
         SignServerUtil.installBCProvider();
     }
 

@@ -313,11 +313,12 @@ public class PDFSignerParameters {
             visible_sig_page = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_PAGE, PDFSigner.VISIBLE_SIGNATURE_PAGE_DEFAULT);
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_PAGE);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_PAGE)) {
-                    visible_sig_page = strMetadataValue;
-                } else {
-                throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_PAGE + " not permitted");
-            }
+                // if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_PAGE)) {
+                //     visible_sig_page = strMetadataValue;
+                // } else {
+                //     throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_PAGE + " not permitted");
+                // }
+                visible_sig_page = strMetadataValue;
             }
 
             LOG.debug("Using visible signature page: " + visible_sig_page);
@@ -329,11 +330,12 @@ public class PDFSignerParameters {
             visible_sig_rectangle = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE, PDFSigner.VISIBLE_SIGNATURE_RECTANGLE_DEFAULT);
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE)) {
-                    visible_sig_rectangle = strMetadataValue;
-                } else {
-                    throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_RECTANGLE + " not permitted");
-                }
+                // if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE)) {
+                //     visible_sig_rectangle = strMetadataValue;
+                // } else {
+                //     throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_RECTANGLE + " not permitted");
+                // }
+                visible_sig_rectangle = strMetadataValue;
             }
             LOG.debug("Using rectangle: " + visible_sig_rectangle);
 
@@ -370,12 +372,13 @@ public class PDFSignerParameters {
             LOG.debug("base64 encoded custom image is set");
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64)) {
-                    visible_sig_custom_image_base64 = strMetadataValue;
-                    LOG.debug("base64 encoded custom image is set with request metadata");
-                } else {
-                    throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 + " not permitted");
-                }
+                // if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64)) {
+                //     visible_sig_custom_image_base64 = strMetadataValue;
+                //     LOG.debug("base64 encoded custom image is set with request metadata");
+                // } else {
+                //     throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 + " not permitted");
+                // }
+                visible_sig_custom_image_base64 = strMetadataValue;
             }
             
             // custom image path. Do not set if base64 encoded image is

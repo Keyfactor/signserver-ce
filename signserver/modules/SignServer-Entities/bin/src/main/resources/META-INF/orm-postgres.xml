@@ -1,0 +1,27 @@
+<entity-mappings
+  xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm orm_2_1.xsd"
+  version="2.1">
+    <entity class="org.signserver.server.config.entities.WorkerConfigDataBean" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="signerId"><column name="signerId" column-definition="INT4"/></id>
+            <basic name="signerConfigData"><column name="signerConfigData" column-definition="TEXT" nullable="true" updatable="true"/></basic>
+        </attributes>
+    </entity>
+
+    <entity class="org.signserver.server.key.entities.KeyData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="keyAlias">
+                <column name="keyAlias" column-definition="TEXT"/>
+            </id>
+            <basic name="keyData">
+                <column name="keyData" column-definition="TEXT"/>
+            </basic>
+            <basic name="certData">
+                <column name="certData" column-definition="TEXT"/>
+            </basic>
+        </attributes>
+    </entity>
+
+</entity-mappings>

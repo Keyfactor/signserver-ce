@@ -534,6 +534,27 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
         }
 
+        // Sign position
+        try {
+            String signPosition = (String) req.getParameter("signPosition");
+            metadata.put("VISIBLE_SIGNATURE_RECTANGLE", signPosition.trim());
+        } catch (Exception e) {
+        }
+
+        // Sign page
+        try {
+            String signPage = (String) req.getParameter("signPage");
+            metadata.put("VISIBLE_SIGNATURE_PAGE", signPage.trim());
+        } catch (Exception e) {
+        }
+
+        // Base64 signature
+        try {
+            String base64Signature = (String) req.getParameter("base64Signature");
+            metadata.put("VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64", base64Signature.trim());
+        } catch (Exception e) {
+        }
+
         addRequestMetaData(metadataHolder, metadata);
 
         if (LOG.isDebugEnabled()) {

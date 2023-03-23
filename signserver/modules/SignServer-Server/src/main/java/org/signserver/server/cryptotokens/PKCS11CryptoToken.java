@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -49,9 +50,9 @@ import org.bouncycastle.crypto.ec.CustomNamedCurves;
 import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.certificates.util.AlgorithmTools;
-import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
-import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
+import com.keyfactor.util.keys.token.pkcs11.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
@@ -290,7 +291,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 // don't initialize keystore delegator when not auto-activated
             }
                 
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         } catch (NoSuchSlotException ex) {
@@ -325,7 +326,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                         }
                     }
                 }
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
+            } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
                 LOG.error("Error testing activation", ex);
             }
         }
@@ -338,7 +339,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         try {
             delegate.activate(authenticationcode.toCharArray());
             keystoreDelegator = new JavaKeyStoreDelegator(delegate.getActivatedKeyStore());
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Activate failed", ex);
             throw new CryptoTokenOfflineException(ex);
         } catch (CryptoTokenAuthenticationFailedException ex) {
@@ -367,7 +368,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
         try {
             return delegate.getPrivateKey(alias);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
@@ -401,7 +402,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
         try {
             return CryptoTokenHelper.genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoTokenV4.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException e) {
             LOG.error("Certificate request error: " + e.getMessage(), e);
             throw new CryptoTokenOfflineException(e);
         } catch (IllegalArgumentException ex) {
@@ -481,7 +482,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 final KeyStore ks = delegate.getActivatedKeyStore();
                 CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, keystoreDelegator, ks.getProvider().getName());
             }
-        } catch (InvalidAlgorithmParameterException | org.cesecore.keys.token.CryptoTokenOfflineException | CertificateException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | OperatorCreationException ex) {
+        } catch (InvalidAlgorithmParameterException | com.keyfactor.util.keys.token.CryptoTokenOfflineException | CertificateException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | OperatorCreationException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -532,7 +533,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
         try {
             delegate.generateKey(keyAlgorithm, Integer.valueOf(keySpec), alias);
-        } catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -638,7 +639,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         public KeyStore getActivatedKeyStore() throws CryptoTokenOfflineException {
             try {
                 return getKeyStore().getKeyStore(); // TODO: Consider if we should instead use the CachingKeystoreWrapper
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
                 throw new CryptoTokenOfflineException(ex);
             }
         }

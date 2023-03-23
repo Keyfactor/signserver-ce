@@ -17,4 +17,8 @@ mvn install:install-file -Dfile=${DIR}/ext/bcprov-jdk18on-1.73b.12.jar -DgroupId
 mvn install:install-file -Dfile=${DIR}/ext/bcpkix-jdk18on-1.73b.12.jar -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk18on -Dversion=1.73b.12 -Dpackaging=jar
 mvn install:install-file -Dfile=${DIR}/ext/bcpg-jdk18on-1.73b.12.jar -DgroupId=org.bouncycastle -DartifactId=bcpg-jdk18on -Dversion=1.73b.12 -Dpackaging=jar
 
+# Install KFC dependencies not yet in Central
+mvn install:install-file -Dfile=${DIR}/ext/x509-common-util-8.0.Alpha0-a7f13143.jar -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=8.0.Alpha0-a7f13143 -Dpackaging=jar
+mvn install:install-file -Dfile=${DIR}/ext/p11ng-8.0.Alpha0-a7f13143.jar -DgroupId=org.ejbca.cesecore -DartifactId=p11ng -Dversion=8.0.Alpha0-a7f13143 -Dpackaging=jar
+
 # Add next group of dependencies here

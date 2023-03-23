@@ -225,6 +225,22 @@
 
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>x509-common-util</artifactId>
+                <version>8.0.Alpha0-a7f13143</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>p11ng</artifactId>
+                <version>8.0.Alpha0-a7f13143</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.1-jre</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-entity</artifactId>
                 <version>7.0.0.1</version>
                 <exclusions>
@@ -232,6 +248,7 @@
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcpkix-jdk15on</artifactId>
                     </exclusion>
+  
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcprov-jdk15on</artifactId>

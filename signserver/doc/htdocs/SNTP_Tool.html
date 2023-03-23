@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>SignServer 5.11.2 Release Notes - SignServer - Documentation Space</title> -->
-    <title>SignServer 5.11.2 Release Notes - SignServer Manual</title>
+    <!-- <title>SNTP Tool - SignServer - Documentation Space</title> -->
+    <title>SNTP Tool - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -428,7 +428,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
+        <a class="ht-nav-page-link current" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1718,7 +1718,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
+        <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
                                         <li class="leaf">
@@ -1839,56 +1839,37 @@
     <ul>
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
-                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
-                                                                                     <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
+                                                                                     <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-181285558"> <span>SignServer 5.11.2 Release Notes</span></h1>
+</div>            <h1 id="src-181281987"> <span>SNTP Tool</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  ><span class="status grey subtle">FEBRUARY 2023</span>    </p>
-    <p  >    <span style="color: #000000;">
-This SignServer 5.11.2     </span>
-    <span style="color: #0e101a;">
-maintenance    </span>
-    <span style="color: #000000;">
- release provides enhanced flexibility for integration with Identity Providers using <a   href="JWT_Authorizer.html">JSON Web Tokens</a> (JWTs).<br/>    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-The release also contains improvements and error corrections related to <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>&#39;s compatibility with Microsoft SignTool.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a>, <a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance</a>, and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-<i class=" ">If you do not have SignServer 5.11 yet, check out the new features and other highlights in the <a   href="SignServer_5.11_Release_Notes.html">SignServer 5.11 Release Notes</a>.</i>    </span>
-    </p>
-    <div class="section section-1" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-UpgradeInformation">
-        <h1 class="heading "><span>Upgrade Information</span></h1>
-    <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    <p  >The SNTP tool is a command line interface tool that allows querying external NTP servers.    </p>
+    <p  >The tool is provided for troubleshooting purposes when setting up the <a   href="SignServer_TimeMonitor_Application.html">SignServer TimeMonitor application</a>.    </p>
+    <p  >Run sntp-tool from <strong class=" ">SIGNSERVER_HOME </strong>using the following command:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"> bin/sntp-tool</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-181285558_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExLjJSZWxlYXNlTm90ZXN2NS4xMS4zLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">
-        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
-    <p  >For full details of fixed bugs and implemented features in SignServer 5.11.2, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.11.2.Final%20ORDER%20BY%20resolution%20DESC">Jira Issue Tracker</a>.    </p>
-    <div class="section section-2" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-IssuesResolvedin5.11.2">
-        <h2 class="heading "><span>Issues Resolved in 5.11.2</span></h2>
-    <p  >Released February 2023    </p>
-    <div class="section section-3" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-NewFeatures">
-        <h3 class="heading "><span>New Features</span></h3>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2356">DSS-2356</a> - Configuration option in JwtAuthorizer to not require typ=JWT    </p>
-    </div>
-    </div>
-    <div class="section section-2" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-Improvements">
-        <h2 class="heading "><span>Improvements</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2540">DSS-2540</a> - MSAuthCodeCMSSigner should not include signingTime attribute    </p>
-    </div>
-    <div class="section section-2" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-BugFixes">
-        <h2 class="heading "><span>Bug Fixes</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2528">DSS-2528</a> - MSAuthCodeCMSSigner encodes signedData in BER instead of DER    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2537">DSS-2537</a> - Regression: Encoding of null parameters in digest algorithm identifiers for MSAuthCode signatures changed after Bouncy Castle upgrade    </p>
-    </div>
+    <p  ><br/>    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Usage</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Usage" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">usage: sntp-tool [options]</code></div>
+<div class="line"><code class="plain">SNTP commands</code></div>
+<div class="line"><code class="plain"> -sendsamples &lt;arg&gt;   Number of samples to send. Optional. Default </code><code class="value">1</code></div>
+<div class="line"><code class="plain"> -servers &lt;arg&gt;       Comma-separated list of host names or IP addresses</code></div>
+<div class="line"><code class="plain">                      to query</code></div>
+<div class="line"><code class="plain"> -timeout &lt;arg&gt;       Timeout in milliseconds. Optional. Default </code><code class="value">1000</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">Sample usages: sntp-tool -servers ntp.example.com</code></div>
+<div class="line"><code class="plain">sntp-tool -servers ntp1.example.com,ntp2.example.com</code></div>
+<div class="line"><code class="plain">sntp-tool -servers ntp.example.com -sendsamples </code><code class="value">2</code></div>
+<div class="line"><code class="plain">sntp-tool -servers ntp.example.com -timeout </code><code class="value">2000</code></div>
+</div>
     </div>
         </div>
 
@@ -1896,7 +1877,7 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_5.11.2.1_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="P11NG_CLI.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1905,9 +1886,9 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer 5.11.2.1 Release Notes</span>
+            <span>P11NG CLI</span>
         </a>
-                <a href="SignServer_5.11_Release_Notes.html" class="ht-post-nav-next">
+                <a href="SignServer_Reference.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1916,7 +1897,7 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer 5.11 Release Notes</span>
+            <span>SignServer Reference</span>
         </a>
     </nav>    
             

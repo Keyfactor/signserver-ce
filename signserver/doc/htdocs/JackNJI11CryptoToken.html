@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.2</p>
+                    <p>Version: 5.11.3</p>
                 </div>
             </header>
 
@@ -425,6 +425,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1706,6 +1710,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
@@ -1832,7 +1844,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-143749049"> <span>JackNJI11CryptoToken</span></h1>
+</div>            <h1 id="src-181283522"> <span>JackNJI11CryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1840,12 +1852,17 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
-    <div class="section section-1" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-Overview">
+    <div class="section section-1" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >Crypto token using PKCS#11 for communication with the HSM but using a new provider instead of the Java SunPKCS11 provider (utilized by the regular <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> for example).    </p>
+    <p  >    <span style="color: #000000;">
+As of SignServer 5.11, the P11NG provider is recommended f    </span>
+or new deployments. P11NG supports functionality not provided by the Java SunPKCS11 provider, such as key wrapping, EdDSA algorithm support, and various Cloud HSM options. The     <span style="color: #000000;">
+different PKCS#11 implementations must not be used simultaneously in a SignServer instance, meaning that the crypto tokens in SignServer using PKCS#11 must use the same PKCS#11 provider implementation. For more information, see <a   href="Migrate_from_SunPKCS11_to_P11NG.html">Migrate from SunPKCS11 to P11NG</a>.    </span>
+    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION_CLASS=<strong class=" ">org.signserver.p11ng.common.cryptotoken.JackNJI11CryptoToken</strong>    </p>
     </div>
-    <div class="section section-1" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-AvailableProperties">
+    <div class="section section-1" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1964,30 +1981,30 @@ Optional. Default true.    </span>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-SecretKeyGeneration">
+    <div class="section section-1" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-SecretKeyGeneration">
         <h1 class="heading "><span>Secret Key Generation</span></h1>
     <p  >If generating a secret key through the JackNJI11CryptoToken, the algorithm name can be supplied in the following ways. See also <a   href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>.    </p>
-    <div class="section section-2" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-StandardJavaName">
+    <div class="section section-2" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-StandardJavaName">
         <h2 class="heading "><span>Standard Java Name</span></h2>
     <p  >Example: <strong class=" ">AES, DES.</strong>    </p>
     <p  >If the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
     </div>
-    <div class="section section-2" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-CKMLongvalue">
+    <div class="section section-2" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-CKMLongvalue">
         <h2 class="heading "><span>CKM Long value</span></h2>
     <p  >Example: <strong class=" ">SEC:4224</strong>. Here 4224 represents the long value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
-    <div class="section section-2" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-CKMHexadecimalvalue">
+    <div class="section section-2" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-CKMHexadecimalvalue">
         <h2 class="heading "><span>CKM Hexadecimal value</span></h2>
     <p  >Example: <strong class=" ">SEC:0x00001080</strong>. Here 0x00001080 represents a hexadecimal value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-HSMSpecificNotes">
+    <div class="section section-1" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-HSMSpecificNotes">
         <h1 class="heading "><span>HSM Specific Notes</span></h1>
-    <div class="section section-2" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-AWSCloudHSM">
+    <div class="section section-2" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-AWSCloudHSM">
         <h2 class="heading "><span>AWS CloudHSM</span></h2>
-<ul class=" "><li class=" ">    <p  >Configure the worker or crypto token not to generate any certificate by setting <strong class=" ">GENERATE_CERTIFICATE_OBJECT=false</strong>. For details, see the GENERATE_CERTIFICATE_OBJECT property in <a   href="#src-143749049_id-.JackNJI11CryptoTokenv5.11.0-AvailableProperties">Available Properties</a>.    </p>
+<ul class=" "><li class=" ">    <p  >Configure the worker or crypto token not to generate any certificate by setting <strong class=" ">GENERATE_CERTIFICATE_OBJECT=false</strong>. For details, see the GENERATE_CERTIFICATE_OBJECT property in <a   href="#src-181283522_id-.JackNJI11CryptoTokenv5.11.3-AvailableProperties">Available Properties</a>.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-GCPKMS">
+    <div class="section section-2" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-GCPKMS">
         <h2 class="heading "><span>GCP KMS</span></h2>
 <ul class=" "><li class=" ">    <p  >The Google Cloud HSM does not support key generation, key wrapping, or import of certificate chains via SignServer.    </p>
 </li><li class=" ">    <p  >    <span style="color: #0e101a;">
@@ -2003,7 +2020,7 @@ Selecting a signature algorithm that does not match the algorithms used when the
     </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-143749049_id-.JackNJI11CryptoTokenv5.11.0-KnownLimitations">
+    <div class="section section-1" id="src-181283522_id-.JackNJI11CryptoTokenv5.11.3-KnownLimitations">
         <h1 class="heading "><span>Known Limitations</span></h1>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Multiple different CA certificates with the same subject DN cannot be stored in the token (see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-1544">DSS-1544</a>).    </span>

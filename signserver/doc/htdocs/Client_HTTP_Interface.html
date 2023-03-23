@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.2</p>
+                    <p>Version: 5.11.3</p>
                 </div>
             </header>
 
@@ -425,6 +425,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1706,6 +1710,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
@@ -1829,12 +1841,12 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-85922295"> <span>Client HTTP Interface</span></h1>
+</div>            <h1 id="src-181284426"> <span>Client HTTP Interface</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-GenericProcessServlet">
+    <div class="section section-1" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-GenericProcessServlet">
         <h1 class="heading "><span>GenericProcessServlet</span></h1>
     <p  >HTTP requests can be sent to the SignServer servlet GenericProcessServlet located at /signserver/process using either POST or GET.    </p>
     <div  class="tablewrap">
@@ -1934,13 +1946,14 @@
             </div>
     <p  ><sup class=" ">*</sup> if the request content-type in a POST is specified as something else than &quot;x-www-form-urlencoded&quot; or &quot;multipart/form-data&quot; the message body is not parsed but instead directly passed to the worker specified by workerName or workerId in the URI&#39;s query string.    </p>
     <p  ><br/>    </p>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Configuration">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-Configuration">
         <h2 class="heading "><span>Configuration</span></h2>
     <p  ><strong class=" ">HTTP_MAX_UPLOAD_SIZE</strong> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request. Defaut: &quot;104857600&quot; (100 MB).    </p>
+    <p  ><strong class=" ">HTTP_MAX_UPLOAD_FIELD_COUNT</strong> = Global configuration property that is set to a default of 16 which typically would support up to around 10 request metadata properties depending on how many other fields are provided. If more fields are needed, the property can be adjusted. Default: &quot;16&quot; fields.    </p>
     <p  ><strong class=" ">FILE_SIZE_THRESHOLD</strong> = Global configuration property that can be set to specify the size threshold (in bytes) after which the data is written to disk Default: &quot;1048576&quot; (1 MB). The directory uploaded files are temporarly stored to is the default temp directory and can be changed by starting the application server with a different value for the Java property java.io.tmpdir.    </p>
     <p  ><br/>    </p>
     </div>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Samples">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-Samples">
         <h2 class="heading "><span>Samples</span></h2>
 <ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a><br/><br/>    </p>
 </li><li class=" ">    <p  >HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>For example see /signserver/clientweb/genericfile.xhtml (multipart/form-data) and /signserver/clientweb/genericdirect.xhtml (x-www-form-urlencoded).<br/><br/>Example with cURL:    </p>
@@ -1957,7 +1970,7 @@
 </li></ul></li></ul>    <p  ><br/>    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-WorkerServlet">
+    <div class="section section-1" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-WorkerServlet">
         <h1 class="heading "><span>WorkerServlet</span></h1>
     <p  >HTTP requests can be sent to the SignServer servlet WorkerServlet located at /signserver/worker/* using either POST or GET.<br/>Requests are forwarded to the GenericProcessServlet, except that the worker name is taken from the URL.<br/>Worker name or ID given through request parameters are ignored.    </p>
     <div  class="tablewrap">
@@ -2025,16 +2038,16 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Samples.1">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-Samples.1">
         <h2 class="heading "><span>Samples</span></h2>
 <ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/worker/DemoXMLSigner?data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a><br/><br/>    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-SODProcessServlet">
+    <div class="section section-1" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-SODProcessServlet">
         <h1 class="heading "><span>SODProcessServlet</span></h1>
     <p  >Servlet recieving HTTP POST requests containing data group hashes and creates a MRTDSODSignerRequest and passes it to the specified MRTDSODSigner. The response from the servlet is the signed security object in binary format.    </p>
     <p  ><br/>    </p>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-ePassportSigningRequests">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-ePassportSigningRequests">
         <h2 class="heading "><span>ePassport Signing Requests</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -2089,9 +2102,8 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  ><br/>    </p>
     </div>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-OtherRequests">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-OtherRequests">
         <h2 class="heading "><span>Other Requests</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -2129,13 +2141,13 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Samples.2">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-Samples.2">
         <h2 class="heading "><span>Samples</span></h2>
 <ul class=" "><li class=" ">    <p  >See /signserver/clientweb/mrtdsod.xhtml.    </p>
 </li><li class=" ">    <p  >To download the configured signer certificate:<br/>HTTP GET: <a  class="external-link" href="http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner">http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner</a>    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-SODProcessWorkerServlet">
+    <div class="section section-1" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-SODProcessWorkerServlet">
         <h1 class="heading "><span>SODProcessWorkerServlet</span></h1>
     <p  >Servlet receiving HTTP POST requests containing data group hashes and creates a MRTDSODSignerRequest and passes it to the specified MRTDSODSigner. The response from the servlet is the signed security object in binary format.<br/>Requests are forwarded to the SODProcessServlet, except that the worker name is taken from the URL.<br/>Worker name or ID given through request parameters are ignored.    </p>
     <div  class="tablewrap">
@@ -2189,7 +2201,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-85922295_id-.ClientHTTPInterfacev5.2.1-Samples.3">
+    <div class="section section-2" id="src-181284426_id-.ClientHTTPInterfacev5.11.3-Samples.3">
         <h2 class="heading "><span>Samples</span></h2>
     <p  >See /signserver/clientweb/mrtdsod.xhtml.    </p>
     </div>

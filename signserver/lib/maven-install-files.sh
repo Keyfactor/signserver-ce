@@ -6,7 +6,7 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 
-# Below add commands for manually installing dependencies to Maven.
+# Below add commands for manually installing dependencies to Maven (for CE see separate file for EE).
 # Note that this is intended as a temporarily solution until artifacts are in the repo.
 
 echo "Will call mvn install:install-file with certain dependencies from ${DIR}/lib/ext/."
@@ -19,7 +19,6 @@ mvn ${MVN_OPTS} install:install-file -Dfile=${DIR}/ext/bcpg-jdk18on-1.73b.12.jar
 
 # Install KFC dependencies not yet in Central
 mvn ${MVN_OPTS} install:install-file -Dfile=${DIR}/ext/x509-common-util-8.0.Alpha0-a7f13143.jar -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=8.0.Alpha0-a7f13143 -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile=${DIR}/ext/p11ng-8.0.Alpha0-a7f13143.jar -DgroupId=org.ejbca.cesecore -DartifactId=p11ng -Dversion=8.0.Alpha0-a7f13143 -Dpackaging=jar
 
 # Add next group of dependencies here
 

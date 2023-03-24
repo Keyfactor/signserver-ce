@@ -22,3 +22,9 @@ mvn ${MVN_OPTS} install:install-file -Dfile=${DIR}/ext/x509-common-util-8.0.Alph
 mvn ${MVN_OPTS} install:install-file -Dfile=${DIR}/ext/p11ng-8.0.Alpha0-a7f13143.jar -DgroupId=org.ejbca.cesecore -DartifactId=p11ng -Dversion=8.0.Alpha0-a7f13143 -Dpackaging=jar
 
 # Add next group of dependencies here
+
+
+# Install EE dependencies as well if available
+if [ -f "${DIR}/maven-install-files-ee.sh" ]; then
+    source ${DIR}/maven-install-files-ee.sh
+fi

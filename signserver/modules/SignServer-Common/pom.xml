@@ -75,6 +75,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.ejbca.cesecore</groupId>
+            <artifactId>x509-common-util</artifactId>
+            <version>8.0.Alpha0-a7f13143</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.signserver.jacknji11</groupId>
+            <artifactId>jacknji11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+
         <dependency>
             <artifactId>cert-cvc</artifactId>
             <groupId>org.ejbca.cvc</groupId>

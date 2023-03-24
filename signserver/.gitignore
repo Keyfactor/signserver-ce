@@ -127,6 +127,7 @@ dist-*/
 /lib/ext/commons-net-*
 /lib/ext/specs-*
 /lib/ext/validation-*
+/lib/ext/p11ng-*
 
 /modules/SignServer-Admin-web/nbproject
 /modules/SignServer-AdminCLI/nbproject

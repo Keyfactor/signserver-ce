@@ -51,7 +51,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.certificates.util.AlgorithmTools;
 import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
-import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
+import com.keyfactor.util.keys.token.pkcs11.Pkcs11SlotLabelType;
 import com.keyfactor.util.keys.token.pkcs11.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;

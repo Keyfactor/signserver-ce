@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.2</p>
+                    <p>Version: 5.11.3</p>
                 </div>
             </header>
 
@@ -425,6 +425,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1706,6 +1710,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
@@ -1832,19 +1844,19 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-85918314"> <span>ZoneHashSigner</span></h1>
+</div>            <h1 id="src-181279572"> <span>ZoneHashSigner</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The ZoneHashSigner signer has the fully qualified class name: <strong class=" ">org.signserver.module.dnssec.signer.ZoneHashSigner</strong>    </p>
-    <div class="section section-1" id="src-85918314_id-.ZoneHashSignerv5.3.0-Overview">
+    <div class="section section-1" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The ZoneHashSigner signer can be used to sign DNS zone zip files using the SignClient in client-side hashing and construction mode, contained in a zip file, using DNS Security Extensions (DNSSEC).    </p>
     <p  >For information on invoking the SignClient, see DNSSEC Signing in <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>.    </p>
-    <p  >The signer is designed around a two-stage request-response protocol, see <a   href="#src-85918314_id-.ZoneHashSignerv5.3.0-Protocol">Protocol</a>.    </p>
+    <p  >The signer is designed around a two-stage request-response protocol, see <a   href="#src-181279572_id-.ZoneHashSignerv5.11.2.1-Protocol">Protocol</a>.    </p>
     </div>
-    <div class="section section-1" id="src-85918314_id-.ZoneHashSignerv5.3.0-AvailableProperties">
+    <div class="section section-1" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1916,10 +1928,18 @@
         <p  >Signature algorithm to use for all signatures. Default: &quot;SHA256withRSA&quot;. Currently only &quot;SHA256withRSA is supported. All signature algorithms map to DNSSEC algorithms using NSEC3 and the NONEwithRSA algorithm is used for signing the digests.    </p>
             </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CHECK_ACTIVE_KSKS    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >True if the keys configured in ACTIVE_KSKS should be checked for existence. Setting CHECK_ACTIVE_KSKS to &quot;false&quot; can improve performance in some environments when listing zone file signers in AdminWeb and when calling health check. Default: &quot;true&quot;.    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-85918314_id-.ZoneHashSignerv5.3.0-RequestParameters">
+    <div class="section section-1" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-RequestParameters">
         <h1 class="heading "><span>Request Parameters</span></h1>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
@@ -1954,27 +1974,27 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-85918314_id-.ZoneHashSignerv5.3.0-Protocol">
+    <div class="section section-1" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-Protocol">
         <h1 class="heading "><span>Protocol</span></h1>
     <p  >Due to the way DNSSEC zone file signing works, this signer is designed around a two-stage request-response protocol.    </p>
     <p  >In the first request (pre-sign request), the request body is empty (this tells the signer that the request is a pre-request). The request metadata parameters ZSK_SEQUENCE_NUMBER and SOA_TTL are included to indicate the zone signing key sequence number to use and the TTL (Time To Live) of the SOA (Start of Authority) record.    </p>
     <p  >The signer sends back a pre-sign response with DNSKEY records, signature records for the DNSKEY records, and the NSEC3PARAM record. These are encoded in the response in the format of a Java properties file.    </p>
     <p  >The client will then construct the sign request containing the same ZSK_SEQUENCE_NUMBER as in the pre-sign request, the same SIG record data as received from the pre-sign response, and mappings from each RRsetId to hash that should be signed. The hash is calculated using the SIG record data received in the pre-sign response and the RRset. The server verifies that the received footprint is correct (and matches the ZSK_SEQUENCE_NUMBER). The server signs each hash and responds with a sign response containing a mapping from the same ID:s provided in the sign request to the signature values. The response data is formatted as a Java properties file. The receiving client (for example, the SignClient) then constructs each SIG record and inserts the signature received from the server.    </p>
-    <div class="section section-2" id="src-85918314_id-.ZoneHashSignerv5.3.0-Pre-signrequest">
+    <div class="section section-2" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-Pre-signrequest">
         <h2 class="heading "><span>Pre-sign request</span></h2>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Metadata</strong>    </p>
 <pre class=" ">ZSK_SEQUENCE_NUMBER=1, SOA_TTL=86400<br/><br/></pre></li><li class=" ">    <p  ><strong class=" ">Request body</strong><br/>&lt;Empty&gt;    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-85918314_id-.ZoneHashSignerv5.3.0-Pre-signresponse">
+    <div class="section section-2" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-Pre-signresponse">
         <h2 class="heading "><span>Pre-sign response</span></h2>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Response body</strong>    </p>
 <pre class="code-java ">rr.dnskey.z1.expiretime=1577011258284<br/>rr.dnskey.z1.signingtime=1574419258284<br/>rr.dnskey.z1.footprint=11644<br/>rr.dnskey.z1.algorithm=8<br/><br/>rr.dnskey.z0=...base64 of wire format for DNSKEY 256 (if one)...<br/>rr.dnskey.z1=...base64 of wire format for DNSKEY 256...<br/>rr.dnskey.z2=...base64 of wire format for DNSKEY 256 (if one)...<br/>rr.dnskey.k1=...base64 of wire format for DNSKEY 257...<br/>rr.dnskey.k2=...base64 of wire format for DNSKEY 257 (if one)...<br/>rr.dnskey.sig.z1=...base64 of wire format for RRSIG with Z1 key...<br/>rr.dnskey.sig.k1=...base64 of wire format for RRSIG with K1 key...<br/>rr.dnskey.sig.k2=...base64 of wire format for RRSIG with K2 key (if one)...<br/>rr.nsec3param=...base64 of wire format for NSEC3PARAM...<br/>rr.nsec3param.sig=...base64 of wire format for RRSIG of NSEC3PARAM...</pre></li></ul>    </div>
-    <div class="section section-2" id="src-85918314_id-.ZoneHashSignerv5.3.0-Signrequest">
+    <div class="section section-2" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-Signrequest">
         <h2 class="heading "><span>Sign request</span></h2>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Metadata</strong>    </p>
 <pre class="code-java ">ZSK_SEQUENCE_NUMBER=10, rr.dnskey.z1.expiretime=1577011258284, rr.dnskey.z1.signingtime=1574419258284, rr.dnskey.z1.footprint=11644, rr.dnskey.z1.algorithm=8<br/><br/></pre></li><li class=" ">    <p  ><strong class=" ">Request body<br/></strong>hash.1=...base64 of hash or signature input...<br/>hash.2=...<br/>hash.N=...    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-85918314_id-.ZoneHashSignerv5.3.0-Signresponse">
+    <div class="section section-2" id="src-181279572_id-.ZoneHashSignerv5.11.2.1-Signresponse">
         <h2 class="heading "><span>Sign response</span></h2>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Response body</strong>    </p>
 <pre class="code-java ">sig.1=...base64 of signature of hash.1...<br/>sig.2=...<br/>sig.N=...</pre></li></ul>    </div>

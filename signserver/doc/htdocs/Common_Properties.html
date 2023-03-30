@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.2</p>
+                    <p>Version: 5.11.3</p>
                 </div>
             </header>
 
@@ -425,6 +425,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1706,6 +1710,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
@@ -1832,7 +1844,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-9797681"> <span>Common Properties</span></h1>
+</div>            <h1 id="src-181283334"> <span>Common Properties</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1842,6 +1854,7 @@
     <p  ><strong class=" ">REQUESTDN</strong> = Subject DN to be included in a certificate signing request (CSR) by default. Used by interfaces such as the Admin GUI to have a default value already filled in as well as when doing automatic renewals, i.e. using <a   href="RenewalWorker.html">Renewal Worker</a> or <a   href="Peer_Systems.html">Peer Systems</a>.    </p>
     <p  ><strong class=" ">NO_REQUEST_ARCHIVING</strong> = When set to true, instructs the signer that archiving of request data is not to be considered. This implies the signer can make optimizations such as not keeping the original request data intact while doing modifications. This is not allowed to be set to true when archivers used are configured to archive request data. Default: false.    </p>
     <p  ><strong class=" ">PEERS_*</strong> = For peers systems related properties see the <a   href="Peer_Systems.html">Peer Systems</a> page.    </p>
+    <p  ><strong class=" ">REQUESTSIGNATUREALGORITHM </strong>=<strong class=" "> </strong>When creating a certificate signing request (CSR) you can use this property instead of using the SIGNATUREALGORITHM property. For example, if a signer would have SIGNATUREALGORITHM=NONEwithRSA to perform client-side hashing but you want to be able to specify another algorithm to use for the CSR, then for instance you can set REQUESTSIGNATUREALGORITHM to SHA256withRSA and keep SIGNATUREALGORITHM = NONEwithRSA. For more information, see <a   href="Peer_Systems.html">Peer Systems</a>. Also, the Administration Web interface may use this property value to suggest an algorithm to use when generating CSRs.<br/>    </p>
         </div>
 
     </article>

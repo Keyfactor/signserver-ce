@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>SignServer 5.11.2 Release Notes - SignServer - Documentation Space</title> -->
-    <title>SignServer 5.11.2 Release Notes - SignServer Manual</title>
+    <!-- <title>SignServer 5.11.3 Release Notes - SignServer - Documentation Space</title> -->
+    <title>SignServer 5.11.3 Release Notes - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -1710,7 +1710,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+        <a class="ht-nav-page-link current" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
 
             </li>
                                         <li class="leaf">
@@ -1718,7 +1718,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
+        <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
                                         <li class="leaf">
@@ -1843,51 +1843,74 @@
                                         <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
                                                                                      <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
                                                             </ul>
-</div>            <h1 id="src-181285558"> <span>SignServer 5.11.2 Release Notes</span></h1>
+</div>            <h1 id="src-181283254"> <span>SignServer 5.11.3 Release Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  ><span class="status grey subtle">FEBRUARY 2023</span>    </p>
+    <p  ><span class="status grey subtle">APRIL 2023</span>    </p>
     <p  >    <span style="color: #000000;">
-This SignServer 5.11.2     </span>
-    <span style="color: #0e101a;">
-maintenance    </span>
-    <span style="color: #000000;">
- release provides enhanced flexibility for integration with Identity Providers using <a   href="JWT_Authorizer.html">JSON Web Tokens</a> (JWTs).<br/>    </span>
+The SignServer team is pleased to announce the release of SignServer 5.11.3.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-The release also contains improvements and error corrections related to <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>&#39;s compatibility with Microsoft SignTool.    </span>
+This minor release includes several improvements and fixes.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a>, <a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance</a>, and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
+Corrections have been made regarding configuration updates in shared database setups, PDF signing, the use of special characters in input file names, and more.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-<i class=" ">If you do not have SignServer 5.11 yet, check out the new features and other highlights in the <a   href="SignServer_5.11_Release_Notes.html">SignServer 5.11 Release Notes</a>.</i>    </span>
+Improvements include library upgrades and enhancements to the use of signature algorithms in automated certificate renewals from a <a   href="Peer_Systems.html">peer-connected</a> EJBCA certificate authority (CA).    </span>
     </p>
-    <div class="section section-1" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-UpgradeInformation">
+    <p  >    <span style="color: #000000;">
+In addition, a new configuration option in the SignServer Administration Web user interface improves performance and speeds up the loading of <a   href="Workers_Page.html">SignServer Workers</a> pages.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance,</a> <a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance</a>, and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
+    </p>
+    <div class="section section-1" id="src-181283254_id-.SignServer5.11.3ReleaseNotesv5.11.3-UpgradeInformation">
         <h1 class="heading "><span>Upgrade Information</span></h1>
-    <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important upgrade information. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    <p  >SignServer 5.11.3 is included in <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance 3.11.3</a>,     <span style="color: #000000;">
+<a  class="external-link" href="https://doc.primekey.com/x/-4_KAw">SignServer Software Appliance 2.3.3</a>,    </span>
+ and    <span style="color: #000000;">
+ <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud 1.14</a>.    </span>
+    </p>
     </div>
-    <div class="section section-1" id="src-181285558_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExLjJSZWxlYXNlTm90ZXN2NS4xMS4zLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">
+    <div class="section section-1" id="src-181283254_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjExLjNSZWxlYXNlTm90ZXN2NS4xMS4zLUNoYW5nZUxvZzpSZXNvbHZlZElzc3Vlcw">
         <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
-    <p  >For full details of fixed bugs and implemented features in SignServer 5.11.2, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.11.2.Final%20ORDER%20BY%20resolution%20DESC">Jira Issue Tracker</a>.    </p>
-    <div class="section section-2" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-IssuesResolvedin5.11.2">
-        <h2 class="heading "><span>Issues Resolved in 5.11.2</span></h2>
-    <p  >Released February 2023    </p>
-    <div class="section section-3" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-NewFeatures">
-        <h3 class="heading "><span>New Features</span></h3>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2356">DSS-2356</a> - Configuration option in JwtAuthorizer to not require typ=JWT    </p>
+    <p  >    <span style="color: #000000;">
+The following lists fixed bugs and implemented features in SignServer 5.11.3.    </span>
+    </p>
+    <div class="section section-2" id="src-181283254_id-.SignServer5.11.3ReleaseNotesv5.11.3-IssuesResolvedin5.11.3">
+        <h2 class="heading "><span>Issues Resolved in 5.11.3</span></h2>
+    <p  >Released April 2023    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    <p  >    </p>
     </div>
+    <div class="section section-2" id="src-181283254_id-.SignServer5.11.3ReleaseNotesv5.11.3-NewFeatures">
+        <h2 class="heading "><span>New Features</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2522">DSS-2522</a> - Option to choose hash algorithm and to request certificate in performance test client    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2529">DSS-2529</a> - Use of other signature algorithm than SIGNATUREALGORITHM property for peers/remote key binding initiated signing requests    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2560">DSS-2560</a> - Add global configuration option to not display statuses on the workers page    </p>
     </div>
-    <div class="section section-2" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-Improvements">
+    <div class="section section-2" id="src-181283254_id-.SignServer5.11.3ReleaseNotesv5.11.3-Improvements">
         <h2 class="heading "><span>Improvements</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2540">DSS-2540</a> - MSAuthCodeCMSSigner should not include signingTime attribute    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2512">DSS-2512</a> - Add standalone SNTP tool    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2535">DSS-2535</a> - Create JUnit tests for TSA_URL in PDFSigner    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2536">DSS-2536</a> - Add webtest for the &#39;not logged in&#39; page of AdminWeb    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2559">DSS-2559</a> - Increase Zone file signers admin performance and options for disabling checks    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2577">DSS-2577</a> - Upgrade library    </p>
     </div>
-    <div class="section section-2" id="src-181285558_id-.SignServer5.11.2ReleaseNotesv5.11.3-BugFixes">
+    <div class="section section-2" id="src-181283254_id-.SignServer5.11.3ReleaseNotesv5.11.3-BugFixes">
         <h2 class="heading "><span>Bug Fixes</span></h2>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2528">DSS-2528</a> - MSAuthCodeCMSSigner encodes signedData in BER instead of DER    </p>
-    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2537">DSS-2537</a> - Regression: Encoding of null parameters in digest algorithm identifiers for MSAuthCode signatures changed after Bouncy Castle upgrade    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2521">DSS-2521</a> - Expired hard coded certificate in test code    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2526">DSS-2526</a> - Worker Authorization &quot;Reload from Database&quot; doesn&#39;t work properly    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2527">DSS-2527</a> - SignServer changes the uploaded file name if contains special characters like &quot;a&#776;&quot;    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2544">DSS-2544</a> - Some unit tests are failing during the build with Java 11 and 8    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2545">DSS-2545</a> - AdES signer unit tests started to fail as key size 2048 is no longer considered reliable for signature creation    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2547">DSS-2547</a> - PDF signature invalidates the previous one    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2580">DSS-2580</a> - Keys not listed with P11NG Crypto Token after activation until after 2 min or after a new key is generated    </p>
+    <p  >    </p>
     </div>
     </div>
         </div>
@@ -1896,7 +1919,7 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_5.11.2.1_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1905,9 +1928,9 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer 5.11.2.1 Release Notes</span>
+            <span>SignServer Release Notes</span>
         </a>
-                <a href="SignServer_5.11_Release_Notes.html" class="ht-post-nav-next">
+                <a href="SignServer_5.11.2.1_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1916,7 +1939,7 @@ Deployment options include <a  class="external-link" href="https://doc.primekey.
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer 5.11 Release Notes</span>
+            <span>SignServer 5.11.2.1 Release Notes</span>
         </a>
     </nav>    
             

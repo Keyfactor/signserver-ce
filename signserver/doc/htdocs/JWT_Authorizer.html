@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.2</p>
+                    <p>Version: 5.11.3</p>
                 </div>
             </header>
 
@@ -425,6 +425,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1706,6 +1710,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
@@ -1965,7 +1977,7 @@ It is also possible to configure a list of accepted audiences that are checked a
 ACCEPTED_AUDIENCES=&lt;comma-separated list of audience names&gt;    </span>
     </p>
 </li></ul>    <p  >    <span style="color: #000000;">
-There is an option to remove the obligation of typ=JWT being set in the header by setting OPTIONAL_TYPE. When OPTIONAL_TYPE is not set the default is false and then requires typ to be set and to be set to JWT. If OPTIONAL_TYPE is set to true the typ can be left out of the header but if it is set it has to be set to JWT.    </span>
+You can optionally remove the requirement to specify type=JWT in the header by setting OPTIONAL_TYPE to true, which allows type to be omitted from the header. If OPTIONAL_TYPE is not set, it defaults to false and requires typ=JWT to be set in the header.    </span>
     </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 OPTIONAL_TYPE=&lt;default:false&gt;    </span>

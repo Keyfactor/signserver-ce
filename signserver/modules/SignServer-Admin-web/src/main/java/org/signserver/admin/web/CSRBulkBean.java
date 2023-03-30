@@ -117,7 +117,12 @@ public class CSRBulkBean extends BulkBean {
                 final String signatureAlgorithm = config.getProperty(RenewalUtils.PROPERTY_SIGNATUREALGORITHM, "");
                 Certificate signerCert;
                 try {
-                    signerCert = getWorkerSessionBean().getSignerCertificateChain(getAuthBean().getAdminCertificate(), id).get(0);
+                    final List<Certificate> certificateList = getWorkerSessionBean().getSignerCertificateChain(getAuthBean().getAdminCertificate(), id);
+                    if (certificateList != null) {
+                        signerCert = certificateList.get(0);
+                    } else {
+                        signerCert = null;
+                    }
                 } catch (CryptoTokenOfflineException ex) {
                     signerCert = null;
                 }

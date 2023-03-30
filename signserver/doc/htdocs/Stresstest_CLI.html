@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.2</p>
+                    <p>Version: 5.11.3</p>
                 </div>
             </header>
 
@@ -425,6 +425,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SNTP_Tool.html">SNTP Tool</a>
 
             </li>
                             </ul>
@@ -1706,6 +1710,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
 
             </li>
@@ -1829,12 +1841,12 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-100270739"> <span>Stresstest CLI</span></h1>
+</div>            <h1 id="src-181282477"> <span>Stresstest CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The stresstest tool can be used to run performance tests. There are currently test suites available for running stress tests for time-stamping, document signing, and document validation. For more information, see <a   href="#src-100270739_id-.StresstestCLIv5.5.1-TestSuites">Test Suites</a>.    </p>
+    <p  >The stresstest tool can be used to run performance tests. There are currently test suites available for running stress tests for time-stamping, document signing, and document validation. For more information, see <a   href="#src-181282477_id-.StresstestCLIv5.11.3-TestSuites">Test Suites</a>.    </p>
     <p  >Tests can be run with a varying number of concurrent threads to simulate multiple concurrent incoming connections.    </p>
     <p  >Run stresstest from <strong class=" ">SIGNSERVER_HOME </strong>using the following command:    </p>
     <div  class="confbox programlisting">
@@ -1858,6 +1870,9 @@
 <div class="line"><code class="plain"> -data &lt;arg&gt;            Input data to be used with the</code></div>
 <div class="line"><code class="plain">                        DocumentSigner/Validator1 testsuites using an</code></div>
 <div class="line"><code class="plain">                        XMLSigner.</code></div>
+<div class="line"><code class="plain"> -hashalgorithm &lt;arg&gt;   Optional. For setting the hash algorithm in </code></div>
+<div class="line"><code class="plain">						timestamp stuites.Default </code><code class="keyword">for</code><code class="plain"> TimeStamp1 = SHA1 and</code></div>
+<div class="line"><code class="plain">      					TimeStamp2 = SHA256.     </code></div>
 <div class="line"><code class="plain"> -infile &lt;arg&gt;          Input file used </code><code class="keyword">for</code><code class="plain"> DocumentSigner/Validator1</code></div>
 <div class="line"><code class="plain">                        testsuites.</code></div>
 <div class="line"><code class="plain"> -maxwaittime &lt;arg&gt;     Maximum number of milliseconds </code><code class="keyword">for</code><code class="plain"> a thread to</code></div>
@@ -1865,7 +1880,9 @@
 <div class="line"><code class="plain">                        Default=</code><code class="value">100</code></div>
 <div class="line"><code class="plain"> -processurl &lt;arg&gt;      URL to process servlet (</code><code class="keyword">for</code><code class="plain"> the</code></div>
 <div class="line"><code class="plain">                        DocumentSigner/Validator1 test suites).</code></div>
-<div class="line"><code class="plain"> -statoutputdir &lt;arg&gt;   Optional. Directory to output statistics to. If</code></div>
+<div class="line"><code class="plain"> -requestcertificate	Optional. For request certificate from the TSA </code></div>
+<div class="line"><code class="plain">						in the timestamp testsuite.</code></div>
+<div class="line"><code class="plain"> -statoutputdir &lt;arg&gt;   Optional. Directory to output statistics to. If</code></div>
 <div class="line"><code class="plain">                        set, each thread creates a file in </code><code class="keyword">this</code><code class="plain"> directory</code></div>
 <div class="line"><code class="plain">                        to output its response times to. The directory</code></div>
 <div class="line"><code class="plain">                        must exist.</code></div>
@@ -1890,7 +1907,7 @@
 <div class="line"><code class="plain"> </code></div>
 <div class="line"><code class="plain">Sample usages:</code></div>
 <div class="line"><code class="plain">a) stresstest -testsuite TimeStamp2 -threads </code><code class="value">4</code><code class="plain"> -tsaurl</code></div>
-<div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/tsa?workerId=1</code></div>
+<div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/tsa?workerId=1 -hashalgorithm SHA384</code></div>
 <div class="line"><code class="plain">b) stresstest -testsuite TimeStamp1 -threads </code><code class="value">4</code><code class="plain"> -maxwaittime </code><code class="value">100</code></div>
 <div class="line"><code class="plain">-statoutputdir ./statistics/ -tsaurl</code></div>
 <div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/tsa?workerId=1</code></div>
@@ -1908,7 +1925,7 @@
 </div>
     </div>
     <p  >When finished, that is once the time limit expires or you stop the process by pressing <strong class=" ">Ctrl+C</strong>, a statistic overview is printed containing the number of signings, and statistics (average, minimum, and maximum) for the response times.    </p>
-    <div class="section section-1" id="src-100270739_id-.StresstestCLIv5.5.1-TestSuites">
+    <div class="section section-1" id="src-181282477_id-.StresstestCLIv5.11.3-TestSuites">
         <h1 class="heading "><span>Test Suites</span></h1>
     <p  >There following test suites are available for running stress tests for time-stamping, document signing, and document validation:    </p>
     <div  class="tablewrap">
@@ -1922,7 +1939,7 @@
         <p  >TimeStamp1    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Sends time-stamp requests using a dummy SHA-1 hash.    </p>
+        <p  >Sends time-stamp requests using a dummy hash. The default is SHA-1 hash.    </p>
             </td>
         </tr>
     <tr>
@@ -1930,7 +1947,7 @@
         <p  >TimeStmap2    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Sends time-stamp requests using a dummy SHA-256 hash.    </p>
+        <p  >Sends time-stamp requests using a dummy hash. The default is SHA-256 hash.    </p>
             </td>
         </tr>
     <tr>

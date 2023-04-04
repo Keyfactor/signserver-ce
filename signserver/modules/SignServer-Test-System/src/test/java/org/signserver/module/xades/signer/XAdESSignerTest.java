@@ -105,7 +105,7 @@ public class XAdESSignerTest extends ModulesTestCase {
             trustAnchors.setCertificateEntry("signerIssuer", signerCertificateChain.get(signerCertificateChain.size() - 1));
             trustAnchors.setCertificateEntry("tsIssuer", tsSignerCertificateChain.get(tsSignerCertificateChain.size() - 1));
 
-            CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
+            CertificateValidationProvider certValidator = PKIXCertificateValidationProvider.builder(trustAnchors).intermediateCertStores(certStore).checkRevocation(false).build();
 
             XadesVerificationProfile p =
                     new XadesVerificationProfile(certValidator).withTimeStampTokenVerifier(DefaultTimeStampVerificationProvider.class);

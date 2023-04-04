@@ -83,7 +83,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.signserver.xades4j</groupId>
+            <groupId>com.googlecode.xades4j</groupId>
             <artifactId>xades4j</artifactId>
         </dependency>
         <dependency>

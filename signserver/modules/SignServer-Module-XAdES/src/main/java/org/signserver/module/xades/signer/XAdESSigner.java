@@ -58,10 +58,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import xades4j.UnsupportedAlgorithmException;
 import xades4j.XAdES4jException;
-import xades4j.algorithms.Algorithm;
-import xades4j.algorithms.GenericAlgorithm;
 import xades4j.production.EnvelopedXmlObject;
 import xades4j.production.SignedDataObjects;
 import xades4j.production.XadesBesSigningProfile;
@@ -70,19 +67,20 @@ import xades4j.production.XadesSigningProfile;
 import xades4j.production.XadesTSigningProfile;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.SignerRoleProperty;
-import xades4j.providers.KeyInfoCertificatesProvider;
 import xades4j.providers.KeyingDataProvider;
 import xades4j.providers.SignaturePropertiesCollector;
-import xades4j.providers.SigningCertChainException;
 import xades4j.providers.TimeStampTokenProvider;
 import xades4j.utils.XadesProfileResolutionException;
-import xades4j.providers.impl.DefaultAlgorithmsProviderEx;
 import xades4j.providers.impl.DefaultMessageDigestProvider;
 import xades4j.providers.impl.DefaultSignaturePropertiesProvider;
-import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
-import xades4j.verification.UnexpectedJCAException;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 import org.signserver.common.data.ReadableData;
+import xades4j.production.BasicSignatureOptions;
+import xades4j.production.SignatureAlgorithms;
+import xades4j.production.SigningCertificateMode;
+import xades4j.providers.impl.AbstractTimeStampTokenProvider;
+import xades4j.providers.impl.HttpTimeStampTokenProvider;
+import xades4j.providers.impl.HttpTsaConfiguration;
 
 /**
  * A Signer using XAdES to createSigner XML documents.
@@ -143,34 +141,9 @@ public class XAdESSigner extends BaseSigner {
     
     private String claimedRoleDefault;
     private boolean claimedRoleFromUsername;
-    
-    /**
-     * Addional signature methods not yet covered by
-     * javax.xml.dsig.SignatureMethod
-     * 
-     * Defined in RFC 4051 {@link http://www.ietf.org/rfc/rfc4051.txt}
-     */
-    static final String SIGNATURE_METHOD_RSA_SHA256 =
-            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-    static final String SIGNATURE_METHOD_RSA_SHA384 =
-            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
-    static final String SIGNATURE_METHOD_RSA_SHA512 =
-            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
-    static final String SIGNATURE_METHOD_ECDSA_SHA1 =
-            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1";
-    static final String SIGNATURE_METHOD_ECDSA_SHA256 =
-            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
-    static final String SIGNATURE_METHOD_ECDSA_SHA384 =
-            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
-    static final String SIGNATURE_METHOD_ECDSA_SHA512 =
-            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
-    
-    /**
-     * The default time stamp token implementation, can be overridden by the unit tests.
-     */
-    private Class<? extends TimeStampTokenProvider> timeStampTokenProviderImplementation =
-            ExtendedTimeStampTokenProvider.class;
-    
+
+    AbstractTimeStampTokenProvider timeStampTokenProviderImplementation;
+
     private TimeStampTokenProvider internalTimeStampTokenProvider;
     private InternalProcessSessionLocal workerSession;
     private WorkerIdentifier tsaWorker;
@@ -401,6 +374,9 @@ public class XAdESSigner extends BaseSigner {
         } catch (XadesProfileResolutionException ex) {
             throw new SignServerException("Exception in XAdES profile resolution", ex);
         } catch (XAdES4jException ex) {
+            if (ex.getMessage().contains("nonExistingAlg")){
+                throw new SignServerException("Signature algorithm does not match keyAlgorithm", ex);
+            }
             throw new SignServerException("Exception signing document", ex);
         } catch (TransformerException ex) {
             throw new SignServerException("Transformation failure", ex);
@@ -439,7 +415,7 @@ public class XAdESSigner extends BaseSigner {
                                     final Request request,
                                     final RequestContext context)
             throws SignServerException, XadesProfileResolutionException,
-                   CryptoTokenOfflineException, IllegalRequestException {
+                CryptoTokenOfflineException, IllegalRequestException {
         // Setup key and certificiates
         final List<X509Certificate> xchain = new LinkedList<>();
         final List<Certificate> chain = this.getSigningCertificateChain(crypto);
@@ -452,7 +428,7 @@ public class XAdESSigner extends BaseSigner {
             }
         }
         final KeyingDataProvider kdp =
-                new CertificateAndChainKeyingDataProvider(xchain, crypto.getPrivateKey());
+                new CertificateAndChainKeyingDataProvider(includedX509Certificates(xchain), crypto.getPrivateKey());
         
         // Signing profile
         XadesSigningProfile xsp;                   
@@ -466,8 +442,13 @@ public class XAdESSigner extends BaseSigner {
                 xsp = new XadesTSigningProfile(kdp);
                 if (tsaUrl != null) {
                     // Use URL to external TSA
-                    xsp = xsp.withTimeStampTokenProvider(timeStampTokenProviderImplementation)
-                            .withBinding(TSAParameters.class, params.getTsaParameters());
+                    AbstractTimeStampTokenProvider provider;
+                    if (timeStampTokenProviderImplementation == null) {
+                        provider = new HttpTimeStampTokenProvider(new DefaultMessageDigestProvider(), new HttpTsaConfiguration(tsaUrl, tsaUsername, tsaPassword));
+                    } else {
+                        provider = timeStampTokenProviderImplementation;
+                    }
+                    xsp = xsp.withTimeStampTokenProvider(provider);
                 } else {
                     // Use internal TSA
                     xsp = xsp.withTimeStampTokenProvider(new InternalTimeStampTokenProvider(mdProvider, context.getServices().get(InternalProcessSessionLocal.class), tsaWorker, tsaUsername, tsaPassword));
@@ -479,20 +460,79 @@ public class XAdESSigner extends BaseSigner {
             default:
                 throw new SignServerException("Unsupported XAdES profile configured");
         }
-        
-        xsp = xsp.withAlgorithmsProviderEx(new AlgorithmsProvider());
+
+        SignatureAlgorithms sigAlg = new SignatureAlgorithms();
+        sigAlg = sigAlg.withSignatureAlgorithm("RSA", "nonExistingAlg");
+
+        if (signatureAlgorithm == null) {
+            if ("EC".contains(crypto.getPublicKey().getAlgorithm())) {
+                sigAlg = sigAlg.withSignatureAlgorithm("EC", SignatureMethod.ECDSA_SHA256);
+            } else {
+                sigAlg = sigAlg.withSignatureAlgorithm("RSA", SignatureMethod.RSA_SHA256);
+            }
+        } else if ("SHA1withRSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("RSA", SignatureMethod.RSA_SHA1);
+        } else if ("SHA256withRSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("RSA", SignatureMethod.RSA_SHA256);
+        } else if ("SHA384withRSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("RSA", SignatureMethod.RSA_SHA384);
+        } else if ("SHA512withRSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("RSA", SignatureMethod.RSA_SHA512);
+        } else if ("SHA1withDSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("DSA", SignatureMethod.DSA_SHA1);
+        } else if ("SHA1withECDSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("EC", SignatureMethod.ECDSA_SHA1);
+        } else if ("SHA256withECDSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("EC", SignatureMethod.ECDSA_SHA256);
+        } else if ("SHA384withECDSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("EC", SignatureMethod.ECDSA_SHA384);
+        } else if ("SHA512withECDSA".equals(signatureAlgorithm)) {
+            sigAlg = sigAlg.withSignatureAlgorithm("EC", SignatureMethod.ECDSA_SHA512);
+        } else {
+            throw new SignServerException("Unsupported signature algorithm: " + signatureAlgorithm);
+        }
+
+        switch (tsaDigestAlgorithm) {
+            case "MD5":
+            case "MD-5":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_NOT_RECOMMENDED_MD5);
+                break;
+            case "SHA1":
+            case "SHA-1":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA1);
+                break;
+            case "SHA224":
+            case "SHA-224":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA224);
+                break;
+            case "SHA256":
+            case "SHA-256":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA256);
+                break;
+            case "SHA384":
+            case "SHA-384":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA384);
+                break;
+            case "SHA512":
+            case "SHA-512":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA512);
+                break;
+            case "RIPEMD160":
+            case "RIPEMD-160":
+                sigAlg = sigAlg.withDigestAlgorithmForTimeStampProperties(MessageDigestAlgorithm.ALGO_ID_DIGEST_RIPEMD160);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported TSA digest algorithm: " + tsaDigestAlgorithm);
+        }
+
+        xsp = xsp.withSignatureAlgorithms(sigAlg);
         
         if (claimedRole != null) {
             xsp = xsp.withSignaturePropertiesProvider(new SignaturePropertiesProvider(claimedRole));
         }
         
         // Include the configured number of certificates in the KeyInfo
-        xsp.withKeyInfoCertificatesProvider(new KeyInfoCertificatesProvider() {
-            @Override
-            public List<X509Certificate> getCertificates(List<X509Certificate> list) throws SigningCertChainException, UnexpectedJCAException {
-                return includedX509Certificates(list);
-            }
-        });
+        xsp.withBasicSignatureOptions(new BasicSignatureOptions().includeSigningCertificate(SigningCertificateMode.FULL_CHAIN));
    
         return (XadesSigner) xsp.newSigner();
     }
@@ -513,90 +553,8 @@ public class XAdESSigner extends BaseSigner {
      * 
      * @param implementation
      */
-    public void setTimeStampTokenProviderImplementation(final Class<? extends TimeStampTokenProvider> implementation) {
+    public void setTimeStampTokenProviderImplementation(final AbstractTimeStampTokenProvider implementation) {
         timeStampTokenProviderImplementation = implementation;
-    }
-
-    /**
-     * Implementation of {@link xades4j.providers.AlgorithmsProviderEx} using the
-     * signature algorithm configured for the worker (or the default values).
-     */
-    private class AlgorithmsProvider extends DefaultAlgorithmsProviderEx {
-
-        @Override
-        public Algorithm getSignatureAlgorithm(String keyAlgorithmName)
-                throws UnsupportedAlgorithmException {
-            if (signatureAlgorithm == null) {
-                if ("EC".equals(keyAlgorithmName)) {
-                    // DefaultAlgorithmsProviderEx only handles RSA and DSA
-                    return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA256);
-                }
-                // use default xades4j behavior when not configured for the worker
-                return super.getSignatureAlgorithm(keyAlgorithmName);
-            }
-            
-            if ("SHA1withRSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SignatureMethod.RSA_SHA1);
-            } else if ("SHA256withRSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_RSA_SHA256);
-            } else if ("SHA384withRSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_RSA_SHA384); 
-            } else if ("SHA512withRSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_RSA_SHA512);
-            } else if ("SHA1withDSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SignatureMethod.DSA_SHA1);
-            } else if ("SHA1withECDSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA1);
-            } else if ("SHA256withECDSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA256);
-            } else if ("SHA384withECDSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA384);
-            } else if ("SHA512withECDSA".equals(signatureAlgorithm)) {
-                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA512);
-            } else {
-                throw new UnsupportedAlgorithmException("Unsupported signature algorithm", signatureAlgorithm);
-            }
-        }
-
-        @Override
-        public String getDigestAlgorithmForTimeStampProperties() {
-            String result;
-
-            switch (tsaDigestAlgorithm) {
-                case "MD5":
-                case "MD-5":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_NOT_RECOMMENDED_MD5;
-                    break;
-                case "SHA1":
-                case "SHA-1":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA1;
-                    break;
-                case "SHA224":
-                case "SHA-224":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA224;
-                    break;
-                case "SHA256":
-                case "SHA-256":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA256;
-                    break;
-                case "SHA384":
-                case "SHA-384":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA384;
-                    break;
-                case "SHA512":
-                case "SHA-512":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA512;
-                    break;
-                case "RIPEMD160":
-                case "RIPEMD-160":
-                    result = MessageDigestAlgorithm.ALGO_ID_DIGEST_RIPEMD160;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported TSA digest algorithm: " + tsaDigestAlgorithm);
-            }
-            return result;
-        }
-        
     }
     
     /**
@@ -623,8 +581,8 @@ public class XAdESSigner extends BaseSigner {
     /**
      * Utility method to extract certificate chain from list of X509Certificate.
      * This will use the default of 1 certificate if the INCLUDE_CERTIFICATE_LEVELS
-     * propery has not been set.
-     * 
+     * property has not been set.
+     *
      * @param certs List of certificates to extract chain from
      * @return The certificate chain, including the configured number of certificates
      */

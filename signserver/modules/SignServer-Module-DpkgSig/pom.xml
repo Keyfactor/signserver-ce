@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>6.0.0.Alpha3-SNAPSHOT</version>
+        <version>6.0.0.Alpha3</version>
     </parent>
     <artifactId>SignServer-Module-DpkgSig</artifactId>
     <name>SignServer-Module-DpkgSig</name>

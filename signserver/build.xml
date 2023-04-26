@@ -197,6 +197,13 @@ Installation Guide for details.
             <zipfileset src="${tmp}/${cesecore-common.jar}" excludes="${cesecore.common.excludes}"/>
         </jar>
 
+        <!-- x509-common-util.jar -->
+        <property name="kfc-x509-common-util.jar" value="x509-common-util-8.0.Alpha0-a7f13143.jar"/>
+        <move todir="${tmp}" file="${app.ear.dir}/lib/${kfc-x509-common-util.jar}"/>
+        <jar destfile="${app.ear.dir}/lib/${kfc-x509-common-util.jar}">
+            <zipfileset src="${tmp}/${kfc-x509-common-util.jar}" excludes="${kfc.x509.common.util.excludes}"/>
+        </jar>
+
         <!-- cesecore-ejb.jar -->
         <property name="cesecore-ejb.jar" value="cesecore-ejb-7.0.0.1.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/${cesecore-ejb.jar}"/>

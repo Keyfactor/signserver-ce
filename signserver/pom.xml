@@ -246,7 +246,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>x509-common-util</artifactId>
-                <version>8.0.Alpha0-a7f13143</version>
+                <version>0.3</version>
             </dependency>
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>

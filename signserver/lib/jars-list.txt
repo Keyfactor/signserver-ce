@@ -140,7 +140,7 @@ c144cc85db81a1ed20b12ea2bbf88ceddd60caeabd381205e7ddf462b138e5e2  ./ext/specs-va
 a954d11c35de6f0e0265bdc2ba6c6a88b2a8d291e2e8f76b5fc8525d84d64e57  ./ext/validation-policy-5.9.jar;                        "DSS"
 274fa403ed08c0d6f2f574dc1916adaaaec9a493e56d6442f8797ede620bca65  ./ext/woodstox-core-asl-4.4.1.jar;                      "Codehaus Woodstox"
 740f448e6b3bc110e02f4a1e56fb57672e732d2ecaf29ae15835051ae8af4725  ./ext/wsdl4j-1.6.3.jar;                                 "WSDL4J"
-2b5d5433f4e1c7700c83fd7b34bd06b2e23009c2c7925c2c34b05447dc21bc8a  ./ext/x509-common-util-8.0.Alpha0-a7f13143.jar;         "EJBCA"
+ee99bcf910775056c1f7fd7d5bba23faf5adcfb1d835344685e1789bda8180af  ./ext/x509-common-util-0.3.jar;                         "EJBCA"
 1e1567bb67f01aaeb66879d90fd6a026824f023bc7b9d4a2e90b80f0ff93d9ce  ./ext/xades4j-2.0.0.jar;                                "XAdES4j"
 a44bd80e82cb0f4cfac0dac8575746223802514e3cec9dc75235bc0de646af14  ./ext/xalan-2.7.2.jar;                                  "Apache Xalan"
 6fc991829af1708d15aea50c66f0beadcd2cfeb6968e0b2f55c1b0909883fe16  ./ext/xercesImpl-2.12.2.jar;                            "Apache Xerces"

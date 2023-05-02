@@ -13,6 +13,7 @@ echo "Will call mvn install:install-file with certain dependencies from ${DIR}/e
 
 # Install KFC dependencies not yet in Central
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-0.3.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=0.3 -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-0.3-sources.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=0.3 -Dpackaging=jar -Dclassifier=sources
 
 # Add next group of dependencies here
 

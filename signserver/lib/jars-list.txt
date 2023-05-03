@@ -130,7 +130,7 @@ cbe6a7bd0b38e4acf44ae25b11812de967c2f74ea105c89a074ffce5797cfc1e  ./ext/poi-4.1.
 639c6a675bc472e1568df9d8c954ff702da6f83ed27da0ff9a7bd12ed73b8bf0  ./ext/quartz-2.3.2.jar;                                 "Quartz Scheduler"
 e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a  ./ext/serializer-2.7.2.jar;                             "Santuario"
 84cbd60deaf9e18db8cb181e43db4e63f7de353cfcaf654a76d85b22da4d2762  ./ext/slf4j-api-1.7.35.jar;                             "SLF4J"
-4ff395cda0d4299e4186cf2618e16beef070a3d242598ef1d0348d19d776b1a3  ./ext/slf4j-reload4j-1.7.35.jar;                        "SLF4J"   
+4ff395cda0d4299e4186cf2618e16beef070a3d242598ef1d0348d19d776b1a3  ./ext/slf4j-reload4j-1.7.35.jar;                        "SLF4J"
 539e167577ca658cccabc9972b54309a1db1ecfab376e2fc3b81143a0d7a1bed  ./ext/specs-trusted-list-5.8.jar;                       "DSS"
 c144cc85db81a1ed20b12ea2bbf88ceddd60caeabd381205e7ddf462b138e5e2  ./ext/specs-validation-report-5.9.jar;                  "DSS"
 236bfdc813441d20f50ecbe6ccd348ed314474d3ce7bcd656c3acdebda8640d9  ./ext/specs-xades-5.9.jar;                              "DSS"

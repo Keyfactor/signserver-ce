@@ -2,6 +2,7 @@
 "AOP Alliance";               "Public Domain";                                 "http://aopalliance.sourceforge.net";                   "Dependency of Guice.";                "No.";
 "ASM";                        "BSD-3-Clause";                                  "https://asm.ow2.io/";                                  "Dependency of CXF and JackNJI11";     "No.";
 "Android";                    "Apache 2.0";                                    "https://android.googlesource.com/";                    "Dependency of the APK Signer";        "No.";
+"Apache CXF";                 "Apache 2.0";                                    "https://cxf.apache.org/";                              "Needed for client CLI webservices on Java 10+";  "No." ;
 "Apache Commons";             "Apache 2.0";                                    "http://commons.apache.org";                            "Core dependency used for multiple tasks such as file handling, configuration and collections support.";  "No.";
 "Apache Geronimo";            "Apache 2.0";                                    "https://geronimo.apache.org/";                         "Needed for client CLI webservices on Java 10+";  "No." ;
 "Apache HttpComponents";      "Apache 2.0";                                    "https://hc.apache.org";                                "Dependency of EJBCA Peer Connectors" ;  "No." ;
@@ -16,6 +17,7 @@
 "DNSSEC Java";                "Eclipse Public License";                        "https://github.com/ibauersachs/dnssecjava";            "A DNSSEC validating stub resolver for Java" ;  "No." ;
 "DSS";                        "LGPLv2.1+";                                     "https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/DSS";  "Dependency of the AdES signer";       "No." ;
 "EJBCA";                      "LGPLv2.1+";                                     "http://ejbca.org";                                     "Core dependency with utility classes used for tasks related to certificate handling etc.";  "Yes. Some unneeded functionality removed. Upstream not interested in the changes.";
+"Eclipse Jetty";              "Eclipse Public License";                        "https://www.eclipse.org/jetty/";                       "Dependency of CXF";                   "No." ;
 "Geckodriver";                "MPL 2.0";                                       "https://hg.mozilla.org/mozilla-central/file/tip/testing/geckodriver";  "Dependency of Selenium.";             "No.";
 "Guava";                      "Apache 2.0;                                     "https://github.com/google/guava";                      "Dependency of XAdES4j.";              "No.;
 "Guice";                      "Apache 2.0";                                    "https://github.com/google/guice";                      "Dependency of XAdES4j.";              "No.";
@@ -39,6 +41,7 @@
 "Selenium";                   "Apache 2.0";                                    "https://www.seleniumhq.org";                           "Dependency of the WebTest module.";   "No.";
 "SignServer";                 "LGPLv2.1+";                                     "http://signserver.org";                                "Clover.jar is an empty jar included for technical reasons in order to be able to build and run both with and without Clover installed. DeployTools JARs are used to build and deploy SignServer. Source JARs are available.";  "No.";
 "SparseBitSet";               "Apache 2.0";                                    "https://github.com/brettwooldridge/SparseBitSet";      "Dependency of Apache POI";            "No." ;
+"Stax2 API";                  "BSD";                                           "https://github.com/FasterXML/stax2-api";               "Needed for client CLI webservices on Java 10+";  "No." ;
 "WSDL4J";                     "CPL 1.0";                                       "https://sourceforge.net/projects/wsdl4j/" ;            "Needed for client CLI webservices on Java 10+";  "No.";
 "XAdES4j";                    "LGPLv3+";                                       "https://code.google.com/p/xades4j";                    "Used by the XAdESSigner for XAdES support.";  "No.";
 "XmlPull";                    "Public Domain";                                 "http://www.xmlpull.org/";                              "Dependency of CESeCore.";             "No.";

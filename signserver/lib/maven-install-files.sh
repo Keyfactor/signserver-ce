@@ -12,7 +12,8 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 echo "Will call mvn install:install-file with certain dependencies from ${DIR}/ext/."
 
 # Install KFC dependencies not yet in Central
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-8.0.Alpha0-a7f13143.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=8.0.Alpha0-a7f13143 -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-0.3.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=0.3 -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-0.3-sources.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=0.3 -Dpackaging=jar -Dclassifier=sources
 
 # Add next group of dependencies here
 

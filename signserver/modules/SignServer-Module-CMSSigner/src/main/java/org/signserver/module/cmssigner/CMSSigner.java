@@ -265,6 +265,10 @@ public class CMSSigner extends BaseSigner {
     protected boolean extendsCMSData() {
         return false;
     }
+
+    protected boolean isDerReEncode() {
+        return derReEncode;
+    }
     
     /**
      * Augment CMSSignedData object with extended attributes.

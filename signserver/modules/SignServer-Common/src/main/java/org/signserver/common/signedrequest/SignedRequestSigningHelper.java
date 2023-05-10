@@ -289,7 +289,7 @@ public class SignedRequestSigningHelper {
             Signature sig = createSignatureInstance();
             sig.initSign(privateKey);
             sig.update(data);
-            return transcodeSignatureToConcat(sig.sign(), getSignatureByteArrayLength(alg));
+            return transcodeDERToConcat(sig.sign(), getSignatureByteArrayLength(alg));
         }
         
     }

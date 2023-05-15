@@ -39,6 +39,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECField;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -408,9 +410,10 @@ public class KeyStoreOptions {
      * @param publicKey public key the algorithm should work with
      * @return an algorithm name
      */
-    public static String suggestSignatureAlgorithm(PublicKey publicKey) {
+    public static String suggestSignatureAlgorithm(final PublicKey publicKey) {
+        final String digestAlgorithm = suggestDigestAlgorithm(publicKey);
         final String result;
-        final String digestAlgorithm = "SHA256";
+        
         switch (publicKey.getAlgorithm()) {
             case "EC":
             case "ECDSA":
@@ -421,6 +424,45 @@ public class KeyStoreOptions {
                 break;
             case "RSA":
                 result = digestAlgorithm + "withRSA";
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported algorithm: " + publicKey.getAlgorithm());
+        }
+        return result;
+    }
+
+    /**
+     * Suggest a digest algorithm expected to work with the provided public key.
+     *
+     * @param publicKey public key the algorithm should work with
+     * @return an algorithm name
+     */
+    public static String suggestDigestAlgorithm(final PublicKey publicKey) {
+        final String result;
+        switch (publicKey.getAlgorithm()) {
+            case "EC":
+            case "ECDSA":
+                final ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
+                final ECField field =
+                        ecPublicKey.getParams().getCurve().getField();
+                final int fieldSize = field.getFieldSize();
+                final int digestSize;
+
+                if (fieldSize <= 256) {
+                    digestSize = 256;
+                } else if (fieldSize <= 384) {
+                    digestSize = 384;
+                } else {
+                    digestSize = 512;
+                }
+
+                result = "SHA" + Integer.toString(digestSize);
+                break;
+            case "DSA":
+                result = "SHA256"; 
+                break;
+            case "RSA":
+                result = "SHA256";
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupported algorithm: " + publicKey.getAlgorithm());

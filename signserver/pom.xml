@@ -246,12 +246,12 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>x509-common-util</artifactId>
-                <version>0.6.0-SNAPSHOT</version>
+                <version>0.6.0</version>
             </dependency>
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>p11ng</artifactId>
-                <version>0.1.2-SNAPSHOT</version>
+                <version>0.2.1</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

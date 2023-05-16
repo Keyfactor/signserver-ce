@@ -269,7 +269,41 @@ public class CMSSigner extends BaseSigner {
     protected boolean isDerReEncode() {
         return derReEncode;
     }
-    
+
+    /**
+     * Determine if detached signature should be used, based on worker
+     * configuration, or request.
+     *
+     * @param requestContext
+     * @return true if detached signature should be used
+     * @throws IllegalRequestException 
+     */
+    protected boolean shouldUseDetachedSignature(final RequestContext requestContext) throws IllegalRequestException {
+        // Should the content be detached or not
+        final boolean detached;
+        final Boolean detachedRequested = getDetachedSignatureRequest(requestContext);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Detached signature configured: " + detachedSignature + "\n"
+                    + "Detached signature requested: " + detachedRequested);
+        }
+        if (detachedRequested == null) {
+            detached = detachedSignature;
+        } else {
+            if (detachedRequested) {
+                if (!detachedSignature && !allowDetachedSignatureOverride) {
+                    throw new IllegalRequestException("Detached signature requested but not allowed");
+                }
+            } else {
+                if (detachedSignature && !allowDetachedSignatureOverride) {
+                    throw new IllegalRequestException("Non detached signature requested but not allowed");
+                }
+            }
+            detached = detachedRequested;
+        }
+
+        return detached;
+    }
+
     /**
      * Augment CMSSignedData object with extended attributes.
      * Must be overridden by extending implementations when extendCMSData
@@ -310,26 +344,7 @@ public class CMSSigner extends BaseSigner {
         generator.addCertificates(new JcaCertStore(certs));
         
         // Should the content be detached or not
-        final boolean detached;
-        final Boolean detachedRequested = getDetachedSignatureRequest(requestContext);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Detached signature configured: " + detachedSignature + "\n"
-                    + "Detached signature requested: " + detachedRequested);
-        }
-        if (detachedRequested == null) {
-            detached = detachedSignature;
-        } else {
-            if (detachedRequested) {
-                if (!detachedSignature && !allowDetachedSignatureOverride) {
-                    throw new IllegalRequestException("Detached signature requested but not allowed");
-                }
-            } else {
-                if (detachedSignature && !allowDetachedSignatureOverride) {
-                    throw new IllegalRequestException("Non detached signature requested but not allowed");
-                }
-            }
-            detached = detachedRequested;
-        }
+        final boolean detached = shouldUseDetachedSignature(requestContext);
 
         // Generate the signature
         if (!derReEncode && !extendsCMSData()) {

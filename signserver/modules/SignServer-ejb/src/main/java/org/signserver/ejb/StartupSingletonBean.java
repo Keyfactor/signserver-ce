@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import com.keyfactor.util.crypto.algorithm.AlgorithmConfigurationCache;
+import com.keyfactor.util.crypto.provider.CryptoProviderConfigurationCache;
+import com.keyfactor.util.string.StringConfigurationCache;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,12 +25,14 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.cesecore.authentication.tokens.AuthenticationToken;
 import org.cesecore.authentication.tokens.UsernamePrincipal;
+import org.cesecore.config.ConfigurationHolder;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.GlobalConfiguration;
@@ -135,6 +140,52 @@ public class StartupSingletonBean {
         LOG.info("Current  schema property:      " + System.getProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema"));
 
       
+        // EJBCA / CESeCore / KFC startup configuration
+
+        // Register forbidden characters
+        // Using 'instance().getString' instead of 'getString' since an empty String (size 0) must be returned when the property is defined without any value.
+        final String forbiddenCharacters = ConfigurationHolder.instance().getString("forbidden.characters");
+        if (StringUtils.isNotBlank(forbiddenCharacters)) {
+            StringConfigurationCache.INSTANCE.setForbiddenCharacters(forbiddenCharacters.toCharArray());
+        }
+
+        //Register password encryption count
+        final String encryptionCount = ConfigurationHolder.getString("password.encryption.count");
+        if (StringUtils.isNumeric(encryptionCount)) {
+            StringConfigurationCache.INSTANCE.setPasswordEncryptionCount(Integer.parseInt(encryptionCount) );
+        }
+
+        //Register encryption key
+        StringConfigurationCache.INSTANCE.setEncryptionKey(ConfigurationHolder.getString("password.encryption.key").toCharArray());
+
+        //Read if GOST3410 or DSTU4145 are defined in cesecore.properties
+        AlgorithmConfigurationCache.INSTANCE.setGost3410Enabled(ConfigurationHolder.getString("extraalgs.gost3410.oidtree") != null);
+        AlgorithmConfigurationCache.INSTANCE.setDstu4145Enabled(ConfigurationHolder.getString("extraalgs.dstu4145.oidtree") != null);
+        //Read and cache all configuration defined algorithms 
+        final List<String> configurationDefinedAlgorithms = ConfigurationHolder.getPrefixedPropertyNames("extraalgs");
+        AlgorithmConfigurationCache.INSTANCE.setConfigurationDefinedAlgorithms(configurationDefinedAlgorithms);
+        for (String algorithm : configurationDefinedAlgorithms) {
+            AlgorithmConfigurationCache.INSTANCE.addConfigurationDefinedAlgorithmTitle(algorithm,
+                    ConfigurationHolder.getString("extraalgs." + algorithm.toLowerCase() + ".title"));
+        }
+
+        // pkcs11.disableHashingSignMechanisms should be true by default in SignServer
+        final String disableHashingSignMechanisms = ConfigurationHolder.getString("pkcs11.disableHashingSignMechanisms");
+        final boolean disableHashingSignMechanismsEnabled = StringUtils.isBlank(disableHashingSignMechanisms) || Boolean.parseBoolean(disableHashingSignMechanisms.trim());
+        CryptoProviderConfigurationCache.INSTANCE.setP11disableHashingSignMechanisms(disableHashingSignMechanismsEnabled);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("pkcs11.disableHashingSignMechanisms: " + disableHashingSignMechanismsEnabled);
+        }
+        
+        // cryptotoken.keystorecache should be false by default in SignServer
+        final String keystoreCache = ConfigurationHolder.getString("cryptotoken.keystorecache");
+        final boolean keystoreCacheEnabled = StringUtils.isNotBlank(keystoreCache) && Boolean.parseBoolean(keystoreCache.trim());
+        CryptoProviderConfigurationCache.INSTANCE.setKeystoreCacheEnabled(keystoreCacheEnabled);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("cryptotoken.keystorecache: " + keystoreCacheEnabled);
+        }
+        
+
         // Make a log row that EJBCA is starting
         AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
         Map<String, Object> details = new LinkedHashMap<>();

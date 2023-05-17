@@ -657,7 +657,14 @@ public class CMSSigner extends BaseSigner {
         return result;
     }
 
-    protected void sign(ICryptoInstance crypto, X509Certificate cert, List<Certificate> certs, String sigAlg, RequestContext requestContext, ReadableData requestData, WritableData responseData, ASN1ObjectIdentifier contentOIDToUse) throws IllegalRequestException, OperatorCreationException, CertificateEncodingException, CMSException, IOException {
+    protected void sign(ICryptoInstance crypto, X509Certificate cert,
+                        List<Certificate> certs, String sigAlg,
+                        RequestContext requestContext, ReadableData requestData,
+                        WritableData responseData,
+                        ASN1ObjectIdentifier contentOIDToUse)
+            throws IllegalRequestException, OperatorCreationException,
+                   CertificateEncodingException, CMSException, IOException,
+                   SignServerException {
         final boolean useClientSideHashing =
                 clientSideHelper.shouldUseClientSideHashing(requestContext);
         if (LOG.isDebugEnabled()) {

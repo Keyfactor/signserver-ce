@@ -18,6 +18,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -959,13 +960,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     throw new SignServerException("Could not find certificate chain matching signing key");
                 }
 
+                final PublicKey publicKey = signCertChain.get(0).getPublicKey();
+                final String digestAlgorithm =
+                    KeyStoreOptions.suggestDigestAlgorithm(publicKey);
                 final String signatureAlgorithm =
-                    KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey());
+                    KeyStoreOptions.suggestSignatureAlgorithm(publicKey);
                 final PrivateKey privateKey = keyStoreOptions.getSignPrivateKey();
                 
-                final byte[] requestDataDigest = inputSource.getHash("SHA-256"); 
+                final byte[] requestDataDigest =
+                        inputSource.getHash(digestAlgorithm); 
 
-                SignedRequestSigningHelper.addRequestSignature("SHA-256",
+                SignedRequestSigningHelper.addRequestSignature(digestAlgorithm,
                                                                requestDataDigest,
                                                                metadata,
                                                                fileName,

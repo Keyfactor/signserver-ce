@@ -334,9 +334,8 @@ public class XMLSignerTest {
     @Test
     public void test16XalanVersion() throws Exception {
         checkDebugProperty("xalan.version", 
-                "Xalan Java 2.7.2", // after copy-xmlsec on JBoss 5
-                "2.7.2", // after manually copying on JBoss AS 7
-                "2.7.1-redhat-7" // on JBoss EAP >= 6.3 or patched
+                "Xalan Java 2.7.3", // after copy-xmlsec on JBoss 5
+                "2.7.3" // after manually copying on JBoss AS 7
         );
     }
 

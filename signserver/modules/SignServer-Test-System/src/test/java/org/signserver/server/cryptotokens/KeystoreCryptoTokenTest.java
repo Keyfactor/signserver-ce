@@ -365,6 +365,48 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
+     * Tests generating CSR using Dilithium key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingDilithiumKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("Dilithium", "Dilithium3", "Dil3Key");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("Dilithium3",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "Dil3Key");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SPHINCS+ key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSPHINCSPLUSKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SPHINCS+", "SPHINCS+", "SphincsPlusKey");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SPHINCS+",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SphincsPlusKey");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
      * Tests that a worker just set up with a key store containing a new
      * key-pair and is activated manually gets status ACTIVE.
      */

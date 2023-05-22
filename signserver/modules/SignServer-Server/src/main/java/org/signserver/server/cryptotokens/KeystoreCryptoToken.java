@@ -17,6 +17,7 @@ import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -310,7 +311,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     private String getProvider(String keyAlgorithm) {
-        if ("Dilithium".equalsIgnoreCase(keyAlgorithm)) {
+        if (keyAlgorithm.toLowerCase(Locale.ENGLISH).contains("dilithium")) {
             return "BCPQC";
         } else {
             return "BC";

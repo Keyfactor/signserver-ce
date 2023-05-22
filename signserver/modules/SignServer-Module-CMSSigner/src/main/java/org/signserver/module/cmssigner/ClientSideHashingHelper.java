@@ -180,7 +180,7 @@ public class ClientSideHashingHelper {
      * @return true if client-side hashing should be used
      * @throws IllegalRequestException If Client-side/Server-side hashing requested but not allowed.
      */
-    protected boolean shouldUseClientSideHashing(final RequestContext requestContext)
+    public boolean shouldUseClientSideHashing(final RequestContext requestContext)
             throws IllegalRequestException {
         final boolean useClientSideHashing;
         final Boolean clientSideHashingRequested =

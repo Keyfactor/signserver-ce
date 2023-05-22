@@ -255,7 +255,7 @@ public interface FileSpecificHandlerFactory {
     
     /**
      * Return true if the factory can create a client-side hashing and
-     * contruction-capable handler.
+     * construction-capable handler.
      * 
      * @return True if can create client-side capable handler
      */

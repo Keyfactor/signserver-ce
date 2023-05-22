@@ -104,7 +104,7 @@ public class DocumentSignerFactory {
      * 
      * @param workerName Worker name to send the request to
      * @param metadata Metadata to include in the request
-     * @param clientSide True if the request is using client-side hashing and contruction
+     * @param clientSide True if the request is using client-side hashing and construction
      * @param isSignatureInputHash True if input is a hash
      * @param typeId File type
      * @return DocumentSigner instance for sending the request given the parameters
@@ -123,7 +123,7 @@ public class DocumentSignerFactory {
      * 
      * @param workerId Worker ID to send the request to
      * @param metadata Metadata to include in the request
-     * @param clientSide True if the request is using client-side hashing and contruction
+     * @param clientSide True if the request is using client-side hashing and construction
      * @param isSignatureInputHash True if input is a hash
      * @param typeId File type
      * @return DocumentSigner instance for sending the request given the parameters

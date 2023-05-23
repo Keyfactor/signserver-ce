@@ -134,6 +134,16 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_GOST3411_WITH_DSTU4145
     ));
 
+    /** Signature algorithms supported by DILITHIUM keys */
+    public static final List<String> SIG_ALGS_DILITHIUM = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_DILITHIUM
+    ));
+
+    /** Signature algorithms supported by SPHINCS+ keys */
+    public static final List<String> SIG_ALGS_SPHINCSPLUS = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_SPHINCSPLUS
+    ));
+
     /**
      * Gets the name of matching key algorithm from a public key as defined by
      * <i>AlgorithmConstants</i>.

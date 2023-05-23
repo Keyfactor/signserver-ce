@@ -638,7 +638,7 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_DILITHIUM2() throws Exception {
         LOG.info("testDetachedSignature_DILITHIUM2");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM2");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
         CMSSigner instance = createMockSigner(tokenPQCDilithium2);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -664,7 +664,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM2");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
         CMSSigner instance = createMockSigner(tokenPQCDilithium2);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -689,7 +689,7 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_DILITHIUM3() throws Exception {
         LOG.info("testDetachedSignature_DILITHIUM3");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM3");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
         CMSSigner instance = createMockSigner(tokenPQCDilithium3);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -715,7 +715,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM3");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
         CMSSigner instance = createMockSigner(tokenPQCDilithium3);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -740,7 +740,7 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_DILITHIUM5() throws Exception {
         LOG.info("testDetachedSignature_DILITHIUM5");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM5");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
         CMSSigner instance = createMockSigner(tokenPQCDilithium5);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -766,7 +766,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM5");
+        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
         CMSSigner instance = createMockSigner(tokenPQCDilithium5);
         instance.init(1, config, new SignServerContext(), null);
 

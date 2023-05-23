@@ -35,6 +35,8 @@ public class KeyUtils {
     private static final int[] AES_KEY_SIZES = {128, 192, 256};
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
     private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
+    private static final String[] DILITHIUM_SPECS = {"Dilithium2", "Dilithium3", "Dilithium5"};
+    private static final String[] SPHINCS_PLUS_SPECS = {"SPHINCS+"};
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};
@@ -78,6 +80,8 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
         algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
+        algMenuValues.add(new SelectItem("Dilithium", "Dilithium"));
+        algMenuValues.add(new SelectItem("SPHINCS+", "SPHINCS+"));
 
         return algMenuValues;
     }
@@ -123,6 +127,19 @@ public class KeyUtils {
                             Integer.toString(keySize)));
                 }
                 break;
+
+            case "Dilithium":
+                for (final String key : DILITHIUM_SPECS) {
+                    keySpecMenuValues.add(new SelectItem(key, key));
+                }
+                break;
+
+            case "SPHINCS+":
+                for (final String key : SPHINCS_PLUS_SPECS) {
+                    keySpecMenuValues.add(new SelectItem(key, key));
+                }
+                break;
+
             default:
                 // leave it blank
                 break;

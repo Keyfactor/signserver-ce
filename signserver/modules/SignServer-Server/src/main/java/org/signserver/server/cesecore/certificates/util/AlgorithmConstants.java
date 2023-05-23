@@ -46,6 +46,8 @@ public final class AlgorithmConstants {
     public static final String SIGALG_GOST3411_WITH_DSTU4145   = "GOST3411withDSTU4145";
     public static final String SIGALG_ED25519                  = "Ed25519";
     public static final String SIGALG_ED448                    = "Ed448";
+    public static final String SIGALG_DILITHIUM                = "Dilithium";
+    public static final String SIGALG_SPHINCSPLUS              = "SPHINCS+";
 
     /**
      * Signature algorithms available to choose from.
@@ -75,6 +77,8 @@ public final class AlgorithmConstants {
             SIGALG_GOST3411_WITH_DSTU4145,
             SIGALG_ED25519,
             SIGALG_ED448,
+            SIGALG_DILITHIUM,
+            SIGALG_SPHINCSPLUS
     };
 
     public static final String KEYALGORITHM_RSA         = "RSA";
@@ -84,6 +88,8 @@ public final class AlgorithmConstants {
     public static final String KEYALGORITHM_ECGOST3410  = "ECGOST3410";
     public static final String KEYALGORITHM_DSTU4145    = "DSTU4145";
     public static final String KEYALGORITHM_EDDSA       = "EdDSA";
+    public static final String KEYALGORITHM_DILITHIUM   = "Dilithium";
+    public static final String KEYALGORITHM_SPHINCSPLUS = "SPHINCS+";
 
     public static final String KEYSPECPREFIX_ECGOST3410 = "GostR3410-";
 

@@ -359,11 +359,12 @@ public class WorkerResource {
     }
 
     private Map<String, String> getResponseMetadata(final RequestContext requestContext) {
-        final Object o = requestContext.get(RequestContext.REQUEST_METADATA);
-        if (o instanceof Map) {
-            return (Map<String, String>) o;
-        } else {
+        // TODO: DSS-x: Implement support for "Response Metadata":
+//        final Object o = requestContext.get(RequestContext.RESPONSE_METADATA);
+//        if (o instanceof Map) {
+//            return (Map<String, String>) o;
+//        } else {
             return Collections.emptyMap();
-        }
+//        }
     }
 }

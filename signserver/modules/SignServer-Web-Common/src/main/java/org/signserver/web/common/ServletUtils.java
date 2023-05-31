@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.web.common;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
@@ -59,5 +61,31 @@ public class ServletUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Parse out the worker name or ID from a REST servlet request.
+     *
+     * @param req Servlet request
+     * @return worker name or ID part of REST request URI, or null if not according to the format
+     */
+    public static String parseWorkerNameOrIdFromRest(final HttpServletRequest req)
+            throws MalformedURLException {
+        final String requestUri = req.getRequestURI();
+        /* Put in a dummy host part to create a URL for the request URI (which
+         * is the trailing part.
+         * This allows getting the path out without any trailing query parameters.
+         */
+        final URL url = new URL("https://localhost" + requestUri);
+        final String prefix = "/signserver/rest/v1/workers/";
+        final String processSuffix = "/process";
+        final String path = url.getPath();
+        
+        if (!path.startsWith(prefix) || !path.endsWith(processSuffix)) {
+            return null;
+        }
+
+        return path.substring(prefix.length(),
+                              path.length() - processSuffix.length());
     }
 }

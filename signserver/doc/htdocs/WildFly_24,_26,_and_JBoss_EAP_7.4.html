@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>WildFly 24 and JBoss EAP 7.4 - SignServer - Documentation Space</title> -->
-    <title>WildFly 24 and JBoss EAP 7.4 - SignServer Manual</title>
+    <!-- <title>WildFly 24, 26, and JBoss EAP 7.4 - SignServer - Documentation Space</title> -->
+    <title>WildFly 24, 26, and JBoss EAP 7.4 - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="75861550">
+<body pageid="181288951">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.11.3</p>
+                    <p>Version: 6.0.0</p>
                 </div>
             </header>
 
@@ -198,15 +198,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="WildFly_24_and_JBoss_EAP_7.4.html">WildFly 24 and JBoss EAP 7.4</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html">WildFly 10+ and JBoss EAP 7.1+</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="WildFly_9_and_JBoss_EAP_7.0.html">WildFly 9 and JBoss EAP 7.0</a>
+        <a class="ht-nav-page-link current" href="WildFly_24%2C_26%2C_and_JBoss_EAP_7.4.html">WildFly 24, 26, and JBoss EAP 7.4</a>
 
             </li>
                             </ul>
@@ -255,6 +247,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Migrate_from_SunPKCS11_to_P11NG.html">Migrate from SunPKCS11 to P11NG</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Upgrade_Notes.html">Upgrade Notes</a>
 
             </li>
                             </ul>
@@ -365,6 +361,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="REST_Interface.html">REST Interface</a>
 
             </li>
                                         <li class="collapsed">
@@ -704,14 +704,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="ODF_Signer.html">ODF Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="OOXML_Signer.html">OOXML Signer</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
 
             </li>
@@ -984,7 +976,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+        <a class="ht-nav-page-link" href="P11NGKeyWrappingCryptoWorker.html">P11NGKeyWrappingCryptoWorker</a>
 
             </li>
                                         <li class="leaf">
@@ -1060,7 +1052,7 @@
                             </ul>
             </li>
                                         <li class="collapsed">
-        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+        <a class="ht-nav-page-link" href="P11NGCryptoToken.html">P11NGCryptoToken</a>
 
                     <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
                 <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -1084,7 +1076,7 @@
                             </ul>
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
+        <a class="ht-nav-page-link" href="P11NGKeyWrappingCryptoToken.html">P11NGKeyWrappingCryptoToken</a>
 
             </li>
                                         <li class="leaf">
@@ -1602,10 +1594,6 @@
                             </ul>
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1673,138 +1661,6 @@
             </li>
                             </ul>
             </li>
-                                                <li class="collapsed">
-        <a class="ht-nav-page-link" href="SignServer_Release_Information.html">SignServer Release Information</a>
-
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="collapsed">
-        <a class="ht-nav-page-link" href="SignServer_Release_Notes.html">SignServer Release Notes</a>
-
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.11.3_Release_Notes.html">SignServer 5.11.3 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.11.2.1_Release_Notes.html">SignServer 5.11.2.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.11.2_Release_Notes.html">SignServer 5.11.2 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.11_Release_Notes.html">SignServer 5.11 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.10_Release_Notes.html">SignServer 5.10 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.9.1_Release_Notes.html">SignServer 5.9.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.9_Release_Notes.html">SignServer 5.9 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.8.2_Release_Notes.html">SignServer 5.8.2 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.8.1_Release_Notes.html">SignServer 5.8.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.8_Release_Notes.html">SignServer 5.8 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.7_Release_Notes.html">SignServer 5.7 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.2.1_Release_Notes.html">SignServer 5.2.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Release_Notes_Summary.html">SignServer Release Notes Summary</a>
-
-            </li>
-                            </ul>
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a>
-
-            </li>
-                            </ul>
-            </li>
                                     </ul>
             </nav>
 
@@ -1843,7 +1699,7 @@
                                         <li class="shortcut"><a href="SignServer_Installation.html">SignServer Installation</a></li>
                                                                                      <li><a href="Application_Server_Setup.html">Application Server Setup</a></li>
                                                             </ul>
-</div>            <h1 id="src-143723572"> <span>WildFly 24 and JBoss EAP 7.4</span></h1>
+</div>            <h1 id="src-181283782"> <span>WildFly 24, 26, and JBoss EAP 7.4</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1851,52 +1707,52 @@
     <div  class="confbox admonition admonition-info">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
-    <p  class="section">Application Server specific information for WildFly 24. Also applicable for JBoss EAP 7.4.    </p>
+    <p  class="section">Application Server specific information for WildFly 24 and 26. Also applicable for JBoss EAP 7.4.    </p>
         </div>
     </div>
     <p  class="section">This section provides information on configuring your application server.    </p>
     <p  class="section">    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DownloadWildFly">Download WildFly</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveRESTEasy-Crypto">Remove RESTEasy-Crypto</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaCustomConfiguration">Create a Custom Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLUNvbmZpZ3VyZVdpbGRGbHlhc2FTZXJ2aWNlKE9wdGlvbmFsKQ">Configure WildFly as a Service (Optional)</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-StartWildFly">Start WildFly</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateanElytronCredentialStore">Create an Elytron Credential Store</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddDatabaseDriver">Add Database Driver</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddaDatasource">Add a Datasource</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureWildFlyRemoting">Configure WildFly Remoting</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureLogging">Configure Logging</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLUhUVFAoUylDb25maWd1cmF0aW9u">HTTP(S) Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureWebServicesWSDLLocationRewrite">Configure Web Services WSDL Location Rewrite</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-OptionalConfiguration">Optional Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-PerformanceTuning">Performance Tuning</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaSnapshotoftheConfiguration">Create a Snapshot of the Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaTerminalAliasforReadingtheLogFile">Create a Terminal Alias for Reading the Log File</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ClearCommandLineHistory">Clear Command Line History</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-References">References</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLU5leHRTdGVwOkluc3RhbGxTaWduU2VydmVy">Next Step: Install SignServer</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DebugSignServer">Debug SignServer</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Eb3dubG9hZFdpbGRGbHk">Download WildFly</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVSRVNURWFzeS1DcnlwdG8">Remove RESTEasy-Crypto</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhQ3VzdG9tQ29uZmlndXJhdGlvbg">Create a Custom Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVXaWxkRmx5YXNhU2VydmljZShPcHRpb25hbCk">Configure WildFly as a Service (Optional)</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TdGFydFdpbGRGbHk">Start WildFly</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhbkVseXRyb25DcmVkZW50aWFsU3RvcmU">Create an Elytron Credential Store</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGREYXRhYmFzZURyaXZlcg">Add Database Driver</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRhRGF0YXNvdXJjZQ">Add a Datasource</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVXaWxkRmx5UmVtb3Rpbmc">Configure WildFly Remoting</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVMb2dnaW5n">Configure Logging</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1IVFRQKFMpQ29uZmlndXJhdGlvbg">HTTP(S) Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVXZWJTZXJ2aWNlc1dTRExMb2NhdGlvblJld3JpdGU">Configure Web Services WSDL Location Rewrite</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1PcHRpb25hbENvbmZpZ3VyYXRpb24">Optional Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1QZXJmb3JtYW5jZVR1bmluZw">Performance Tuning</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhU25hcHNob3RvZnRoZUNvbmZpZ3VyYXRpb24">Create a Snapshot of the Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhVGVybWluYWxBbGlhc2ZvclJlYWRpbmd0aGVMb2dGaWxl">Create a Terminal Alias for Reading the Log File</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DbGVhckNvbW1hbmRMaW5lSGlzdG9yeQ">Clear Command Line History</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZWZlcmVuY2Vz">References</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1OZXh0U3RlcDpJbnN0YWxsU2lnblNlcnZlcg">Next Step: Install SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1EZWJ1Z1NpZ25TZXJ2ZXI">Debug SignServer</a>    </p>
 </li></ul>    <p  >    </p>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DownloadWildFly">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Eb3dubG9hZFdpbGRGbHk">
         <h1 class="heading "><span>Download WildFly</span></h1>
     <p  >WildFly can either be downloaded as a zip package or customized using Galleon. We recommend you to use Galleon, since it only downloads the components you need, as opposed to using the zip package, which bundles all configurations and JBoss modules (SignServer is only using a subset of all functionality in WildFly).    </p>
     <p  >WildFly is usually put in the <tt class=" ">/opt</tt> folder on Linux systems, and using a symlink to the WildFly folder makes it easy to switch to a new version of WildFly by simply overriding the symlink.    </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-UsingtheZipPackage">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Vc2luZ3RoZVppcFBhY2thZ2U">
         <h2 class="heading "><span>Using the Zip Package</span></h2>
     <p  >You need to use the <i class=" ">Jakarta EE Full &amp; Web Distribution</i> package of WildFly when downloading the zip package. If you have not downloaded WildFly already, you can use the following command to do so:    </p>
     <div  class="confbox programlisting">
                     <div class="title">Download and unpack the WildFly zip package</div>
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Download and unpack the WildFly zip package" data-linenumbers="false" data-firstline="1">
-<div class="line"><code class="plain">wget https:</code><code class="plain">//download</code><code class="plain">.jboss.org</code><code class="plain">/wildfly/24</code><code class="plain">.0.1.Final</code><code class="plain">/wildfly-24</code><code class="plain">.0.1.Final.zip -O </code><code class="plain">/tmp/wildfly-24</code><code class="plain">.0.1.Final.zip</code></div>
+<div class="line"><code class="plain">wget https:</code><code class="plain">//download</code><code class="plain">.jboss.org</code><code class="plain">/wildfly/26</code><code class="plain">.1.3.Final</code><code class="plain">/wildfly-26</code><code class="plain">.1.3.Final.zip -O </code><code class="plain">/tmp/wildfly-24</code><code class="plain">.0.1.Final.zip</code></div>
 <div class="line"><code class="plain">unzip -q </code><code class="plain">/tmp/wildfly-24</code><code class="plain">.0.1.Final.zip -d </code><code class="plain">/opt/</code></div>
 <div class="line"><code class="functions">ln</code><code class="plain"> -snf </code><code class="plain">/opt/wildfly-24</code><code class="plain">.0.1.Final </code><code class="plain">/opt/wildfly</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-UsingGalleon">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Vc2luZ0dhbGxlb24">
         <h2 class="heading label"><span>Using Galleon</span></h2>
     <p  >Instead of downloading the WildFly zip package containing everything (all default server configurations and all JBoss modules), using Galleon tooling you can choose to only install the components needed by SignServer.    </p>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DownloadGalleon">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Eb3dubG9hZEdhbGxlb24">
         <h3 class="heading "><span>Download Galleon</span></h3>
     <p  >Galleon is provided as a zip package from GitHub which you can download and run without any installation.    </p>
     <div  class="confbox programlisting">
@@ -1908,7 +1764,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-LayersUsedBySignServer">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1MYXllcnNVc2VkQnlTaWduU2VydmVy">
         <h3 class="heading "><span>Layers Used By SignServer</span></h3>
     <p  >The table below lists the Galleon layers used by SignServer.    </p>
     <p  >The<tt class=" "> core-tools</tt> layer will include the JBoss and Elytron CLI which comes in handy if the Elytron credential store or the <tt class=" ">standalone.xml</tt> configuration file need to be tweaked later. If you don&#39;t need this, exclude the <tt class=" ">core-tools</tt> and <tt class=" ">management</tt> layers and add <tt class=" ">elytron</tt> separately. <tt class=" ">bean-validation</tt> can be excluded as well, but is good to have, at least in staging environments. Picketbox-based web security is required for SignServer to detect authentication using client certificates.    </p>
@@ -2109,7 +1965,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DownloadandConfigureWildFlyUsingGalleon">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Eb3dubG9hZGFuZENvbmZpZ3VyZVdpbGRGbHlVc2luZ0dhbGxlb24">
         <h3 class="heading "><span>Download and Configure WildFly Using Galleon</span></h3>
     <p  >    <span style="color: #000000;">
 Galleon can download and extract WildFly to the directory specified using the <tt class=" ">install</tt> command. SignServer is running on a standalone server, and only this server configuration is needed. For a typical installation, use the following CLI recipe:    </span>
@@ -2117,14 +1973,14 @@ Galleon can download and extract WildFly to the directory specified using the <t
     <div  class="confbox programlisting">
                     <div class="title">Download and build WildFly using Galleon</div>
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Download and build WildFly using Galleon" data-linenumbers="false" data-firstline="1">
-<div class="line"><code class="plain">.</code><code class="plain">/galleon</code><code class="plain">.sh </code><code class="functions">install</code><code class="plain"> wildfly:current</code><code class="comments">#24.0.1.Final --dir=/opt/wildfly-24.0.1.Final --default-configs=standalone/standalone.xml --layers=cdi,core-tools,datasources,deployment-scanner,discovery,ee,-jsonb,ejb,io,jaxrs,jpa,jsf,logging,mail,management,webservices,legacy-security</code></div>
+<div class="line"><code class="plain">.</code><code class="plain">/galleon</code><code class="plain">.sh </code><code class="functions">install</code><code class="plain"> wildfly:current</code><code class="comments">#26.1.3.Final --dir=/opt/wildfly-26.1.3.Final --default-configs=standalone/standalone.xml --layers=cdi,core-tools,datasources,deployment-scanner,discovery,ee,-jsonb,ejb,io,jaxrs,jpa,jsf,logging,mail,management,webservices</code></div>
 <div class="line"><code class="functions">ln</code><code class="plain"> -snf </code><code class="plain">/opt/wildfly-24</code><code class="plain">.0.1.Final </code><code class="plain">/opt/wildfly</code><code class="plain">  </code></div>
 </div>
     </div>
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveRESTEasy-Crypto">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVSRVNURWFzeS1DcnlwdG8">
         <h1 class="heading label"><span>Remove RESTEasy-Crypto</span></h1>
     <p  >    <span style="color: #000000;">
 The application server can sometimes load its own version of Bouncy Castle, resulting in incompatibility and/or conflict issues.    </span>
@@ -2147,7 +2003,7 @@ To avoid issues and prevent WildFly from loading the Bouncy Castle library inclu
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaCustomConfiguration">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhQ3VzdG9tQ29uZmlndXJhdGlvbg">
         <h1 class="heading "><span>Create a Custom Configuration</span></h1>
     <p  >    <span style="color: #000000;">
 Replace <tt class=" ">/opt/wildfly/bin/standalone.conf</tt> with the following Jinja2 template.    </span>
@@ -2174,7 +2030,7 @@ Replace <tt class=" ">/opt/wildfly/bin/standalone.conf</tt> with the following J
 <div class="line"><code class="keyword">fi</code></div>
 </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-SetAllowedMemoryUsage">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TZXRBbGxvd2VkTWVtb3J5VXNhZ2U">
         <h2 class="heading "><span>Set Allowed Memory Usage</span></h2>
     <p  >    <span style="color: #000000;">
 By default, 512 MB of heap (RAM) is allowed to be used by the application server. This is not sufficient to run SignServer. We recommend to allocate at least 2048 MB of RAM. To increase the default value, run the following command:    </span>
@@ -2185,7 +2041,7 @@ By default, 512 MB of heap (RAM) is allowed to be used by the application server
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-SettheTransactionNodeID">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TZXR0aGVUcmFuc2FjdGlvbk5vZGVJRA">
         <h2 class="heading "><span>Set the Transaction Node ID</span></h2>
     <p  >    <span style="color: #000000;">
 Set the transaction node ID to a unique number. The node ID is used by the <tt class=" ">transactions</tt> subsystem and ensures that the transaction manager only recovers branches which match the specified identifier. It is imperative that this identifier is unique between WildFly instances sharing either an object store or access common resource managers (i.e. when multiple SignServer instances access the same database).    </span>
@@ -2197,7 +2053,7 @@ Set the transaction node ID to a unique number. The node ID is used by the <tt c
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLUNvbmZpZ3VyZVdpbGRGbHlhc2FTZXJ2aWNlKE9wdGlvbmFsKQ">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVXaWxkRmx5YXNhU2VydmljZShPcHRpb25hbCk">
         <h1 class="heading "><span>Configure WildFly as a Service (Optional) </span></h1>
     <p  >    <span style="color: #000000;">
 Modern Linux systems use systemd to start and stop services. The WildFly zip package already contains the necessary files to run as a service, but they need to be installed manually. Once started as a service, WildFly will run as the <tt class=" ">wildfly</tt> user, and you need to add this user as well.    </span>
@@ -2213,7 +2069,7 @@ The following provides a suggestion for setting up WildFly as a systemd service.
 <div class="line"><code class="functions">cp</code><code class="plain"> </code><code class="plain">/opt/wildfly/docs/contrib/scripts/systemd/wildfly</code><code class="plain">.conf </code><code class="plain">/etc/wildfly</code></div>
 <div class="line"><code class="plain">systemctl daemon-reload</code></div>
 <div class="line"><code class="functions">useradd</code><code class="plain"> -r -s </code><code class="plain">/bin/false</code><code class="plain"> wildfly</code></div>
-<div class="line"><code class="functions">chown</code><code class="plain"> -R wildfly:wildfly </code><code class="plain">/opt/wildfly-24</code><code class="plain">.0.1.Final/</code></div>
+<div class="line"><code class="functions">chown</code><code class="plain"> -R wildfly:wildfly </code><code class="plain">/opt/wildfly-26</code><code class="plain">.1.3.Final/</code></div>
 </div>
     </div>
     <p  >    <span style="color: #000000;">
@@ -2268,14 +2124,14 @@ The <tt class=" ">docs</tt> directory does not exist when using Galleon. For ref
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-StartWildFly">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TdGFydFdpbGRGbHk">
         <h1 class="heading "><span>Start WildFly </span></h1>
     <p  >    <span style="color: #000000;">
 The following provides two examples for starting WildFly,     </span>
     <span style="color: #000000;">
 one if you are using a systemd service in the background and alternatively for starting WildFly in a separate terminal for testing.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-StartWildFlyinstalledasasystemdservice">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TdGFydFdpbGRGbHlpbnN0YWxsZWRhc2FzeXN0ZW1kc2VydmljZQ">
         <h2 class="heading "><span>Start WildFly installed as a systemd service</span></h2>
     <p  >    <span style="color: #000000;">
 To start    </span>
@@ -2290,7 +2146,7 @@ WildFly installed as a systemd service:<br/>    </span>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-StartWildFlyinaseparateterminalfortesting">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TdGFydFdpbGRGbHlpbmFzZXBhcmF0ZXRlcm1pbmFsZm9ydGVzdGluZw">
         <h2 class="heading auto-cursor-target"><span>Start WildFly in a separate terminal for testing</span></h2>
     <p  >    <span style="color: #000000;">
 Alternatively, start WildFly in a separate terminal for quick testing:    </span>
@@ -2302,12 +2158,12 @@ Alternatively, start WildFly in a separate terminal for quick testing:    </span
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateanElytronCredentialStore">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhbkVseXRyb25DcmVkZW50aWFsU3RvcmU">
         <h1 class="heading "><span>Create an Elytron Credential Store</span></h1>
     <p  >    <span style="color: #000000;">
 You can protect passwords by storing them in a credential store. The credential is encrypted with a master password which is fetched by WildFly on startup.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaMasterPassword">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhTWFzdGVyUGFzc3dvcmQ">
         <h2 class="heading "><span>Create a Master Password</span></h2>
     <p  >    <span style="color: #000000;">
 Create a script which outputs the master password to <tt class=" ">stdout</tt> and ensure the script can only be executed by the <tt class=" ">wildfly</tt> user.    </span>
@@ -2321,7 +2177,7 @@ Create a script which outputs the master password to <tt class=" ">stdout</tt> a
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreatetheCredentialStore">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGV0aGVDcmVkZW50aWFsU3RvcmU">
         <h2 class="heading "><span>Create the Credential Store</span></h2>
     <p  >    <span style="color: #000000;">
 Create a credential store in<tt class=" "> /opt/wildfly/standalone/configuration</tt> encrypted with the password echoed by the<tt class=" "> wildfly_pass</tt> script.    </span>
@@ -2335,12 +2191,12 @@ Create a credential store in<tt class=" "> /opt/wildfly/standalone/configuration
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddDatabaseDriver">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGREYXRhYmFzZURyaXZlcg">
         <h1 class="heading "><span>Add Database Driver</span></h1>
     <p  >    <span style="color: #000000;">
 For most database management systems, the JDBC driver can be added by hot-deploying it into the deployment directory. This will be picked up by WildFly and deployed so we can create a data source straight away. You can use a generic name, without version number, in order to get a generic <tt class=" ">driver-name</tt> for the data source command.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-MariaDB">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1NYXJpYURC">
         <h2 class="heading "><span>MariaDB</span></h2>
     <div  class="confbox programlisting">
                     <div class="title">Download and deploy MariaDB JDBC driver</div>
@@ -2349,7 +2205,7 @@ For most database management systems, the JDBC driver can be added by hot-deploy
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-PostgreSQL">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Qb3N0Z3JlU1FM">
         <h2 class="heading "><span>PostgreSQL</span></h2>
     <div  class="confbox programlisting">
                     <div class="title">Download and deploy PostgreSQL JDBC driver</div>
@@ -2359,7 +2215,7 @@ For most database management systems, the JDBC driver can be added by hot-deploy
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddaDatasource">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRhRGF0YXNvdXJjZQ">
         <h1 class="heading "><span>Add a Datasource</span></h1>
     <p  >    <span style="color: #000000;">
 To add a datasource for SignServer to use, run the commands in JBoss CLI according to the examples below.    </span>
@@ -2378,7 +2234,7 @@ The <tt class=" ">--user-name</tt> and <tt class=" ">--password</tt> defines the
     </p>
         </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-MariaDB.1">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1NYXJpYURCLjE">
         <h2 class="heading "><span>MariaDB</span></h2>
     <p  >    <span style="color: #000000;">
 For MariaDB, run the following:    </span>
@@ -2391,11 +2247,11 @@ For MariaDB, run the following:    </span>
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-PostgreSQL.1">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Qb3N0Z3JlU1FMLjE">
         <h2 class="heading "><span>PostgreSQL</span></h2>
     <p  >    <span style="color: #000000;">
 For PostgreSQL, run the following:    </span>
@@ -2408,12 +2264,12 @@ For PostgreSQL, run the following:    </span>
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureWildFlyRemoting">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVXaWxkRmx5UmVtb3Rpbmc">
         <h1 class="heading "><span>Configure WildFly Remoting</span></h1>
     <p  >    <span style="color: #000000;">
 SignServer needs to use JBoss Remoting for the SignServer Admin CLI to work. Configure it to use a separate port 4447 and remove any other dependency on remoting except for what SignServer needs.    </span>
@@ -2427,33 +2283,35 @@ SignServer needs to use JBoss Remoting for the SignServer Admin CLI to work. Con
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureLogging">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVMb2dnaW5n">
         <h1 class="heading "><span>Configure Logging</span></h1>
     <p  >    <span style="color: #000000;">
 Configure logging in WildFly to be able to dynamically change logging while the application server is running.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-LoggingConfigurations">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Mb2dnaW5nQ29uZmlndXJhdGlvbnM">
         <h2 class="heading "><span>Logging Configurations</span></h2>
     <p  >    <span style="color: #000000;">
 Choose one of the logging configurations below.    </span>
     </p>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-Option1-RecommendedLogging">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1PcHRpb24xLVJlY29tbWVuZGVkTG9nZ2luZw">
         <h3 class="heading "><span>Option 1 - Recommended Logging</span></h3>
     <p  >    <span style="color: #000000;">
-INFO log level for <tt class=" ">org.signserver</tt> and <tt class=" ">org.cesecore</tt> is recommended for production systems.    </span>
+INFO log level for <tt class=" ">org.signserver</tt> and <tt class=" ">org.cesecore</tt> etc. is recommended for production systems.    </span>
     </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.signserver:add(level=INFO)'</code></div>
 <div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.cesecore:add(level=INFO)'</code></div>
+<div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.ejbca:add(level=INFO)'</code></div>
+<div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=com.keyfactor:add(level=INFO)'</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-Option2-QuietLogging">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1PcHRpb24yLVF1aWV0TG9nZ2luZw">
         <h3 class="heading auto-cursor-target"><span>Option 2 - Quiet Logging</span></h3>
     <p  >    <span style="color: #000000;">
 If you prefer more quiet logging, configure WildFly to only log audit log messages, warnings and errors.<br/>    </span>
@@ -2463,10 +2321,12 @@ If you prefer more quiet logging, configure WildFly to only log audit log messag
 <div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.cesecore.audit.impl.log4j.Log4jDevice:add(level=INFO)'</code></div>
 <div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.signserver:add(level=WARN)'</code></div>
 <div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.cesecore:add(level=WARN)'</code></div>
+<div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=org.ejbca:add(level=WARN)'</code></div>
+<div class="line"><code class="plain">/opt/wildfly/bin/jboss-cli</code><code class="plain">.sh --connect </code><code class="string">'/subsystem=logging/logger=com.keyfactor:add(level=WARN)'</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AdditionalLoggingConfiguration">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRpdGlvbmFsTG9nZ2luZ0NvbmZpZ3VyYXRpb24">
         <h3 class="heading "><span>Additional Logging Configuration</span></h3>
     <p  >    <span style="color: #000000;">
 You may additionally want to add the following configuration:    </span>
@@ -2485,7 +2345,7 @@ You may additionally want to add the following configuration:    </span>
     </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddAccessLogging">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRBY2Nlc3NMb2dnaW5n">
         <h2 class="heading "><span>Add Access Logging</span></h2>
     <p  >    <span style="color: #000000;">
 To log all requests processed by the server, similar to the Apache access log, add the following configuration:    </span>
@@ -2497,7 +2357,7 @@ To log all requests processed by the server, similar to the Apache access log, a
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemovetheConsoleHandler">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmV0aGVDb25zb2xlSGFuZGxlcg">
         <h2 class="heading "><span>Remove the Console Handler</span></h2>
     <p  >    <span style="color: #000000;">
 Console logging is not used when running WildFly with systemd, and removing it can increase logging performance.    </span>
@@ -2509,7 +2369,7 @@ Console logging is not used when running WildFly with systemd, and removing it c
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveOldLogFiles">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVPbGRMb2dGaWxlcw">
         <h2 class="heading "><span>Remove Old Log Files</span></h2>
     <p  >    <span style="color: #000000;">
 Log files are rotated on a daily basis by default, but old log files are not deleted automatically. You can delete old log files using a cronjob:    </span>
@@ -2531,7 +2391,7 @@ Make the file executable:    </span>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableSyslogShipping">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVTeXNsb2dTaGlwcGluZw">
         <h2 class="heading "><span>Enable Syslog Shipping</span></h2>
     <p  >    <span style="color: #000000;">
 To additionally send the server log over UDP to a syslog server such as Graylog or Logstash, configure a syslog handler in WildFly. Set the hostname and port of the syslog server, as well as the desired log level according to the following example:    </span>
@@ -2544,7 +2404,7 @@ To additionally send the server log over UDP to a syslog server such as Graylog 
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableAuditLoggingToFile">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVBdWRpdExvZ2dpbmdUb0ZpbGU">
         <h2 class="heading "><span>Enable Audit Logging To File</span></h2>
     <p  >    <span style="color: #000000;">
 You can write the SignServer audit log to a separate file. E.g. to log to <tt class=" ">/opt/wildfly/standalone/log/cesecore-audit.log</tt>, rotate every 128 MB and keep one rotated file:    </span>
@@ -2558,12 +2418,12 @@ You can write the SignServer audit log to a separate file. E.g. to log to <tt cl
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLUhUVFAoUylDb25maWd1cmF0aW9u">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1IVFRQKFMpQ29uZmlndXJhdGlvbg">
         <h1 class="heading "><span>HTTP(S) Configuration</span></h1>
     <p  >    <span style="color: #000000;">
 The following section explains how to configure HTTP(S) using Undertow.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveExistingTLSandHTTPConfiguration">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVFeGlzdGluZ1RMU2FuZEhUVFBDb25maWd1cmF0aW9u">
         <h2 class="heading "><span>Remove Existing TLS and HTTP Configuration</span></h2>
     <p  >    <span style="color: #000000;">
 Run the following commands in JBoss CLI to remove existing TLS and HTTP configuration:    </span>
@@ -2580,16 +2440,16 @@ Run the following commands in JBoss CLI to remove existing TLS and HTTP configur
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-Use3-PortSeparation">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Vc2UzLVBvcnRTZXBhcmF0aW9u">
         <h2 class="heading "><span>Use 3-Port Separation</span></h2>
     <p  >    <span style="color: #000000;">
 The following section explains how to set up Undertow with 3-port separation. Port 8080 is used for HTTP (unencrypted traffic), port 8442 for HTTPS (encrypted) traffic with only server authentication and port 8443 for HTTPS (encrypted) traffic with both server and client authentication.    </span>
     </p>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddNewInterfacesandSockets">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGROZXdJbnRlcmZhY2VzYW5kU29ja2V0cw">
         <h3 class="heading "><span>Add New Interfaces and Sockets</span></h3>
     <p  >    <span style="color: #000000;">
 To add new interfaces and sockets, use the following:<br/>    </span>
@@ -2613,7 +2473,7 @@ Consider binding to a specific interface instead of binding to all interfaces us
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureTLS">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVUTFM">
         <h3 class="heading "><span>Configure TLS</span></h3>
     <p  >    <span style="color: #000000;">
 Configure TLS according to the following instructions.    </span>
@@ -2642,7 +2502,7 @@ Note that TLS v1.3 is only available when running JDK 11 or greater.    </span>
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLUFkZEhUVFAoUylMaXN0ZW5lcnM">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRIVFRQKFMpTGlzdGVuZXJz">
         <h3 class="heading label"><span>Add HTTP(S) Listeners</span></h3>
     <p  class="label">    <span style="color: #000000;">
 To add HTTP(S) listeners:    </span>
@@ -2656,11 +2516,11 @@ To add HTTP(S) listeners:    </span>
 </div>
     </div>
     <p  class="subsubsection">    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfiguretheFirewall">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmV0aGVGaXJld2FsbA">
         <h3 class="heading subsubsection"><span>Configure the Firewall</span></h3>
     <p  >    <span style="color: #000000;">
 Open port 8080, 8442 and 8443 for incoming TCP traffic.    </span>
@@ -2678,12 +2538,12 @@ Open port 8080, 8442 and 8443 for incoming TCP traffic.    </span>
     </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-Use2-PortSeparation2portseparation">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Vc2UyLVBvcnRTZXBhcmF0aW9uMnBvcnRzZXBhcmF0aW9u">
         <h2 class="heading "><span>Use 2-Port Separation </span></h2>
     <p  >    <span style="color: #000000;">
 The following section explains how to set up Undertow with 2-port separation. Port 8080 is used for HTTP (unencrypted traffic) and port 8443 is used for HTTPS (encrypted) traffic with optional client authentication.    </span>
     </p>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddNewInterfacesandSockets.1">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGROZXdJbnRlcmZhY2VzYW5kU29ja2V0cy4x">
         <h3 class="heading "><span>Add New Interfaces and Sockets</span></h3>
     <p  >    <span style="color: #000000;">
 To add new interfaces and sockets, use the following:<br/>    </span>
@@ -2705,7 +2565,7 @@ Consider binding to a specific IP instead of binding to all interfaces using <tt
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureTLS.1">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVUTFMuMQ">
         <h3 class="heading "><span>Configure TLS</span></h3>
     <p  >    <span style="color: #000000;">
 Configure TLS according to the following instructions.    </span>
@@ -2733,7 +2593,7 @@ Note that TLS v1.3 is only available when running JDK 11 or greater.    </span>
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLUFkZEhUVFAoUylMaXN0ZW5lcnMuMQ">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRIVFRQKFMpTGlzdGVuZXJzLjE">
         <h3 class="heading "><span>Add HTTP(S) Listeners</span></h3>
     <p  class="label">    <span style="color: #000000;">
 To add HTTP(S) listeners:    </span>
@@ -2746,11 +2606,11 @@ To add HTTP(S) listeners:    </span>
 </div>
     </div>
     <p  class="subsubsection">    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfiguretheFirewall.1">
+    <div class="section section-3" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmV0aGVGaXJld2FsbC4x">
         <h3 class="heading subsubsection"><span>Configure the Firewall</span></h3>
     <p  >    <span style="color: #000000;">
 Open port 8080 and 8443 for incoming TCP traffic.    </span>
@@ -2782,7 +2642,7 @@ Alternatively, you may open port 80 and port 443 and redirect traffic to 8080 an
     </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-UseanHSM">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Vc2VhbkhTTQ">
         <h2 class="heading label"><span>Use an HSM</span></h2>
     <p  >    <span style="color: #000000;">
 You can store the private key for the TLS client certificate in an HSM instead for improved security and performance. WildFly contains the Sun PKCS11 provider which can be used to talk to the HSM using PKCS#11.    </span>
@@ -2868,7 +2728,7 @@ Switch to the HSM keystore.    </span>
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ConfigureWebServicesWSDLLocationRewrite">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Db25maWd1cmVXZWJTZXJ2aWNlc1dTRExMb2NhdGlvblJld3JpdGU">
         <h1 class="heading "><span>Configure Web Services WSDL Location Rewrite</span></h1>
     <p  >In order for the web services to work correctly in cases when the client reads the endpoint address from the Web Services Description Language (WSDL) and uses client certificate or a different port, you need to configure the WSDL web-host rewriting to use the request host.    </p>
     <p  >To configure the WSDL location, run:    </p>
@@ -2880,12 +2740,12 @@ Switch to the HSM keystore.    </span>
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-OptionalConfiguration">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1PcHRpb25hbENvbmZpZ3VyYXRpb24">
         <h1 class="heading label"><span>Optional Configuration</span></h1>
     <p  >    <span style="color: #000000;">
 The following sections cover optional configurations.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveWelcomeContent">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVXZWxjb21lQ29udGVudA">
         <h2 class="heading label"><span>Remove Welcome Content</span></h2>
     <p  class="label">    <span style="color: #000000;">
 Removes the hardcoded welcome page in WildFly. This is not needed if Galleon was used.    </span>
@@ -2898,7 +2758,7 @@ Removes the hardcoded welcome page in WildFly. This is not needed if Galleon was
 </div>
     </div>
     <p  class="subsubsection">    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     <p  class="subsubsection">    <span style="color: #000000;">
@@ -2910,7 +2770,7 @@ You can also remove the actual files and save some disk space with:    </span>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RedirecttoApplicationforUnknownURLs">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZWRpcmVjdHRvQXBwbGljYXRpb25mb3JVbmtub3duVVJMcw">
         <h2 class="heading label"><span>Redirect to Application for Unknown URLs</span></h2>
     <p  >    <span style="color: #000000;">
 Known URLs for SignServer starts with <tt class=" ">/signserver</tt> according to the following example:    </span>
@@ -2922,7 +2782,7 @@ Known URLs for SignServer starts with <tt class=" ">/signserver</tt> according t
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableHTTPStrictTransportLayerSecurity">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVIVFRQU3RyaWN0VHJhbnNwb3J0TGF5ZXJTZWN1cml0eQ">
         <h2 class="heading label"><span>Enable HTTP Strict Transport Layer Security</span></h2>
     <p  >    <span style="color: #000000;">
 The <tt class=" ">HTTP</tt> <tt class=" ">Strict-Transport-Security</tt> response header (HSTS) defined in RFC 6797 tells the browser to only access the server using HTTPS. If you are not serving any resources on the domain over HTTP, you can enable this to improve security. Start off with a small <tt class=" ">max-age</tt> value (such as 60 seconds) and then gradually increase.    </span>
@@ -2942,7 +2802,7 @@ You should also redirect any HTTP traffic to HTTPS. The example assumes port 80 
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableOCSPRevocationChecking">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVPQ1NQUmV2b2NhdGlvbkNoZWNraW5n">
         <h2 class="heading label"><span>Enable OCSP Revocation Checking</span></h2>
     <p  >    <span style="color: #000000;">
 WildFly can check the validity of client certificates against the OCSP responder defined by the certificate&#39;s AIA extension:    </span>
@@ -2954,11 +2814,11 @@ WildFly can check the validity of client certificates against the OCSP responder
 </div>
     </div>
     <p  class="label">    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemovetheExampleDSDatasource">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmV0aGVFeGFtcGxlRFNEYXRhc291cmNl">
         <h2 class="heading label"><span>Remove the ExampleDS Datasource</span></h2>
     <p  >    <span style="color: #000000;">
 You can remove the ExampleDS datasource as it is not being used. This is not needed if Galleon was used.    </span>
@@ -2971,11 +2831,11 @@ You can remove the ExampleDS datasource as it is not being used. This is not nee
 </div>
     </div>
     <p  class="subsubsection">    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveUnusedSubsystemsandExtensions">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVVbnVzZWRTdWJzeXN0ZW1zYW5kRXh0ZW5zaW9ucw">
         <h2 class="heading label"><span>Remove Unused Subsystems and Extensions</span></h2>
     <p  >    <span style="color: #000000;">
 Optionally remove the unused subsystems and extensions. This is not needed if Galleon was used.    </span>
@@ -3017,11 +2877,11 @@ If you used the <i class=" ">Jakarta EE Full &amp; Web Distribution</i> zip pack
 </div>
     </div>
     <p  class="subsubsection">    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveAJP">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVBSlA">
         <h2 class="heading label"><span>Remove AJP</span></h2>
     <p  >    <span style="color: #000000;">
 Clean up all AJP related configuration if you are not using it.<br/>    </span>
@@ -3033,11 +2893,11 @@ Clean up all AJP related configuration if you are not using it.<br/>    </span>
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableAJPConnector">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVBSlBDb25uZWN0b3I">
         <h2 class="heading label"><span>Enable AJP Connector</span></h2>
     <p  class="label">    <span style="color: #000000;">
 Enabling the AJP connector is only needed if you terminate the TLS connection at a proxy (such as Apache or nginx) running in front of WildFly:    </span>
@@ -3049,11 +2909,11 @@ Enabling the AJP connector is only needed if you terminate the TLS connection at
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-AddaRequestLimiter">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1BZGRhUmVxdWVzdExpbWl0ZXI">
         <h2 class="heading "><span>Add a Request Limiter</span></h2>
     <p  >    <span style="color: #000000;">
 You can limit the number of concurrent connections by adding a request limiter in Undertow. For example, to allow 100 connections to be processed at the same time, and allow up to 300 connections to be queued before new connections are rejected:    </span>
@@ -3065,7 +2925,7 @@ You can limit the number of concurrent connections by adding a request limiter i
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RestrictAccesstoServices">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZXN0cmljdEFjY2Vzc3RvU2VydmljZXM">
         <h2 class="heading "><span>Restrict Access to Services</span></h2>
     <p  >    <span style="color: #000000;">
 You can whitelist IP addresses or block access to some services completely using predicates and handlers in Undertow.    </span>
@@ -3089,7 +2949,7 @@ To block access to the public web pages and the SignServer documentation:    </s
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-OnlyDeployatStartup">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Pbmx5RGVwbG95YXRTdGFydHVw">
         <h2 class="heading "><span>Only Deploy at Startup</span></h2>
     <p  >    <span style="color: #000000;">
 Historically application servers are really bad at cleaning up memory from previous deployments and hot (re-)deploy is discouraged in production. To avoid manual deployment with the management interface, we can specify that the deployment directory should be scanned once at application server startup by setting the scan-interval to 0. This also prevents an attacker from loading a malicious JAR file by dropping it in the <tt class=" ">deployments</tt> directory.    </span>
@@ -3100,7 +2960,7 @@ Historically application servers are really bad at cleaning up memory from previ
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-IncreasetheDeploymentTimeout">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1JbmNyZWFzZXRoZURlcGxveW1lbnRUaW1lb3V0">
         <h2 class="heading subsubsection"><span>Increase the Deployment Timeout</span></h2>
     <p  >    <span style="color: #000000;">
 If you are using HSMs with smart card authentication or if the database needs to reindex when WildFly boots, you may have to increase the deployment timeout to be able to deploy SignServer correctly. The deployment timeout is specified in seconds, the command below sets it to 5 minutes.    </span>
@@ -3111,7 +2971,7 @@ If you are using HSMs with smart card authentication or if the database needs to
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DisableManagementWebConsole">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1EaXNhYmxlTWFuYWdlbWVudFdlYkNvbnNvbGU">
         <h2 class="heading subsubsection"><span>Disable Management Web Console</span></h2>
     <p  >    <span style="color: #000000;">
 If you only plan on using the JBoss CLI anyway there is little reason to keep this around.    </span>
@@ -3123,11 +2983,11 @@ If you only plan on using the JBoss CLI anyway there is little reason to keep th
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-IncreasetheMaximumUploadSize">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1JbmNyZWFzZXRoZU1heGltdW1VcGxvYWRTaXpl">
         <h2 class="heading "><span>Increase the Maximum Upload Size</span></h2>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
@@ -3160,7 +3020,7 @@ If 2-port separation is used, increase the maximum upload size for the 2 listene
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableWildFlyAuditLogging">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVXaWxkRmx5QXVkaXRMb2dnaW5n">
         <h2 class="heading "><span>Enable WildFly Audit Logging</span></h2>
     <p  >    <span style="color: #000000;">
 WildFly can audit log changes made to the management model and output audit log events in JSON format to the file <tt class=" ">/opt/wildfly/standalone/data/audit-log.log</tt>. Audit logging is disabled by default. To enable it, run:    </span>
@@ -3171,7 +3031,7 @@ WildFly can audit log changes made to the management model and output audit log 
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-RemoveWildFlyAuditLogging">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZW1vdmVXaWxkRmx5QXVkaXRMb2dnaW5n">
         <h2 class="heading "><span>Remove WildFly Audit Logging</span></h2>
     <p  >    <span style="color: #000000;">
 You may remove the WildFly audit logging configuration completely if you are not using it.    </span>
@@ -3182,7 +3042,7 @@ You may remove the WildFly audit logging configuration completely if you are not
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-StartWildFlyonSystemBoot">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1TdGFydFdpbGRGbHlvblN5c3RlbUJvb3Q">
         <h2 class="heading "><span>Start WildFly on System Boot</span></h2>
     <p  >    <span style="color: #000000;">
 To make SignServer available automatically after a system restart, use systemd.    </span>
@@ -3194,7 +3054,7 @@ To make SignServer available automatically after a system restart, use systemd. 
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-PerformanceTuning">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1QZXJmb3JtYW5jZVR1bmluZw">
         <h1 class="heading "><span>Performance Tuning</span></h1>
     <p  >    <span style="color: #000000;">
 The following section covers WildFly configuration for maximizing SignServer performance. The best setup could vary from installation to installation and should be manually fine-tuned. However, the &quot;default&quot; configuration would typically be a good starting point. You should also consider increasing the heap (RAM) for SignServer instances under high load to at least 4 GB.    </span>
@@ -3211,11 +3071,11 @@ The following section covers WildFly configuration for maximizing SignServer per
 </div>
     </div>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/-7vhn92/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Wait for the reload to complete by checking the server log or the result of <strong class=" "><tt class=" ">:read-attribute(name=server-state)</tt></strong> before continuing.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaSnapshotoftheConfiguration">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhU25hcHNob3RvZnRoZUNvbmZpZ3VyYXRpb24">
         <h1 class="heading "><span>Create a Snapshot of the Configuration</span></h1>
     <p  >    <span style="color: #000000;">
 Create a snapshot of the current configuration to make sure you can revert back to a working state.    </span>
@@ -3227,7 +3087,7 @@ Create a snapshot of the current configuration to make sure you can revert back 
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-CreateaTerminalAliasforReadingtheLogFile">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DcmVhdGVhVGVybWluYWxBbGlhc2ZvclJlYWRpbmd0aGVMb2dGaWxl">
         <h1 class="heading "><span>Create a Terminal Alias for Reading the Log File</span></h1>
     <p  >    <span style="color: #000000;">
 SignServer is logging all actions to the WildFly log file located in <tt class=" ">/opt/wildfly/standalone/log/server.log</tt>. It is often useful to be able to quickly filter and inspect the latest log lines. If you are using Fish you can add the following function to your <tt class=" ">config.fish</tt>:    </span>
@@ -3266,7 +3126,7 @@ Or if you are using Bash, add this to your <tt class=" ">.bashrc</tt>:    </span
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-ClearCommandLineHistory">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1DbGVhckNvbW1hbmRMaW5lSGlzdG9yeQ">
         <h1 class="heading "><span>Clear Command Line History</span></h1>
     <p  >    <span style="color: #000000;">
 Clear the command line history to prevent accidental viewing of passwords put into the credential store.    </span>
@@ -3277,7 +3137,7 @@ Clear the command line history to prevent accidental viewing of passwords put in
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-References">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1SZWZlcmVuY2Vz">
         <h1 class="heading "><span>References</span></h1>
     <p  >    <span style="color: #000000;">
 The following lists links to references and useful external resources.    </span>
@@ -3295,7 +3155,7 @@ The following lists links to references and useful external resources.    </span
 </li><li class=" ">    <p  ><a  class="external-link" href="https://github.com/glowroot/glowroot/wiki/Agent-Installation-%28with-Embedded-Collector%29">GitHub - Glowroot Wiki, Agent Installation (with Embedded Collector)</a>    </p>
 </li><li class=" ">    <p  ><a  class="external-link" href="https://gist.github.com/mcupak/8c8769392c56cba49a881b1f8b18011b">GitHub Gist - Setting up an access log with WildFly</a>    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-143723572_safe-id-aWQtLldpbGRGbHkyNGFuZEpCb3NzRUFQNy40djUuOC4yLU5leHRTdGVwOkluc3RhbGxTaWduU2VydmVy">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1OZXh0U3RlcDpJbnN0YWxsU2lnblNlcnZlcg">
         <h1 class="heading "><span>Next Step: Install SignServer </span></h1>
     <p  >    <span style="color: #003366;">
     <span style="color: #000000;">
@@ -3303,12 +3163,12 @@ For instructions on how to install SignServer, see    </span>
  <a   href="Install_SignServer.html">Install SignServer</a><a   href="https://confluence.primekey.com/display/EJBCADS/.Deploying+EJBCA+v7.4.0">.</a>    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-DebugSignServer">
+    <div class="section section-1" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1EZWJ1Z1NpZ25TZXJ2ZXI">
         <h1 class="heading "><span>Debug SignServer </span></h1>
     <p  >    <span style="color: #000000;">
 The following explains the configuration options in WildFly for troubleshooting SignServer.    </span>
     </p>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-SwitchtoDebugLoggingGlobally">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Td2l0Y2h0b0RlYnVnTG9nZ2luZ0dsb2JhbGx5">
         <h2 class="heading auto-cursor-target"><span>Switch to Debug Logging Globally</span></h2>
     <p  class="auto-cursor-target">    <span style="color: #000000;">
 To enable debug logging globally, if you need to troubleshoot, follow these steps.    </span>
@@ -3335,7 +3195,7 @@ Switch to debug logging.    </span>
 Once you are done troubelshooting, switch back to the log level you used previously. Note that having debug logging enabled globally will produce a lot of output, avoid using this configuration in production and consider enabling debugging for individual packages instead.    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-LogRequestsandResponsesfortheWebServiceAPI">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1Mb2dSZXF1ZXN0c2FuZFJlc3BvbnNlc2ZvcnRoZVdlYlNlcnZpY2VBUEk">
         <h2 class="heading "><span>Log Requests and Responses for the WebService API</span></h2>
     <p  >    <span style="color: #000000;">
 To log the SOAP messages received by and sent from SignServer:    </span>
@@ -3358,7 +3218,7 @@ To remove the configuration when you are done:    </span>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableHibernateStatistics">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVIaWJlcm5hdGVTdGF0aXN0aWNz">
         <h2 class="heading "><span>Enable Hibernate Statistics</span></h2>
     <p  >    <span style="color: #000000;">
 Hibernate is the ORM library used by SignServer to create SQL queries. You can enable Hibernate statistics to get the SQL query, as well as the time it takes to execute it, written in the server log.    </span>
@@ -3394,7 +3254,7 @@ To remove the configuration:    </span>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-143723572_id-.WildFly24andJBossEAP7.4v5.8.2-EnableProfilingUsingGlowroot">
+    <div class="section section-2" id="src-181283782_safe-id-aWQtLldpbGRGbHkyNCwyNixhbmRKQm9zc0VBUDcuNHY2LjAuMC1FbmFibGVQcm9maWxpbmdVc2luZ0dsb3dyb290">
         <h2 class="heading "><span>Enable Profiling Using Glowroot</span></h2>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #003366;">
     <span style="color: #000000;">
@@ -3444,7 +3304,7 @@ Glowroot should now be available on    </span>
             </svg>
             <span>Application Server Setup</span>
         </a>
-                <a href="WildFly_10%2B_and_JBoss_EAP_7.1%2B.html" class="ht-post-nav-next">
+                <a href="Install_SignServer.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -3453,7 +3313,7 @@ Glowroot should now be available on    </span>
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>WildFly 10+ and JBoss EAP 7.1+</span>
+            <span>Install SignServer</span>
         </a>
     </nav>    
             

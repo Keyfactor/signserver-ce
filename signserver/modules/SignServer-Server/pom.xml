@@ -23,6 +23,11 @@
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
         </exclusion>
+        <!-- DSS-2643: Workaround for PKCS11CryptoToken available in x509-common-util conflicing with the one from cesecore-common -->
+        <exclusion>
+          <groupId>org.ejbca.cesecore</groupId>
+          <artifactId>x509-common-util</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

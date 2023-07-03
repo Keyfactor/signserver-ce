@@ -870,6 +870,10 @@ public class ModulesTestCase {
         return Integer.parseInt(config.getProperty("httpserver.prefport", config.getProperty("httpserver.pubhttp")));
     }
 
+    public String getSignServerBaseURL() {
+        return config.getProperty("test.signserver.baseurl", "http://localhost:8080/signserver");
+    }
+
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */
     public String getClientIP() {
         return config.getProperty("httpclient.ipaddress", "127.0.0.1");

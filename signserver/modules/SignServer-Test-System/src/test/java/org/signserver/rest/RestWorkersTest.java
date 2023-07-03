@@ -40,7 +40,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
     @Before
     public void setUp() {
-        baseURL = getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/rest/v1";
+        baseURL = getSignServerBaseURL() + "/rest/v1";
     }
 
     /**

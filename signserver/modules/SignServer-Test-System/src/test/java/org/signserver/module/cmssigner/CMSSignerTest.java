@@ -22,6 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
 
+import io.restassured.response.Response;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
@@ -38,27 +39,28 @@ import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.encoders.Base64;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
+import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -294,12 +296,6 @@ public class CMSSignerTest  {
     private void helperBasicCMSSign(final int workerId, final String sigAlg, final String expectedDigAlgOID,
                                     final String expectedEncAlgOID, final String includedCertificateLevelsProperty,
                                     final int expectedIncludedCertificateLevels) throws Exception {
-        final int reqid = 37;
-
-        final String testDocument = "Something to sign...123";
-
-        final GenericSignRequest signRequest =
-                new GenericSignRequest(reqid, testDocument.getBytes());
 
         // override signature algorithm if set
         if (sigAlg != null) {
@@ -315,15 +311,31 @@ public class CMSSignerTest  {
         } else {
             workerSession.removeWorkerProperty(workerId, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
         }
-
         workerSession.reloadConfiguration(workerId);
 
-        final GenericSignResponse res =
-                (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RemoteRequestContext());
-        final byte[] data = res.getProcessedData();
+        final String baseURL = mt.getSignServerBaseURL() + "/rest/v1";
 
-        // Answer to right question
-        assertSame("Request ID", reqid, res.getRequestID());
+        // Data to be signed
+        final String testDocument = "Something to sign...123";
+
+        // Create a JSON object containing data to be signed for the request
+        JSONObject postRequestJsonBody = new JSONObject();
+        postRequestJsonBody.put("data", testDocument);
+
+        final Response response = given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(postRequestJsonBody)
+                .when()
+                .post(baseURL + "/workers/" + workerId + "/process")
+                .then()
+                .statusCode(200)
+                .contentType("application/json")
+                .extract().response();
+
+        final JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+        final byte[] data = Base64.decode(responseJsonObject.get("data").toString());
 
         try ( // Output for manual inspection
               FileOutputStream fos = new FileOutputStream(
@@ -333,8 +345,9 @@ public class CMSSignerTest  {
         }
 
         // Check certificate returned
-        final Certificate signercert = res.getSignerCertificate();
-        assertNotNull("Signer certificate", signercert);
+        final byte[] signerCertByteArray = Base64.decode(responseJsonObject.get("signerCertificate").toString());
+        final Certificate signerCert = CertTools.getCertfromByteArray(signerCertByteArray);
+        assertNotNull("Signer certificate", signerCert);
 
         // Check that the signed data contains the document (i.e. not detached)
         final CMSSignedData signedData = new CMSSignedData(data);
@@ -347,7 +360,7 @@ public class CMSSignerTest  {
         final SignerInformation signer = signers.iterator().next();
 
         final SignerInformationVerifier sigVerifier =
-                new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC").build(signercert.getPublicKey());
+                new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC").build(signerCert.getPublicKey());
 
         // Verify using the signer's certificate
         assertTrue("Verification using signer certificate", signer.verify(sigVerifier));
@@ -365,10 +378,10 @@ public class CMSSignerTest  {
         if (!signerCerts.isEmpty()) {
             final X509CertificateHolder certHolder = signerCerts.iterator().next();
             final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
-            assertEquals(signercert, cert);
+            assertEquals(signerCert, cert);
         }
 
-        // check the signature algorithm
+        // Check the signature algorithm
         assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());
         assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());
     }

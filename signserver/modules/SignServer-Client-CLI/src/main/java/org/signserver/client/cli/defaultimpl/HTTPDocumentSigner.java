@@ -65,6 +65,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
      */
     private final HostManager hostsManager;
     private final int port;
+    private final String baseUrlPath;
     private final String servlet;
     private final boolean useHTTPS;
 
@@ -84,6 +85,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     public HTTPDocumentSigner(final HostManager hostsManager,
             final int port,
+            final String baseUrlPath,
             final String servlet,
             final boolean useHTTPS,
             final String workerName,
@@ -93,6 +95,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final Map<String, String> metadata, final int timeOutLimit) {        
         this.hostsManager = hostsManager;
         this.port = port;
+        this.baseUrlPath = baseUrlPath;
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
         this.workerName = workerName;
@@ -107,6 +110,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     
     public HTTPDocumentSigner(final HostManager hostsManager,
             final int port,
+            final String baseUrlPath,
             final String servlet,
             final boolean useHTTPS,
             final int workerId, 
@@ -116,6 +120,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final Map<String, String> metadata, final int timeOutLimit) {        
         this.hostsManager = hostsManager;
         this.port = port;
+        this.baseUrlPath = baseUrlPath;
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
         this.workerName = null;
@@ -189,7 +194,11 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
     
     private URL createServletURL(String host) throws MalformedURLException, SignServerException {
-        return new URL(useHTTPS ? "https" : "http", host, port, servlet);
+        if (servlet != null) {
+            return new URL(useHTTPS ? "https" : "http", host, port, servlet);
+        } else {
+            return new URL(useHTTPS ? "https" : "http", host, port, baseUrlPath + "/process");
+        }
     }
 
     private void sendRequest(final URL processServlet,

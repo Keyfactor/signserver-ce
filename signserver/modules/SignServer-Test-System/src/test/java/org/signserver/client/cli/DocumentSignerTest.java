@@ -154,6 +154,20 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     /**
+     * Test that setting both -servlet and -baseurlpath is not allowed.
+     */
+    @Test
+    public void test01servletAndbaseurlpathNotAllowed() throws Exception {
+        LOG.info("test01servletAndbaseurlpathNotAllowed");
+        try {
+            execute("signdocument", "-servlet", "/signserver/process", "-baseurlpath",
+                    "/signserver");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+
+    /**
      * Test that setting -timeout options is not allowed for -protocol
      * WEBSERVICES.
      */
@@ -247,6 +261,23 @@ public class DocumentSignerTest extends ModulesTestCase {
             execute("signdocument", "-host", "");
             fail("Should have thrown exception about empty argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+
+    /**
+     * Test that setting baseurlpath option with default protocol returns
+     * result.
+     */
+    @Test
+    public void test01Settingbaseurlpath() throws Exception {
+        LOG.info("test01Settingbaseurlpath");
+        try {
+            byte[] res = execute("signdocument", "-baseurlpath", "/signserver", "-workername", "TestXMLSigner", "-data", "<root/>");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
     }
 
     /**

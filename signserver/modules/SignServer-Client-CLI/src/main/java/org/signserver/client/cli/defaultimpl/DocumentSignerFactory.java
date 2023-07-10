@@ -33,6 +33,7 @@ public class DocumentSignerFactory {
     
     private final Protocol protocol;
     private final String host;
+    private final String baseUrlPath;
     private final String servlet;
     private final int port;
     private final String digestAlgorithm;
@@ -64,6 +65,7 @@ public class DocumentSignerFactory {
     public DocumentSignerFactory(final Protocol protocol,
                                  final KeyStoreOptions keyStoreOptions,
                                  final String host,
+                                 final String baseUrlPath,
                                  final String servlet,
                                  final Integer port,
                                  final String digestAlgorithm,
@@ -75,6 +77,7 @@ public class DocumentSignerFactory {
                                  final int timeOutLimit) {
         this.protocol = protocol;
         this.host = host;
+        this.baseUrlPath = baseUrlPath;
         this.servlet = servlet;
         this.digestAlgorithm = digestAlgorithm;
         this.keyStoreOptions = keyStoreOptions;
@@ -170,6 +173,7 @@ public class DocumentSignerFactory {
                 signer = new WebServicesDocumentSigner(
                     host,
                     port,
+                    baseUrlPath,
                     servlet,
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
@@ -190,6 +194,7 @@ public class DocumentSignerFactory {
                 signer = new ClientWSDocumentSigner(
                     host,
                     port,
+                    baseUrlPath,
                     servlet,
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
@@ -206,14 +211,14 @@ public class DocumentSignerFactory {
                 }
                 
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(hostsManager, port, servlet,
+                    signer = new HTTPDocumentSigner(hostsManager, port, baseUrlPath, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerName, username,
                                                     currentPassword, accessToken,
                                                     pdfPassword, metadata,
                                                     timeOutLimit);
                 } else {
-                    signer = new HTTPDocumentSigner(hostsManager, port, servlet,
+                    signer = new HTTPDocumentSigner(hostsManager, port, baseUrlPath, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerId, username,
                                                     currentPassword, accessToken,

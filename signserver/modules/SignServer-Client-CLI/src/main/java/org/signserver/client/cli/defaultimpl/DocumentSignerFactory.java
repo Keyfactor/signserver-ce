@@ -202,6 +202,16 @@ public class DocumentSignerFactory {
                     pdfPassword, sf, metadata);
                 break;
             }
+            case REST: {
+                LOG.debug("Using REST as protocol");
+                signer = new RESTDocumentSigner(hostsManager, port, baseUrlPath, servlet,
+                        keyStoreOptions.isUseHTTPS(),
+                        workerName, username,
+                        currentPassword, accessToken,
+                        pdfPassword, metadata,
+                        timeOutLimit);
+                break;
+            }
             case HTTP:
             default: {
                 LOG.debug("Using HTTP as procotol");

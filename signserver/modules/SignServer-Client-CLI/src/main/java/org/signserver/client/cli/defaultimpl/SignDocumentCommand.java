@@ -172,7 +172,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         CLIENTWS,
 
         /** The HTTP interface. */
-        HTTP
+        HTTP,
+        /**
+         * The REST interface.
+         */
+        REST
     }
     
     static {
@@ -339,7 +343,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("k) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyaliasprompt").append(NL)
             .append("l) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyalias admin3").append(NL)
             .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL)
-            .append("n) ").append(COMMAND).append(" -data \"<root/>\" -servlet /signserver/worker/XMLSigner").append(NL); 
+            .append("n) ").append(COMMAND).append(" -data \"<root/>\" -servlet /signserver/worker/XMLSigner").append(NL)
+            .append("o) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -data \"<root/>\"").append(NL)
+            .append("p) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -infile /tmp/document.xml").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -597,16 +603,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throw new IllegalCommandArgumentsException("Can only specify one of -host and -hosts");
         }
         
-        if (hosts != null && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -hosts with protocol HTTP");
+        if (hosts != null && !(protocol == Protocol.HTTP || protocol == Protocol.REST)) {
+            throw new IllegalCommandArgumentsException("Can only use -hosts with protocol HTTP or REST");
         }
         
-        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP");
+        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && !(protocol == Protocol.HTTP || protocol == Protocol.REST)) {
+            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP or REST");
         }
 
-        if (timeOutString != null && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -timeout with protocol HTTP");
+        if (timeOutString != null && !(protocol == Protocol.HTTP || protocol == Protocol.REST)) {
+            throw new IllegalCommandArgumentsException("Can only use -timeout with protocol HTTP or REST");
         }
         
         if (host != null) {

@@ -353,9 +353,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.signserver.jsign</groupId>
+                <groupId>net.jsign</groupId>
                 <artifactId>jsign-core</artifactId>
-                <version>3.1-signserver5.5</version>
+                <version>5.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>

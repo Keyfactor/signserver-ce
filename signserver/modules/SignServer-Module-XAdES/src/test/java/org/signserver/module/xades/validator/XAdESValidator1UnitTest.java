@@ -47,59 +47,8 @@ public class XAdESValidator1UnitTest {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(XAdESSignerUnitTest.class);
     
-    private static final String SIGNED_DOCUMENT1 = 
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf\">\n" +
-            "<ds:SignedInfo>\n" +
-            "<ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/>\n" +
-            "<ds:SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\"/>\n" +
-            "<ds:Reference Id=\"xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf-ref0\" Type=\"http://www.w3.org/2000/09/xmldsig#Object\" URI=\"#xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf-object0\">\n" +
-            "<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>\n" +
-            "<ds:DigestValue>xg51wjdF6iCIBbqklug05nGfjZ73tfmY+/WopRCFlRA=</ds:DigestValue>\n" +
-            "</ds:Reference>\n" +
-            "<ds:Reference Type=\"http://uri.etsi.org/01903#SignedProperties\" URI=\"#xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf-signedprops\">\n" +
-            "<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>\n" +
-            "<ds:DigestValue>EdX5QE5zNFRNDOtNO0C0NHaXU4jQqmt/I/d7LwYvarU=</ds:DigestValue>\n" +
-            "</ds:Reference>\n" +
-            "</ds:SignedInfo>\n" +
-            "<ds:SignatureValue Id=\"xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf-sigvalue\">\n" +
-            "fL4dUIzJmE5Us6zwMx4m9h+lttg8LXybRbz6hCE0mkHMZtcHifFDqaxIwyJlaVkIUwbVPcm2mVbM\n" +
-            "tzoOJbntlxcur8IAR8f/X29rHZ8oqWQoG9CHj/rmMQcgpDerV8d3mUg7LzPuBl1doJZpDV+olAFt\n" +
-            "pUaVtZmAfT4cgGU2D9zktEv/11jNOP9jZpkivGO8qepVktUcrRENpIRFgwJ/o1RrYLSB0GyXpkB9\n" +
-            "Hw+IGmM+OJhvdw8rWcA0Tw6zjstEUAwEJwhJ9KXexD4IQLvfI5ATra4FDoAZymcxmOXFLwKpDKkX\n" +
-            "v5MbIVbCIpYgA0ECUtlBeYbN63Sr2iLULwBRsQ==\n" +
-            "</ds:SignatureValue>\n" +
-            "<ds:KeyInfo>\n" +
-            "<ds:X509Data>\n" +
-            "<ds:X509Certificate>\n" +
-            "MIIE7DCCAtSgAwIBAgIITC/vp/LOZSMwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJv\n" +
-            "b3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYT\n" +
-            "AlNFMB4XDTEzMDgxOTE0NTMyMVoXDTIzMDgyMDE0NTMyMVowSzEVMBMGA1UEAwwMWE1MIFNpZ25l\n" +
-            "ciAxMRAwDgYDVQQLDAdUZXN0aW5nMRMwEQYDVQQKDApTaWduU2VydmVyMQswCQYDVQQGEwJTRTCC\n" +
-            "ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAI8BZM1qIbtmUYdMjTghIQSFuBbxq2n/ZXUF\n" +
-            "Wlr71YtJ/6jjzn/VyuADkulGBywlMa34nPivGEDnGqQcVa8eToHlWGojiQCiMIoDIvm1b38i64qK\n" +
-            "YXSzwR3vxIrPD/WoQQkpBP9y1UG0uRlz/nCBosnipshfhZPLbd/tqJQprcAX1i03Ps4sYK4NpOrG\n" +
-            "TMDyuyuz0Fl0MiHDhPiGGeDG1kru+Cj0DYs6IYNevzhOEcbAM+tSyrvKgMXi7vyS2meZMN5xeZ0V\n" +
-            "Hu+Yu43YTgK/r9mV5L5jYfdYVVkUiLs3Lwq2TstDGnfrqoFgAei4Uf377221bHF61Ws9TMCmeEzO\n" +
-            "cKsCAwEAAaOB0TCBzjBPBggrBgEFBQcBAQRDMEEwPwYIKwYBBQUHMAGGM2h0dHA6Ly92bW1hcmt1\n" +
-            "c2NhMTo4MDgwL2VqYmNhL3B1YmxpY3dlYi9zdGF0dXMvb2NzcDAdBgNVHQ4EFgQUpkMNnroRqO/o\n" +
-            "NKhuCXXhQke7HGUwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgF\n" +
-            "ojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3\n" +
-            "DQEBCwUAA4ICAQAw2odWbIgWEZbO1BZQPXRZtQGBo+VlYcTEnBVn5MnM3VrSO35YySpdW7tr2y06\n" +
-            "E7I6w7KZ9WxCkUHq3NH62kvgr2IKIaDninRS1Xu4TKQgEgrTUYlUGbmXsl6gsTngzhxPl3BnpMw8\n" +
-            "VKm5fCP4rk06nUfL/lNxZmEJg4PhoOW9IeZlYsaZkvBk/ZsEO+kkXerLy5IVA+uaKGrm6mLb0FX0\n" +
-            "nKm/Vat0gGHhkQwV208nphRhiVMXTGNi9epHOL27Y3pGUsgaWGslaI8SwC/HD9U2ttWVVDJ4xvW7\n" +
-            "h5FhYSOvb6/NkByl90p4d3/3dFxbTbsyTb+5Y+vwaPIVlDDO6nEOF7h7CygVFe07HeqPJHjnaALZ\n" +
-            "PGKg2ajMi8/PoVbGv2wa7lfxbzKolr5wT3kZTKiOShOt8FfK2WBksMwZ1NMdchtmug4tLjjKN6Ob\n" +
-            "Thdhr+YnMVWq6Yr59YAz3+vP/+qtPIWXfU8FI2h/2J2JOp8GhPYDPNxSSm+BAlo9MRdYCQ2ypATN\n" +
-            "yNjPKPlch3EA5efZgrli6/lW5i8aLSdZ5B7auKXNHXen2by9P7HTFTSGWqIC6Cl8DS9cH/5czgLP\n" +
-            "EufzkLCabDmtsq6MoO3o7FJYXjwQHQKD4hfKDFWIr50GAoG4oT4KmqeFkLg/3SU6+7RQ8hcu82M4\n" +
-            "Ckyc15pHnrPfKQ==\n" +
-            "</ds:X509Certificate>\n" +
-            "</ds:X509Data>\n" +
-            "</ds:KeyInfo>\n" +
-            "<ds:Object Id=\"xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf-object0\"><root/></ds:Object>\n" +
-            "<ds:Object><xades:QualifyingProperties xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\" xmlns:xades141=\"http://uri.etsi.org/01903/v1.4.1#\" Target=\"#xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf\"><xades:SignedProperties Id=\"xmldsig-025b548b-c461-4fb4-a1fb-d95ec54b3cdf-signedprops\"><xades:SignedSignatureProperties><xades:SigningTime>2013-08-21T15:22:23.083+02:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>VCymlxaOCJedLLqZxg6sZdrEyj2l5S8y0SppsJfcQCY=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>5489869975400113443</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:CommitmentTypeIndication><xades:CommitmentTypeId><xades:Identifier>http://uri.etsi.org/01903/v1.2.2#ProofOfApproval</xades:Identifier><xades:Description>Indicates that the signer has approved the content of the signed data object</xades:Description></xades:CommitmentTypeId><xades:AllSignedDataObjects/></xades:CommitmentTypeIndication></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object>\n" +
-            "</ds:Signature>";
+    private static final String SIGNED_DOCUMENT1
+            = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1\"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/><ds:SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\"/><ds:Reference Id=\"xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1-ref0\" Type=\"http://www.w3.org/2000/09/xmldsig#Object\" URI=\"#xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1-object0\"><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>7yTzK+OxhxetHwos5DO3GQEcQ7rxBVPOwGFM6iAIG68=</ds:DigestValue></ds:Reference><ds:Reference Type=\"http://uri.etsi.org/01903#SignedProperties\" URI=\"#xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1-signedprops\"><ds:Transforms><ds:Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/></ds:Transforms><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>POOUO7EPOgQJFzNwvJ0e86duQ9flyPi0UZj4J1A9Zz0=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id=\"xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1-sigvalue\">hanSj66DDnKU7O/DEkd/4MvicENQZmn4bDEGdM0wPVIZQf8XznLgFeatcUhXM4jc7pvKF90I/OufJ0I35y69yHerCJXxB4pLQCXQ58PZA7lbfaGOmEGLydEiCQWQyFkFTSZp964k9s3cMSwvt4/BLF+s+YCTW3m9+kks6XOjx5/iEM1wngcJEF5uohiAw6XIMqge5WOOQLFGZOefvQn7lyTmyef0RbnLiv25xfXxSTGdiiCNGTAC+w/azhqIh/ILF0QqJE49Bf+lLxxHrUpMcpZt5mgyCoB0B9BkbQyHz2agSZs16K1q+ruLjiwbaVHEw3iRBdlh6j2iE6tcC6HKvw==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIEmDCCAoCgAwIBAgIIa4ipW9G59Z0wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE2MDMwMzA4MjQwOVoXDTM2MDIyNzA4MjQwOVowSjEUMBIGA1UEAwwLc2lnbmVyMDAwMDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApzvRZ6gX/u2T1AqL7EVrpKHEFDtKlBehjqJ05/kIzFNbGNkmTLQkbCRRirfHcd6jhY9wmFnYFTTHBS9JFWI7Q6Q/nehHApSaoh+eb5QrZYW2Cq5wLrQg18ckpecarXratsPQEKvTGWBCnJ1bhHmMeWHj56LYIB2EqES09gmKIVbNoAX/XymZ3lDgtfGXUc5SndTh1iIPFVMUzRbXoSvZGIfvQ6rRJDVS3/epBRfWtGzLaDK+dXMHisLsOahQARp5XU8DXd5+CwZC1dA+zQNixYEhStHXVuKfv4a89ONSpEdv2KHgOLiQP2N+hjszzSasRbhwLSENMEbeL5GbMIJTRQIDAQABo38wfTAdBgNVHQ4EFgQUlkvLMTR+fW1eSjV4irWUdoJifMwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQANg0pIIifUnDHjffnpiep7eITU6V6odovsj3+1tYIaAahW+HtI5T2ishEt++huFiUFIdwbFyF4Ep5cQe9cMfQghUJ//YqC1WHnxVQH234ELdO1FzaC1YcHis2zeW7HFpugd9WrLgms/p2gXTLkLEfbUVE5ujUjelBUKyIA3ADDnWRxaz2vlOvRV+8ZgrvxSN+jYkrASeoDHeBh9qGknu1AmgaIUuQV6j/SSuf9+em3E7RSpFzOFwQTKq1MlKcxb3EC32O/JHu8T8jHWHZDmq2IkmwyGm3vTJH9bLNKvgM+wLWBJpbU5Ku/ijRNvOCAVrt90QKlMtA2/JZfLqZFiBNdB43VrM6cxWMdCL7gRIb50rR/CNAgblHq0DvpnXwS16SdaEibH6LjzTIJjoLwVbW+23j5w5r+XgxeNpoGxD5WY+Kq/h7D4eoL3e+oXHEfNwvXEuuRFpFXv4+4kOibRklG79VHSXEWclMvMlplIqHjHYh4gGSyvktCkV7YmqWteK9NEKeLOFoJ5Y5S4S9a+aCFkaHoUrW/PwR8Qp/0vOCK8+UduaDVbEQaM8Z2KeZwWafVdFxgb41nu6vcDVL/OQU0JyvdmNYmVoujboC3kNVfYJRgWeGceW2yo5anh5EuVwpMDncNHRF8V0TNwfORKDMmKoX5rcdgjmrR7Ebh29qalg==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object Id=\"xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1-object0\"><root/></ds:Object><ds:Object><xades:QualifyingProperties xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\" xmlns:xades141=\"http://uri.etsi.org/01903/v1.4.1#\" Target=\"#xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1\"><xades:SignedProperties Id=\"xmldsig-e106dc41-1ce1-42e1-8498-840b82449ea1-signedprops\"><xades:SignedSignatureProperties><xades:SigningTime>2023-08-28T13:22:18.702+02:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>8qawQMVRT87mKlonLZjgfwlbrOiDr5iO2B1f5NO4ZvE=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>c=SE,o=SignServer,ou=Testing,cn=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>7748629370716681629</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature>";
 
     private static final String ROOTCA_CERTIFICATE = 
             "-----BEGIN CERTIFICATE-----\n" +

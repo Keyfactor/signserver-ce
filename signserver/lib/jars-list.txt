@@ -93,7 +93,7 @@ d401243d5c6eae928a37121b6e819158c8c32ea0584793e7285bb489ab2a3d17  ./ext/httpmime
 4e4bf74b2981baacbcd6b9d9f25cd6531c906be3e29ee00531e034e43cae90a8  ./ext/jacknji11-1.2-pk3.jar;                            "JackNJI11"
 ddf46e401a7d9ea3b481c263fa192285d13c50982a5882b22f806639b9645ee4  ./ext/jackson-annotations-2.12.6.jar;                   "Jackson"
 0026cff293bdba389fbbbc67a20fdd5f73e091554ab46671efa654c25c807ee6  ./ext/jackson-core-2.12.6.jar;                          "Jackson"
-eb60e494ba8c23e653da4db8e29af0342927fc7e1c60501bf99e93145738c696  ./ext/jackson-databind-2.12.6.1.jar;                    "Jackson"
+3f504cac405ce066d5665ff69541484d5322f35ac7a7ec6104cf86a01008e02d  ./ext/jackson-databind-2.12.7.1.jar;                    "Jackson"
 4489a762f28d607d7d5456e5bd08735c94a9e6e535d17f18ccd5f9656e0c2a66  ./ext/jackson-module-jaxb-annotations-2.12.6.jar;       "Jackson"
 02156773e4ae9d048d14a56ad35d644bee9f1052a791d072df3ded3c656e6e1a  ./ext/jakarta.activation-1.2.2.jar;                     "Jakarta EE"
 c04d73f48ee09f16e31cbc4f715ffc44eeb7346d9981511be941f151787a270a  ./ext/jakarta.jakartaee-api-8.0.0.jar;                  "Jakarta EE"

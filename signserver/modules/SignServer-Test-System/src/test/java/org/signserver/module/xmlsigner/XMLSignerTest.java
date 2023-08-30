@@ -104,7 +104,7 @@ public class XMLSignerTest {
                 new File(mt.getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKERID3, "DEFAULTKEY",
-                "23b427f763311df918fc10e44e19528634b4193c");
+                "TestXMLSignerEC2");
         workerSession.reloadConfiguration(WORKERID3);
         
         mt.addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);

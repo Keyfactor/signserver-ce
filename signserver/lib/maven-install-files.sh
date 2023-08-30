@@ -12,9 +12,9 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 echo "Will call mvn install:install-file with certain dependencies from ${DIR}/ext/."
 
 # Install KFC dependencies not yet in Central
-XCU_VERSION=0.6.0
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-${XCU_VERSION}.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-${XCU_VERSION}-sources.jar" -DgroupId=org.ejbca.cesecore -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar -Dclassifier=sources
+XCU_VERSION=0.7.4
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-${XCU_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-${XCU_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar -Dclassifier=sources
 
 # Add next group of dependencies here
 

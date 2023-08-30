@@ -25,7 +25,7 @@
         </exclusion>
         <!-- DSS-2643: Workaround for PKCS11CryptoToken available in x509-common-util conflicing with the one from cesecore-common -->
         <exclusion>
-          <groupId>org.ejbca.cesecore</groupId>
+          <groupId>com.keyfactor</groupId>
           <artifactId>x509-common-util</artifactId>
         </exclusion>
       </exclusions>

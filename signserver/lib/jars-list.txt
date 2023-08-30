@@ -8,10 +8,10 @@
 0addec670fedcd3f113c5c8091d783280d23f75e3acb841b61a9cdb079376a08  ./ext/aopalliance-1.0.jar;                              "AOP Alliance"
 42ae502030df68b4a876879479a2b8eff6b3ac70190f40974bb9402f30f91516  ./ext/apksig-30.0.2-signserver5-1.jar;                  "Android"
 39d0e2b3dc45af65a09b097945750a94a126e052e124f93468443a1d0e15f381  ./ext/asm-9.4.jar;                                      "ASM"
-dd6efbd826f0d3aed3a1193acf1d81dd6044c585b90ddf88adca4e1fb41a0984  ./ext/bcpg-jdk18on-1.73.jar;                            "Bouncy Castle"
-9487164ba018f2211fcc0f989d6f4ea25b7d48fc6031501c3c7e3a17b164d860  ./ext/bcpkix-jdk18on-1.73.jar;                          "Bouncy Castle"
-ad3ae628f4459a8fecb5c1a142b5525ce5118817414f97efd92f5448a69180ff  ./ext/bcprov-jdk18on-1.73.jar;                          "Bouncy Castle"
-0b70292c36cfe08ac00a71f5cc5af4c412ceedbc8c0f0a22995dbacfaf25dd42  ./ext/bcutil-jdk18on-1.73.jar;                          "Bouncy Castle"
+9066751647747f745dd41f66dcb961b6a8babf53f0006edc79fe0efd2b3a5931  ./ext/bcpg-jdk18on-1.74.jar;                            
+8f200d681a15b7be037c2781f75878ccc5a63b0f292553be27d4d836c991fe37  ./ext/bcpkix-jdk18on-1.74.jar;                          
+56ede1472d78dc47b8a16fc5e90c02b9eeb970b55d8b5b8bfe760311907821e9  ./ext/bcprov-jdk18on-1.74.jar;                          
+30ee7c495b090f0024b9a7e1e32f548e502206c406d7497d1bf72960f92b4987  ./ext/bcutil-jdk18on-1.74.jar;                          
 3f6d8dbbfcd98291eaedca5a5da644215f76a2a1233ef79519492c043bb3a5b1  ./ext/byte-buddy-1.10.10.jar;                           "Hibernate dependencies"
 781d97e959f14fd314202221d5488bf30900b8f2bb991046cbce53dd1c56b6ed  ./ext/cert-cvc-1.4.6.jar;                               "EJBCA"
 011e053de651ec42e3058d2513ad36e17034db931d8b149688c6a38bbe65e700  ./ext/cesecore-ce/cesecore-common-7.0.0.1.jar;          "CESeCore"
@@ -146,7 +146,7 @@ c144cc85db81a1ed20b12ea2bbf88ceddd60caeabd381205e7ddf462b138e5e2  ./ext/specs-va
 a954d11c35de6f0e0265bdc2ba6c6a88b2a8d291e2e8f76b5fc8525d84d64e57  ./ext/validation-policy-5.9.jar;                        "DSS"
 274fa403ed08c0d6f2f574dc1916adaaaec9a493e56d6442f8797ede620bca65  ./ext/woodstox-core-asl-4.4.1.jar;                      "Codehaus Woodstox"
 740f448e6b3bc110e02f4a1e56fb57672e732d2ecaf29ae15835051ae8af4725  ./ext/wsdl4j-1.6.3.jar;                                 "WSDL4J"
-69aeacb67179e20ae9790f1f2d2927431d1a522c0b8ef03cb9939edd10d75e85  ./ext/x509-common-util-0.6.0.jar;                       "EJBCA"
+b37079f590cc605a6e3f254aec5d4fd7e1bec28401b88e368041343074a24338  ./ext/x509-common-util-0.7.4.jar;                       "EJBCA"
 1e1567bb67f01aaeb66879d90fd6a026824f023bc7b9d4a2e90b80f0ff93d9ce  ./ext/xades4j-2.0.0.jar;                                "XAdES4j"
 febd48bb133a96c447282213951a6b74ea7fb45c0d896121296c014316bda6b0  ./ext/xalan-2.7.3.jar;                                  "Apache Xalan"
 6fc991829af1708d15aea50c66f0beadcd2cfeb6968e0b2f55c1b0909883fe16  ./ext/xercesImpl-2.12.2.jar;                            "Apache Xerces"

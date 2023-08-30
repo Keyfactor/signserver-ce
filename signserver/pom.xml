@@ -17,10 +17,10 @@
         <bouncycastle.bcutil.artifact>bcutil-jdk18on</bouncycastle.bcutil.artifact>
 
         <!-- Bouncy Castle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.73</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.73</bouncycastle.bcpkix.artifact.version>
-        <bouncycastle.bcprov.artifact.version>1.73</bouncycastle.bcprov.artifact.version>
-        <bouncycastle.bcutil.artifact.version>1.73</bouncycastle.bcutil.artifact.version>
+        <bouncycastle.bcpg.artifact.version>1.74</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.74</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcprov.artifact.version>1.74</bouncycastle.bcprov.artifact.version>
+        <bouncycastle.bcutil.artifact.version>1.74</bouncycastle.bcutil.artifact.version>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -240,9 +240,9 @@
                 <version>1.4.2</version>
             </dependency>
             <dependency>
-                <groupId>org.ejbca.cesecore</groupId>
+                <groupId>com.keyfactor</groupId>
                 <artifactId>x509-common-util</artifactId>
-                <version>0.6.0</version>
+                <version>0.7.4</version>
             </dependency>
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>

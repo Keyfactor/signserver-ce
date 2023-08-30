@@ -80,7 +80,7 @@ a171ee4c734dd2da837e4b16be9df4661afab72a41adaf31eb84dfdaf936ca26  ./ext/failurea
 3cfc1533d323fcc8eda290fcba410ce8df292c8c13df74b3d353f5a5930143f1  ./ext/geronimo-osgi-locator-1.1.jar;                    "Apache Geronimo"
 0eda455b9eedfb1f0ea77df9a1bb285735df210a22504e186f1095d063f1d4fa  ./ext/groovy-4.0.12.jar;                                "Groovy"
 60808e257084121562b32494696824aa9abe293e2772ee3b9487801990b51bee  ./ext/groovy-json-4.0.12.jar;                           "Groovy"
-e6dd072f9d3fe02a4600688380bd422bdac184caf6fe2418cfdd0934f09432aa  ./ext/guava-30.1-jre.jar;                               "Guava"
+bc65dea7cfd9e4dacf8419d8af0e741655857d27885bb35d943d7187fc3a8fce  ./ext/guava-32.1.2-jre.jar;                             "Guava"
 4130e50bfac48099c860f0d903b91860c81a249c90f38245f8fed58fc817bc26  ./ext/guice-5.1.0.jar;                                  "Guice"
 23f6b9d4fadfa30202ab452eb740d9b90885da2d5941f2c0f935e3b3d4c877d9  ./ext/guice-multibindings-4.2.3.jar;                    "Guice"
 5e62846a89f05cd78cd9c1a553f340d002458380c320455dd1f8fc5497a8a1c1  ./ext/hamcrest-2.2.jar;                                 "Hamcrest"

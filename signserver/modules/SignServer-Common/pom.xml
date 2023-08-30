@@ -77,7 +77,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ejbca.cesecore</groupId>
+            <groupId>com.keyfactor</groupId>
             <artifactId>x509-common-util</artifactId>
         </dependency>
         <dependency>

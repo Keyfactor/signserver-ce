@@ -44,6 +44,10 @@
 # the directory needs to be present, writable by the application server and empty at first startup.
 #database.nodb.location=/opt/jboss-as-7.1.1.Final/standalone/data/nodb
 
+# Option to disable database caching. We do not know about potential performance impact in disabling database caching
+# so use with caution
+# Default false
+# database.hibernate.disable.cache=false
 
 # -------------- Web Services Configuration ------------------------------------
 #

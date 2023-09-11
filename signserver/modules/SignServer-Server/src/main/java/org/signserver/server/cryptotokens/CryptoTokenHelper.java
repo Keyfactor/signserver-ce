@@ -629,7 +629,7 @@ public class CryptoTokenHelper {
 
         final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
 
-        return new JcaX509CertificateConverter().getCertificate(cg.build(new BufferingContentSigner(contentSigner)));
+        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(cg.build(new BufferingContentSigner(contentSigner)));
     }
 
     public static TokenSearchResults searchTokenEntries(final KeyStoreDelegator keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {

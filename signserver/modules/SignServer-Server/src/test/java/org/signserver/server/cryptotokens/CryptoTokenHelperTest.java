@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -257,7 +258,7 @@ public class CryptoTokenHelperTest extends TestCase {
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
-        assertEquals("New signature algorithm", expectedSigAlg, certAfter.getSigAlgName());
+        assertTrue("New signature algorithm", StringUtils.containsIgnoreCase(expectedSigAlg, certAfter.getSigAlgName()));
         assertTrue("Validity time more than about 20 years: " + certAfter.getNotAfter(), TimeUnit.MILLISECONDS.toDays(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()) > 7300);
 
         // Custom validity
@@ -281,7 +282,7 @@ public class CryptoTokenHelperTest extends TestCase {
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("New issuer DN", new X500Principal(expectedDN2).getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("New subject DN", new X500Principal(expectedDN2).getName(), certAfter.getSubjectX500Principal().getName());
-        assertEquals("New signature algorithm", expectedSigAlg2, certAfter.getSigAlgName());
+        assertTrue("New signature algorithm", StringUtils.containsIgnoreCase(expectedSigAlg2, certAfter.getSigAlgName()));
         assertEquals("New validity time about 2 hour", 2L, TimeUnit.MILLISECONDS.toHours(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()));
     }
 

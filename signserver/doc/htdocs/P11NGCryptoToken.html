@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.0.0</p>
+                    <p>Version: 6.1.0</p>
                 </div>
             </header>
 
@@ -1083,6 +1083,30 @@
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="FortanixCryptoToken.html">FortanixCryptoToken</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Algorithm_Support3.html">Algorithm Support</a>
+
+            </li>
+                            </ul>
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
@@ -1700,7 +1724,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-181279785"> <span>P11NGCryptoToken</span></h1>
+</div>            <h1 id="src-198152556"> <span>P11NGCryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1708,7 +1732,7 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
-    <div class="section section-1" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-Overview">
+    <div class="section section-1" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >    <span style="color: #000000;">
 Crypto token using PKCS#11 for communication with the HSM but using a new provider instead of the Java SunPKCS11 provider (utilized by the regular    </span>
@@ -1725,7 +1749,7 @@ Note that the JackNJI11CryptoToken has been renamed P11NGCryptoToken as of SignS
 CRYPTOTOKEN_IMPLEMENTATION_CLASS=<strong class=" ">org.signserver.p11ng.common.cryptotoken.P11NGCryptoToken</strong>    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-AvailableProperties">
+    <div class="section section-1" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1820,11 +1844,11 @@ CRYPTOTOKEN_IMPLEMENTATION_CLASS=<strong class=" ">org.signserver.p11ng.common.c
 If true, when generating a key pair, creates a certificate object with a self-signed dummy certificate and defaults to not persist the public key object. The default value is &#39;true&#39; for historical reasons and is the same as when generating a key pair with for instance the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> (or any other Java application using the SunPKCS11 provider).    </span>
     </p>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property can be set either in the crypto worker, on the worker that is going to use the key, or both, which means that different options can be used for different workers. Setting this property in the crypto token makes it the default setting for all workers using that crypto token. If the worker also includes this property, the property value of the worker will override this setting.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-minus" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/forbidden.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/forbidden.svg"   />
+    <img  class="emoticon emoticon-minus" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/forbidden.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/forbidden.svg"   />
  Be cautious if you also set any of the ATTRIBUTE.PUBLIC.*.CKA_TOKEN property attributes since some combinations like GENERATE_CERTIFICATE_OBJECT=false and CKA_TOKEN=false may not be useful, and setting both properties to true might waste space in the HSM with an unnecessary object.    </span>
     </p>
     <p  >    <span style="color: #000000;">
@@ -1844,30 +1868,30 @@ Optional. Default true.    </span>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-SecretKeyGeneration">
+    <div class="section section-1" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-SecretKeyGeneration">
         <h1 class="heading "><span>Secret Key Generation</span></h1>
     <p  >If generating a secret key through the P11NGCryptoToken, the algorithm name can be supplied in the following ways. See also <a   href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>.    </p>
-    <div class="section section-2" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-StandardJavaName">
+    <div class="section section-2" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-StandardJavaName">
         <h2 class="heading "><span>Standard Java Name</span></h2>
     <p  >Example: <strong class=" ">AES, DES.</strong>    </p>
     <p  >If the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
     </div>
-    <div class="section section-2" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-CKMLongvalue">
+    <div class="section section-2" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-CKMLongvalue">
         <h2 class="heading "><span>CKM Long value</span></h2>
     <p  >Example: <strong class=" ">SEC:4224</strong>. Here 4224 represents the long value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
-    <div class="section section-2" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-CKMHexadecimalvalue">
+    <div class="section section-2" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-CKMHexadecimalvalue">
         <h2 class="heading "><span>CKM Hexadecimal value</span></h2>
     <p  >Example: <strong class=" ">SEC:0x00001080</strong>. Here 0x00001080 represents a hexadecimal value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-HSMSpecificNotes">
+    <div class="section section-1" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-HSMSpecificNotes">
         <h1 class="heading "><span>HSM Specific Notes</span></h1>
-    <div class="section section-2" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-AWSCloudHSM">
+    <div class="section section-2" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-AWSCloudHSM">
         <h2 class="heading "><span>AWS CloudHSM</span></h2>
-<ul class=" "><li class=" ">    <p  >Configure the worker or crypto token not to generate any certificate by setting <strong class=" ">GENERATE_CERTIFICATE_OBJECT=false</strong>. For details, see the GENERATE_CERTIFICATE_OBJECT property in <a   href="#src-181279785_id-.P11NGCryptoTokenv6.0.0-AvailableProperties">Available Properties</a>.    </p>
+<ul class=" "><li class=" ">    <p  >Configure the worker or crypto token not to generate any certificate by setting <strong class=" ">GENERATE_CERTIFICATE_OBJECT=false</strong>. For details, see the GENERATE_CERTIFICATE_OBJECT property in <a   href="#src-198152556_id-.P11NGCryptoTokenv6.1.0-AvailableProperties">Available Properties</a>.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-GCPKMS">
+    <div class="section section-2" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-GCPKMS">
         <h2 class="heading "><span>GCP KMS</span></h2>
 <ul class=" "><li class=" ">    <p  >The Google Cloud HSM does not support key generation, key wrapping, or import of certificate chains via SignServer.    </p>
 </li><li class=" ">    <p  >    <span style="color: #0e101a;">
@@ -1883,15 +1907,16 @@ Selecting a signature algorithm that does not match the algorithms used when the
     </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-NoteonFIPSMode">
+    <div class="section section-1" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-NoteonFIPSMode">
         <h1 class="heading "><span>Note on FIPS Mode</span></h1>
     <p  >Some HSM vendors have started to enforce stricter rules on keys when the HSM is in FIPS mode. For instance, with Utimaco SecurityServer V4.10.0, the following is needed in order to generate key-pairs and activate the crypto token when the P11NG    <span style="color: #172b4d;">
 CryptoToken    </span>
- is used:    </p>
-<ul class=" "><li class=" ">    <p  class="auto-cursor-target">Key-pair to be generated with the following worker property set:    </p>
+ is used and the choice of RSA padding is PSS:    </p>
+<ul class=" "><li class=" ">    <p  class="auto-cursor-target">Key-pair to be generated with the following worker properties set:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS</code></div>
+<div class="line"><code class="plain">SELFSIGNED_SIGNATUREALGORITHM=SHA256withRSAandMGF1</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  class="auto-cursor-target">The following worker property set in order for test signing to work:    </p>
@@ -1900,8 +1925,9 @@ CryptoToken    </span>
 <div class="line"><code class="plain">  SIGNATUREALGORITHM=SHA256withRSAandMGF1</code></div>
 </div>
     </div>
-</li></ul>    </div>
-    <div class="section section-1" id="src-181279785_id-.P11NGCryptoTokenv6.0.0-KnownLimitations">
+</li></ul>    <p  >For keys using the PKCS1_v1.5 padding instead the CKA_ALLOWED_MECHANISMS should only contain mechanisms like CKM_RSA_PKCS and CKM_SHA256_RSA_PKCS and the algorithm properties should then be for instance SHA256withRSA.    </p>
+    </div>
+    <div class="section section-1" id="src-198152556_id-.P11NGCryptoTokenv6.1.0-KnownLimitations">
         <h1 class="heading "><span>Known Limitations</span></h1>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Multiple different CA certificates with the same subject DN cannot be stored in the token (see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-1544">DSS-1544</a>).    </span>

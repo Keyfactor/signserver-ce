@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.0.0</p>
+                    <p>Version: 6.1.0</p>
                 </div>
             </header>
 
@@ -1083,6 +1083,30 @@
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="FortanixCryptoToken.html">FortanixCryptoToken</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Algorithm_Support3.html">Algorithm Support</a>
+
+            </li>
+                            </ul>
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
@@ -1734,7 +1758,7 @@
         <p  >signserver.managedconfig<br/><span id="src-143752165_id-.TimeMonitorConfigurationv5.11.0-managedconfig"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >When set to &quot;true&quot; the <a   href="#src-143752165_id-.TimeMonitorConfigurationv5.11.0-Runtimeproperties">Runtime properties</a> are not allowed in the configuration file but are instead queried from the SignServer <a   href="TimeMonitorManager.html">TimeMonitorManager</a>. In this mode, the TimeMonitor will start up disabled<span id="src-143752165_id-.TimeMonitorConfigurationv5.11.0-__DdeLink__1303_1230965538"></span>, meaning that the time server and NTP daemon will not be queried until the TimeMonitor gets an updated configuration from SignServer. In this mode, the TimeMonitor will query SignServer every 15 seconds.<br/>Sample value: &quot;true&quot;<br/>    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+        <p  >When set to &quot;true&quot; the <a   href="#src-143752165_id-.TimeMonitorConfigurationv5.11.0-Runtimeproperties">Runtime properties</a> are not allowed in the configuration file but are instead queried from the SignServer <a   href="TimeMonitorManager.html">TimeMonitorManager</a>. In this mode, the TimeMonitor will start up disabled<span id="src-143752165_id-.TimeMonitorConfigurationv5.11.0-__DdeLink__1303_1230965538"></span>, meaning that the time server and NTP daemon will not be queried until the TimeMonitor gets an updated configuration from SignServer. In this mode, the TimeMonitor will query SignServer every 15 seconds.<br/>Sample value: &quot;true&quot;<br/>    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  On the <a  class="external-link" href="https://doc.primekey.com/x/4YT_/">SignServer Hardware Appliance</a>, the TimeMonitor is by default configured with <tt class=" ">signserver.managedconfig=true</tt> and the other application properties below are not relevant in this case.    </p>
             </td>
         </tr>
@@ -1792,7 +1816,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Name of the <i class=" ">StatusPropertiesWorker</i> that will handle the status update.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  SignServer will have to be configured with either a <i class=" ">StatusPropertiesWorker or a TimeMonitorManager</i> with this name. It needs to use an Authorizer which gives the TimeMonitor access. For instance, AUTHTYPE=NOAUTH can be used but that would also give everybody permission to update the status. Instead, as the TimeMonitor is running on the same host as SignServer, it is recommended to use a RemoteAddressAuthorizer and only allow requests from localhost.<br/>Sample value: &quot;StatusPropertiesWorker&quot;    </p>
             </td>
         </tr>
@@ -1818,7 +1842,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Path to the nptdate command executable.<br/>Sample value: &quot;/usr/sbin/ntpdate&quot;    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Only relevant when using the legacy NTP implementation with local NTP commands (NTP implementation set to <a   href="#src-143752165_id-.TimeMonitorConfigurationv5.11.0-builtin-sntp">local-ntp-commands</a>). As of SignServer 5.11, TimeMonitor is by default using its built-in SNTP support, see runtime property for NTP implementation <a   href="#src-143752165_id-.TimeMonitorConfigurationv5.11.0-builtin-sntp">ntpimplementation</a> below.    </p>
             </td>
         </tr>
@@ -1828,7 +1852,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Path to the ntpq command executable.<br/>Sample value &quot;/usr/bin/ntpq&quot;    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Only relevant when using the legacy NTP implementation with local NTP commands (NTP implementation set to <a   href="#src-143752165_id-.TimeMonitorConfigurationv5.11.0-builtin-sntp">local-ntp-commands</a>). As of SignServer 5.11, TimeMonitor is by default using its built-in SNTP support, see runtime property for NTP implementation <a   href="#src-143752165_id-.TimeMonitorConfigurationv5.11.0-builtin-sntp">ntpimplementation</a> below.    </p>
             </td>
         </tr>
@@ -1928,7 +1952,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Expire time (in milliseconds) to set when publishing the status to SignServer.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Make sure the TimeMonitor has enough time to run one round and publish a new value before the expiration otherwise SignServer will not be able to issue time-stamp tokens for a period of time.<br/>Sample value: &quot;900&quot;    </p>
             </td>
         </tr>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.0.0</p>
+                    <p>Version: 6.1.0</p>
                 </div>
             </header>
 
@@ -1083,6 +1083,30 @@
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="FortanixCryptoToken.html">FortanixCryptoToken</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Algorithm_Support3.html">Algorithm Support</a>
+
+            </li>
+                            </ul>
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
@@ -1697,7 +1721,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-75860186"> <span>Deploy-time Configuration</span></h1>
+</div>            <h1 id="src-198153436"> <span>Deploy-time Configuration</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1710,7 +1734,7 @@
         </div>
     </div>
     <p  >See the sample configuration script conf/signserver_deploy.properties.sample for available options and default values.    </p>
-    <div class="section section-1" id="src-75860186_id-.DeploytimeConfigurationv5.1.0-CryptoTokenConfiguration">
+    <div class="section section-1" id="src-198153436_id-.DeploytimeConfigurationv6.1.0-CryptoTokenConfiguration">
         <h1 class="heading "><span>CryptoToken Configuration</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1738,7 +1762,51 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  ><br/>    </p>
+    </div>
+    <div class="section section-1" id="src-198153436_id-.DeploytimeConfigurationv6.1.0-DatabaseConfiguration">
+        <h1 class="heading auto-cursor-target"><span>Database Configuration</span></h1>
+    <div  class="tablewrap">
+        <table class="relative-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="12.9661%"/>
+                                    <col  width="87.0339%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >database.hibernate.disable.cache    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Disable the hibernate L2 (Second-level) and query cache.    </p>
+    <p  >Default: false    </p>
+    <p  >With this property set to true, the SignServerJPA and ejbca persistence units will be deployed with some extra elements to disable the L2 and query cache.    </p>
+    <p  >The elements added are:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">&lt;property name=</code><code class="string">"hibernate.cache.use_second_level_cache"</code><code class="plain"> value=</code><code class="string">"false"</code><code class="plain">/&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">&lt;property name=</code><code class="string">"hibernate.cache.use_query_cache"</code><code class="plain"> value=</code><code class="string">"false"</code><code class="plain">/&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">&lt;property name=</code><code class="string">"hibernate.cache.region.factory_class"</code><code class="plain"> value=</code><code class="string">"org.hibernate.cache.internal.NoCachingRegionFactory"</code><code class="plain">/&gt;</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-warning">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >The results of disabling the L2 and query cache have not been tested, but it is expected to have a negative impact on performance.    </p>
+        </div>
+    </div>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
     </div>
         </div>
 

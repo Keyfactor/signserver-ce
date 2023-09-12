@@ -298,6 +298,14 @@ database.nodb.location              = ${database.nodb.location}
     			-->
     		]]>
         </property>
+        <property name="hibernatedatabasecachingheader">
+            <![CDATA[
+    		]]>
+        </property>
+        <property name="hibernatedatabasecachingfooter">
+            <![CDATA[
+    		]]>
+        </property>
     </target>
 
     <target name="-preprocess-persistence">

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.0.0</p>
+                    <p>Version: 6.1.0</p>
                 </div>
             </header>
 
@@ -1083,6 +1083,30 @@
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="FortanixCryptoToken.html">FortanixCryptoToken</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Algorithm_Support3.html">Algorithm Support</a>
+
+            </li>
+                            </ul>
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
@@ -1738,7 +1762,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Comma-separated list of worker names or worker IDs of workers whose keys should be tested. This would typically be crypto workers i.e. corresponding to different slots in an HSM, but could also be regular workers with crypto tokens configured directly. This property is required, but can be set to an empty value if only audit logging is needed (see below).    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/a1nx3h/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  If secure audit logging is used and a separate crypto token is used for logging, service logging using the WORK_LOG_TYPES property and the SECURE_AUDITLOGGING value can be used to write to the audit log at the same time as testing crypto worker keys, to keep the auditlog crypto token from timing-out. For more information, see <a   href="SignServer_Timed_Services.html">SignServer Timed Services</a>.    </p>
             </td>
         </tr>

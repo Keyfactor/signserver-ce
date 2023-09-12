@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.0.0</p>
+                    <p>Version: 6.1.0</p>
                 </div>
             </header>
 
@@ -1083,6 +1083,30 @@
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="FortanixCryptoToken.html">FortanixCryptoToken</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Algorithm_Support3.html">Algorithm Support</a>
+
+            </li>
+                            </ul>
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
@@ -1711,7 +1735,12 @@
     <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.extendedcmssigner.ExtendedCMSSigner</strong>.    </p>
     <div class="section section-1" id="src-181291443_id-.ExtendedCMSSignerv6.0.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The extended CMS signer, in addition to all the features provided by the regular <a   href="CMS_Signer.html">CMS signer</a>, has support for timestamping.    </p>
+    <p  >    <span style="color: #000000;">
+The extended CMS signer, in addition to all the features provided by the regular <a   href="CMS_Signer.html">CMS signer</a>, has support for timestamping.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+The extended CMS signer also supports CMS re-signing, enabling signing software and firmware using multiple algorithms. It is possible to produce two signatures using different signing algorithms by signing data with one algorithm and using the output of the first signing operation as input in a second signing operation targeting an extended CMS signer configured for re-signing with a different algorithm. CMS re-signing can be used for crypto agile CMS signing in general and for transitioning from traditional to post-quantum algorithms.    </span>
+    </p>
     </div>
     <div class="section section-1" id="src-181291443_id-.ExtendedCMSSignerv6.0.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
@@ -1723,69 +1752,110 @@
                             </colgroup>
         <thead class=" ">    <tr>
             <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Property    </p>
+        <p  >    <span style="color: #000000;">
+Property    </span>
+    </p>
             </td>
                 <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
+        <p  >    <span style="color: #000000;">
+Description    </span>
+    </p>
             </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER    </p>
+        <p  >    <span style="color: #000000;">
+TSA_WORKER    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Worker ID or name of internal timestamp signer in the same SignServer. Optional, default: none. This property cannot be combined with TSA_URL.    </p>
+        <p  >    <span style="color: #000000;">
+Worker ID or name of internal timestamp signer in the same SignServer. Optional, default: none. This property cannot be combined with TSA_URL.    </span>
+    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL    </p>
+        <p  >    <span style="color: #000000;">
+TSA_URL    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >URL of external timestamp authority. Optional, default: none. This property cannot be combined with TSA_WORKER.    </p>
+        <p  >    <span style="color: #000000;">
+URL of external timestamp authority. Optional, default: none. This property cannot be combined with TSA_WORKER.    </span>
+    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_USERNAME    </p>
+        <p  >    <span style="color: #000000;">
+TSA_USERNAME    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Login username used if the TSA uses HTTP Basic Auth. Optional, default: none.    </p>
+        <p  >    <span style="color: #000000;">
+Login username used if the TSA uses HTTP Basic Auth. Optional, default: none.    </span>
+    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_PASSWORD    </p>
+        <p  >    <span style="color: #000000;">
+TSA_PASSWORD    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Login password used if the TSA uses HTTP Basic Auth. Required if TSA_USERNAME is specified. Default: none.    </p>
+        <p  >    <span style="color: #000000;">
+Login password used if the TSA uses HTTP Basic Auth. Required if TSA_USERNAME is specified. Default: none.    </span>
+    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_DIGESTALGORITHM    </p>
+        <p  >    <span style="color: #000000;">
+TSA_DIGESTALGORITHM    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Algorithm for timestamp digests. Optional, default: SHA-256.    </p>
+        <p  >    <span style="color: #000000;">
+Algorithm for timestamp digests. Optional, default: SHA-256.    </span>
+    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >SIGNING_MODE    </p>
+        <p  >    <span style="color: #000000;">
+SIGNING_MODE    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Mode to use when signing. Optional, default: NEW    </p>
-<ul class=" "><li class=" ">    <p  >NEW    </p>
-</li><li class=" ">    <p  >APPEND    </p>
+        <p  >    <span style="color: #000000;">
+Mode to use when signing. Optional, default: NEW    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+NEW    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+APPEND    </span>
+    </p>
 </li></ul>            </td>
         </tr>
 </tbody>        </table>
             </div>
     <div class="section section-2" id="src-181291443_id-.ExtendedCMSSignerv6.0.0-SigningMode">
         <h2 class="heading auto-cursor-target"><span>Signing Mode</span></h2>
-    <p  >The following signing modes are available:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">NEW</strong>:<strong class=" "> </strong>A new CMS signature is calculated based on the digest of the input data.    </p>
-</li><li class=" ">    <p  ><strong class=" ">APPEND</strong>:<strong class=" "> </strong>An additional signature is calculated based on the existing message digest in input data, which must be an existing CMS structure.    </p>
+    <p  >    <span style="color: #000000;">
+CMS re-signing enables signing software and firmware using multiple algorithms. Using the signing mode <strong class=" ">append</strong>, it is possible to produce two signatures using different signing algorithms by signing data with one algorithm and using the output of the first signing operation as input in a second signing operation targeting an extended CMS signer configured for re-signing with a different algorithm. CMS re-signing can be used for crypto agile CMS signing in general and for transitioning from traditional to post-quantum algorithms.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+The following signing modes are available:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">NEW</strong>:<strong class=" "> </strong>A new CMS signature is calculated based on the digest of the input data.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">APPEND</strong>:<strong class=" "> </strong>An additional signature is calculated based on the existing message digest in input data, which must be an existing CMS structure.    </span>
+    </p>
 </li></ul>    </div>
     </div>
         </div>

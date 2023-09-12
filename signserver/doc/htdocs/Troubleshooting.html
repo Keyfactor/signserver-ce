@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.0.0</p>
+                    <p>Version: 6.1.0</p>
                 </div>
             </header>
 
@@ -1083,6 +1083,30 @@
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="FortanixCryptoToken.html">FortanixCryptoToken</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Algorithm_Support3.html">Algorithm Support</a>
+
+            </li>
+                            </ul>
+            </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
@@ -1697,7 +1721,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-181285197"> <span>Troubleshooting</span></h1>
+</div>            <h1 id="src-198152716"> <span>Troubleshooting</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1708,18 +1732,20 @@ The following provides troubleshooting tips to help you get back on track and in
 common errors.<br/>    </span>
     </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-DebugLogging">Debug Logging</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-GeneralIssues">General Issues</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-Transactionrolledbackerror">Transaction rolled back error</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="#src-181285197_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjAuMC1QMTFORy9KYWNrTkpJMTE">P11NG / JackNJI11</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-UnsatisfiedLinkError">UnsatisfiedLinkError</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-USER_NOT_LOGGED_INError">USER_NOT_LOGGED_IN Error</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="#src-181285197_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjAuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRKYXZhMTdpbkNvbW11bml0eUVkaXRpb24">SunPKCS11 / PKCS11CryptoToken and Java 17 in Community Edition</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181285197_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjAuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRjZXJ0YWluSmF2YTE3dmVyc2lvbnNpbkNvbW11bml0eUVkaXRpb24">SunPKCS11 / PKCS11CryptoToken and certain Java 17 versions in Community Edition</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-SignClient">SignClient</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181285197_id-.Troubleshootingv6.0.0-CannotProduceCertificateVerifySignature">Cannot Produce CertificateVerify Signature</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-DebugLogging">Debug Logging</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-GeneralIssues">General Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-Transactionrolledbackerror">Transaction rolled back error</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1DS1JfUElOX0lOQ09SUkVDVChMdW5hSFNNKQ">CKR_PIN_INCORRECT (Luna HSM)</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-SQLFeatureNotSupportedExceptionwithPostgreSQL">SQLFeatureNotSupportedException with PostgreSQL</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1QMTFORy9KYWNrTkpJMTE">P11NG / JackNJI11</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-UnsatisfiedLinkError">UnsatisfiedLinkError</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-USER_NOT_LOGGED_INError">USER_NOT_LOGGED_IN Error</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRKYXZhMTc">SunPKCS11 / PKCS11CryptoToken and Java 17</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRjZXJ0YWluSmF2YTE3dmVyc2lvbnM">SunPKCS11 / PKCS11CryptoToken and certain Java 17 versions</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-SignClient">SignClient</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-198152716_id-.Troubleshootingv6.1.0-CannotProduceCertificateVerifySignature">Cannot Produce CertificateVerify Signature</a>    </p>
 </li></ul></li></ul>    <p  >    </p>
-    <div class="section section-1" id="src-181285197_id-.Troubleshootingv6.0.0-DebugLogging">
+    <div class="section section-1" id="src-198152716_id-.Troubleshootingv6.1.0-DebugLogging">
         <h1 class="heading "><span>Debug Logging</span></h1>
     <p  >To troubleshoot unexpected behavior in SignServer, enable more detailed (debug) logging by running the following command in the JBoss CLI:    </p>
 <ol class=" "><li class=" ">    <p  class="auto-cursor-target">Start JBoss CLI:    </p>
@@ -1737,9 +1763,9 @@ common errors.<br/>    </span>
 </div>
     </div>
 </li></ol>    </div>
-    <div class="section section-1" id="src-181285197_id-.Troubleshootingv6.0.0-GeneralIssues">
+    <div class="section section-1" id="src-198152716_id-.Troubleshootingv6.1.0-GeneralIssues">
         <h1 class="heading "><span>General Issues</span></h1>
-    <div class="section section-2" id="src-181285197_id-.Troubleshootingv6.0.0-Transactionrolledbackerror">
+    <div class="section section-2" id="src-198152716_id-.Troubleshootingv6.1.0-Transactionrolledbackerror">
         <h2 class="heading "><span>Transaction rolled back error</span></h2>
     <p  >A transaction timeout can occur for requests that are taking longer time to finish than what is configured for database transactions in the application server.    </p>
     <p  >Example of errors displayed in the log:    </p>
@@ -1753,16 +1779,30 @@ common errors.<br/>    </span>
 </div>
     </div>
     <p  >Possible reasons include large file uploads and/or downloads, and/or slow network connections, slow HSM connection or HSM, or that contacting external servers takes a long time (CRL/OCSP fetching or time-stamping etc).    </p>
-    <div class="section section-3" id="src-181285197_id-.Troubleshootingv6.0.0-Solutions">
+    <div class="section section-3" id="src-198152716_id-.Troubleshootingv6.1.0-Solutions">
         <h3 class="heading "><span>Solutions</span></h3>
 <ul class=" "><li class=" ">    <p  >Since database transactions are not required if the worker is not configured to access the database, disabling the key usage counter, and not using any archivers will resolve this issue. For more information, see <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a> and <a   href="Archiving.html">Archiving</a>.    </p>
 </li><li class=" ">    <p  >Alternatively, if the key usage counter or an Archiver must be used, reconfigure the application server with a higher value for the transaction timeout. For more information, see <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a> and <a   href="Archiving.html">Archiving</a>.    </p>
 </li></ul>    </div>
     </div>
+    <div class="section section-2" id="src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1DS1JfUElOX0lOQ09SUkVDVChMdW5hSFNNKQ">
+        <h2 class="heading "><span>CKR_PIN_INCORRECT (Luna HSM)</span></h2>
+    <p  >When attempting to log into a Luna HSM, the HSM may require a PIN code from an external PIN pad. If you subsequently try to log in via an application, you might encounter a misleading exception.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">ERROR [org.signserver.server.cryptotokens.PKCS11CryptoToken] (</code><code class="keyword">default</code><code class="plain"> task-</code><code class="value">2</code><code class="plain">) Activate failed: Failed to initialize PKCS11 provider slot </code><code class="string">'CAAUTHDEV'</code><code class="plain">.: load failed: CKR_PIN_INCORRECT</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-181285197_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjAuMC1QMTFORy9KYWNrTkpJMTE">
+    <p  >A workaround we&#39;ve seen could be to set<strong class=" "> ProtectedAuthenticationPathFlagStatus = 1</strong> in the config file of the HSM    </p>
+    </div>
+    <div class="section section-2" id="src-198152716_id-.Troubleshootingv6.1.0-SQLFeatureNotSupportedExceptionwithPostgreSQL">
+        <h2 class="heading editable-field inactive"><span>SQLFeatureNotSupportedException with PostgreSQL</span></h2>
+    <p  >When running SignServer with certain versions of PostgreSQL, an SQLFeatureNotSupportedException can occur on any database insert. By disabling the L2 and query cache you can forgo this issue. See <a   href="Deploy-time_Configuration.html">Deploy-time Configuration</a>.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1QMTFORy9KYWNrTkpJMTE">
         <h1 class="heading "><span>P11NG / JackNJI11</span></h1>
-    <div class="section section-2" id="src-181285197_id-.Troubleshootingv6.0.0-UnsatisfiedLinkError">
+    <div class="section section-2" id="src-198152716_id-.Troubleshootingv6.1.0-UnsatisfiedLinkError">
         <h2 class="heading "><span>UnsatisfiedLinkError</span></h2>
     <p  >There can be a conflict between the JNA implementation in SignServer and the one installed in the system. This can be seen as errors similar to the following:    </p>
 <ul class=" "><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: com.sun.jna.Native.malloc(J)J    </p>
@@ -1774,7 +1814,7 @@ common errors.<br/>    </span>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-181285197_id-.Troubleshootingv6.0.0-USER_NOT_LOGGED_INError">
+    <div class="section section-2" id="src-198152716_id-.Troubleshootingv6.1.0-USER_NOT_LOGGED_INError">
         <h2 class="heading "><span>USER_NOT_LOGGED_IN Error</span></h2>
     <p  >If a <strong class=" ">USER_NOT_LOGGED_IN</strong> error is encountered while using the Utimaco HSM, the solution is to enable the <strong class=" ">KeepAlive</strong> setting in the Utimaco configuration    <span style="color: #000000;">
  file <tt class=" ">cs_pkcs11_R2.cfg</tt>:    </span>
@@ -1787,9 +1827,9 @@ common errors.<br/>    </span>
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-181285197_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjAuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRKYXZhMTdpbkNvbW11bml0eUVkaXRpb24">
-        <h1 class="heading "><span>SunPKCS11 / PKCS11CryptoToken and Java 17 in Community Edition</span></h1>
-    <p  >In Community Edition, the PKCS11CryptoToken does not work on Java 17 unless the Java process that runs the application server is passed the JAVA_OPTS parameter &quot;--add-exports=jdk.crypto.cryptoki/sun.security.pkcs11.wrapper=ALL-UNNAMED&quot;.    </p>
+    <div class="section section-1" id="src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRKYXZhMTc">
+        <h1 class="heading "><span>SunPKCS11 / PKCS11CryptoToken and Java 17</span></h1>
+    <p  >The PKCS11CryptoToken does not work on Java 17 unless the Java process that runs the application server is passed the JAVA_OPTS parameter &quot;--add-exports=jdk.crypto.cryptoki/sun.security.pkcs11.wrapper=ALL-UNNAMED&quot;.    </p>
     <p  >When using the PKCS11CryptoToken an error similar to the following may be logged:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1797,10 +1837,9 @@ common errors.<br/>    </span>
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-181285197_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjAuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRjZXJ0YWluSmF2YTE3dmVyc2lvbnNpbkNvbW11bml0eUVkaXRpb24">
-        <h1 class="heading "><span>SunPKCS11 / PKCS11CryptoToken and certain Java 17 versions in Community Edition</span></h1>
-    <p  >Certain Java 17 versions/builds attempt to call C_GetInfo before the call C_Initialize, resulting in many HSM drivers responding with CKR_CRYPTOKI_NOT_INITIALIZED. Generally, Enterprise Edition does not have this issue because the C_Initialize call is made with P11NG regardless of whether the PKCS11CryptoToken is used.    </p>
-    <p  >The issue has been observed with OpenJDK 17 version Red_Hat-17.0.6.0.10-1.fc36 and switching to a different Java version/build is the only known solution.    </p>
+    <div class="section section-1" id="src-198152716_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y2LjEuMC1TdW5QS0NTMTEvUEtDUzExQ3J5cHRvVG9rZW5hbmRjZXJ0YWluSmF2YTE3dmVyc2lvbnM">
+        <h1 class="heading "><span>SunPKCS11 / PKCS11CryptoToken and certain Java 17 versions</span></h1>
+    <p  >Certain Java 17 versions/builds attempt to call C_GetInfo before the call C_Initialize, resulting in many HSM drivers responding with CKR_CRYPTOKI_NOT_INITIALIZED.The issue has been observed with OpenJDK 17 version Red_Hat-17.0.6.0.10-1.fc36 and switching to a different Java version/build is the only known solution.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain"> </code><code class="value">12</code><code class="plain">:</code><code class="value">30</code><code class="plain">:</code><code class="value">33</code><code class="plain">,</code><code class="value">581</code><code class="plain"> ERROR [stderr] (</code><code class="keyword">default</code><code class="plain"> task-</code><code class="value">1</code><code class="plain">) sunpkcs11: Initializing PKCS#</code><code class="value">11</code><code class="plain"> library /opt/ETcpsdk/lib/linux-x86_64/libctsw.so</code></div>
@@ -1847,9 +1886,9 @@ common errors.<br/>    </span>
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-181285197_id-.Troubleshootingv6.0.0-SignClient">
+    <div class="section section-1" id="src-198152716_id-.Troubleshootingv6.1.0-SignClient">
         <h1 class="heading "><span>SignClient</span></h1>
-    <div class="section section-2" id="src-181285197_id-.Troubleshootingv6.0.0-CannotProduceCertificateVerifySignature">
+    <div class="section section-2" id="src-198152716_id-.Troubleshootingv6.1.0-CannotProduceCertificateVerifySignature">
         <h2 class="heading "><span>Cannot Produce CertificateVerify Signature</span></h2>
     <p  >When using SignClient using a PKCS 11 token (e.g. a smart-card reader) for authenticating in some cases (e.g. both server and client running on Java 11) a cipher-suit-related error can occur:    </p>
     <div  class="confbox programlisting">

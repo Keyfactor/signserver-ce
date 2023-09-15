@@ -120,7 +120,7 @@ bb806aa583bafce595a780f9fe8876e583a24067758688022027840f21b2723b  ./ext/jjwt-api
 74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    "OpenLDAP"
 5557e235a8aa2f9766d5dc609d67948f2a8832c2d796cea9ef1d6cbe0b3b7eaf  ./ext/jna-5.6.0.jar;                                    "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
-5941b98baab198e29a62a71170026e91d995648a72ec8f65f8557a484bef8239  ./ext/jsign-core-3.1-signserver5.5.jar;                 "Jsign"
+6353bff935a23bdfe5b1f81742f0d55aead532d2930d5c32399f19fb33ff6fcd  ./ext/jsign-core-5.0.jar;                               "Jsign"
 e336cb8d9db41c8ce420b0d76d3356c5aef61cac9c6a118c24ac0ccfe30df6a9  ./ext/json-path-5.3.0.jar;                              "json-path"
 108045c9675ebf6d6ec4d8dcc331693f9b944ac7c87de52dccff2c55e8dfa6f1  ./ext/json-simple-1.1.1.jar;                            "json-simple"
 ca3e9150f95c31d15b9680a609b8817f8549bd395591c5ca55957d1ef0f464d6  ./ext/log4j-1.2-api-2.17.1.jar;                         "Log4j"

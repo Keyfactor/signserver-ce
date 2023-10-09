@@ -44,12 +44,20 @@ public class TokenEntry implements Serializable {
     private Date creationDate;
     
     private Map<String, String> info;
+
+    private transient Object implementationSpecific;
         
     public TokenEntry(String alias, String type) {
         this.alias = alias;
         this.type = type;
     }
-    
+
+    public TokenEntry(String alias, String type, Object implementationSpecific) {
+        this.alias = alias;
+        this.type = type;
+        this.implementationSpecific = implementationSpecific;
+    }
+
     public String getType() {
         return this.type;
     }
@@ -129,5 +137,9 @@ public class TokenEntry implements Serializable {
     public String toString() {
         return "TokenEntry{" + "alias=" + alias + '}';
     }
-    
+
+    public Object getImplementationSpecific() {
+        return implementationSpecific;
+    }
+
 }

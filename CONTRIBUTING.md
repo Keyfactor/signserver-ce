@@ -1,4 +1,4 @@
-# SignServer contributing guidelines <!-- omit in toc -->
+# SignServer Contributing Guidelines <!-- omit in toc -->
 
 Thank you for contributing to SignServer!
 

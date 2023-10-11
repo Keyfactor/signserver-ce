@@ -15,6 +15,7 @@ package org.signserver.admin.web;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,8 +30,10 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
-import org.cesecore.certificates.util.AlgorithmConstants;
-import org.cesecore.certificates.util.AlgorithmTools;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.server.RenewalUtils;
+import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;
+import org.signserver.server.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -110,10 +113,25 @@ public class CSRBulkBean extends BulkBean {
                     fixedAlias = true;
                 }
 
-                String signatureAlgorithm = config.getProperty("SIGNATUREALGORITHM", "");
+                final String requestSignatureAlgorithm = config.getProperty(RenewalUtils.PROPERTY_REQUESTSIGNATUREALGORITHM, "");
+                final String signatureAlgorithm = config.getProperty(RenewalUtils.PROPERTY_SIGNATUREALGORITHM, "");
+                Certificate signerCert;
+                try {
+                    final List<Certificate> certificateList = getWorkerSessionBean().getSignerCertificateChain(getAuthBean().getAdminCertificate(), id);
+                    if (certificateList != null) {
+                        signerCert = certificateList.get(0);
+                    } else {
+                        signerCert = null;
+                    }
+                } catch (CryptoTokenOfflineException ex) {
+                    signerCert = null;
+                }
+
+                final String sigAlg = RenewalUtils.getRequestSignatureAlgorithm(requestSignatureAlgorithm, signatureAlgorithm, signerCert);
+
                 String requestDN = config.getProperty("REQUESTDN", "");
 
-                myWorkers.add(new CSRWorker(id, exists, name, config.getProperties(), alias, signatureAlgorithm, requestDN, index++, fixedAlias));
+                myWorkers.add(new CSRWorker(id, exists, name, config.getProperties(), alias, sigAlg, requestDN, index++, fixedAlias));
 
                 // Select checkbox
                 getSelectedIds().put(id, exists);
@@ -121,7 +139,7 @@ public class CSRBulkBean extends BulkBean {
         }
         return myWorkers;
     }
-
+    
     public String getKeys() {
         return keys;
     }
@@ -385,10 +403,19 @@ public class CSRBulkBean extends BulkBean {
                 AlgorithmTools.SIG_ALGS_ECDSA.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
+                AlgorithmTools.SIG_ALG_EDDSA.forEach((alg) -> {
+                  signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
+                });
                 AlgorithmTools.SIG_ALGS_ECGOST3410.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_DSTU4145.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
+                });
+                AlgorithmTools.SIG_ALGS_DILITHIUM.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
+                });
+                AlgorithmTools.SIG_ALGS_SPHINCSPLUS.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
             }

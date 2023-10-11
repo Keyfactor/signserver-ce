@@ -14,10 +14,18 @@ package org.signserver.module.tsa;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -48,7 +56,6 @@ import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
-import org.junit.After;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -59,12 +66,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
+import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 
@@ -124,6 +135,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
             "MCsCAQEwITAJBgUrDgMCGgUABBQyoGF6q0yf5yXxtbxEEpEYCtJbcwYDKgMF";
     private static final String SHA256WITHRSA_ENCRYPTION_ALG_OID ="1.2.840.113549.1.1.11";
 
+    private static final ModulesTestCase helper = new ModulesTestCase();
+
     private final Random RANDOM = new Random(4711);
 
     private final WorkerSession workerSession = getWorkerSession();
@@ -135,8 +148,81 @@ public class TimeStampSignerTest extends ModulesTestCase {
         repository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
     }
 
-    @After
-    public void tearDown() {
+    @BeforeClass
+    public static void setUpKeyStore() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, CertBuilderException, CertificateException, KeyStoreException, FileNotFoundException {
+        SignServerUtil.installBCProvider();
+
+        final String signatureAlgorithm = "SHA256withRSA";
+
+        // Create CA
+        final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
+        final KeyPair caKeyPairEC = CryptoUtils.generateEcCurve("prime256v1");
+        final String caDN = "CN=Test CA";
+        long currentTime = System.currentTimeMillis();
+        final X509Certificate caCertificate
+                = new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                .setSelfSignKeyPair(caKeyPair)
+                .setNotBefore(new Date(currentTime - 120000))
+                .setSignatureAlgorithm(signatureAlgorithm)
+                .setIssuer(caDN)
+                .setSubject(caDN)
+                .build());
+
+        // Create signer key-pair (DSA) and issue certificate
+        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
+        final Certificate[] certChainDSA =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPair.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm(signatureAlgorithm)
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer DSA 2")
+                                .addExtension(new CertExt(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping).toASN1Primitive()))
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+
+        // Create signer key-pair (ECDSA) and issue certificate
+        final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
+        final Certificate[] certChainECDSA =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPairEC.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairECDSA.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm("SHA256withECDSA")
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer ECDSA 3")
+                                .addExtension(new CertExt(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping).toASN1Primitive()))
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+
+        KeyStore ks = KeyStore.getInstance("pkcs12");
+        char[] password = "foo123".toCharArray();
+
+        ks.load(null, password);
+        ks.setKeyEntry("mykeydsa", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
+        ks.setKeyEntry("mykeyec", signerKeyPairECDSA.getPrivate(),"foo123".toCharArray(), certChainECDSA);
+
+        // Store away the keystore.
+        try (FileOutputStream fos = new FileOutputStream("tmp/TimeStampSignerTest.p12")) {
+            ks.store(fos, password);
+        }
+    }
+
+    @AfterClass
+    public static void tearDown() throws FileNotFoundException {
+        final File keystore = new File(helper.getSignServerHome(), "tmp/TimeStampSignerTest.p12");
+        keystore.delete();
     }
 
     @Test
@@ -999,12 +1085,12 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final int workerId = WORKER20.getId();
         try {
             // Setup signer
-            final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
+            final File keystore = new File(getSignServerHome(), "tmp/TimeStampSignerTest.p12");
             if (!keystore.exists()) {
                 throw new FileNotFoundException(keystore.getAbsolutePath());
             }
             addP12DummySigner(TimeStampSigner.class.getName(), workerId,
-                    "TestTimeStampP12ECDSA", keystore, "foo123", "signerec");
+                    "TestTimeStampP12ECDSA", keystore, "foo123", "mykeyec");
             workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
             workerSession.setWorkerProperty(workerId, "ACCEPTANYPOLICY", "true");
             workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA1WithECDSA");
@@ -1042,11 +1128,11 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final int workerId = WORKER20.getId();
         try {
             // Setup signer
-            final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+            final File keystore = new File(getSignServerHome(), "tmp/TimeStampSignerTest.p12");
             if (!keystore.exists()) {
                 throw new FileNotFoundException(keystore.getAbsolutePath());
             }
-            addJKSDummySigner(TimeStampSigner.class.getName(), workerId, "TestTimeStampJKSDSA", keystore, "foo123", "mykey");
+            addP12DummySigner(TimeStampSigner.class.getName(), workerId, "TestTimeStampP12DSA", keystore, "foo123", "mykeydsa");
             workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
             workerSession.setWorkerProperty(workerId, "ACCEPTANYPOLICY", "true");
             workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA1WithDSA");

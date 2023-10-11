@@ -104,7 +104,7 @@ public class XMLSignerTest {
                 new File(mt.getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKERID3, "DEFAULTKEY",
-                "23b427f763311df918fc10e44e19528634b4193c");
+                "TestXMLSignerEC2");
         workerSession.reloadConfiguration(WORKERID3);
         
         mt.addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);
@@ -324,7 +324,7 @@ public class XMLSignerTest {
      */
     @Test
     public void test15XMLSecVersion() throws Exception {
-        checkDebugProperty("xml-sec.version", "2.1.7");
+        checkDebugProperty("xml-sec.version", "2.2.3");
     }
     
     /**
@@ -334,9 +334,8 @@ public class XMLSignerTest {
     @Test
     public void test16XalanVersion() throws Exception {
         checkDebugProperty("xalan.version", 
-                "Xalan Java 2.7.2", // after copy-xmlsec on JBoss 5
-                "2.7.2", // after manually copying on JBoss AS 7
-                "2.7.1-redhat-7" // on JBoss EAP >= 6.3 or patched
+                "Xalan Java 2.7.3", // after copy-xmlsec on JBoss 5
+                "2.7.3" // after manually copying on JBoss AS 7
         );
     }
 

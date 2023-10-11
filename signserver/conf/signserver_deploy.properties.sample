@@ -44,6 +44,10 @@
 # the directory needs to be present, writable by the application server and empty at first startup.
 #database.nodb.location=/opt/jboss-as-7.1.1.Final/standalone/data/nodb
 
+# Option to disable database caching. We do not know about potential performance impact in disabling database caching
+# so use with caution
+# Default false
+# database.hibernate.disable.cache=false
 
 # -------------- Web Services Configuration ------------------------------------
 #
@@ -101,14 +105,6 @@
 # Default: true
 #module.cmssigner.enabled=true
 
-# Module ODFSigner
-# Default: true
-#module.odfsigner.enabled=true
-
-# Module OOXMLSigner
-# Default: true
-#module.ooxmlsigner.enabled=true
-
 # Module PDFSigner
 # Default: true
 #module.pdfsigner.enabled=true
@@ -159,10 +155,6 @@
 # Default: true
 #signingandvalidationapi.enabled=true
 
-# Set to enable build of the AdminGUI
-# Default: true
-#admingui.enabled=true
-
 # Set to enable deployment of the AdminWeb
 # Default: true
 #adminweb.enabled=true
@@ -207,23 +199,6 @@
 # Default: true
 #webdoc.enabled=true
 
-# Offer the AdminGUI binary dist for download from the public web
-# Note: If enabled the following configuration files will also be part of the 
-# download:
-# - conf/admingui_default.properties
-# - conf/log4.properties
-# - doc/sample-configs/*.properties
-#
-# The ZIP file is created as part of the compose-ear (deploy) Ant target.
-#
-# Default: false
-#web.admingui.dist.enabled=false
-
-# Path to the AdminGUI binary dist file
-# Default: ${basedir}/lib/signserver-admingui.zip
-#web.admingui.dist.file=${basedir}/lib/signserver-admingui.zip
-#web.admingui.dist.file=/tmp/signserver-admingui.zip
-
 # Offer the ClientCLI binary dist for download from the public web
 # Note: If enabled the following configuration files will also be part of the 
 # download:
@@ -238,11 +213,6 @@
 # Default: ${basedir}/lib/signserver-clientcli.zip
 #web.clientcli.dist.file=${basedir}/lib/signserver-clientcli.zip
 #web.clientcli.dist.file=/tmp/signserver-clientcli.zip
-
-
-# Theme to use for the admin web
-# Default: "default"
-#web.theme=custom
 
 # -------------- Status And Health Check Configuration -------------------------
 #
@@ -355,8 +325,46 @@
 #cryptotoken.p11.lib.71.file=/usr/lib64/libgpkcs11cc2000.so
 #cryptotoken.p11.lib.72.name=Bull TrustWay Proteccio
 #cryptotoken.p11.lib.72.file=/usr/lib64/libnethsm64.so
-#cryptotoken.p11.lib.80.name=SoftHSM
+#cryptotoken.p11.lib.80.name=SoftHSM 2
 #cryptotoken.p11.lib.80.file=/usr/local/lib/softhsm/libsofthsm2.so
+#cryptotoken.p11.lib.81.name=SoftHSM 2
+#cryptotoken.p11.lib.81.file=/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so
+#cryptotoken.p11.lib.82.name=SoftHSM 2
+#cryptotoken.p11.lib.82.file=/usr/lib/softhsm/libsofthsm2.so
+#cryptotoken.p11.lib.83.name=SoftHSM 2
+#cryptotoken.p11.lib.83.file=/usr/lib64/pkcs11/libsofthsm2.so
+#cryptotoken.p11.lib.90.name=SoftHSM
+#cryptotoken.p11.lib.90.file=/usr/lib/softhsm/libsofthsm.so
+#cryptotoken.p11.lib.91.name=SoftHSM
+#cryptotoken.p11.lib.91.file=/usr/lib64/softhsm/libsofthsm.so
+#cryptotoken.p11.lib.100.name=PKCS11 Spy
+#cryptotoken.p11.lib.100.file=/usr/lib/x86_64-linux-gnu/pkcs11-spy.so
+#cryptotoken.p11.lib.101.name=PKCS11 Spy
+#cryptotoken.p11.lib.101.file=/usr/lib64/pkcs11/pkcs11-spy.so
+#cryptotoken.p11.lib.110.name=Utimaco R2
+#cryptotoken.p11.lib.110.file=/opt/utimaco/p11/libcs_pkcs11_R2.so
+#cryptotoken.p11.lib.111.name=Utimaco R2
+#cryptotoken.p11.lib.111.file=/opt/Utimaco/Linux/x86_64/Crypto_APIs/PKCS11_R2/lib/libcs_pkcs11_R2.so
+#cryptotoken.p11.lib.112.name=Utimaco R2
+#cryptotoken.p11.lib.112.file=/etc/utimaco/libcs_pkcs11_R2.so
+#cryptotoken.p11.lib.113.name=Cavium Nitrox III
+#cryptotoken.p11.lib.113.file=/home/liquidsec_bin/lib/libliquidsec_pkcs11.so
+#cryptotoken.p11.lib.114.name=AWS CloudHSM PrimeKey
+#cryptotoken.p11.lib.114.file=/opt/PrimeKey/cloudhsm/lib/libliquidsec_pkcs11.so
+#cryptotoken.p11.lib.115.name=AWS CloudHSM
+#cryptotoken.p11.lib.115.file=/opt/cloudhsm/lib/libcloudhsm_pkcs11.so
+#cryptotoken.p11.lib.120.name=YubiHSM2
+#cryptotoken.p11.lib.120.file=/usr/lib/x86_64-linux-gnu/pkcs11/yubihsm_pkcs11.so
+#cryptotoken.p11.lib.130.name=Trident HSM
+#cryptotoken.p11.lib.130.file=/usr/lib/x86_64-linux-gnu/libmpcm-pkcs11.so
+#cryptotoken.p11.lib.131.name=Trident HSM
+#cryptotoken.p11.lib.131.file=/usr/lib64/libmpcm-pkcs11.so
+#cryptotoken.p11.lib.132.name=Primus HSM
+#cryptotoken.p11.lib.132.file=/usr/local/primus/lib/libprimusP11.so
+#cryptotoken.p11.lib.133.name=Primus HSM
+#cryptotoken.p11.lib.133.file=/opt/primus/lib/libprimusP11.so
+#cryptotoken.p11.lib.135.name=GCP KMS P11
+#cryptotoken.p11.lib.135.file=/opt/gcp/libkmsp11-1.1-linux-amd64/libkmsp11.so
 
 # ------------ Peer Connector settings (Enterprise Edition only) --------------
 #

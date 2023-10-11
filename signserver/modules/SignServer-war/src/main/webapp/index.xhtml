@@ -32,11 +32,6 @@
                                 <h:outputLink value="clientcli-dist/">Client CLI Download</h:outputLink>
                             </li>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{publicWebBean.webAdminGUIDistEnabled}">
-                            <li>
-                                <h:outputLink value="admingui-dist/">Administration GUI Download</h:outputLink>    
-                            </li>
-                        </h:panelGroup>
                         <h:panelGroup rendered="#{publicWebBean.adminWebEnabledAndAvailable}">
                             <li>
                                 <h:outputLink value="#{publicWebBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           

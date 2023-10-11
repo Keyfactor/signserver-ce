@@ -31,7 +31,7 @@ if [ -n "${SIGNCLIENT_HOME}" ]; then
 elif [ -n "${SIGNSERVER_HOME}" ]; then
   SIGNSRV_HOME=$SIGNSERVER_HOME
 else
-  if [ -f $DIR/signclient ]; then
+  if [ -f "$DIR/signclient" ]; then
     SIGNSRV_HOME=$DIR/..
   fi
   if [ -f /etc/signserver/signservermgmt.env ]; then
@@ -97,8 +97,8 @@ fi
 
 # In some cases, running SignClient authenticating with a P11 token
 # (e.g. a smartcard reader) could give cipher-suit errors,
-# In these cases, a workaround is to force the use of TLS version 1.1
-#JAVA_OPTS="$JAVA_OPTS  -Djdk.tls.client.protocols=TLSv1.1 -Dhttps.protocols=TLSv1.1"
+# In these cases, a workaround is to force the use of TLS version 1.2
+#JAVA_OPTS="$JAVA_OPTS  -Djdk.tls.client.protocols=TLSv1.2 -Dhttps.protocols=TLSv1.2"
 
 # Enable Java debugging
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"

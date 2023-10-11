@@ -144,7 +144,7 @@ database.nodb.location              = ${database.nodb.location}
     </target>
 
     <!-- Target doing the actual packaging of the EAR file -->
-    <target name="-do-configure-ear" depends="display-properties,-check-appsrv,-check-built, -init-tasks, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, j2ee:check">
+    <target name="-do-configure-ear" depends="display-properties,-check-appsrv,-check-built, -init-tasks, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, -set-hibernate-database-caching, j2ee:check">
         <echo/>
 
         <!-- Use Hibernate Persistence Provider by default -->
@@ -245,6 +245,10 @@ database.nodb.location              = ${database.nodb.location}
             <equals arg1="${database.name}" arg2="nodb"/>
         </condition>
 
+        <condition property="hibernate.database.caching">
+            <equals arg1="${database.hibernate.disable.cache}" arg2="true"/>
+        </condition>
+
         <property name="app.ear.dir" location="${tmp}/application.ear-dir"/>
         <property name="database.name" value="${database.name}"/>
         <delete dir="${app.ear.dir}"/>
@@ -254,6 +258,21 @@ database.nodb.location              = ${database.nodb.location}
         <copy todir="${app.ear.dir}">
             <fileset dir="${this.dir}/ear" includes="*/*.*"/>
         </copy>
+        
+    </target>
+    <target name="-set-hibernate-database-caching" unless="hibernate.database.caching">
+        <!-- generate starting and closing comment marks to either enable or disable
+        hibernate database caching-->
+        <property name="hibernatedatabasecachingheader">
+    		<![CDATA[
+    			<!--
+    		]]>
+        </property>
+        <property name="hibernatedatabasecachingfooter">
+    		<![CDATA[
+    			-->
+    		]]>
+        </property>
     </target>
 
     <target name="-set-ejbjarheader-nodb" if="noDB">
@@ -277,6 +296,14 @@ database.nodb.location              = ${database.nodb.location}
         <property name="persistencefooter">
     		<![CDATA[
     			-->
+    		]]>
+        </property>
+        <property name="hibernatedatabasecachingheader">
+            <![CDATA[
+    		]]>
+        </property>
+        <property name="hibernatedatabasecachingfooter">
+            <![CDATA[
     		]]>
         </property>
     </target>
@@ -462,6 +489,7 @@ app.edition.lc=${app.edition.lc}
                 <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.12.jar"/>
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
+                <pathelement path="${basedir}/lib/ext/ext/jakarta.jakartaee-api-8.0.0-LocalStrings.jar"/>
             </classpath>
         </junit>
     </target>

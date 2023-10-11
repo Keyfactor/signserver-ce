@@ -7,13 +7,9 @@
         <div class="kfds-header-brand">
             <div class="kfds-header-logo">
                 <a href="../">
-                    <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/images/logo.svg.xhtml?ln=<%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME)%>" alt="SignServer - PKI by PrimeKey"/>
+                    <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/images/logo.svg.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" alt="SignServer by Keyfactor"/>
                 </a>
             </div>
-            <div class="<%= org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME).equalsIgnoreCase("default") ? "hide-element" : "kfds-header-product" %>">
-                <div class="kfds-header-product-name">
-                    <%=org.signserver.common.CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.APPNAME_CAP)%>
-                </div>
             </div>
         </div>
     </div>

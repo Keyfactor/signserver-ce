@@ -227,7 +227,7 @@ public class XAdESValidator extends BaseValidator {
         
         final XAdESVerificationResult result;
         try {
-            CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
+            CertificateValidationProvider certValidator = PKIXCertificateValidationProvider.builder(trustAnchors).intermediateCertStores(certStore).checkRevocation(false).build();
 
             XadesVerificationProfile p = new XadesVerificationProfile(certValidator)
                 .withTimeStampTokenVerifier(timeStampVerificationImplementation);

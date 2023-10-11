@@ -182,6 +182,16 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             briefEntries.add(new WorkerStatusInfo.Entry("", "Signer is disabled"));
         }
 
+        // Warnings
+        final StringBuilder infoValue = new StringBuilder();
+        // added to print on worker status summary page when P11NGCryptoWorker is using old deprecated JackJNI11 inplementation class name
+        if (config.getCryptoTokenImplementationClass() != null && config.getCryptoTokenImplementationClass().contains("JackNJI11")) {
+            infoValue.append("Deprecated name JackNJI11 is used, please change to P11NG.");
+        }
+        if (infoValue.length() != 0) {
+            completeEntries.add(new WorkerStatusInfo.Entry("Warnings", infoValue.toString()));
+        }
+
         // Properties
         final StringBuilder configValue = new StringBuilder();
         Properties properties = config.getProperties();

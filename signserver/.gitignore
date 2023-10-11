@@ -3,8 +3,8 @@
 *.class
 
 # Skip copied web themes
-modules/SignServer-Admin-web/src/main/webapp/resources/keyfactor
-modules/SignServer-war/src/main/webapp/resources/keyfactor
+modules/SignServer-Admin-web/src/main/webapp/resources/enterprise
+modules/SignServer-war/src/main/webapp/resources/enterprise
 
 # Log file
 *.log
@@ -59,9 +59,9 @@ dist-*/
 /bin/p11ng-tool.cmd
 /bin/signserver-db
 /bin/signserver-db.cmd
+/bin/sntp-tool
+/bin/sntp-tool.cmd
 /bin/timemonitor-in-background.sh
-/bin/signserver-gui
-/bin/signserver-gui.cmd
 
 /conf/signserver_deploy.properties
 /conf/signserver_cli.properties
@@ -71,7 +71,6 @@ dist-*/
 /conf/cesecore.properties
 /conf/timemonitor-log4j.properties
 /conf/signserver_build.properties
-/conf/admingui.properties
 /conf/timemonitor-log4j2.properties
 
 # Enterprise Edition sample configuration files
@@ -86,7 +85,6 @@ dist-*/
 
 /doc/sample-configs/ms_authcode_cms_signer.properties
 /doc/sample-configs/jarchive_cms_signer.properties
-/doc/sample-configs/jarchive_signer.properties
 /doc/sample-configs/ms_authcode_signer.properties
 /doc/sample-configs/timemonitormanager.properties
 /doc/sample-configs/keywrapping-*
@@ -97,12 +95,12 @@ dist-*/
 /doc/sample-configs/extended_timestamp.properties
 /doc/sample-configs/openpgpplainsigner*.properties
 /doc/sample-configs/p11ng-*
-/doc/sample-configs/debian*.properties
 /doc/sample-configs/zone*.properties
 /doc/sample-configs/appx*.properties
 /doc/sample-configs/apk_*.properties
 /doc/sample-configs/qos_*.properties
 /doc/sample-configs/ades.properties
+/doc/sample-configs/fortanix-*
 
 /indir*/
 /jarsigner-test-files/
@@ -127,8 +125,11 @@ dist-*/
 /lib/ext/jdbc/*.jar
 /lib/ext/dss-*
 /lib/ext/commons-lang3-*
+/lib/ext/commons-net-*
 /lib/ext/specs-*
 /lib/ext/validation-*
+/lib/ext/p11ng-*
+/lib/maven-install-files-ee.sh
 
 /modules/SignServer-Admin-web/nbproject
 /modules/SignServer-AdminCLI/nbproject
@@ -142,8 +143,6 @@ dist-*/
 /modules/SignServer-Test-System/src/jndi.properties
 /modules/SignServer-Test-System/src/test/java/org/signserver/client/api/EightCA-use.crl
 /modules/SignServer-ejb/.ant-targets-build.xml
-/modules/mod-enterprise/SignServer-AdminGUI/connect.properties
-/modules/mod-enterprise/SignServer-AdminGUI/.~lock.admingui-splash.odg*
 /modules/mod-enterprise/SignServer-Module-TimeMonitorManager/.jacocoverage
 /modules/mod-enterprise/SignServer-Test-Enterprise/nbproject
 /modules/mod-enterprise/SignServer-TimeMonitor/.jacocoverage

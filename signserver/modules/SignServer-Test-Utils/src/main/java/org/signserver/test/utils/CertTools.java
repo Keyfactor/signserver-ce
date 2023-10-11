@@ -54,7 +54,7 @@ import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509DefaultEntryConverter;
-import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.asn1.x509.X509NameEntryConverter;
 import org.bouncycastle.asn1.x509.X509NameTokenizer;
@@ -232,12 +232,12 @@ public class CertTools {
 
             // Basic constranits is always critical and MUST be present at-least in CA-certificates.
             BasicConstraints bc = new BasicConstraints(isCA);
-            certgen.addExtension(X509Extension.basicConstraints, true, bc);
+            certgen.addExtension(Extension.basicConstraints, true, bc);
 
             // Put critical KeyUsage in CA-certificates
             if (isCA == true) {
                 X509KeyUsage ku = new X509KeyUsage(keyusage);
-                certgen.addExtension(X509Extension.keyUsage, true, ku);
+                certgen.addExtension(Extension.keyUsage, true, ku);
             }
 
             // Subject and Authority key identifier is always non-critical and MUST be present for certificates to verify in Firefox.
@@ -251,8 +251,8 @@ public class CertTools {
                                 new ByteArrayInputStream(publicKey.getEncoded())).readObject());
                     AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(apki);
 
-                    certgen.addExtension(X509Extension.subjectKeyIdentifier, false, ski);
-                    certgen.addExtension(X509Extension.authorityKeyIdentifier, false, aki);
+                    certgen.addExtension(Extension.subjectKeyIdentifier, false, ski);
+                    certgen.addExtension(Extension.authorityKeyIdentifier, false, aki);
                 }
             } catch (IOException e) { // do nothing
             }
@@ -261,7 +261,7 @@ public class CertTools {
             if (policyId != null) {
                     PolicyInformation pi = new PolicyInformation(new ASN1ObjectIdentifier(policyId));
                     DERSequence seq = new DERSequence(pi);
-                    certgen.addExtension(X509Extension.certificatePolicies, false, seq);
+                    certgen.addExtension(Extension.certificatePolicies, false, seq);
             }
 
             X509Certificate selfcert = certgen.generate(privKey, provider);

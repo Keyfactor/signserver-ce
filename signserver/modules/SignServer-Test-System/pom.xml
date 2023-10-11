@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.9.2.Alpha1-SNAPSHOT</version>
+        <version>6.2.0.Beta1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Test-System</artifactId>
     <name>SignServer-Test-System</name>
@@ -13,10 +13,56 @@
         <dist.jar>${project.build.finalName}-tests.jar</dist.jar>
         <skipTests>true</skipTests>
         <appserver.conf.folder>jboss7</appserver.conf.folder>
-        <appserver.home>/opt/wildfly-14.0.1.Final-signserver</appserver.home>
+        <appserver.home>/opt/wildfly-26.1.3.Final-signserver</appserver.home>
 
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured-all</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured-common</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>xml-path</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>4.0.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>4.0.12</version>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Test-Utils</artifactId>
@@ -83,7 +129,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.signserver.xades4j</groupId>
+            <groupId>com.googlecode.xades4j</groupId>
             <artifactId>xades4j</artifactId>
         </dependency>
         <dependency>
@@ -96,18 +142,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Lib-OpenXML4J</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.ejbca.cvc</groupId>
             <artifactId>cert-cvc</artifactId>
         </dependency>
         <dependency>
-            <groupId>asm</groupId>
+            <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>3.3.1</version>
+            <version>9.4</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -132,6 +173,33 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Web-Common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-simple</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-wsdl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -210,9 +278,6 @@
                         <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
                         <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
                     </additionalClasspathElements>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>org.apache.tomee:javaee-api</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

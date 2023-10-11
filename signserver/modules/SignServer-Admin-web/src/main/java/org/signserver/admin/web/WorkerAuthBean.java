@@ -760,10 +760,8 @@ public class WorkerAuthBean {
      * Reload authorizations from database. 
      */
     public String reloadFromDatabase() throws AdminNotAuthorizedException {
-        // invalidate old cached config
-        config = null;
 
-        config = getConfig();
+        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
         
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }

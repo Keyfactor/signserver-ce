@@ -28,8 +28,8 @@ import org.apache.commons.io.IOUtils;
 /**
  * Abstract distribution servlet for ZIP bundles.
  * 
- * Currently used for Admin GUI and Admin CLI downloads.
- * 
+ * Currently used for Client CLI downloads.
+ * * 
  * @author Marcus Lundblad
  * @version $Id$
  */
@@ -58,7 +58,7 @@ public abstract class AbstractDistServlet extends HttpServlet {
 
         final File file = getFile();
         if (file == null || !file.exists()) {
-            throw new FileNotFoundException("AdminGUI binary not available");
+            throw new FileNotFoundException("Binary file not available");
         }
         
         response.setContentType("application/zip");

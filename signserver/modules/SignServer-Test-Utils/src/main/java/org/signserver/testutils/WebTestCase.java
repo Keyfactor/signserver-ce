@@ -351,7 +351,7 @@ public abstract class WebTestCase extends ModulesTestCase {
                 out.print("Content-Disposition: form-data; name=\"");
                 out.print(field.getKey());
                 out.print("\"");
-                if (field.getKey().equals("data")) {
+                if (field.getKey().startsWith("data")) {
                     out.print("; filename=\"" + fileName + "\"");
                     out.print(CRLF);
                     out.print("Content-Type: application/octet-stream");

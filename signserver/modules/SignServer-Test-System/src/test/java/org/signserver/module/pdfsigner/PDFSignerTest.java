@@ -749,6 +749,53 @@ public class PDFSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID);
         }
     }
+
+    /**
+     * Test signing and timestamping with an external TSA, SHA1.
+     */
+    @Test
+    public void test22SigningWithExternaTSASHA1() throws Exception {
+        testSigningWithExternalTSA("SHA1", true, "SHA1");
+    }
+
+    /**
+     * Test signing and timestamping with an external TSA, SHA-256.
+     */
+    @Test
+    public void test22SigningWithExternalTSASHA256() throws Exception {
+        testSigningWithExternalTSA("SHA256", true, "SHA-256");
+    }
+
+    /**
+     * Test signing and timestamping with an external TSA, SHA-384.
+     */
+    @Test
+    public void test22SigningWithExternalTSASHA384() throws Exception {
+        testSigningWithExternalTSA("SHA384", true, "SHA-384");
+    }
+
+    /**
+     * Test signing and timestamping with an external TSA, SHA-512.
+     */
+    @Test
+    public void test22SigningWithExternalTSASHA512() throws Exception {
+        testSigningWithExternalTSA("SHA512", true, "SHA-512");
+    }
+
+    public void testSigningWithExternalTSA(final String digestAlgorithm, final boolean expectTimestamp, final String tsaDigestAlgorithm) throws Exception {
+        try {
+            final byte[] pdfOk = getTestFile(TESTPDF_OK);
+
+            workerSession.setWorkerProperty(WORKERID, "TSA_URL", "http://localhost:8080/signserver/tsa?workerName=" + "TestTSA1");
+
+            workerSession.reloadConfiguration(WORKERID);
+
+            signGenericPDFWithHash(pdfOk, digestAlgorithm, expectTimestamp, tsaDigestAlgorithm);
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_URL);
+            workerSession.reloadConfiguration(TSAWORKERID);
+        }
+    }
     
     /**
      * Tests that it is possible to override the 

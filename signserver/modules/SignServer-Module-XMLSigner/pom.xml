@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.9.2.Alpha1-SNAPSHOT</version>
+        <version>6.2.0.Beta1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Module-XMLSigner</artifactId>
     <name>SignServer-Module-XMLSigner</name>
@@ -50,6 +50,10 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>serializer</artifactId>
         </dependency>
     </dependencies>
 </project>

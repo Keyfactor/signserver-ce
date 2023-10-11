@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.9.2.Alpha1-SNAPSHOT</version>
+        <version>6.2.0.Beta1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Test-ValidationWS</artifactId>
     <name>SignServer-Test-ValidationWS</name>
@@ -13,7 +13,7 @@
         <dist.jar>${project.build.finalName}-tests.jar</dist.jar>
         <skipTests>true</skipTests>
         <appserver.conf.folder>jboss7</appserver.conf.folder>
-        <appserver.home>/opt/wildfly-14.0.1.Final-signserver</appserver.home>
+        <appserver.home>/opt/wildfly-26.1.3.Final-signserver</appserver.home>
     </properties>
     <dependencies>
         <dependency>
@@ -48,9 +48,28 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-simple</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -129,9 +148,6 @@
                         <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
                         <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
                     </additionalClasspathElements>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>org.apache.tomee:javaee-api</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

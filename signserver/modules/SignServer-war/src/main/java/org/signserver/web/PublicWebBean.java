@@ -20,6 +20,8 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
+import org.signserver.web.common.ThemeHelper;
+
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.inject.Named;
@@ -42,8 +44,6 @@ public class PublicWebBean {
     /** Key in signservercompile.properties. */
     private static final String ADMINWEB_ENABLED_AND_AVAILABLE = "adminweb.enabled.available";
     private static final String WEBDOC_ENABLED = "webdoc.enabled";
-    private static final String WEB_ADMINGUI_DIST_ENABLED = "web.admingui.dist.enabled";
-    private static final String WEB_ADMINGUI_DIST_FILE = "web.admingui.dist.file";
     private static final String WEB_CLIENTCLI_DIST_ENABLED = "web.clientcli.dist.enabled";
     private static final String WEB_CLIENTCLI_DIST_FILE = "web.clientcli.dist.file";
     private static final String HTTPSERVER_EXTERNAL_PRIVHTTPS = "httpserver.external.privhttps";
@@ -69,22 +69,9 @@ public class PublicWebBean {
         return Boolean.parseBoolean(enabled);
     }
 
-    public boolean isWebAdminGUIDistEnabled() {
-        final String enabled = settings.getProperty(WEB_ADMINGUI_DIST_ENABLED);
-        return Boolean.parseBoolean(enabled);
-    }
-
     public boolean isWebClientCLIDistEnabled() {
         final String enabled = settings.getProperty(WEB_CLIENTCLI_DIST_ENABLED);
         return Boolean.parseBoolean(enabled);
-    }
-
-    public File getAdminGUIDistFile() {
-        final String fileName = settings.getProperty(WEB_ADMINGUI_DIST_FILE);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("AdminGUI dist file: " + fileName);
-        }
-        return fileName == null ? null : new File(fileName);
     }
 
     public File getClientCLIDistFile() {
@@ -93,21 +80,6 @@ public class PublicWebBean {
             LOG.debug("Client CLI dist file: " + fileName);
         }
         return fileName == null ? null : new File(fileName);
-    }
-
-    public boolean isWebAdminGUIDistAvailable() {
-        final boolean result;
-        if (!isWebAdminGUIDistEnabled()) {
-            result = false;
-        } else {
-            final File file = getAdminGUIDistFile();
-            if (file == null) {
-                result = false;
-            } else {
-                result = file.exists() && file.isFile();
-            }
-        }
-        return result;
     }
 
     public boolean isWebClientCLIDistAvailable() {
@@ -123,10 +95,6 @@ public class PublicWebBean {
             }
         }
         return result;
-    }
-
-    public String getWebAdminGUIDistSize() {
-        return String.format("%.2f MB", getAdminGUIDistFile().length() / 1000000f);
     }
 
     public String getWebClientCLIDistSize() {
@@ -178,15 +146,19 @@ public class PublicWebBean {
     }
 
     public String getCopyright() {
-        return getTheme().equalsIgnoreCase("default") ? "Copyright © 2006–2022 PrimeKey Solutions AB" : "Copyright © 2006–2022 Keyfactor";
+        return "Copyright © 2006–2023 Keyfactor";
     }
 
     public String getNode() {
         return CesecoreConfiguration.getNodeIdentifier();
     }
 
+    public String getEdition() {
+        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION);
+    }
+
     public String getTheme() {
-        return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
+        return ThemeHelper.getInstance().getTheme();
     }
 
     public String getProductName() {
@@ -197,11 +169,6 @@ public class PublicWebBean {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_EDITION)
                 + " "
                 + CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION_NUMBER);
-    }
-
-    public boolean isDefaultThemeEnabled() {
-        final String enabled = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.WEB_THEME);
-        return enabled.equalsIgnoreCase("default");
     }
 
 }

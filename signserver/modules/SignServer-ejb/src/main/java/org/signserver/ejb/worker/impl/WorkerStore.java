@@ -15,6 +15,7 @@ package org.signserver.ejb.worker.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class WorkerStore {
         if (wi.hasId()) {
             result = workersOnly.get(wi.getId());
         } else if (wi.hasName()) {
-            final Integer workerId = nameToIdMap.get(wi.getName().toUpperCase());
+            final Integer workerId = nameToIdMap.get(wi.getName().toUpperCase(Locale.ENGLISH));
             if (workerId != null) {
                 result = workersOnly.get(workerId);
             }
@@ -60,7 +61,7 @@ public class WorkerStore {
         if (wi.hasId()) {
             result = workersWithComponents.get(wi.getId());
         } else if (wi.hasName()) {
-            final Integer workerId = nameToIdMap.get(wi.getName().toUpperCase());
+            final Integer workerId = nameToIdMap.get(wi.getName().toUpperCase(Locale.ENGLISH));
             if (workerId != null) {
                 result = workersWithComponents.get(workerId);
             }
@@ -69,7 +70,7 @@ public class WorkerStore {
     }
     
     public Integer getWorkerId(String name) {
-        return nameToIdMap.get(name.toUpperCase());
+        return nameToIdMap.get(name.toUpperCase(Locale.ENGLISH));
     }
 
     public void putWorkerOnly(int workerId, IWorker worker) {
@@ -108,7 +109,7 @@ public class WorkerStore {
         String result = null;
         if (worker.getConfig() != null) {
             if (worker.getConfig().getProperty(PropertiesConstants.NAME) != null) {
-                result = worker.getConfig().getProperty(PropertiesConstants.NAME).toUpperCase();
+                result = worker.getConfig().getProperty(PropertiesConstants.NAME).toUpperCase(Locale.ENGLISH);
             }
         }
         return result;

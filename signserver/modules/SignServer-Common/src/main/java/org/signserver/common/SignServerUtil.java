@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.cesecore.util.CertTools;
 
 /**
@@ -43,6 +44,13 @@ public class SignServerUtil {
             Security.removeProvider("BC");
             if (Security.addProvider(new BouncyCastleProvider()) < 0) {
                 LOG.error("Cannot even install BC provider again!");
+            }
+
+        }
+        if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
+            Security.removeProvider("BCPQC");
+            if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
+                LOG.error("Cannot even install BCPQCprovider again!");
             }
 
         }

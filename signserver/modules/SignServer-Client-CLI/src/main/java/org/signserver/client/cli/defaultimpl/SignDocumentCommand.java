@@ -18,6 +18,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -362,7 +363,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
         host = line.getOptionValue(HOST);
-        
+                
         if (line.hasOption(HOSTS)) {
             final String hostsString = line.getOptionValue(HOSTS);
             
@@ -621,6 +622,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             hosts = Collections.singletonList(host);
         } else if (hosts == null && host == null) {
             hosts = Collections.singletonList(KeyStoreOptions.DEFAULT_HOST);
+            host = KeyStoreOptions.DEFAULT_HOST;
         }
         
         if (hosts.isEmpty()) {
@@ -728,7 +730,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (rejectedFileType) {
             throw new CommandFailureException("Could not find file handler factory supporting file type: " + fileType);
         } else {
-            throw new CommandFailureException("Client-side hashing and contruction is not supported");
+            throw new CommandFailureException("Client-side hashing and construction is not supported");
         }
     }
 
@@ -958,13 +960,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     throw new SignServerException("Could not find certificate chain matching signing key");
                 }
 
+                final PublicKey publicKey = signCertChain.get(0).getPublicKey();
+                final String digestAlgorithm =
+                    KeyStoreOptions.suggestDigestAlgorithm(publicKey);
                 final String signatureAlgorithm =
-                    KeyStoreOptions.suggestSignatureAlgorithm(signCertChain.get(0).getPublicKey());
+                    KeyStoreOptions.suggestSignatureAlgorithm(publicKey);
                 final PrivateKey privateKey = keyStoreOptions.getSignPrivateKey();
                 
-                final byte[] requestDataDigest = inputSource.getHash("SHA-256"); 
+                final byte[] requestDataDigest =
+                        inputSource.getHash(digestAlgorithm); 
 
-                SignedRequestSigningHelper.addRequestSignature("SHA-256",
+                SignedRequestSigningHelper.addRequestSignature(digestAlgorithm,
                                                                requestDataDigest,
                                                                metadata,
                                                                fileName,

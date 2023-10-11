@@ -44,7 +44,6 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.Selector;
@@ -777,7 +776,7 @@ public class RenewalWorker extends BaseSigner {
             final Collection<? extends X509CertificateHolder> certs) {
         X509CertificateHolder result = null;
         for (X509CertificateHolder cert : certs) {
-            Extension extension = cert.getExtension(X509Extension.basicConstraints);
+            Extension extension = cert.getExtension(Extension.basicConstraints);
             if (extension == null) {
                 result = cert;
                 break;

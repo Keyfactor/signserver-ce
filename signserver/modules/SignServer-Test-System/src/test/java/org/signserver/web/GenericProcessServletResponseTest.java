@@ -16,6 +16,7 @@ import org.signserver.testutils.WebTestCase;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,6 @@ import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.junit.Test;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.server.signers.EchoRequestMetadataSigner;
 import org.signserver.testutils.ModulesTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -219,9 +219,42 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("data", "Something to sign...");
 
         final String expectedResponseFilename = "mydocument.dat.p7s";
-        final String expected = "attachment; filename=\"" + expectedResponseFilename + "\"";
+        final String expected = "attachment; filename=\""
+                + expectedResponseFilename + "\"; filename*=UTF-8''"
+                + "mydocument.dat.p7s";
 
         HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "mydocument.dat");
+        assertEquals(200, con.getResponseCode());
+
+        final String actual = con.getHeaderField("Content-Disposition");
+        assertEquals("Returned filename", expected, actual);
+
+        con.disconnect();
+    }
+
+    /**
+     * <pre>
+     * Tests filename containing a special character that looks
+     * like an 'ä' but is actually just an 'a' with two dots over it.
+     * Character 'a' with two dots hex: 61 CC 88
+     * Character 'ä' hex:               C3 A4
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    public void test06AttachmentFileNameAsterisk() throws Exception {
+        Map<String, String> fields = new HashMap<>();
+        fields.put("workerName", getSignerNameCMSSigner1());
+        fields.put("data", "Something to sign...");
+
+        final String expectedResponseFilename = "xa\bx.dat.p7s";
+        final String expectedResponseFilenameAsterisk = "xa%CC%88x.dat.p7s";
+        final String expected = "attachment; filename=\""
+                + expectedResponseFilename + "\"; filename*=UTF-8''"
+                + expectedResponseFilenameAsterisk;
+
+        // NOTE: the "a" character with two dots are not an actual "ä"
+        HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "xäx.dat");
         assertEquals(200, con.getResponseCode());
 
         final String actual = con.getHeaderField("Content-Disposition");
@@ -520,6 +553,103 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             assertStatusReturned(fields, 413);
         } finally {
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
+            getGlobalSession().reload();
+            // Wait for caching in GenericProcessServlet to expire
+            Thread.sleep(UPLOAD_CONFIG_CACHE_TIME);
+        }
+    }
+
+    /**
+     * Tests that the default maximum upload field count is enforced.
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void test23MaxUploadFieldCountDefault() throws IOException {
+
+        // Testing default limit value
+        Map<String, String> fields = new HashMap<>();
+        fields.put("workerName", getSignerNameCMSSigner1());
+        for (int i = 1; i < 16; i++) {
+            fields.put("data" + i, "Something to sign...");
+        }
+
+        HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "mydocument.dat");
+        assertEquals(200, con.getResponseCode());
+
+        // Testing over default value
+        Map<String, String> fields2 = new HashMap<>();
+        fields2.put("workerName", getSignerNameCMSSigner1());
+        for (int i = 1; i < 17; i++) {
+            fields2.put("data" + i, "Something to sign...");
+        }
+
+        con = sendPostMultipartFormData(getServletURL(), fields2, "mydocument.dat");
+        assertEquals(400, con.getResponseCode());
+
+        // Testing under default limit
+        Map<String, String> fields3 = new HashMap<>();
+        fields3.put("workerName", getSignerNameCMSSigner1());
+        for (int i = 1; i < 5; i++) {
+            fields3.put("data" + i, "Something to sign...");
+        }
+
+        con = sendPostMultipartFormData(getServletURL(), fields3, "mydocument.dat");
+        assertEquals(200, con.getResponseCode());
+
+        con.disconnect();
+
+    }
+
+    /**
+     * Tests that the set maximum upload field count is enforced.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test23MaxUploadFieldCount() throws IOException, InterruptedException {
+
+        try {
+            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_FIELD_COUNT", "5");
+            getGlobalSession().reload();
+            // Wait for caching in GenericProcessServlet to expire
+            Thread.sleep(UPLOAD_CONFIG_CACHE_TIME);
+
+            // Testing set value
+            Map<String, String> fields = new HashMap<>();
+            fields.put("workerName", getSignerNameCMSSigner1());
+            for (int i = 1; i < 5; i++) {
+                fields.put("data" + i, "Something to sign...");
+            }
+
+            HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "mydocument.dat");
+            assertEquals(200, con.getResponseCode());
+
+            // Testing over set value
+            Map<String, String> fields2 = new HashMap<>();
+            fields2.put("workerName", getSignerNameCMSSigner1());
+            for (int i = 1; i < 6; i++) {
+                fields2.put("data" + i, "Something to sign...");
+            }
+
+            con = sendPostMultipartFormData(getServletURL(), fields2, "mydocument.dat");
+            assertEquals(400, con.getResponseCode());
+
+            // Testing under set limit
+            Map<String, String> fields3 = new HashMap<>();
+            fields3.put("workerName", getSignerNameCMSSigner1());
+            for (int i = 1; i < 4; i++) {
+                fields3.put("data" + i, "Something to sign...");
+            }
+
+            con = sendPostMultipartFormData(getServletURL(), fields3, "mydocument.dat");
+            assertEquals(200, con.getResponseCode());
+
+            con.disconnect();
+
+        } finally {
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_FIELD_COUNT");
             getGlobalSession().reload();
             // Wait for caching in GenericProcessServlet to expire
             Thread.sleep(UPLOAD_CONFIG_CACHE_TIME);

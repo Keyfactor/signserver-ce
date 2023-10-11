@@ -16,6 +16,13 @@
     <properties>
       <property name="hibernate.dialect" value="${hibernate.dialect}"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+  <!--COMMENT-REPLACEMENT(hibernatedatabasecachingheader)-->
+      <property name="hibernate.cache.use_second_level_cache" value="false"/>
+      <property name="hibernate.cache.use_query_cache" value="false"/>
+      <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.internal.NoCachingRegionFactory"/>
+  <!--COMMENT-REPLACEMENT(hibernatedatabasecachingfooter)-->
+
     </properties>
   </persistence-unit>
 
@@ -32,6 +39,11 @@
             <property name="hibernate.query.jpaql_strict_compliance" value="true"/>
 
             <property name="hibernate.show_sql" value="false"/>
+          <!--COMMENT-REPLACEMENT(hibernatedatabasecachingheader)-->
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.internal.NoCachingRegionFactory"/>
+          <!--COMMENT-REPLACEMENT(hibernatedatabasecachingfooter)-->
         </properties>
     </persistence-unit>
 

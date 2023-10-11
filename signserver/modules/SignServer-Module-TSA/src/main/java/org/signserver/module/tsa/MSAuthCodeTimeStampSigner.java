@@ -485,9 +485,10 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
      */
     private ITimeSource getTimeSource() throws SignServerException {
         if (timeSource == null) {
+            String classpath = null;
             try {
-                String classpath
-                        = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE);
+                classpath
+                        = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE).trim();
 
                 final Class<?> implClass = Class.forName(classpath);
                 final Object obj = implClass.newInstance();
@@ -495,7 +496,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 timeSource.init(config.getProperties());
 
             } catch (ClassNotFoundException e) {
-                throw new SignServerException("Class not found", e);
+                throw new SignServerException("Class not found" + " \"" + classpath + "\"", e);
             } catch (IllegalAccessException iae) {
                 throw new SignServerException("Illegal access", iae);
             } catch (InstantiationException ie) {
@@ -646,7 +647,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     result.add("Missing extended key usage timeStamping");
                 }
                 if (cert.getCriticalExtensionOIDs() == null
-                        || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
+                        || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.Extension.extendedKeyUsage.getId())) {
                     result.add("The extended key usage extension must be present and marked as critical");
                 }
                 // if extended key usage contains timeStamping and also other

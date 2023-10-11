@@ -4,12 +4,12 @@
     <parent>
     <artifactId>SignServer-Modules</artifactId>
     <groupId>org.signserver</groupId>
-    <version>5.9.2.Alpha1-SNAPSHOT</version>
+    <version>6.2.0.Beta1-SNAPSHOT</version>
   </parent>
 
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-Doc-web</artifactId>
-    <version>5.9.2.Alpha1-SNAPSHOT</version>
+    <version>6.2.0.Beta1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>SignServer-Doc-web</name>
@@ -30,8 +30,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

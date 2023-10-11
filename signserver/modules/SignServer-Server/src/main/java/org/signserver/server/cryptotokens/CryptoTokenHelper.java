@@ -44,7 +44,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -513,15 +512,43 @@ public class CryptoTokenHelper {
      * @return One signature algorithm that should work with the key type
      */
     public static String suggestSigAlg(PublicKey key) {
-        final String alg;
-        if (key instanceof ECKey) {
-            alg = "SHA256withECDSA";
-        } else if (key instanceof RSAKey) {
-            alg = "SHA256withRSA";
-        } else if (key instanceof DSAKey) {
-            alg = "SHA256withDSA";
-        } else {
-            alg = null;
+        String alg = null;
+        if (key != null) {
+            switch (key.getAlgorithm()) {
+                case "EC":
+                case "ECDSA":
+                    alg = "SHA256withECDSA";
+                    break;
+                case "RSA":
+                    alg = "SHA256withRSA";
+                    break;
+                case "DSA":
+                    alg = "SHA256withDSA";
+                    break;
+                case "Ed25519":
+                    alg = "Ed25519";
+                    break;
+                case "Ed448":
+                    alg = "Ed448";
+                    break;
+                case "ED":
+                case "Ed":
+                case "EDDSA":
+                case "EdDSA":
+                    alg = "Ed25519";
+                    break;
+            }
+            if (alg == null) {
+                if (key instanceof ECKey) {
+                    alg = "SHA256withECDSA";
+                } else if (key instanceof RSAKey) {
+                    alg = "SHA256withRSA";
+                } else if (key instanceof DSAKey) {
+                    alg = "SHA256withDSA";
+                } else {
+                    alg = null;
+                }
+            }
         }
         return alg;
     }
@@ -602,7 +629,7 @@ public class CryptoTokenHelper {
 
         final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
 
-        return new JcaX509CertificateConverter().getCertificate(cg.build(new BufferingContentSigner(contentSigner)));
+        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(cg.build(new BufferingContentSigner(contentSigner)));
     }
 
     public static TokenSearchResults searchTokenEntries(final KeyStoreDelegator keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {
@@ -781,15 +808,23 @@ public class CryptoTokenHelper {
             throw new InvalidAlgorithmParameterException("Invalid specification of public exponent");
         }
 
-        final int keyLength = Integer.parseInt(parts[0].trim());
+        final int keyLength;
+        try {
+            keyLength = Integer.parseInt(parts[0].trim());
+        } catch (NumberFormatException ex) {
+            throw new InvalidAlgorithmParameterException("Invalid key length " + ex.getMessage(), ex);
+        }
+
         final String exponentString = parts[1].trim();
         final BigInteger exponent;
-
-        if (exponentString.startsWith("0x")) {
-            exponent =
-                    new BigInteger(exponentString.substring(2), 16);
-        } else {
-            exponent = new BigInteger(exponentString);
+        try {
+            if (exponentString.startsWith("0x")) {
+                exponent = new BigInteger(exponentString.substring(2), 16);
+            } else {
+                exponent = new BigInteger(exponentString);
+            }
+        } catch (NumberFormatException ex) {
+            throw new InvalidAlgorithmParameterException("Invalid exponent " + ex.getMessage(), ex);
         }
 
         return new RSAKeyGenParameterSpec(keyLength, exponent);
@@ -893,23 +928,6 @@ public class CryptoTokenHelper {
         }
         return keyUsageCounterValue;
     }
-    
-    /**
-     * @return True if the JRE has been patched with additional PKCS#11 features
-     */
-    public static boolean isJREPatched() {
-        boolean result = true;
-        try {
-            Class.forName("sun.security.pkcs11.P11AsymmetricParameterSpec");
-            LOG.debug("JRE patched");
-        } catch (ClassNotFoundException ex) {
-            result = false;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("JRE not patched: " + ex.getMessage());
-            }
-        }
-        return result;
-    }  
         
     /**
      * Identifies whether KeyPair or Key should be generated for provided keyAlgorithm.

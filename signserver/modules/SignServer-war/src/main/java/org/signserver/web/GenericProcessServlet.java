@@ -15,6 +15,8 @@ package org.signserver.web;
 import org.signserver.web.common.ServletUtils;
 import org.signserver.server.data.impl.BinaryFileUpload;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -58,6 +60,7 @@ import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.Loggable;
 import org.signserver.validationservice.common.Validation;
 import javax.servlet.http.Cookie;
+import org.apache.commons.fileupload.FileCountLimitExceededException;
 import org.signserver.common.RequestContext;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 
@@ -90,6 +93,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
     private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
     private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
+    private static final String HTTP_MAX_UPLOAD_FIELD_COUNT = "HTTP_MAX_UPLOAD_FIELD_COUNT";
 
     private enum ProcessType {
         signDocument,
@@ -158,6 +162,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             if (ServletFileUpload.isMultipartContent(req)) {
                 final ServletFileUpload upload = new ServletFileUpload(factory);
                 upload.setSizeMax(uploadConfig.getMaxUploadSize());
+                upload.setFileCountMax(uploadConfig.getMaxUploadCount());
 
                 try {
                     final List<FileItem> items = upload.parseRequest(req);
@@ -275,6 +280,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                         "Maximum content length is " + uploadConfig.getMaxUploadSize() + " bytes");
                     return;
+                } catch (FileCountLimitExceededException ex) {
+                    LOG.error(HTTP_MAX_UPLOAD_FIELD_COUNT + " exceeded: " + ex.getLocalizedMessage(), ex);
+                    res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Maximum field count is " + uploadConfig.getMaxUploadCount());
+                    return;
                 } catch (FileUploadException ex) {
                     throw new ServletException("Upload failed", ex);
                 }
@@ -342,7 +351,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         sendBadRequest(res, "Missing field 'data' in request");
                         return;
                     }
-                    byte[] bytes = req.getParameter(DATA_PROPERTY_NAME).getBytes();
+                    byte[] bytes = req.getParameter(DATA_PROPERTY_NAME).getBytes(StandardCharsets.US_ASCII);
 
                     String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
                     if (encoding != null && !encoding.isEmpty()) {
@@ -554,10 +563,12 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     final Response response = processSession.process(new AdminInfo("Client user", null, null), wi,
                             new SignatureRequest(requestId, data, responseData), context);
 
-
                     Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
                     if (responseFileName instanceof String) {
-                        res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
+                        // Use percentage encoding for filename* according to RFC 5987
+                        res.setHeader("Content-Disposition", "attachment; filename=\""
+                                + responseFileName + "\"; filename*=UTF-8''"
+                                + URLEncoder.encode((String) responseFileName, "UTF-8").replaceAll("\\+", "%20"));
                     }
 
                     if (response instanceof SignatureResponse) {

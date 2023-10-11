@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer</artifactId>
-    <version>5.9.2.Alpha1-SNAPSHOT</version>
+    <version>6.2.0.Beta1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SignServer</name>
     <properties>
@@ -10,26 +10,23 @@
         <fixedTime/>
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
 
-        <!-- BouncyCastle artifacts name, so we can easily switch to the debug ones -->
+        <!-- Bouncy Castle artifacts name, so we can easily switch to the debug ones -->
         <bouncycastle.bcpg.artifact>bcpg-jdk18on</bouncycastle.bcpg.artifact>
         <bouncycastle.bcpkix.artifact>bcpkix-jdk18on</bouncycastle.bcpkix.artifact>
         <bouncycastle.bcprov.artifact>bcprov-jdk18on</bouncycastle.bcprov.artifact>
         <bouncycastle.bcutil.artifact>bcutil-jdk18on</bouncycastle.bcutil.artifact>
 
-        <!-- BouncyCastle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.71</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.71</bouncycastle.bcpkix.artifact.version>
-        <bouncycastle.bcprov.artifact.version>1.71</bouncycastle.bcprov.artifact.version>
-        <bouncycastle.bcutil.artifact.version>1.71</bouncycastle.bcutil.artifact.version>
+        <!-- Bouncy Castle artifacts version -->
+        <bouncycastle.bcpg.artifact.version>1.74</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.74</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcprov.artifact.version>1.74</bouncycastle.bcprov.artifact.version>
+        <bouncycastle.bcutil.artifact.version>1.74</bouncycastle.bcutil.artifact.version>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- 3rd party libraries as a set of release(s) -->
-        <jackson.version>2.11.2</jackson.version>
-
-        <dss.framework.version>5.8</dss.framework.version>
+        <dss.framework.version>5.9</dss.framework.version>
     </properties>
 
     <profiles>
@@ -108,12 +105,12 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-reload4j</artifactId>
-                <version>1.7.35</version>
+                <version>2.0.6</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.35</version>
+                <version>2.0.6</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -124,6 +121,11 @@
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.11</version>
             </dependency>
             <dependency>
                 <groupId>commons-configuration</groupId>
@@ -143,7 +145,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.4</version>
+                <version>1.5</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -155,41 +157,102 @@
                 <artifactId>commons-codec</artifactId>
                 <version>1.15</version>
             </dependency>
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>3.9.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
-                <version>2.1.7</version>
+                <version>2.2.3</version>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.12.1</version>
+                <version>2.12.2</version>
             </dependency>
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
-                <version>2.7.2</version>
+                <version>2.7.3</version>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>serializer</artifactId>
+                <version>2.7.3</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.tomee</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>7.0-1</version>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>8.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.4.0-b180830.0359</version>
-                <scope>provided</scope>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.jws</groupId>
+                <artifactId>jakarta.jws-api</artifactId>
+                <version>2.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.activation</groupId>
+                <artifactId>jakarta.activation</artifactId>
+                <version>1.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.soap</groupId>
+                <artifactId>jakarta.xml.soap-api</artifactId>
+                <version>1.4.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.keyfactor</groupId>
+                <artifactId>x509-common-util</artifactId>
+                <version>0.7.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>p11ng</artifactId>
+                <version>0.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>32.1.2-jre</version>
             </dependency>
 
             <dependency>
@@ -201,6 +264,7 @@
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcpkix-jdk15on</artifactId>
                     </exclusion>
+  
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcprov-jdk15on</artifactId>
@@ -283,15 +347,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.signserver.jsign</groupId>
+                <groupId>net.jsign</groupId>
                 <artifactId>jsign-core</artifactId>
-                <version>3.1-signserver5.5</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.signserver.xades4j</groupId>
-                <artifactId>xades4j</artifactId>
-                <version>1.3.2-signserver4</version>
+                <version>5.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
@@ -302,6 +360,32 @@
                         <artifactId>bcprov-jdk15on</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.googlecode.xades4j</groupId>
+                <artifactId>xades4j</artifactId>
+                <version>2.0.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>5.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-multibindings</artifactId>
+                <version>4.2.3</version>
             </dependency>
 
             <dependency>
@@ -329,50 +413,55 @@
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-soap</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-jaxb</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-simple</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
                 <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-core</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
                 <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxws</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-wsdl</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-jetty</artifactId>
-                <version>3.3.11</version>
+                <version>3.5.5</version>
             </dependency>
 	    <dependency>
-            	<groupId>org.codehaus.woodstox</groupId>
-            	<artifactId>woodstox-core-asl</artifactId>
-            	<version>4.4.1</version>
-            </dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
+            <version>3.1.4</version>
+        </dependency>
 	    <dependency>
     		<groupId>org.apache.geronimo.specs</groupId>
     		<artifactId>geronimo-osgi-locator</artifactId>
@@ -381,27 +470,38 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.42.v20210604</version>
+                <version>9.4.51.v20230217</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
-                <version>9.4.42.v20210604</version>
+                <version>9.4.51.v20230217</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-http</artifactId>
+                <version>9.4.51.v20230217</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-io</artifactId>
+                <version>9.4.51.v20230217</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.7</version>
+                <version>4.5.14</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>4.4.11</version>
+                <version>4.4.16</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
-                <version>4.5.7</version>
+                <version>4.5.14</version>
             </dependency>
             <dependency>
             <groupId>org.apache.poi</groupId>
@@ -421,36 +521,36 @@
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
-                <version>0.11.0</version>
+                <version>0.11.5</version>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-impl</artifactId>
-                <version>0.11.0</version>
+                <version>0.11.5</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
-                <version>0.11.0</version>
+                <version>0.11.5</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
+                <version>2.12.6</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <version>2.12.7.1</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>2.12.6</version>
             </dependency>
             <dependency>
                 <groupId>org.signserver.apksig</groupId>
@@ -460,7 +560,7 @@
             <dependency>
                 <groupId>com.github.librepdf</groupId>
                 <artifactId>openpdf</artifactId>
-                <version>1.3.28</version>
+                <version>1.3.30</version>
             </dependency>
 
             <dependency>
@@ -481,7 +581,13 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>2.12.6</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>2.3.2</version>
             </dependency>
 
             <!-- DSS Framework dependencies -->
@@ -494,6 +600,16 @@
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-spi</artifactId>
                 <version>${dss.framework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -519,6 +635,16 @@
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-crl-parser</artifactId>
                 <version>${dss.framework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -628,7 +754,7 @@
                 <plugin>
                     <groupId>com.helger.maven</groupId>
                     <artifactId>jaxws-maven-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.6.2</version>
                 </plugin>
 
                 <plugin>

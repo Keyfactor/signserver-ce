@@ -5,7 +5,7 @@
   <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.9.2.Alpha1-SNAPSHOT</version>
+        <version>6.2.0.Beta1-SNAPSHOT</version>
     </parent>
   <artifactId>SignServer-Server</artifactId>
   <name>SignServer-Server</name>
@@ -23,6 +23,11 @@
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
         </exclusion>
+        <!-- DSS-2643: Workaround for PKCS11CryptoToken available in x509-common-util conflicing with the one from cesecore-common -->
+        <exclusion>
+          <groupId>com.keyfactor</groupId>
+          <artifactId>x509-common-util</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -38,7 +43,6 @@
     <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
-      <version>2.3.2</version>
       <exclusions>
         <exclusion>
           <groupId>c3p0</groupId>
@@ -86,12 +90,6 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>SignServer-Compile</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.signserver.jacknji11</groupId>

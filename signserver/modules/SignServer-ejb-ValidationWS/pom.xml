@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.9.2.Alpha1-SNAPSHOT</version>
+        <version>6.2.0.Beta1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-ejb-ValidationWS</artifactId>
     <packaging>ejb</packaging>
@@ -45,9 +45,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
         </dependency>
     </dependencies>
 

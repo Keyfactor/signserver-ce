@@ -487,7 +487,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 context.setServices(services);
                 ICryptoInstance crypto = null;
                 try {
-                    crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), alias, context);
+                    crypto = acquireDefaultCryptoInstance(new HashMap<>(),
+                                                          alias, context);
                     result = crypto.getCertificate();
                 } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
                     throw new CryptoTokenOfflineException("Unable to get certificate from token: " + ex.getLocalizedMessage(), ex);
@@ -1007,7 +1008,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     protected ICryptoInstance acquireDefaultCryptoInstance(RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
-        return acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
+        return acquireDefaultCryptoInstance(new HashMap<>(), context);
     }
 
     protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {

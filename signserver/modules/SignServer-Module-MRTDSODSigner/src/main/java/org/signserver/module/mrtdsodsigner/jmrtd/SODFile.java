@@ -28,11 +28,14 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -108,8 +111,8 @@ public class SODFile extends PassportFile
 	private static final ASN1ObjectIdentifier PKCS1_MD4_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.3");
 	private static final ASN1ObjectIdentifier PKCS1_MD5_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.4");
 	private static final ASN1ObjectIdentifier PKCS1_SHA1_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.5");
-    private static final ASN1ObjectIdentifier PKCS1_MGF1_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.8");
-    private static final ASN1ObjectIdentifier PKCS1_RSA_PSS_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.10");
+        private static final ASN1ObjectIdentifier PKCS1_MGF1_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.8");
+        private static final ASN1ObjectIdentifier PKCS1_RSA_PSS_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.10");
 	private static final ASN1ObjectIdentifier PKCS1_SHA256_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.11");
 	private static final ASN1ObjectIdentifier PKCS1_SHA384_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.12");
 	private static final ASN1ObjectIdentifier PKCS1_SHA512_WITH_RSA_OID = new ASN1ObjectIdentifier("1.2.840.113549.1.1.13");
@@ -117,6 +120,8 @@ public class SODFile extends PassportFile
 	private static final ASN1ObjectIdentifier X9_SHA1_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.1");
 	private static final ASN1ObjectIdentifier X9_SHA224_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.1");
 	private static final ASN1ObjectIdentifier X9_SHA256_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.2");
+        private static final ASN1ObjectIdentifier X9_SHA384_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.3");
+        private static final ASN1ObjectIdentifier X9_SHA512_WITH_ECDSA_OID = new ASN1ObjectIdentifier("1.2.840.10045.4.3.4");
 	private static final ASN1ObjectIdentifier IEEE_P1363_SHA1_OID = new ASN1ObjectIdentifier("1.3.14.3.2.26");
 
     private static final HashMap<String, ASN1Encodable> algorithmParameters =
@@ -189,12 +194,15 @@ public class SODFile extends PassportFile
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
      * @throws java.io.IOException
+     * @throws java.security.InvalidKeyException if Encryption Algorithm does not match Private Key
+     * @throws java.security.SignatureException if unable to sign data
+     * @throws java.security.NoSuchProviderException if provider parameter is not recognized
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
             PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider)
-    throws NoSuchAlgorithmException, CertificateException, IOException {
+    throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         signedData = createSignedData(digestAlgorithm,
                 digestEncryptionAlgorithm,
                 dataGroupHashes,
@@ -217,13 +225,16 @@ public class SODFile extends PassportFile
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
      * @throws java.io.IOException
+     * @throws java.security.InvalidKeyException if Encryption Algorithm does not match Private Key
+     * @throws java.security.SignatureException if unable to sign data
+     * @throws java.security.NoSuchProviderException if provider parameter is not recognized
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
             PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider,
             String ldsVersion, String unicodeVersion)
-    throws NoSuchAlgorithmException, CertificateException, IOException {
+    throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         signedData = createSignedData(digestAlgorithm,
                 digestEncryptionAlgorithm,
                 dataGroupHashes,
@@ -243,12 +254,15 @@ public class SODFile extends PassportFile
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
      * @throws java.io.IOException
+     * @throws java.security.InvalidKeyException if Encryption Algorithm does not match Private Key
+     * @throws java.security.SignatureException if unable to sign data
+     * @throws java.security.NoSuchProviderException if provider parameter is not recognized
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
             PrivateKey privateKey,
             X509Certificate docSigningCertificate)
-    throws NoSuchAlgorithmException, CertificateException, IOException {
+    throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         signedData = createSignedData(digestAlgorithm,
                 digestEncryptionAlgorithm,
                 dataGroupHashes,
@@ -731,7 +745,7 @@ public class SODFile extends PassportFile
             String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes, PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider)
-            throws NoSuchAlgorithmException, CertificateException, IOException {
+            throws NoSuchAlgorithmException, CertificateException, IOException, InvalidKeyException, SignatureException, NoSuchProviderException {
         return createSignedData(digestAlgorithm, digestEncryptionAlgorithm,
                 dataGroupHashes, privateKey, docSigningCertificate, provider,
                 null, null);
@@ -742,7 +756,7 @@ public class SODFile extends PassportFile
             Map<Integer, byte[]> dataGroupHashes, PrivateKey privateKey,
             X509Certificate docSigningCertificate, String provider,
             String ldsVersion, String unicodeVersion)
-            throws NoSuchAlgorithmException, CertificateException, IOException {
+            throws NoSuchAlgorithmException, CertificateException, InvalidKeyException, SignatureException, NoSuchProviderException, IOException {
         ASN1Set digestAlgorithmsSet = createSingletonSet(createDigestAlgorithms(digestAlgorithm));
         ContentInfo contentInfo = createContentInfo(digestAlgorithm,
                         dataGroupHashes, ldsVersion, unicodeVersion);
@@ -781,10 +795,8 @@ public class SODFile extends PassportFile
         }
         catch (NoSuchAlgorithmException e) {
             throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        } 
+        
         ASN1Set certificates = createSingletonSet(createCertificate(docSigningCertificate));
         ASN1Set crls = null;
         ASN1Set signerInfos = createSingletonSet(createSignerInfo(
@@ -909,7 +921,9 @@ public class SODFile extends PassportFile
 		if(oid.equals(NISTObjectIdentifiers.id_sha512)) { return "SHA512"; }
 		if (oid.equals(X9_SHA1_WITH_ECDSA_OID)) { return "SHA1withECDSA"; }
 		if (oid.equals(X9_SHA224_WITH_ECDSA_OID)) { return "SHA224withECDSA"; }
-		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }		
+		if (oid.equals(X9_SHA256_WITH_ECDSA_OID)) { return "SHA256withECDSA"; }
+                if (oid.equals(X9_SHA384_WITH_ECDSA_OID)) { return "SHA384withECDSA"; }
+                if (oid.equals(X9_SHA512_WITH_ECDSA_OID)) { return "SHA512withECDSA"; }
                 if (oid.equals(PKCS1_MGF1_OID)) { return "MGF1"; }
 		if (oid.equals(PKCS1_RSA_OID)) { return "RSA"; }
 		if (oid.equals(PKCS1_MD2_WITH_RSA_OID)) { return "MD2withRSA"; }
@@ -949,6 +963,8 @@ public class SODFile extends PassportFile
 		if (name.equalsIgnoreCase("SHA1withECDSA")) { return X9_SHA1_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("SHA224withECDSA")) { return X9_SHA224_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("SHA256withECDSA")) { return X9_SHA256_WITH_ECDSA_OID; }
+                if (name.equalsIgnoreCase("SHA384withECDSA")) { return X9_SHA384_WITH_ECDSA_OID; }
+                if (name.equalsIgnoreCase("SHA512withECDSA")) { return X9_SHA512_WITH_ECDSA_OID; }
 		if (name.equalsIgnoreCase("MGF1")) { return  PKCS1_MGF1_OID; }
                 if (name.equalsIgnoreCase("SHA1withRSAandMGF1")) { return  PKCS1_RSA_PSS_OID; }
                 if (name.equalsIgnoreCase("SHA224withRSAandMGF1")) { return PKCS1_RSA_PSS_OID; }

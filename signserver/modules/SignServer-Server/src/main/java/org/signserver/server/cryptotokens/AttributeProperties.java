@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -64,7 +65,7 @@ public class AttributeProperties {
                     if (nextDot == -1 || keyAttribute.length() < nextDot + 1) {
                         throw new IllegalArgumentException("Incorrect attribute property name: " + attributeObjectKeyAttribute);
                     } else {
-                        final String keyType = keyAttribute.substring(0, nextDot);
+                        final String keyType = keyAttribute.substring(0, nextDot).toUpperCase(Locale.ENGLISH);
                         
                         List<Attribute> publicTemplate = publicTemplateMap.get(keyType);
                         if (publicTemplate == null) {
@@ -161,7 +162,7 @@ public class AttributeProperties {
      * @return list of attributes
      */
     public List<Attribute> getPublicTemplate(final String keyType) {
-        return publicTemplateMap.get(keyType);
+        return publicTemplateMap.get(keyType.toUpperCase(Locale.ENGLISH));
     }
 
     /**
@@ -170,7 +171,7 @@ public class AttributeProperties {
      * @return list of attributes
      */
     public List<Attribute> getPrivateTemplate(final String keyType) {
-        return privateTemplateMap.get(keyType);
+        return privateTemplateMap.get(keyType.toUpperCase(Locale.ENGLISH));
     }        
 
     /**

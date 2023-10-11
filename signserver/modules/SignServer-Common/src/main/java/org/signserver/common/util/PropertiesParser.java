@@ -166,7 +166,7 @@ public class PropertiesParser {
         Enumeration<?> iter = properties.keys();
         while (iter.hasMoreElements()) {
             String key = (String) iter.nextElement();
-            processKey(key.toUpperCase(), properties.getProperty(key));
+            processKey(key.toUpperCase(Locale.ENGLISH), properties.getProperty(key));
         }
 
         // Process Gen2 auth client rules if exist
@@ -299,10 +299,10 @@ public class PropertiesParser {
                 addAuthorizedClient(workerIdOrName, ac);
             }
         } else {
-            if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
+            if (propertykey.equals(DOT_SIGNERCERTIFICATE.substring(1))) {
                 signerCertificates.put(workerIdOrName, Base64.decode(propertyvalue.getBytes()));
             } else {
-                if (propertykey.startsWith(DOT_SIGNERCERTCHAIN.substring(1))) {
+                if (propertykey.equals(DOT_SIGNERCERTCHAIN.substring(1))) {
                     String certs[] = propertyvalue.split(";");
                     ArrayList<byte[]> chain = new ArrayList<>();
                     for (String base64cert : certs) {

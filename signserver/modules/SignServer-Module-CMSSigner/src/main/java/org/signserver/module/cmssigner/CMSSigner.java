@@ -265,7 +265,45 @@ public class CMSSigner extends BaseSigner {
     protected boolean extendsCMSData() {
         return false;
     }
-    
+
+    protected boolean isDerReEncode() {
+        return derReEncode;
+    }
+
+    /**
+     * Determine if detached signature should be used, based on worker
+     * configuration, or request.
+     *
+     * @param requestContext
+     * @return true if detached signature should be used
+     * @throws IllegalRequestException 
+     */
+    protected boolean shouldUseDetachedSignature(final RequestContext requestContext) throws IllegalRequestException {
+        // Should the content be detached or not
+        final boolean detached;
+        final Boolean detachedRequested = getDetachedSignatureRequest(requestContext);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Detached signature configured: " + detachedSignature + "\n"
+                    + "Detached signature requested: " + detachedRequested);
+        }
+        if (detachedRequested == null) {
+            detached = detachedSignature;
+        } else {
+            if (detachedRequested) {
+                if (!detachedSignature && !allowDetachedSignatureOverride) {
+                    throw new IllegalRequestException("Detached signature requested but not allowed");
+                }
+            } else {
+                if (detachedSignature && !allowDetachedSignatureOverride) {
+                    throw new IllegalRequestException("Non detached signature requested but not allowed");
+                }
+            }
+            detached = detachedRequested;
+        }
+
+        return detached;
+    }
+
     /**
      * Augment CMSSignedData object with extended attributes.
      * Must be overridden by extending implementations when extendCMSData
@@ -306,26 +344,7 @@ public class CMSSigner extends BaseSigner {
         generator.addCertificates(new JcaCertStore(certs));
         
         // Should the content be detached or not
-        final boolean detached;
-        final Boolean detachedRequested = getDetachedSignatureRequest(requestContext);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Detached signature configured: " + detachedSignature + "\n"
-                    + "Detached signature requested: " + detachedRequested);
-        }
-        if (detachedRequested == null) {
-            detached = detachedSignature;
-        } else {
-            if (detachedRequested) {
-                if (!detachedSignature && !allowDetachedSignatureOverride) {
-                    throw new IllegalRequestException("Detached signature requested but not allowed");
-                }
-            } else {
-                if (detachedSignature && !allowDetachedSignatureOverride) {
-                    throw new IllegalRequestException("Non detached signature requested but not allowed");
-                }
-            }
-            detached = detachedRequested;
-        }
+        final boolean detached = shouldUseDetachedSignature(requestContext);
 
         // Generate the signature
         if (!derReEncode && !extendsCMSData()) {
@@ -582,14 +601,25 @@ public class CMSSigner extends BaseSigner {
     }
     
     private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
-        final String result;
+        String result;
 
-        if (publicKey instanceof ECPublicKey) {
-            result = "SHA256withECDSA";
-        }  else if (publicKey instanceof DSAPublicKey) {
-            result = "SHA256withDSA";
-        } else {
-            result = "SHA256withRSA";
+        switch (publicKey.getAlgorithm()) {
+            case "EC":
+            case "ECDSA":
+                result = "SHA256withECDSA";
+                break;
+            case "DSA":
+                result = "SHA256withDSA";
+                break;
+            case "Ed25519":
+                result = "Ed25519";
+                break;
+            case "Ed448":
+                result = "Ed448";
+                break;
+            case "RSA":
+            default:
+                result = "SHA256withRSA";    
         }
 
         return result;
@@ -627,7 +657,14 @@ public class CMSSigner extends BaseSigner {
         return result;
     }
 
-    protected void sign(ICryptoInstance crypto, X509Certificate cert, List<Certificate> certs, String sigAlg, RequestContext requestContext, ReadableData requestData, WritableData responseData, ASN1ObjectIdentifier contentOIDToUse) throws IllegalRequestException, OperatorCreationException, CertificateEncodingException, CMSException, IOException {
+    protected void sign(ICryptoInstance crypto, X509Certificate cert,
+                        List<Certificate> certs, String sigAlg,
+                        RequestContext requestContext, ReadableData requestData,
+                        WritableData responseData,
+                        ASN1ObjectIdentifier contentOIDToUse)
+            throws IllegalRequestException, OperatorCreationException,
+                   CertificateEncodingException, CMSException, IOException,
+                   SignServerException {
         final boolean useClientSideHashing =
                 clientSideHelper.shouldUseClientSideHashing(requestContext);
         if (LOG.isDebugEnabled()) {

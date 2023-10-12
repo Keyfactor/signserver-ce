@@ -82,6 +82,7 @@ public class CMSSignerTest  {
     private static final ModulesTestCase mt = new ModulesTestCase();
 
     public CMSSignerTest() {
+        mt.setUseRestWorkerSession(true);
         workerSession = mt.getWorkerSession();
         processSession = mt.getProcessSession();
     }

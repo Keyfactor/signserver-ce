@@ -56,8 +56,7 @@ import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
+import io.restassured.http.Method;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -322,16 +321,9 @@ public class CMSSignerTest  {
         JSONObject postRequestJsonBody = new JSONObject();
         postRequestJsonBody.put("data", testDocument);
 
-        final Response response = given()
-                .contentType(JSON)
-                .accept(JSON)
-                .body(postRequestJsonBody)
-                .when()
-                .post(baseURL + "/workers/" + workerId + "/process")
-                .then()
-                .statusCode(200)
-                .contentType("application/json")
-                .extract().response();
+        final Response response =
+                mt.callRest(Method.POST, "/workers/" + workerId + "/process",
+                            postRequestJsonBody);
 
         final JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
 

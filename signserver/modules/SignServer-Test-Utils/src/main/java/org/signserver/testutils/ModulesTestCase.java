@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.testutils;
 
+import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
+import io.restassured.http.Method;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,10 +40,12 @@ import java.util.LinkedList;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLSocketFactory;
 
+import io.restassured.response.Response;
 import org.apache.log4j.Logger;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
+import org.json.simple.JSONObject;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -872,6 +877,30 @@ public class ModulesTestCase {
 
     public String getSignServerBaseURL() {
         return config.getProperty("test.signserver.baseurl", "http://localhost:8080/signserver");
+    }
+
+    public Response callRest(final Method method, final int statusCode,
+                             final String responseContentType,
+                             final String call, final JSONObject body) {
+        final String baseURL = getSignServerBaseURL() + "/rest/v1";
+
+        final Response response = given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(body)
+                .when()
+                .request(method, baseURL + call)
+                .then()
+                .statusCode(statusCode)
+                .contentType(responseContentType)
+                .extract().response();
+        
+        return response;
+    }
+
+    public Response callRest(final Method method, final String call,
+                             final JSONObject body) {
+        return callRest(method, 200, "application/json", call, body);
     }
 
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */

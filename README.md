@@ -26,7 +26,7 @@ In our Community we welcome contributions. The Community software is open source
 * Read more on the open source project website: **[SignServer website](https://www.signserver.org/)**.   
 
 ## Commercial Support
-Commercial support is available for **[SignServer Enterprise](https://www.primekey.com/products/signserver-enterprise/)**.
+Commercial support is available for **[SignServer Enterprise](https://www.keyfactor.com/products/signserver-enterprise/)**.
 
 ## License
 SignServer Community is licensed under the LGPL license, please see **[LICENSE](LICENSE)**. 

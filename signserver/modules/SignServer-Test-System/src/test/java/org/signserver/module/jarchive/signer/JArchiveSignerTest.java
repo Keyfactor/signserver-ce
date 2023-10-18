@@ -98,6 +98,10 @@ public class JArchiveSignerTest {
 
     private final ModulesTestCase helper = new ModulesTestCase();
 
+    public JArchiveSignerTest() {
+        helper.setUseRestWorkerSession(true);
+    }
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         executableFile = new File(PathUtil.getAppHome(), "lib/SignServer-ejb.jar");

@@ -27,7 +27,9 @@ import org.signserver.rest.api.entities.Metadata;
 import org.signserver.rest.api.exception.InternalServerException;
 import org.signserver.rest.api.exception.RequestFailedException;
 import org.signserver.rest.api.io.request.ProcessRequest;
+import org.signserver.rest.api.io.request.WorkerRequest;
 import org.signserver.rest.api.io.response.ProcessResponse;
+import org.signserver.rest.api.io.response.WorkerResponse;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.data.impl.*;
 import org.signserver.server.log.AdminInfo;
@@ -49,6 +51,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -90,6 +93,346 @@ public class WorkerResource {
     }
 
     /**
+     * Add worker REST operation for adding a new worker by given properties and worker ID.
+     *
+     * @param id                 ID of the worker
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @param request            Request data
+     * @return The operation result in a JSON format.
+     * @throws WorkerExistsException In case the given new worker ID already exists.
+     */
+    @POST
+    @Path("{id}/")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "409",
+            description = "Worker already exists.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "201",
+            description = "Worker added successfully"
+    )
+    @Operation(
+            summary = "Submit data for adding a new worker from multiple properties",
+            description = "Submit a worker ID and a list of worker properties to "
+                    + "add a new worker."
+    )
+    public Response addWorker(
+
+            @Context final HttpServletRequest httpServletRequest,
+            @PathParam("id") final int id,
+            @RequestBody(
+                    description = "The request"
+            ) final WorkerRequest request) throws IllegalRequestException {
+        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+        final Map<String, String> tempProperties = request.getProperties();
+        if (tempProperties == null) {
+            LOG.error("Properties in the request is not valid!");
+            throw new IllegalRequestException("Properties in the request body is not valid!");
+        }
+        Map<String, String> properties = tempProperties.keySet().stream()
+                .collect(Collectors.toMap(key -> key.toUpperCase(), key -> tempProperties.get(key)));
+
+        if (properties.containsKey("NAME")) {
+            String workerName = properties.get("NAME");
+            if (checkWorkerNameAlreadyExists(workerName)) {
+                LOG.debug("Worker already exists: " + workerName);
+                throw new WorkerExistsException(workerName);
+            }
+        }
+        workerSession.addWorker(adminInfo, id, properties);
+        return Response.ok().status(201).build();
+    }
+
+
+    /**
+     * Add worker REST operation for adding a new worker by given properties. SignServer generates a new worker ID.
+     *
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @param request            Request data
+     * @return The operation result in a JSON format.
+     * @throws WorkerExistsException In case the given new worker ID already exists.
+     */
+    @POST
+    @Path("/")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "409",
+            description = "Worker already exists.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "201",
+            description = "Worker added successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @Operation(
+            summary = "Submit data for adding a new worker from multiple properties",
+            description = "Submit a worker ID and a list of worker properties to "
+                    + "add a new worker."
+    )
+    public Response addWorkerWithoutID(
+
+            @Context final HttpServletRequest httpServletRequest,
+            @RequestBody(
+                    description = "The request"
+            ) final WorkerRequest request) throws IllegalRequestException {
+        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+
+        Map<String, String> tempProperties = request.getProperties();
+        if (tempProperties == null) {
+            LOG.error("Properties in the request is not valid!");
+            throw new IllegalRequestException("Properties in the request body is not valid!");
+        }
+
+        Map<String, String> properties = tempProperties.keySet().stream()
+                .collect(Collectors.toMap(key -> key.toUpperCase(), key -> tempProperties.get(key)));
+
+        if (properties.containsKey("NAME")) {
+            String workerName = properties.get("NAME");
+            if (checkWorkerNameAlreadyExists(workerName)) {
+                LOG.debug("Worker already exists: " + workerName);
+                throw new WorkerExistsException(workerName);
+            }
+        }
+
+        final int id = workerSession.genFreeWorkerId();
+
+        workerSession.addWorker(adminInfo, id, properties);
+        return Response.ok().status(201).build();
+    }
+
+    /**
+     * Worker properties update REST operation for update/add/remove worker properties for the given worker ID.
+     *
+     * @param id                 ID of the worker
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @param request            Request data
+     * @return The operation result in a JSON format.
+     * @throws NoSuchWorkerException In case the given worker ID not exists.
+     */
+    @PATCH
+    @Path("{id}/")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Properties replaced successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @Operation(
+            summary = "Submit data for update and delete worker properties",
+            description = "Submit a worker ID and a list of worker properties to update or delete."
+    )
+    public Response updateAndDeleteWorkerProperties(
+
+            @Context final HttpServletRequest httpServletRequest,
+            @PathParam("id") final int id,
+            @RequestBody(
+                    description = "The request"
+            ) final WorkerRequest request) throws IllegalRequestException {
+
+        Map<String, String> properties = request.getProperties();
+        Map<String, String> tempProperty = new HashMap<>();
+        List<String> propertiesToRemove = new ArrayList<>();
+
+        // Add the properties starting with "-" to the propertiesToRemove
+        properties.entrySet().stream()
+                .filter(x -> x.getKey().startsWith("-"))
+                .forEach(x -> {
+                    propertiesToRemove.add(x.getKey().substring(1));
+                    tempProperty.put(x.getKey(), x.getValue());
+                });
+        // Remove the "-" from the key name by replacing the keys
+        tempProperty.entrySet().stream()
+                .forEach(x -> {
+                    properties.put(x.getKey().substring(1), x.getValue());
+                    properties.remove(x.getKey());
+                });
+
+        workerSession.addUpdateDeleteWorkerProperties(id, properties, propertiesToRemove);
+
+        return Response.ok(new WorkerResponse("Worker properties successfully updated"))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
+     * Worker properties replace REST operation for replacing all the worker properties with the new ones for the given worker ID.
+     *
+     * @param id                 ID of the worker
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @param request            Request data
+     * @return The operation result in a JSON format.
+     * @throws NoSuchWorkerException In case the given worker ID not exists.
+     */
+    @PUT
+    @Path("{id}/")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Properties replaced successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @Operation(
+            summary = "Submit data for replace worker properties with the new properties",
+            description = "Submit a worker ID and a list of worker properties to replace "
+                    + "with current worker properties."
+    )
+    public Response replaceAllWorkerProperties(
+
+            @Context final HttpServletRequest httpServletRequest,
+            @PathParam("id") final int id,
+            @RequestBody(
+                    description = "The request"
+            ) final WorkerRequest request) throws IllegalRequestException {
+        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+
+        final Map<String, String> properties = request.getProperties();
+        if (properties == null) {
+            LOG.error("Properties in the request is not valid!");
+            throw new IllegalRequestException("Properties in the request body is not valid!");
+        }
+
+        workerSession.replaceWorkerProperties(adminInfo, id, properties);
+        return Response.ok(new WorkerResponse("Worker properties successfully replaced"))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
+     * Worker delete REST operation for removing the worker by the given ID.
+     *
+     * @param id                 ID of the worker
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @return The operation result in a JSON format.
+     * @throws NoSuchWorkerException In case the given worker ID not exists.
+     */
+    @DELETE
+    @Path("{id}/")
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Worker removed successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @Operation(
+            summary = "Removing worker",
+            description = "Removing worker by ID."
+    )
+    public Response removeWorker(
+            @Context final HttpServletRequest httpServletRequest,
+            @PathParam("id") final int id
+    ) throws NoSuchWorkerException {
+        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+
+        workerSession.removeWorker(adminInfo, id);
+
+        return Response.ok(new WorkerResponse("Worker removed successfully!"))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
      * Generic REST operation for request signing of a byte array.
      *
      * @param idOrName           Name or ID of worker to send the request to
@@ -104,57 +447,57 @@ public class WorkerResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
-        responseCode = "400",
-        description = "Bad request from the client",
-        content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(implementation = ErrorMessage.class)
-        )
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
     )
     @APIResponse(
-        responseCode = "404",
-        description = "No such worker",
-        content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(implementation = ErrorMessage.class)
-        )
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
     )
     @APIResponse(
-        responseCode = "503",
-        description = "Crypto Token not available",
-        content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(implementation = ErrorMessage.class)
-        )
+            responseCode = "503",
+            description = "Crypto Token not available",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
     )
     @APIResponse(
-        responseCode = "500",
-        description = "The server were unable to process the request. See server-side logs for more details.",
-        content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(implementation = ErrorMessage.class)
-        )
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
     )
     @APIResponseSchema(
-        value = ProcessResponse.class,
-        responseCode = "200",
-        responseDescription = "The response data"
+            value = ProcessResponse.class,
+            responseCode = "200",
+            responseDescription = "The response data"
     )
     @Operation(
-        summary = "Submit data for processing",
-        description = "Submit data/document/file for processing such as for "
-                + "instance signing and get back the result (i.e. signature)."
+            summary = "Submit data for processing",
+            description = "Submit data/document/file for processing such as for "
+                    + "instance signing and get back the result (i.e. signature)."
     )
     public Response process(
             @Parameter(
-                description = "Worker Id or name of the worker",
-                example = "ExampleSigner1",
-                schema = @Schema(anyOf = {String.class, Integer.class})
+                    description = "Worker Id or name of the worker",
+                    example = "ExampleSigner1",
+                    schema = @Schema(anyOf = {String.class, Integer.class})
             )
             @PathParam("idOrName") final String idOrName,
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
-                description = "The request"
+                    description = "The request"
             ) final ProcessRequest request) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException {
         final List<Metadata> requestMetadata = new ArrayList<>();
         if (request.getMetaData() != null) {
@@ -364,7 +707,11 @@ public class WorkerResource {
 //        if (o instanceof Map) {
 //            return (Map<String, String>) o;
 //        } else {
-            return Collections.emptyMap();
+        return Collections.emptyMap();
 //        }
+    }
+
+    protected boolean checkWorkerNameAlreadyExists(String workerName) {
+        return workerSession.getAllWorkerNames().contains(workerName);
     }
 }

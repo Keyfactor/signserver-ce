@@ -53,8 +53,8 @@ public class LDSVersionInfo
                     "Incorrect sequence size: " + seq.size());
         }
 
-        ldsVersion = DERPrintableString.getInstance(seq.getObjectAt(0));
-        unicodeVersion = DERPrintableString.getInstance(seq.getObjectAt(1));
+        ldsVersion = (DERPrintableString) DERPrintableString.getInstance(seq.getObjectAt(0));
+        unicodeVersion = (DERPrintableString) DERPrintableString.getInstance(seq.getObjectAt(1));
     }
 
     public LDSVersionInfo(

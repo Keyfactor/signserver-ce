@@ -1447,10 +1447,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final ASN1Sequence seq1 = ASN1Sequence.getInstance(res);
         final ASN1Sequence signedData = ASN1Sequence.getInstance(seq1.getObjectAt(1));
         final ASN1TaggedObject tag = ASN1TaggedObject.getInstance(signedData.getObjectAt(1));
-        final ASN1Sequence seq2 = ASN1Sequence.getInstance(tag.getObject());
+        final ASN1Sequence seq2 = ASN1Sequence.getInstance(tag.getBaseObject().toASN1Primitive());
         final ASN1Sequence seq3 = ASN1Sequence.getInstance(seq2.getObjectAt(2));
         final ASN1TaggedObject tag2 = ASN1TaggedObject.getInstance(seq3.getObjectAt(1));
-        final ASN1OctetString data = ASN1OctetString.getInstance(tag2.getObject());
+        final ASN1OctetString data = ASN1OctetString.getInstance(tag2.getBaseObject().toASN1Primitive());
 
         return ASN1Sequence.getInstance(data.getOctets());
     }

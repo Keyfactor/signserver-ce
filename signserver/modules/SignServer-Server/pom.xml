@@ -67,14 +67,6 @@
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcpkix-jdk15on</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-jdk15on</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -92,7 +84,7 @@
       <artifactId>commons-fileupload</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.signserver.jacknji11</groupId>
+      <groupId>com.keyfactor</groupId>
       <artifactId>jacknji11</artifactId>
     </dependency>
     <dependency>

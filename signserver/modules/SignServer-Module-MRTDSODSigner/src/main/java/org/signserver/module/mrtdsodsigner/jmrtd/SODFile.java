@@ -286,7 +286,7 @@ public class SODFile extends PassportFile
 			//DERTaggedObject o = (DERTaggedObject)seq.getObjectAt(1);
 			/* TODO: where is this tagNo specified? */
 		// int tagNo =  o.getTagNo();
-		ASN1Sequence s2 = (ASN1Sequence)((ASN1TaggedObject)seq.getObjectAt(1)).getObject();			
+		ASN1Sequence s2 = (ASN1Sequence)((ASN1TaggedObject)seq.getObjectAt(1)).getBaseObject().toASN1Primitive();			
 			
 		this.signedData = SignedData.getInstance(s2);
 	}

@@ -242,7 +242,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         ASN1Sequence asn1seq = ASN1Sequence.getInstance(Base64.decode(buf));
         CMSSignedData signedData = new CMSSignedData(asn1seq.getEncoded());
         ASN1TaggedObject ato = ASN1TaggedObject.getInstance(asn1seq.getObjectAt(1));
-        ASN1Sequence asn1seq1 = ASN1Sequence.getInstance(ato.getObject());
+        ASN1Sequence asn1seq1 = ASN1Sequence.getInstance(ato.getBaseObject().toASN1Primitive());
         final X509Certificate cert =
                 (X509Certificate) CertTools.getCertfromByteArray(certbytes1);
         // expected serial number
@@ -297,7 +297,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         final ASN1Sequence seq = ASN1Sequence.getInstance(Base64.decode(data));
         final ASN1Sequence seq2 = ASN1Sequence.getInstance(seq.getObjectAt(1));
         final ASN1TaggedObject tag = ASN1TaggedObject.getInstance(seq2.getObjectAt(1));
-        final ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
+        final ASN1OctetString octets = ASN1OctetString.getInstance(tag.getBaseObject().toASN1Primitive());
 
         assertArrayEquals("Contains request data", octets.getOctets(), content);
 

@@ -222,7 +222,7 @@ public final class RFC4683Tools {
             // First in sequence is the object identifier, that we must check
             final ASN1ObjectIdentifier id = ASN1ObjectIdentifier.getInstance(sequence.getObjectAt(0));
             if (SUBJECTIDENTIFICATIONMETHOD_OBJECTID.equals(id.getId())) {
-                final ASN1Sequence simVector = ASN1Sequence.getInstance(ASN1TaggedObject.getInstance(sequence.getObjectAt(1)).getObject());
+                final ASN1Sequence simVector = ASN1Sequence.getInstance(ASN1TaggedObject.getInstance(sequence.getObjectAt(1)).getBaseObject().toASN1Primitive());
                 // 1. After certificate issuance the method is called with an algorithm identifier in its ASN.1 sequence.
                 // 2. But after reading a stored certificate (PEM or DER) the ASN.1 sequence contains a DERSeqence instead.
                 String algorithmIdentifier = null;

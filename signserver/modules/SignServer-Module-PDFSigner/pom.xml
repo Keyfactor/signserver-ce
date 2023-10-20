@@ -44,7 +44,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.librepdf</groupId>
+            <groupId>org.signserver.librepdf</groupId>
             <artifactId>openpdf</artifactId>
         </dependency>
     </dependencies>

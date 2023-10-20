@@ -14,7 +14,7 @@ package org.signserver.cli;
 
 import java.io.File;
 import org.apache.log4j.Logger;
-import org.cesecore.util.CertTools;
+import com.keyfactor.util.CertTools;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 

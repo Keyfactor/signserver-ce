@@ -85,7 +85,7 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.signserver.jacknji11</groupId>
+            <groupId>com.keyfactor</groupId>
             <artifactId>jacknji11</artifactId>
         </dependency>
         <dependency>

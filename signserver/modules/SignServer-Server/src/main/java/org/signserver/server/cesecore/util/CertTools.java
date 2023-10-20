@@ -2138,11 +2138,11 @@ public abstract class CertTools {
             if (id.getId().equals(oid)) {
                 ASN1TaggedObject oobj = ASN1TaggedObject.getInstance(seq.getObjectAt(1));
                 // Due to bug in java cert.getSubjectAltName regarding OtherName, it can be tagged an extra time...
-                ASN1Primitive obj = oobj.getObject();
+                ASN1Primitive obj = oobj.getBaseObject().toASN1Primitive();
                 if (obj instanceof ASN1TaggedObject) {
-                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                 }
-                DERUTF8String str = DERUTF8String.getInstance(obj);
+                DERUTF8String str = (DERUTF8String) DERUTF8String.getInstance(obj);
                 return str.getString();
             }
         }
@@ -2162,11 +2162,11 @@ public abstract class CertTools {
             if (id.getId().equals(oid)) {
                 ASN1TaggedObject oobj = ASN1TaggedObject.getInstance(seq.getObjectAt(1));
                 // Due to bug in java cert.getSubjectAltName regarding OtherName, it can be tagged an extra time...
-                ASN1Primitive obj = oobj.getObject();
+                ASN1Primitive obj = oobj.getBaseObject().toASN1Primitive();
                 if (obj instanceof ASN1TaggedObject) {
-                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                 }
-                DERIA5String str = DERIA5String.getInstance(obj);
+                DERIA5String str = (DERIA5String) DERIA5String.getInstance(obj);
                 return str.getString();
             }
         }
@@ -2186,9 +2186,9 @@ public abstract class CertTools {
             if (id.getId().equals(oid)) {
                 ASN1TaggedObject oobj = ASN1TaggedObject.getInstance(seq.getObjectAt(1));
                 // Due to bug in java cert.getSubjectAltName regarding OtherName, it can be tagged an extra time...
-                ASN1Primitive obj = oobj.getObject();
+                ASN1Primitive obj = oobj.getBaseObject().toASN1Primitive();
                 if (obj instanceof ASN1TaggedObject) {
-                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                 }
                 ASN1OctetString str = ASN1OctetString.getInstance(obj);
                 return str.getOctets();
@@ -2257,9 +2257,9 @@ public abstract class CertTools {
                 // Get the PermanentIdentifier sequence
                 ASN1TaggedObject oobj = ASN1TaggedObject.getInstance(seq.getObjectAt(1));
                 // Due to bug in java cert.getSubjectAltName regarding OtherName, it can be tagged an extra time...
-                ASN1Primitive obj = oobj.getObject();
+                ASN1Primitive obj = oobj.getBaseObject().toASN1Primitive();
                 if (obj instanceof ASN1TaggedObject) {
-                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                 }
                 ASN1Sequence piSeq = ASN1Sequence.getInstance(obj);
 
@@ -2337,9 +2337,9 @@ public abstract class CertTools {
             if (id.getId().equals(CertTools.GUID_OBJECTID)) {
                 ASN1TaggedObject oobj = ASN1TaggedObject.getInstance(seq.getObjectAt(1));
                 // Due to bug in java cert.getSubjectAltName regarding OtherName, it can be tagged an extra time...
-                ASN1Primitive obj = oobj.getObject();
+                ASN1Primitive obj = oobj.getBaseObject().toASN1Primitive();
                 if (obj instanceof ASN1TaggedObject) {
-                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                 }
                 ASN1OctetString str = ASN1OctetString.getInstance(obj);
                 ret = new String(Hex.encode(str.getOctets()));
@@ -2379,27 +2379,27 @@ public abstract class CertTools {
                 // Get the KRB5PrincipalName sequence
                 ASN1TaggedObject oobj = ASN1TaggedObject.getInstance(seq.getObjectAt(1));
                 // Due to bug in java cert.getSubjectAltName regarding OtherName, it can be tagged an extra time...
-                ASN1Primitive obj = oobj.getObject();
+                ASN1Primitive obj = oobj.getBaseObject().toASN1Primitive();
                 if (obj instanceof ASN1TaggedObject) {
-                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                 }
                 ASN1Sequence krb5Seq = ASN1Sequence.getInstance(obj);
                 // Get the Realm tagged as 0
                 ASN1TaggedObject robj = ASN1TaggedObject.getInstance(krb5Seq.getObjectAt(0));
-                DERGeneralString realmObj = DERGeneralString.getInstance(robj.getObject());
+                DERGeneralString realmObj = (DERGeneralString) DERGeneralString.getInstance(robj.getBaseObject().toASN1Primitive());
                 String realm = realmObj.getString();
                 // Get the PrincipalName tagged as 1
                 ASN1TaggedObject pobj = ASN1TaggedObject.getInstance(krb5Seq.getObjectAt(1));
                 // This is another sequence of type and name
-                ASN1Sequence nseq = ASN1Sequence.getInstance(pobj.getObject());
+                ASN1Sequence nseq = ASN1Sequence.getInstance(pobj.getBaseObject().toASN1Primitive());
                 // Get the name tagged as 1
                 ASN1TaggedObject nobj = ASN1TaggedObject.getInstance(nseq.getObjectAt(1));
                 // The name is yet another sequence of GeneralString
-                ASN1Sequence sseq = ASN1Sequence.getInstance(nobj.getObject());
+                ASN1Sequence sseq = ASN1Sequence.getInstance(nobj.getBaseObject().toASN1Primitive());
                 @SuppressWarnings("unchecked")
                 Enumeration<ASN1Object> en = sseq.getObjects();
                 while (en.hasMoreElements()) {
-                    DERGeneralString str = DERGeneralString.getInstance(en.nextElement());
+                    DERGeneralString str = (DERGeneralString) DERGeneralString.getInstance(en.nextElement());
                     if (ret != null) {
                         ret += "/" + str.getString();
                     } else {
@@ -2459,7 +2459,7 @@ public abstract class CertTools {
             throw new RuntimeException("Could not read ASN1InputStream", e);
         }
         if (oct instanceof ASN1TaggedObject) {
-            oct = ((ASN1TaggedObject) oct).getObject();
+            oct = ((ASN1TaggedObject) oct).getBaseObject().toASN1Primitive();
         }
         ASN1Sequence seq = ASN1Sequence.getInstance(oct);
         return seq;
@@ -3191,7 +3191,7 @@ public abstract class CertTools {
             for (int j = 0; j < distributionPoint.size(); j++) {
                 final ASN1TaggedObject tagged = ASN1TaggedObject.getInstance(distributionPoint.getObjectAt(j));
                 if (tagged.getTagNo() == 0) {
-                    String url = getStringFromGeneralNames(tagged.getObject());
+                    String url = getStringFromGeneralNames(tagged.getBaseObject().toASN1Primitive());
                     if(url!=null) {
                         try {
                             new URL(url); // Syntax check
@@ -3232,7 +3232,7 @@ public abstract class CertTools {
             final GeneralNames generalNames = GeneralNames.getInstance(dpName.getName());
             for (final GeneralName generalName : generalNames.getNames()) {
                 if (generalName.getTagNo() == GeneralName.uniformResourceIdentifier) {
-                    final DERIA5String asn1Value = DERIA5String.getInstance(generalName.getName());
+                    final DERIA5String asn1Value = (DERIA5String) DERIA5String.getInstance(generalName.getName());
                     uris.add(asn1Value.getString());
                 }
             }
@@ -3267,9 +3267,9 @@ public abstract class CertTools {
                                 // Due to bug in java getting some ASN.1 objects, it can be tagged an extra time...
                                 ASN1Primitive obj = generalName.toASN1Primitive();
                                 if (obj instanceof ASN1TaggedObject) {
-                                    obj = ASN1TaggedObject.getInstance(obj).getObject();
+                                    obj = ASN1TaggedObject.getInstance(obj).getBaseObject().toASN1Primitive();
                                 }
-                                final DERIA5String deria5String = DERIA5String.getInstance(obj);
+                                final DERIA5String deria5String = (DERIA5String) DERIA5String.getInstance(obj);
                                 result.add(deria5String.getString());
                             }
                         }
@@ -3328,9 +3328,9 @@ public abstract class CertTools {
                                 // After encoding in a cert, it is tagged an extra time...
                                 ASN1Primitive gnobj = generalName.toASN1Primitive();
                                 if (gnobj instanceof ASN1TaggedObject) {
-                                    gnobj = ASN1TaggedObject.getInstance(gnobj).getObject();
+                                    gnobj = ASN1TaggedObject.getInstance(gnobj).getBaseObject().toASN1Primitive();
                                 }
-                                final DERIA5String str = DERIA5String.getInstance(gnobj);
+                                final DERIA5String str = (DERIA5String) DERIA5String.getInstance(gnobj);
                                 if(str != null) {
                                     urls.add(str.getString());
                                 }
@@ -3366,9 +3366,9 @@ public abstract class CertTools {
                                 // After encoding in a cert, it is tagged an extra time...
                                 ASN1Primitive gnobj = generalName.toASN1Primitive();
                                 if (gnobj instanceof ASN1TaggedObject) {
-                                    gnobj = ASN1TaggedObject.getInstance(gnobj).getObject();
+                                    gnobj = ASN1TaggedObject.getInstance(gnobj).getBaseObject().toASN1Primitive();
                                 }
-                                final DERIA5String str = DERIA5String.getInstance(gnobj);
+                                final DERIA5String str = (DERIA5String) DERIA5String.getInstance(gnobj);
                                 if(str != null) {
                                     urls.add(str.getString());
                                 }

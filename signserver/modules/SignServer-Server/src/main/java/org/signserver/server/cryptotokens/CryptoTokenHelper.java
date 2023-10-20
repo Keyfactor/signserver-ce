@@ -1000,7 +1000,7 @@ public class CryptoTokenHelper {
      * Utility method to get CKA attribute map from list of provided CKA attribute property.
      *
      * @param attributes list of CKA attribute property
-     * @return map of CKA attribute constant as key and its value 
+     * @return map of CKA attribute constant as key and its value
      */
     public static Map<Long, Object> convertCKAAttributeListToMap(List<AttributeProperties.Attribute> attributes) {
         if (attributes == null) {

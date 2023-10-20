@@ -313,7 +313,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 throw new IllegalRequestException("Wrong tag no (should be 0): " + tag.getTagNo());
             }
 
-            ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
+            ASN1OctetString octets = ASN1OctetString.getInstance(tag.getBaseObject().toASN1Primitive());
             byte[] content = octets.getOctets();
 
             final byte[] signedbytes;

@@ -12,7 +12,8 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.*;
+
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -24,21 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
-import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.ArchiveMetadata;
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.CertificateMatchingRule;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.KeyTestResult;
-import org.signserver.common.OperationUnsupportedException;
-import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
-import org.signserver.common.WorkerType;
 
 /**
  * Interface for the worker session bean.
@@ -168,6 +154,21 @@ public interface WorkerSession {
     void updateWorkerProperties(int workerId,
                                 Map<String, String> propertiesAndValues,
                                 List<String> propertiesToRemove);
+
+    /**
+     * Sets several parameters in a workers configuration, additions, deletions and edits.
+     *
+     * Observe that the worker isn't activated with this config until reload is
+     * performed.
+     *
+     * @param workerId            ID of worker to set (add/edit/delete) properties on
+     * @param propertiesAndValues new/adjusted properties that are to be saved
+     * @param propertiesToRemove  properties to remove
+     * @throws NoSuchWorkerException if worker not found.
+     */
+    void addUpdateDeleteWorkerProperties(int workerId,
+                                         Map<String, String> propertiesAndValues,
+                                         List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException;
     
     /**
      * Method that returns a collection of AuthorizedClient of

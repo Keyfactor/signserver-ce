@@ -788,7 +788,6 @@ mvn install
             <exclude name=".eclipse/**" />
             <exclude name=".settings/**" />
             <exclude name="**/.cvsignore" />
-            <exclude name="**/*.sh" />
             <exclude name="**/nbproject/private/**" />
             <exclude name="**/target/**" />
             

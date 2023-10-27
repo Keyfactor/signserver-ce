@@ -1,4 +1,4 @@
-/*************************************************************************
+/** ***********************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
@@ -9,7 +9,7 @@
  *                                                                       *
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
- *************************************************************************/
+ ************************************************************************ */
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
@@ -22,29 +22,35 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.SignServerException;
+import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
+import org.json.simple.JSONObject;
+import org.signserver.common.RequestContext;
+
+
 
 /**
- * DocumentSigner using the HTTP protocol.
+ * DocumentSigner using the REST protocol.
  *
- * @author Markus Kilås
+ * @author Hanna Hansson
  * @version $Id$
  */
-public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
+public class RESTDocumentSigner extends AbstractHTTPDocumentSigner {
 
     /**
      * Logger for this class.
      */
-    private static final Logger LOG = Logger.getLogger(HTTPDocumentSigner.class);
+    private static final Logger LOG = Logger.getLogger(RESTDocumentSigner.class);
 
-    public HTTPDocumentSigner(final HostManager hostsManager,
+
+    public RESTDocumentSigner(HostManager hostsManager,
             final int port,
             final String baseUrlPath,
             final String servlet,
@@ -59,7 +65,7 @@ public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
         super(hostsManager, port, baseUrlPath, servlet, useHTTPS, workerName, username, password, accessToken, pdfPassword, metadata, timeOutLimit);
     }
 
-    public HTTPDocumentSigner(final HostManager hostsManager,
+    public RESTDocumentSigner(final HostManager hostsManager,
             final int port,
             final String baseUrlPath,
             final String servlet,
@@ -71,7 +77,6 @@ public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
             final Map<String, String> metadata,
             final int timeOutLimit) {
         super(hostsManager, port, baseUrlPath, servlet, useHTTPS, workerId, username, password, accessToken, pdfPassword, metadata, timeOutLimit);
-
     }
 
     @Override
@@ -79,7 +84,7 @@ public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
         if (servlet != null) {
             return new URL(useHTTPS ? "https" : "http", host, port, servlet);
         } else {
-            return new URL(useHTTPS ? "https" : "http", host, port, baseUrlPath + "/process");
+            return new URL(useHTTPS ? "https" : "http", host, port, baseUrlPath + "/rest/v1/workers/" + workerName + "/process");
         }
     }
 
@@ -88,120 +93,81 @@ public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
             final InputStream in,
             final long size,
             final OutputStream out, final Map<String, Object> requestContext) throws IOException {
-        
-        OutputStream requestOut = null;
-        InputStream responseIn = null;        
 
-        // set it false in beginning as signing will be tried with new host
+        OutputStream requestOut = null;
+        InputStream responseIn = null;
         connectionFailure = false;
 
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
-            
+
             // only set timeout for connection when provided on command line
             if (timeOutLimit != -1) {
                 conn.setConnectTimeout(timeOutLimit);
             }
-            
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
 
             if (username != null && password != null) {
-                conn.setRequestProperty(BASICAUTH_AUTHORIZATION, 
+                conn.setRequestProperty(BASICAUTH_AUTHORIZATION,
                         BASICAUTH_BASIC + " "
-                        + new String(Base64.encode((username + ":" + password).getBytes())));
-            } else if (accessToken != null) {
+                        + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
+            }
+            else if (accessToken != null) {
                 conn.setRequestProperty(BASICAUTH_AUTHORIZATION,
                         BASICAUTH_BEARER + " " + accessToken);
             }
-            
+
             final StringBuilder sb = new StringBuilder();
-            sb.append("--" + BOUNDARY);
-            sb.append(CRLF);
-            
+            JSONObject jsonMain = new JSONObject();
+
             if (workerName == null && workerId.isPresent()) {
-                sb.append("Content-Disposition: form-data; name=\"workerId\"");
-                sb.append(CRLF);
-                sb.append(CRLF);
-                sb.append(workerId.get());
-                sb.append(CRLF);
+                jsonMain.put("WorkerID", workerId);
             } else if (workerName != null) {
-                sb.append("Content-Disposition: form-data; name=\"workerName\"");
-                sb.append(CRLF);
-                sb.append(CRLF);
-                sb.append(workerName);
-                sb.append(CRLF);
+                jsonMain.put("WorkerName", workerName);
             }
-            
-            if (pdfPassword != null) {
-                sb.append("--" + BOUNDARY).append(CRLF)
-                    .append("Content-Disposition: form-data; name=\"pdfPassword\"").append(CRLF)
-                    .append(CRLF)
-                    .append(pdfPassword).append(CRLF);
-            }
-            
+
             if (metadata != null) {
+                JSONObject jsonSub = new JSONObject();
                 for (final String key : metadata.keySet()) {
                     final String value = metadata.get(key);
-                    
-                    sb.append("--" + BOUNDARY).append(CRLF)
-                        .append("Content-Disposition: form-data; name=\"REQUEST_METADATA." + key + "\"").append(CRLF)
-                        .append(CRLF)
-                        .append(value).append(CRLF);
+                    jsonSub.put(key, value);
                 }
+                if (pdfPassword != null) {
+                    jsonSub.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+                }
+                jsonMain.put("metaData", jsonSub);
             }
 
-            sb.append("--" + BOUNDARY);
-            sb.append(CRLF);
-            sb.append("Content-Disposition: form-data; name=\"datafile\"");
-            sb.append("; filename=\"");
             if (requestContext.get("FILENAME") == null) {
-                sb.append("noname.dat");
+                jsonMain.put("filename", "noname.dat");
             } else {
-                sb.append(requestContext.get("FILENAME"));
-            }
-            sb.append("\"");
-            sb.append(CRLF);
-            sb.append("Content-Type: application/octet-stream");
-            sb.append(CRLF);
-            sb.append("Content-Transfer-Encoding: binary");
-            sb.append(CRLF);
-            sb.append(CRLF);
-
-            conn.addRequestProperty("Content-Type",
-                    "multipart/form-data; boundary=" + BOUNDARY);
-
-            final byte[] preData = sb.toString().getBytes("ASCII");
-            final byte[] postData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("ASCII");
-            
-            if (size >= 0) {
-                final long totalSize = (long) preData.length + size + (long) postData.length;
-                conn.setFixedLengthStreamingMode(totalSize);
+                jsonMain.put("filename", requestContext.get("FILENAME"));
             }
 
-            // Write the request: preData, data, postData
             requestOut = conn.getOutputStream();
-            requestOut.write(preData);
-            final long copied = IOUtils.copyLarge(in, requestOut);
-            if (copied != size) {
-                throw new IOException("Expected file size of " + size + " but only read " + copied + " bytes");
-            }
-            requestOut.write(postData);
+            jsonMain.put("encoding", "BASE64");
+            jsonMain.put("data", Base64.toBase64String(IOUtils.toByteArray(in)));
+            sb.append(jsonMain);
+            requestOut.write(sb.toString().getBytes("utf-8"));
             requestOut.flush();
+
 
             // Get the response
             final int responseCode = conn.getResponseCode();
             responseIn = conn.getErrorStream();
-            if (responseIn == null) {             
+            if (responseIn == null) {
                 responseIn = conn.getInputStream();
             }
 
-            // Read the body to the output if OK otherwise to the error message
             if (responseCode < 400) {
                 IOUtils.copy(responseIn, out);
             } else {
                 final byte[] errorBody = IOUtils.toByteArray(responseIn);
-              
+
                 // display customized error message sent from server, if exists, instead of default(ex: Bad Request)
                 String clientResponseMessage = conn.getResponseMessage();
                 Map<String, List<String>> map = conn.getHeaderFields();
@@ -209,7 +175,7 @@ public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
                 if (errorList != null) {
                     clientResponseMessage = errorList.toString();
                 }
-                
+
                 throw new HTTPException(processServlet, responseCode, clientResponseMessage, errorBody);
             }
         } catch (ConnectException | SocketTimeoutException | UnknownHostException ex) {
@@ -243,7 +209,5 @@ public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
                 }
             }
         }
-
     }
-
 }

@@ -12,7 +12,8 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.*;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -24,18 +25,6 @@ import javax.ejb.Local;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
-import org.signserver.common.ArchiveMetadata;
-import org.signserver.common.AuthorizedClient;
-import org.signserver.common.CertificateMatchingRule;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.KeyTestResult;
-import org.signserver.common.OperationUnsupportedException;
-import org.signserver.common.QueryException;
-import org.signserver.common.SignServerException;
-import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.log.AdminInfo;
 
@@ -138,9 +127,38 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param adminInfo
      * @param workerId
      * @param key
-     * @return true if the property did exist and was removed othervise false
+     * @return true if the property did exist and was removed otherwise false
      */
     boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key);
+
+    /**
+     * Removes a given worker.
+     *
+     * @param adminInfo
+     * @param workerId
+     */
+    void removeWorker(final AdminInfo adminInfo, int workerId) throws NoSuchWorkerException;
+
+    /**
+     * Checks the given worker Id exists.
+     *
+     * @param workerId
+     * @return true if the worker did exist otherwise false
+     */
+    boolean isWorkerExists(int workerId);
+
+    /**
+     * Add a new worker by setting several parameters in the worker configuration.
+     *
+     * Observe that the worker isn't activated with this config until reload is
+     * performed.
+     *
+     * @param adminInfo
+     * @param workerId ID of the new worker to set properties on
+     * @param propertiesAndValues new properties to be saved
+     */
+    void addWorker(AdminInfo adminInfo, int workerId,
+                                Map<String, String> propertiesAndValues) throws WorkerExistsException;
 
     /**
      * Sets several parameters in a workers configuration, additions, deletions and edits.
@@ -156,7 +174,39 @@ public interface WorkerSessionLocal extends WorkerSession {
     void updateWorkerProperties(AdminInfo adminInfo, int workerId,
                                 Map<String, String> propertiesAndValues,
                                 List<String> propertiesToRemove);
-    
+
+    /**
+     * Sets several parameters in a workers configuration, additions, deletions and edits.
+     *
+     * Observe that the worker isn't activated with this config until reload is
+     * performed.
+     *
+     * @param adminInfo
+     * @param workerId            ID of worker to set (add/edit/delete) properties on
+     * @param propertiesAndValues new/adjusted properties that are to be saved
+     * @param propertiesToRemove  properties to remove
+     * @throws NoSuchWorkerException if worker not found.
+     * @throws WorkerExistsException if worker name already exists
+     */
+    void addUpdateDeleteWorkerProperties(AdminInfo adminInfo, int workerId,
+                                         Map<String, String> propertiesAndValues,
+                                         List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException;
+
+    /**
+     * Remove all the current parameters and add new properties in a workers configuration.
+     *
+     * Observe that the worker isn't activated with this config until reload is
+     * performed.
+     *
+     * @param adminInfo
+     * @param workerId ID of worker to set (add/edit/delete) properties on
+     * @param propertiesAndValues new/adjusted properties that are to be saved
+     * @throws NoSuchWorkerException if worker not found
+     * @throws WorkerExistsException if worker with the same name already exists
+     */
+    void replaceWorkerProperties(AdminInfo adminInfo, int workerId,
+                                 Map<String, String> propertiesAndValues) throws NoSuchWorkerException, WorkerExistsException;
+
     /**
      * Method adding an authorized client to a signer.
      *

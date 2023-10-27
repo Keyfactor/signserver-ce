@@ -61,14 +61,22 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
 
     private Random random = new Random();
 
-    public ClientWSDocumentSigner(final String host, final int port,
+    public ClientWSDocumentSigner(final String host, final int port, final String baseUrlPath,
             final String servlet, final String workerName, final boolean useHTTPS, 
             final String username, final String password, final String pdfPassword,
             final SSLSocketFactory socketFactory,
             final Map<String, String> metadata) {
-        final String url = (useHTTPS ? "https://" : "http://")
-                + host + ":" + port
-                + servlet;
+        final String url;
+        if (servlet != null) {
+            url = (useHTTPS ? "https://" : "http://")
+                    + host + ":" + port
+                    + servlet;
+        } else {
+            url = (useHTTPS ? "https://" : "http://")
+                    + host + ":" + port
+                    + baseUrlPath + "/ClientWSService/ClientWS?wsdl";
+        }
+
         final ClientWSService service;
 
         // Set the username and password. This is needed here in case the WSDL

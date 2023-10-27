@@ -42,6 +42,7 @@ public class SignServerWSClientFactory {
     public static final String SECURE_PROTOCOL = "https://";
     public static final String DEFAULT_WSDL_URL = "/signserver/SignServerWSService/SignServerWS?wsdl";
 
+
     /**
      * Generates a SignServerWSClient using default port, timeout and wsdlURL.
      * 

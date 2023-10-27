@@ -45,18 +45,23 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
     private Random random = new Random();
 
-    public WebServicesDocumentSigner(final String host, final int port,
+    public WebServicesDocumentSigner(final String host, final int port, final String baseUrlPath,
             final String servlet, final String workerName, final boolean useHTTPS, 
             final String username, final String password, final String pdfPassword,
             final SSLSocketFactory socketFactory,
             final Map<String, String> metadata) {
         this.signServer = null;
-        
+
         if (servlet != null) {
         	this.signServer =
                         new SigningAndValidationWS(host, port, servlet, useHTTPS, 
                                                    username, password, socketFactory);
-        } else {
+        } else if (baseUrlPath != null) {
+            this.signServer
+                    = new SigningAndValidationWS(host, port, baseUrlPath + "/SignServerWSService/SignServerWS?wsdl", useHTTPS,
+                            username, password, socketFactory);
+
+        } else { // never reach this state?!
         	this.signServer =
                         new SigningAndValidationWS(host, port, useHTTPS,
                                                    username, password,

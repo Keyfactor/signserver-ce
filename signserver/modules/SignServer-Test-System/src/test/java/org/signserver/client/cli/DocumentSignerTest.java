@@ -12,14 +12,9 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.*;
 import java.security.KeyPair;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -128,6 +123,20 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     /**
+     * Test that setting both -host and -hosts is not allowed for REST.
+     */
+    @Test
+    public void test01hostAndHostsNotAllowedWithProtocolRest() throws Exception {
+        LOG.info("test01hostAndHostsNotAllowed");
+        try {
+            execute("signdocument", "-protocol", "REST", "-host", "localhost", "-hosts",
+                    "localhost,otherhost");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+
+    /**
      * Test that setting -hosts options is not allowed for -protocol CLIENTWS.
      */
     @Test
@@ -151,6 +160,20 @@ public class DocumentSignerTest extends ModulesTestCase {
                     "WEBSERVICES");
             fail("Should have thrown exception about illegal combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+
+    /**
+     * Test that setting both -servlet and -baseurlpath is not allowed.
+     */
+    @Test
+    public void test01servletAndbaseurlpathNotAllowed() throws Exception {
+        LOG.info("test01servletAndbaseurlpathNotAllowed");
+        try {
+            execute("signdocument", "-servlet", "/signserver/process", "-baseurlpath",
+                    "/signserver");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
     }
 
     /**
@@ -247,6 +270,23 @@ public class DocumentSignerTest extends ModulesTestCase {
             execute("signdocument", "-host", "");
             fail("Should have thrown exception about empty argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+
+    /**
+     * Test that setting baseurlpath option with default protocol returns
+     * result.
+     */
+    @Test
+    public void test01Settingbaseurlpath() throws Exception {
+        LOG.info("test01Settingbaseurlpath");
+        try {
+            byte[] res = execute("signdocument", "-baseurlpath", "/signserver", "-workername", "TestXMLSigner", "-data", "<root/>");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
     }
 
     /**
@@ -473,6 +513,149 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     /**
+     * Tests the sample use case o from the documentation with protocol REST.
+     *
+     */
+    @Test
+    public void test02signDocumentFromParameterWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithProtocolRest");
+        try {
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-workername", "TestXMLSigner", "-data", "<root/>"));
+            System.out.println("Res String: " + res);
+            assertTrue("contains signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Tests the sample use case p from the documentation with protocol REST.
+     * 
+     */
+    @Test
+    public void test02signDocumentFromFileWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromFileWithProtocolRest");
+        File doc = null;
+        try {
+            doc = File.createTempFile("test.xml", null);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
+                out.write("<tag/>".getBytes());
+            }
+
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-workername",
+                            "TestXMLSigner", "-infile", doc.getAbsolutePath()));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
+        }
+    }
+
+    /**
+     * Test signing a file with multiple hosts set with -hosts with the first
+     * host failing with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromFileWithFallbackHostWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromFileWithFallbackHostWithProtocolRest");
+        File doc = null;
+        try {
+            doc = File.createTempFile("test.xml", null);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
+                out.write("<tag/>".getBytes());
+            }
+
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-workername",
+                            "TestXMLSigner", "-infile", doc.getAbsolutePath(),
+                            "-hosts", "nonexistinghost,localhost"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
+        }
+    }
+
+    /**
+     * Test signing a file with multiple hosts set with -hosts with the first
+     * host succeeding with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromFileFallingHostFirstSuccessWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromFileWithFallbackHostFirstSuccessWithProtocolRest");
+        File doc = null;
+        try {
+            doc = File.createTempFile("test.xml", null);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
+                out.write("<tag/>".getBytes());
+            }
+
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-workername",
+                            "TestXMLSigner", "-infile", doc.getAbsolutePath(),
+                            "-hosts", "localhost, nonexisting"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
+        }
+    }
+
+    /**
+     * Tests signing from a file and output the results to a file with protocol
+     * REST.
+     * <pre>
+     * signdocument -workername XMLSigner
+     *     -infile /tmp/document.xml
+     *     -outfile /tmp/document-signed.xml
+     * </pre>
+     */
+    @Test
+    public void test02signDocumentFromFileToFileWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromFileToFileWithProtocolRest");
+        File inFile = null;
+        File outFile = null;
+        try {
+            inFile = File.createTempFile("test.xml", null);
+            FileUtils.writeStringToFile(inFile, "<tag/>");
+            outFile = new File(inFile.getParentFile(), inFile.getName() + "-signed");
+
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST",
+                            "-workername", "TestXMLSigner",
+                            "-infile", inFile.getAbsolutePath(),
+                            "-outfile", outFile.getAbsolutePath()));
+            assertFalse("not containing signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
+
+            String file1Content = FileUtils.readFileToString(outFile);
+
+            assertTrue("contains signature tag: "
+                    + file1Content, file1Content.contains("\"signerCertificate\":\""));
+
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(inFile);
+            FileUtils.deleteQuietly(outFile);
+        }
+    }
+
+    /**
      * Test for the "-pdfpassword" argument.
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
      */
@@ -482,6 +665,26 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
 
             byte[] res = execute("signdocument", "-workername",
+                    "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
+                    "-pdfpassword", "open123");
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Test for the "-pdfpassword" argument. signdocument -workername
+     * TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
+     */
+    @Test
+    public void test04signPDFwithPasswordOverRest() throws Exception {
+        LOG.info("test03signPDFwithPasswordOverRest");
+        try {
+
+            byte[] res = execute("signdocument", "-protocol", "REST", "-workername",
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123");
             assertNotNull("No result", res);
@@ -810,6 +1013,42 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     /**
+     * Tests that when providing a username but not a password the code for
+     * prompting for password is called once.
+     */
+    @Test
+    public void test13promptForUserPasswordWithProtocolRest() throws Exception {
+        LOG.info("test13promptForUserPassword");
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "foo123".toCharArray();
+                    }
+                };
+            }
+        };
+
+        // Sign anything and check that the readPassword was called once
+        try {
+            String res
+                    = new String(execute(instance, "signdocument", "-protocol", "REST", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-username", "user1"));
+            assertEquals("calls to readPassword", 1, called.size());
+            assertTrue("contains signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
      * Tests that when not specifying any keystore password on the command
      * line the code for prompting for the password is called once.
      */
@@ -947,6 +1186,43 @@ public class DocumentSignerTest extends ModulesTestCase {
                             "-truststore", signserverhome + "/p12/truststore.jks"));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+        assertEquals("calls to readPassword", 2, called.size());
+    }
+
+    /**
+     * Tests that when not specifying any of user and truststore password they
+     * are both prompted for.
+     */
+    @Test
+    public void test13promptForUserAndTruststoreWithProtocolRest() throws Exception {
+        LOG.info("test13promptForUserAndTruststore");
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "changeit".toCharArray();
+                    }
+                };
+            }
+        };
+
+        // Sign anything and check that the readPassword was called twice
+        try {
+            String res
+                    = new String(execute(instance, "signdocument", "-protocol", "REST", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-username", "user1",
+                            "-truststore", signserverhome + "/p12/truststore.jks"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("\"signerCertificate\":\""));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());

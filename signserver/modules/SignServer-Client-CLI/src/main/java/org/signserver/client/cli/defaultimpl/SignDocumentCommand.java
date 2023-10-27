@@ -47,7 +47,6 @@ import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.ROUND_ROBIN_LOAD_BALANCING;
 import org.signserver.common.RequestContext;
@@ -69,8 +68,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
             "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
-    private static final String DEFAULT_CLIENTWS_WSDL_URL = "/signserver/ClientWSService/ClientWS?wsdl";
-    
     /** System-specific new line characters. **/
     private static final String NL = System.getProperty("line.separator");
 
@@ -119,6 +116,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Option PORT. */
     public static final String PORT = "port";
 
+    public static final String DEFAULT_BASEURLPATH = "/signserver";
+    public static final String BASEURLPATH = "baseurlpath";
     public static final String SERVLET = "servlet";
 
     /** Option PROTOCOL. */
@@ -173,7 +172,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         CLIENTWS,
 
         /** The HTTP interface. */
-        HTTP
+        HTTP,
+        /**
+         * The REST interface.
+         */
+        REST
     }
     
     static {
@@ -194,6 +197,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("HOSTS_DESCRIPTION"));
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
+        OPTIONS.addOption(BASEURLPATH, true,
+                TEXTS.getString("BASEURLPATH_DESCRIPTION"));
         OPTIONS.addOption(SERVLET, true,
                 TEXTS.getString("SERVLET_DESCRIPTION"));
         OPTIONS.addOption(PROTOCOL, true,
@@ -257,7 +262,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** TCP port number of the SignServer host. */
     private Integer port;
 
-    private String servlet = "/signserver/process";
+    private String baseUrlPath;
+    private String servlet;
 
     /** File to read the data from. */
     private File inFile;
@@ -337,7 +343,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("k) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyaliasprompt").append(NL)
             .append("l) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyalias admin3").append(NL)
             .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL)
-            .append("n) ").append(COMMAND).append(" -data \"<root/>\" -servlet /signserver/worker/XMLSigner").append(NL); 
+            .append("n) ").append(COMMAND).append(" -data \"<root/>\" -servlet /signserver/worker/XMLSigner").append(NL)
+            .append("o) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -data \"<root/>\"").append(NL)
+            .append("p) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -infile /tmp/document.xml").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -380,6 +388,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (line.hasOption(PORT)) {
             port = Integer.parseInt(line.getOptionValue(PORT));
         }
+        if (line.hasOption(BASEURLPATH)) {
+            baseUrlPath = line.getOptionValue(BASEURLPATH, null);
+        }
         if (line.hasOption(SERVLET)) {
             servlet = line.getOptionValue(SERVLET, null);
         }
@@ -413,17 +424,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (line.hasOption(PROTOCOL)) {
             protocol = Protocol.valueOf(line.getOptionValue(
                     PROTOCOL, null));
-            
-            // if the protocol is WS and -servlet is not set, override the servlet URL
-            // with the default one for the WS servlet
-            if (Protocol.WEBSERVICES.equals(protocol) &&
-            	!line.hasOption(SERVLET)) {
-            	servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
-            }
-            if ((Protocol.CLIENTWS.equals(protocol)) &&
-            	!line.hasOption(SERVLET)) {
-            	servlet = DEFAULT_CLIENTWS_WSDL_URL;
-            }
         }
         if (line.hasOption(USERNAME)) {
             username = line.getOptionValue(USERNAME, null);
@@ -603,16 +603,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throw new IllegalCommandArgumentsException("Can only specify one of -host and -hosts");
         }
         
-        if (hosts != null && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -hosts with protocol HTTP");
+        if (hosts != null && !(protocol == Protocol.HTTP || protocol == Protocol.REST)) {
+            throw new IllegalCommandArgumentsException("Can only use -hosts with protocol HTTP or REST");
         }
         
-        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP");
+        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && !(protocol == Protocol.HTTP || protocol == Protocol.REST)) {
+            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP or REST");
         }
 
-        if (timeOutString != null && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -timeout with protocol HTTP");
+        if (timeOutString != null && !(protocol == Protocol.HTTP || protocol == Protocol.REST)) {
+            throw new IllegalCommandArgumentsException("Can only use -timeout with protocol HTTP or REST");
         }
         
         if (host != null) {
@@ -670,6 +670,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         // -signrequest reuires -keystore
         if (keyStoreOptions.isSignRequest() && keyStoreOptions.getKeystoreFile() == null) {
             throw new IllegalCommandArgumentsException("-signrequest requires -keystore");
+        }
+
+        if (servlet != null && baseUrlPath != null) {
+            throw new IllegalCommandArgumentsException("Can only specify one of -servlet and -baseurlpath");
         }
     }
 
@@ -737,6 +741,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     protected DocumentSignerFactory createDocumentSignerFactory(final Protocol protocol,
                                                                 final KeyStoreOptions keyStoreOptions,
                                                                 final String host,
+                                                                final String baseUrlPath,
                                                                 final String servlet,
                                                                 final Integer port,
                                                                 final String digestAlgorithm,
@@ -747,7 +752,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                                 final HostManager hostsManager,
                                                                 final int timeoutLimit) {
         return new DocumentSignerFactory(protocol, keyStoreOptions, host,
-                                              servlet, port,
+                                              baseUrlPath, servlet, port,
                                               digestAlgorithm, username,
                                               currentPassword, accessToken,
                                               pdfPassword,
@@ -774,9 +779,12 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         final String currentPassword =
                 manager == null ? password : manager.getPassword();
+        if (baseUrlPath == null) {
+            baseUrlPath = DEFAULT_BASEURLPATH;
+        }
         final DocumentSignerFactory signerFactory =
                     createDocumentSignerFactory(protocol, keyStoreOptions, host,
-                                                servlet, port,
+                                                baseUrlPath, servlet, port,
                                                 digestAlgorithm, username,
                                                 currentPassword, accessToken,
                                                 pdfPassword,

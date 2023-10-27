@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.testutils;
 
+import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
+import io.restassured.http.Method;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,10 +40,12 @@ import java.util.LinkedList;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLSocketFactory;
 
+import io.restassured.response.Response;
 import org.apache.log4j.Logger;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
+import org.json.simple.JSONObject;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -202,7 +207,8 @@ public class ModulesTestCase {
     public static final String WORKER_KEY_SLEEP_TIME = "SLEEP_TIME";
     public static final String WORKER_KEY_WORKER_LOGGER = "WORKERLOGGER";
 
-    private WorkerSessionRemote workerSession;
+    private WorkerSessionRemote workerSessionEjb;
+    private WorkerSessionRemote workerSessionRest;
     private static WorkerSessionRemote cWorkerSession;
     private ProcessSessionRemote processSession;
     private GlobalConfigurationSessionRemote globalSession;
@@ -219,6 +225,8 @@ public class ModulesTestCase {
     private static CLITestHelper cClientCLI;
     private final TestUtils testUtils = new TestUtils();
     protected static Random random = new Random(1234);
+
+    private boolean useRestWorkerSession = false;
 
     public ModulesTestCase() {
         final Properties defaultConfig = new Properties();
@@ -258,6 +266,10 @@ public class ModulesTestCase {
         }
     }
 
+    public void setUseRestWorkerSession(final boolean useRestWorkerSession) {
+        this.useRestWorkerSession = useRestWorkerSession;
+    }
+    
     public CLITestHelper getAdminCLI() {
         if (adminCLI == null) {
             adminCLI = new CLITestHelper(AdminCLI.class);
@@ -279,15 +291,30 @@ public class ModulesTestCase {
         return cClientCLI;
     }
 
-    public WorkerSessionRemote getWorkerSession() {
-        if (workerSession == null) {
+    private WorkerSessionRemote getWorkerSessionEjb() {
+        if (workerSessionEjb == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
+                workerSessionEjb = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
             } catch (NamingException ex) {
                 fail("Could not lookup WorkerSession: " + ex.getMessage());
             }
         }
-        return workerSession;
+
+        return workerSessionEjb;
+    }
+
+    private WorkerSessionRemote getWorkerSessionRest() {
+        if (workerSessionRest == null) {
+            workerSessionRest = new WorkerSessionRest(this,
+                                                      getWorkerSessionEjb());
+        }
+
+        return workerSessionRest;
+    }
+    
+    public WorkerSessionRemote getWorkerSession() {
+        return useRestWorkerSession ?
+               getWorkerSessionRest() : getWorkerSessionEjb();
     }
 
     public static WorkerSessionRemote getCurrentWorkerSession() {
@@ -603,9 +630,28 @@ public class ModulesTestCase {
         if (password != null) {
             properties.put(KEY_KEYSTORE_PASSWORD,password);
         }
-        getWorkerSession().updateWorkerProperties(signerId,properties,new LinkedList<>());
+
+        /* when using the REST interface, call the POST operation to
+         * create the worker directly, as the corresponding update operation
+         * for REST assumes a worker already exists with that ID
+         */
+        if (useRestWorkerSession) {
+            final JSONObject body = new JSONObject();
+            final JSONObject props = new JSONObject();
+
+            for (final String property : properties.keySet()) {
+                props.put(property, properties.get(property));
+            }
+
+            body.put("properties", props);
+
+            callRest(Method.POST, 201, "", "/workers/" + signerId, body);
+        } else {
+            getWorkerSession().updateWorkerProperties(signerId,properties,new LinkedList<>());
+        }
 
         getWorkerSession().reloadConfiguration(signerId);
+
         try {
             assertNotNull("Check signer available",
                     getWorkerSession().getStatus(new WorkerIdentifier(signerId)));
@@ -819,13 +865,20 @@ public class ModulesTestCase {
     }
 
     public void removeWorker(final int workerId) {
-        removeGlobalProperties(workerId);
-        WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
-        LOG.info("Got current config: " + wc.getProperties());
-        for (Object o : wc.getProperties().keySet()) {
-            final String key = (String) o;
-            getWorkerSession().removeWorkerProperty(workerId, key);
+         WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
+        
+        if (useRestWorkerSession) {
+            callRest(Method.DELETE, "/workers/" + workerId, new JSONObject());
+        } else {
+            removeGlobalProperties(workerId);
+
+            LOG.info("Got current config: " + wc.getProperties());
+            for (Object o : wc.getProperties().keySet()) {
+                final String key = (String) o;
+                getWorkerSession().removeWorkerProperty(workerId, key);
+            }
         }
+
         getWorkerSession().reloadConfiguration(workerId);
         wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config after: " + wc.getProperties());
@@ -868,6 +921,34 @@ public class ModulesTestCase {
 
     public int getPreferredHTTPPort() {
         return Integer.parseInt(config.getProperty("httpserver.prefport", config.getProperty("httpserver.pubhttp")));
+    }
+
+    public String getSignServerBaseURL() {
+        return config.getProperty("test.signserver.baseurl", "http://localhost:8080/signserver");
+    }
+
+    public Response callRest(final Method method, final int statusCode,
+                             final String responseContentType,
+                             final String call, final JSONObject body) {
+        final String baseURL = getSignServerBaseURL() + "/rest/v1";
+
+        final Response response = given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(body)
+                .when()
+                .request(method, baseURL + call)
+                .then()
+                .statusCode(statusCode)
+                .contentType(responseContentType)
+                .extract().response();
+        
+        return response;
+    }
+
+    public Response callRest(final Method method, final String call,
+                             final JSONObject body) {
+        return callRest(method, 200, "application/json", call, body);
     }
 
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */

@@ -107,6 +107,21 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
+    public void removeWorker(AdminInfo adminInfo, int workerId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isWorkerExists(int workerId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void addAuthorizedClient(AdminInfo adminInfo, int signerId,
             AuthorizedClient authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -517,10 +532,27 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
+    public void replaceWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void updateWorkerProperties(int workerId,
                                        Map<String, String> propertiesAndValues,
                                        List<String> propertiesToRemove) {
         throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public void addUpdateDeleteWorkerProperties(int workerId, Map<String, String> propertiesAndValues,
+                                                List<String> propertiesToRemove) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addUpdateDeleteWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues,
+                                                List<String> propertiesToRemove) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private static class Worker {

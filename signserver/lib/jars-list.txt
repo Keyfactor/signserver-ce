@@ -14,7 +14,7 @@
 027f36578c1ffdf08878c1cc2aa1e191f4b9da119c1e8f113299c53f298fa664  ./ext/bcutil-jdk18on-1.75.jar;                          "Bouncy Castle"
 3f6d8dbbfcd98291eaedca5a5da644215f76a2a1233ef79519492c043bb3a5b1  ./ext/byte-buddy-1.10.10.jar;                           "Hibernate dependencies"
 781d97e959f14fd314202221d5488bf30900b8f2bb991046cbce53dd1c56b6ed  ./ext/cert-cvc-1.4.6.jar;                               "EJBCA"
-f1b49aabf50eee5f3e27179e601beeb84b9dd74a839c0eada5d46c7889c31b85  ./ext/cesecore-ce/cesecore-common-7.0.0.1signserver6.2.0.jar;  "CESeCore"
+a8f07942abc70e75598398a28e5abbdcf034d9289931eebe54e51cf0e5c75ca8  ./ext/cesecore-ce/cesecore-common-7.0.0.1signserver6.2.0.jar;  "CESeCore"
 9a281da56e24c3733d0f1f911d4c2df509d12f72532b5ec2f519fef1f39c68cb  ./ext/cesecore-ce/cesecore-ejb-7.0.0.1.jar;             "CESeCore"
 3f638e27315c5e963ce1faaaba2428197c88449c62b4249aa2b6cdfde39f2bac  ./ext/cesecore-ce/cesecore-entity-7.0.0.1.jar;          "CESeCore"
 02ec01176c744895bf1c52293fdb743c9d417f2fdbaa8f7b206f8c3b191f0d79  ./ext/cesecore-ce/cesecore-interfaces-7.0.0.1.jar;      "CESeCore"

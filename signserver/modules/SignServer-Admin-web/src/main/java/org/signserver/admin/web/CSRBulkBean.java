@@ -404,7 +404,7 @@ public class CSRBulkBean extends BulkBean {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALG_EDDSA.forEach((alg) -> {
-                  signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_ECGOST3410.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
@@ -413,6 +413,9 @@ public class CSRBulkBean extends BulkBean {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_DILITHIUM.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
+                });
+                AlgorithmTools.SIG_ALGS_LMS.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
                 AlgorithmTools.SIG_ALGS_SPHINCSPLUS.forEach((alg) -> {

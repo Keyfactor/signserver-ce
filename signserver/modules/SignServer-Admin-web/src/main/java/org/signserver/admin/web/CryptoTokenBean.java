@@ -42,6 +42,8 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 
+import static java.util.Map.entry;
+
 /**
  *
  * @author Markus Kilås
@@ -153,6 +155,12 @@ public class CryptoTokenBean {
         final ArrayList<Entry> results = new ArrayList<>(tes.size());
         final Set<String> selectedKeys = new HashSet<>(Arrays.asList(keysSelected));
         for (TokenEntry te : tes) {
+            final String keyAlgValue = te.getInfo().get("Key algorithm");
+            if (keyAlgValue != null) {
+                if ("Dilithium".equals(keyAlgValue) || "LMS".equals(keyAlgValue)) {
+                    te.getInfo().replace("Key algorithm", "");
+                }
+            }
             results.add(Entry.fromTokenEntry(te, selectedKeys.contains(te.getAlias())));
         }
         return results;

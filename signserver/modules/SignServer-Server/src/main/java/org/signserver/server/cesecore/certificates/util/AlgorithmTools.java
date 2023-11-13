@@ -57,6 +57,8 @@ import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.pqc.jcajce.interfaces.DilithiumPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.lms.BCLMSPublicKey;
 import org.cesecore.config.CesecoreConfiguration;
 import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.StringTools;
@@ -136,7 +138,15 @@ public abstract class AlgorithmTools {
 
     /** Signature algorithms supported by DILITHIUM keys */
     public static final List<String> SIG_ALGS_DILITHIUM = Collections.unmodifiableList(Arrays.asList(
-            AlgorithmConstants.SIGALG_DILITHIUM
+            AlgorithmConstants.SIGALG_DILITHIUM,
+            AlgorithmConstants.SIGALG_DILITHIUM2,
+            AlgorithmConstants.SIGALG_DILITHIUM3,
+            AlgorithmConstants.SIGALG_DILITHIUM5
+    ));
+
+    /** Signature algorithms supported by LMS keys */
+    public static final List<String> SIG_ALGS_LMS = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_LMS
     ));
 
     /** Signature algorithms supported by SPHINCS+ keys */
@@ -170,6 +180,10 @@ public abstract class AlgorithmTools {
             } else {
                 keyAlg = AlgorithmConstants.KEYALGORITHM_ECDSA;
             }
+        } else if (publickey instanceof DilithiumPublicKey) {
+            keyAlg = AlgorithmConstants.KEYALGORITHM_DILITHIUM;
+        } else if (publickey instanceof BCLMSPublicKey) {
+            keyAlg = AlgorithmConstants.KEYALGORITHM_LMS;
         }
         return keyAlg;
     }
@@ -369,6 +383,14 @@ public abstract class AlgorithmTools {
         } else if( publicKey instanceof  EdDSAPublicKey) {
             final EdDSAPublicKey edPublickKey = (EdDSAPublicKey) publicKey;
             keyspec = edPublickKey.getAlgorithm();
+        } else if (publicKey instanceof DilithiumPublicKey) {
+            final DilithiumPublicKey dilithiumPublicKey = (DilithiumPublicKey) publicKey;
+            if (dilithiumPublicKey.getParameterSpec() != null) {
+                keyspec = dilithiumPublicKey.getParameterSpec().getName();
+            }
+        } else if (publicKey instanceof BCLMSPublicKey) {
+            // Hardcoded for now since .getParameterSpec() does not exist in BCLMSPublicKey yet...
+            keyspec = "LMS_SHA256_N32_H5";
         }
         else if ( publicKey instanceof ECPublicKey) {
             final ECPublicKey ecPublicKey = (ECPublicKey) publicKey;

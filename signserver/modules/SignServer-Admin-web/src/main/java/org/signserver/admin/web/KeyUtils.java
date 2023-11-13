@@ -36,6 +36,7 @@ public class KeyUtils {
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
     private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
     private static final String[] DILITHIUM_SPECS = {"Dilithium2", "Dilithium3", "Dilithium5"};
+    private static final String[] LMS_SPECS = {"LMS_SHA256_N32_H5"};
     private static final String[] SPHINCS_PLUS_SPECS = {"SPHINCS+"};
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
@@ -81,6 +82,7 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
         algMenuValues.add(new SelectItem("Dilithium", "Dilithium"));
+        algMenuValues.add(new SelectItem("LMS", "LMS"));
         algMenuValues.add(new SelectItem("SPHINCS+", "SPHINCS+"));
 
         return algMenuValues;
@@ -88,7 +90,7 @@ public class KeyUtils {
 
     /**
      * Gets a map of key specification labels and values given a key algorithm
-     * (suitable for a bean 
+     * (suitable for a bean
      * 
      * @param keyAlg
      * @return 
@@ -130,6 +132,12 @@ public class KeyUtils {
 
             case "Dilithium":
                 for (final String key : DILITHIUM_SPECS) {
+                    keySpecMenuValues.add(new SelectItem(key, key));
+                }
+                break;
+
+            case "LMS":
+                for (final String key : LMS_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;

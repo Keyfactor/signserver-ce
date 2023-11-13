@@ -113,6 +113,11 @@ public class CryptoUtils {
         return g.generateKeyPair();
     }
 
+    public static KeyPair generateLMS_SHA256_N32_H5() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("LMS", "BCPQC");
+        return g.generateKeyPair();
+    }
+
     public static KeyPair generateEd25519() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator g = KeyPairGenerator.getInstance("Ed25519", "BC");
         return g.generateKeyPair();

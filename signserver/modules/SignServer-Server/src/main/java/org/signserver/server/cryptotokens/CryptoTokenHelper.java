@@ -537,6 +537,18 @@ public class CryptoTokenHelper {
                 case "EdDSA":
                     alg = "Ed25519";
                     break;
+                case "DILITHIUM2":
+                    alg = "Dilithium2";
+                    break;
+                case "DILITHIUM3":
+                    alg = "Dilithium3";
+                    break;
+                case "DILITHIUM5":
+                    alg = "Dilithium5";
+                    break;
+                case "LMS":
+                    alg = "LMS";
+                    break;
             }
             if (alg == null) {
                 if (key instanceof ECKey) {

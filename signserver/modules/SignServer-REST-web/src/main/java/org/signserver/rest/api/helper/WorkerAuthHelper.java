@@ -3,8 +3,8 @@ package org.signserver.rest.api.helper;
 import java.security.cert.X509Certificate;
 import java.util.Set;
 import org.signserver.admin.common.auth.AdminAuthHelper;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.common.ClientEntry;
-import org.signserver.rest.api.exception.AdminNotAuthorizedException;
 import org.signserver.server.log.AdminInfo;
 
 /**

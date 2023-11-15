@@ -12,7 +12,12 @@
  *************************************************************************/
 package org.signserver.rest.api.exception;
 
-import javax.xml.ws.WebFault;
+import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.status;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.rest.api.entities.ErrorMessage;
 
 /**
  * Exception indicating that the user is not authorized to perform the
@@ -21,20 +26,14 @@ import javax.xml.ws.WebFault;
  * @author Hanna Hansson
  * @version $Id$
  */
-@WebFault
-public class AdminNotAuthorizedException extends Exception {
+@Provider
+public class AdminNotAuthorizedExceptionMapper implements ExceptionMapper<AdminNotAuthorizedException> {
 
-    /** serialVersionUID for this class. */
-    private static final long serialVersionUID = 1;
-
-    public AdminNotAuthorizedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public AdminNotAuthorizedException(String message) {
-        super(message);
-    }
-
-    public AdminNotAuthorizedException() {
+    @Override
+    public Response toResponse(AdminNotAuthorizedException e) {
+        return status(Response.Status.UNAUTHORIZED)
+                .header("Content-Type", "application/json")
+                .entity(new ErrorMessage(e.getMessage()))
+                .build();
     }
 }

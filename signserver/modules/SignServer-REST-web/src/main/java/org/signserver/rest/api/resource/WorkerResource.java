@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Base64;
+import org.signserver.admin.common.auth.AdminAuthHelper;
 import org.signserver.common.*;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.SignatureRequest;
@@ -55,7 +56,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -106,6 +106,7 @@ public class WorkerResource {
     @PostConstruct
     protected void init() {
         dataFactory = DataUtils.createDataFactory();
+        auth = new WorkerAuthHelper(new AdminAuthHelper(globalSession));
     }
 
     /**
@@ -161,8 +162,7 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         final Map<String, String> tempProperties = request.getProperties();
         if (tempProperties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -178,6 +178,8 @@ public class WorkerResource {
                 throw new WorkerExistsException(workerName);
             }
         }
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "addWorker",
+                String.valueOf(id));
         workerSession.addWorker(adminInfo, id, properties);
         return Response.ok().status(201).build();
     }
@@ -236,8 +238,7 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         Map<String, String> tempProperties = request.getProperties();
         if (tempProperties == null) {
@@ -257,7 +258,8 @@ public class WorkerResource {
         }
 
         final int id = workerSession.genFreeWorkerId();
-
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "addWorkerWithoutID",
+                String.valueOf(id));
         workerSession.addWorker(adminInfo, id, properties);
         return Response.ok().status(201).build();
     }
@@ -330,7 +332,6 @@ public class WorkerResource {
                 });
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "updateAndDeleteWorkerProperties",
                 String.valueOf(id), properties.entrySet().stream().findFirst().get().getKey());
-        //workerSession.addUpdateDeleteWorkerProperties(id, properties, propertiesToRemove);
         workerSession.addUpdateDeleteWorkerProperties(adminInfo, id, properties, propertiesToRemove);
 
         return Response.ok(new WorkerResponse("Worker properties successfully updated"))
@@ -384,15 +385,15 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         final Map<String, String> properties = request.getProperties();
         if (properties == null) {
             LOG.error("Properties in the request is not valid!");
             throw new IllegalRequestException("Properties in the request body is not valid!");
         }
-
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "replaceAllWorkerProperties",
+                String.valueOf(id), properties.entrySet().stream().findFirst().get().getKey());
         workerSession.replaceWorkerProperties(adminInfo, id, properties);
         return Response.ok(new WorkerResponse("Worker properties successfully replaced"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -446,11 +447,10 @@ public class WorkerResource {
     public Response removeWorker(
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id
-    ) throws NoSuchWorkerException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
-
+    ) throws NoSuchWorkerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "removeWorker",
+                String.valueOf(id));
         workerSession.removeWorker(adminInfo, id);
-
         return Response.ok(new WorkerResponse("Worker removed successfully!"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
     }

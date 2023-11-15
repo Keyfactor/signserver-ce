@@ -53,6 +53,9 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -63,6 +66,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponseSchema;
 import org.signserver.rest.api.entities.ErrorMessage;
 import org.signserver.rest.api.entities.DataEncoding;
+import org.signserver.rest.api.exception.AdminNotAuthorizedException;
+import org.signserver.rest.api.helper.WorkerAuthHelper;
 
 /**
  * REST API implementation containing operations:
@@ -81,6 +86,9 @@ import org.signserver.rest.api.entities.DataEncoding;
 public class WorkerResource {
     private static final Logger LOG = Logger.getLogger(WorkerResource.class);
 
+    @Resource
+    private WebServiceContext wsContext;
+
     @EJB
     private ProcessSessionLocal processSession;
 
@@ -91,6 +99,9 @@ public class WorkerResource {
     private WorkerSessionLocal workerSession;
 
     private DataFactory dataFactory;
+
+    private WorkerAuthHelper auth;
+
 
     @PostConstruct
     protected void init() {
@@ -259,6 +270,7 @@ public class WorkerResource {
      * @param request            Request data
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @PATCH
     @Path("{id}")
@@ -294,10 +306,11 @@ public class WorkerResource {
 
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id,
+            @PathParam("key") final String key,
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         Map<String, String> properties = request.getProperties();
         Map<String, String> tempProperty = new HashMap<>();
@@ -316,8 +329,10 @@ public class WorkerResource {
                     properties.put(x.getKey().substring(1), x.getValue());
                     properties.remove(x.getKey());
                 });
-
-        workerSession.addUpdateDeleteWorkerProperties(id, properties, propertiesToRemove);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "setWorkerProperty",
+                String.valueOf(id), properties.entrySet().stream().findFirst().toString());
+        //workerSession.addUpdateDeleteWorkerProperties(id, properties, propertiesToRemove);
+        workerSession.addUpdateDeleteWorkerProperties(adminInfo, id, properties, propertiesToRemove);
 
         return Response.ok(new WorkerResponse("Worker properties successfully updated"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -814,4 +829,23 @@ public class WorkerResource {
         return workerSession.getAllWorkerNames().contains(workerName);
     }
 
+    private X509Certificate[] getClientCertificates() {
+        final HttpServletRequest req
+                = (HttpServletRequest) wsContext.getMessageContext()
+                        .get(MessageContext.SERVLET_REQUEST);
+        final X509Certificate[] certificates
+                = (X509Certificate[]) req.getAttribute(
+                        "javax.servlet.request.X509Certificate");
+        return certificates;
+    }
+
+    private X509Certificate getCertificate() throws AdminNotAuthorizedException {
+        final X509Certificate[] certificates = getClientCertificates();
+        if (certificates == null || certificates.length == 0) {
+            throw new AdminNotAuthorizedException(
+                    "Admin not authorized to resource. "
+                    + "Client certificate authentication required.");
+        }
+        return certificates[0];
+    }
 }

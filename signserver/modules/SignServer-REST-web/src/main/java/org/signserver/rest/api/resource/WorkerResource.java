@@ -64,9 +64,9 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponseSchema;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.rest.api.entities.ErrorMessage;
 import org.signserver.rest.api.entities.DataEncoding;
-import org.signserver.rest.api.exception.AdminNotAuthorizedException;
 import org.signserver.rest.api.helper.WorkerAuthHelper;
 
 /**
@@ -306,7 +306,6 @@ public class WorkerResource {
 
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id,
-            @PathParam("key") final String key,
             @RequestBody(
                     description = "The request",
                     required = true
@@ -329,8 +328,8 @@ public class WorkerResource {
                     properties.put(x.getKey().substring(1), x.getValue());
                     properties.remove(x.getKey());
                 });
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "setWorkerProperty",
-                String.valueOf(id), properties.entrySet().stream().findFirst().toString());
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "updateAndDeleteWorkerProperties",
+                String.valueOf(id), properties.entrySet().stream().findFirst().get().getKey());
         //workerSession.addUpdateDeleteWorkerProperties(id, properties, propertiesToRemove);
         workerSession.addUpdateDeleteWorkerProperties(adminInfo, id, properties, propertiesToRemove);
 
@@ -829,23 +828,13 @@ public class WorkerResource {
         return workerSession.getAllWorkerNames().contains(workerName);
     }
 
-    private X509Certificate[] getClientCertificates() {
-        final HttpServletRequest req
-                = (HttpServletRequest) wsContext.getMessageContext()
-                        .get(MessageContext.SERVLET_REQUEST);
-        final X509Certificate[] certificates
-                = (X509Certificate[]) req.getAttribute(
-                        "javax.servlet.request.X509Certificate");
-        return certificates;
-    }
-
-    private X509Certificate getCertificate() throws AdminNotAuthorizedException {
-        final X509Certificate[] certificates = getClientCertificates();
-        if (certificates == null || certificates.length == 0) {
+    private X509Certificate getCertificate(HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException {
+        final X509Certificate certificates = getClientCertificate(httpServletRequest);
+        if (certificates == null) {
             throw new AdminNotAuthorizedException(
                     "Admin not authorized to resource. "
                     + "Client certificate authentication required.");
         }
-        return certificates[0];
+        return certificates;
     }
 }

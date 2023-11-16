@@ -2,12 +2,66 @@
   "openapi" : "3.0.3",
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.0"
+    "version" : "1.1.0"
   },
   "servers" : [ {
     "url" : "/signserver/rest/v1"
   } ],
   "paths" : {
+    "/workers" : {
+      "post" : {
+        "summary" : "Submit data for adding a new worker from multiple properties",
+        "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Worker already exists.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Worker added successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
     "/workers/{idOrName}/process" : {
       "post" : {
         "summary" : "Submit data for processing",
@@ -90,6 +144,219 @@
           }
         }
       }
+    },
+    "/workers/{id}" : {
+      "put" : {
+        "summary" : "Submit data for replace worker properties with the new properties",
+        "description" : "Submit a worker ID and a list of worker properties to replace with current worker properties.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "Properties replaced successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Submit data for adding a new worker from multiple properties",
+        "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Worker already exists.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Worker added successfully"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Removing worker",
+        "description" : "Removing worker by ID.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "Worker removed successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      },
+      "patch" : {
+        "summary" : "Submit data for update and delete worker properties",
+        "description" : "Submit a worker ID and a list of worker properties to update or delete.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "Properties replaced successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
@@ -154,6 +421,28 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "WorkerRequest" : {
+        "description" : "Represents a worker request.",
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "description" : "Worker properties list",
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "WorkerResponse" : {
+        "description" : "Represents a worker response.",
+        "type" : "object",
+        "properties" : {
+          "responseMessage" : {
+            "type" : "string"
           }
         }
       }

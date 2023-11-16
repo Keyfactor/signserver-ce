@@ -22,6 +22,8 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
 
+import io.restassured.RestAssured;
+import io.restassured.config.SSLConfig;
 import io.restassured.response.Response;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -157,6 +159,10 @@ public class CMSSignerTest  {
         try (FileOutputStream fos = new FileOutputStream("tmp/CMSSignerTest.p12")) {
             ks.store(fos, password);
         }
+
+        RestAssured.config = RestAssured.config().sslConfig(new SSLConfig()
+                .keyStore(mt.getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12", "foo123")
+                .trustStore(mt.getSignServerHome().getAbsolutePath() + "/p12/truststore.jks", "changeit"));
     }
 
     @AfterClass

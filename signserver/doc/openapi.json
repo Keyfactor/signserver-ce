@@ -1,0 +1,162 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "title" : "SignServer REST Interface",
+    "version" : "1.0"
+  },
+  "servers" : [ {
+    "url" : "/signserver/rest/v1"
+  } ],
+  "paths" : {
+    "/workers/{idOrName}/process" : {
+      "post" : {
+        "summary" : "Submit data for processing",
+        "description" : "Submit data/document/file for processing such as for instance signing and get back the result (i.e. signature).",
+        "parameters" : [ {
+          "name" : "idOrName",
+          "in" : "path",
+          "description" : "Worker Id or name of the worker",
+          "required" : true,
+          "schema" : {
+            "anyOf" : [ {
+              "type" : "string"
+            }, {
+              "format" : "int32",
+              "type" : "integer"
+            } ]
+          },
+          "example" : "ExampleSigner1"
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ProcessRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Crypto Token not available",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "The response data",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProcessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "DataEncoding" : {
+        "description" : "Choice of additional encoding of the data.",
+        "enum" : [ "NONE", "BASE64" ],
+        "type" : "string"
+      },
+      "ErrorMessage" : {
+        "type" : "object",
+        "properties" : {
+          "error" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ProcessRequest" : {
+        "description" : "POJO that represents a process request.",
+        "required" : [ "data" ],
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "description" : "The input data to be processed (i.e. signed).",
+            "type" : "string"
+          },
+          "encoding" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/DataEncoding"
+            }, {
+              "description" : "Additional encoding of the input data."
+            } ]
+          },
+          "metaData" : {
+            "description" : "Additional request metadata for the worker.",
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ProcessResponse" : {
+        "description" : "POJO that represents a process response.",
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "description" : "The resulting data (i.e the signature) in Base64 encoding",
+            "type" : "string"
+          },
+          "requestId" : {
+            "type" : "string"
+          },
+          "archiveId" : {
+            "type" : "string"
+          },
+          "signerCertificate" : {
+            "type" : "string"
+          },
+          "metaData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

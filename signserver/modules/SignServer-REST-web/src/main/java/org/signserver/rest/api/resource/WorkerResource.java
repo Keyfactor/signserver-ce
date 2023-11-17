@@ -27,6 +27,7 @@ import org.signserver.rest.api.entities.Metadata;
 import org.signserver.rest.api.exception.InternalServerException;
 import org.signserver.rest.api.exception.RequestFailedException;
 import org.signserver.rest.api.io.request.ProcessRequest;
+import org.signserver.rest.api.io.request.ReloadRequest;
 import org.signserver.rest.api.io.request.WorkerRequest;
 import org.signserver.rest.api.io.response.ProcessResponse;
 import org.signserver.rest.api.io.response.WorkerResponse;
@@ -65,8 +66,12 @@ import org.signserver.rest.api.entities.DataEncoding;
 
 /**
  * REST API implementation containing operations:
- * GET /workers : Returns a list of available workers
  * POST /workers/{idOrName}/process : Gets data bytes or a file, worker, MetaData and returns signature.
+ * POST /workers/{id} : Creates a new worker from the request properties. ID is optional.
+ * PUT /workers/{id} : Replacing all the worker properties with the new ones for the given worker ID.
+ * PATCH /workers/{id} : Update/add/remove worker properties for the given worker ID.
+ * DELETE /workers/{id} : Removing the worker by the given ID.
+ * POST /workers/reload : Reload the workers for the given worker IDs in the request.
  *
  * @author Nima Saboonchi
  * @version $Id$
@@ -102,7 +107,7 @@ public class WorkerResource {
      * @throws WorkerExistsException In case the given new worker ID already exists.
      */
     @POST
-    @Path("{id}/")
+    @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
@@ -143,7 +148,8 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id,
             @RequestBody(
-                    description = "The request"
+                    description = "The request",
+                    required = true
             ) final WorkerRequest request) throws IllegalRequestException {
         AdminInfo adminInfo = new AdminInfo("REST user", null, null);
         final Map<String, String> tempProperties = request.getProperties();
@@ -217,7 +223,8 @@ public class WorkerResource {
 
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
-                    description = "The request"
+                    description = "The request",
+                    required = true
             ) final WorkerRequest request) throws IllegalRequestException {
         AdminInfo adminInfo = new AdminInfo("REST user", null, null);
 
@@ -254,7 +261,7 @@ public class WorkerResource {
      * @throws NoSuchWorkerException In case the given worker ID not exists.
      */
     @PATCH
-    @Path("{id}/")
+    @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
@@ -288,7 +295,8 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id,
             @RequestBody(
-                    description = "The request"
+                    description = "The request",
+                    required = true
             ) final WorkerRequest request) throws IllegalRequestException {
 
         Map<String, String> properties = request.getProperties();
@@ -325,7 +333,7 @@ public class WorkerResource {
      * @throws NoSuchWorkerException In case the given worker ID not exists.
      */
     @PUT
-    @Path("{id}/")
+    @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
@@ -360,7 +368,8 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id,
             @RequestBody(
-                    description = "The request"
+                    description = "The request",
+                    required = true
             ) final WorkerRequest request) throws IllegalRequestException {
         AdminInfo adminInfo = new AdminInfo("REST user", null, null);
 
@@ -384,7 +393,7 @@ public class WorkerResource {
      * @throws NoSuchWorkerException In case the given worker ID not exists.
      */
     @DELETE
-    @Path("{id}/")
+    @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
             responseCode = "400",
@@ -429,6 +438,95 @@ public class WorkerResource {
         workerSession.removeWorker(adminInfo, id);
 
         return Response.ok(new WorkerResponse("Worker removed successfully!"))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
+     * REST operation for reload the workers.
+     *
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @return The operation result in a JSON format.
+     * @throws InternalServerException In case the request could not be processed by some error at the server side.
+     * @throws NoSuchWorkerException   In case any of the given worker IDs do not exist.
+     */
+    @POST
+    @Path("reload")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @Operation(
+            summary = "Reload workers",
+            description = "Submit a list of worker IDs to reload configurations from the database." +
+                    " The request without body reloads all the workers."
+    )
+    public Response reload(
+            @Context final HttpServletRequest httpServletRequest,
+            @RequestBody(
+                    description = "The request"
+            ) final ReloadRequest request) throws IllegalRequestException {
+        final List<Integer> tempWorkerIDs = request.getWorkerIDs();
+        if (tempWorkerIDs == null || tempWorkerIDs.isEmpty()) {
+            LOG.error("There is no Worker ID to reload!");
+            throw new IllegalRequestException("There is no Worker ID to reload!");
+        }
+        for (int workerId : tempWorkerIDs) {
+            if (!workerSession.isWorkerExists(workerId)) {
+                throw new NoSuchWorkerException(String.valueOf(workerId));
+            }
+        }
+        for (int workerID : tempWorkerIDs) {
+            workerSession.reloadConfiguration(workerID);
+        }
+
+        return Response.ok(new WorkerResponse("Workers successfully reloaded"))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
+     * REST operation for reload all workers.
+     *
+     * @return The operation result in a JSON format.
+     */
+    @POST
+    @Path("reload")
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    public Response reloadAll() {
+        List<Integer> allWorkerIDs = workerSession.getAllWorkers();
+        for (int workerID : allWorkerIDs) {
+            workerSession.reloadConfiguration(workerID);
+        }
+        return Response.ok(new WorkerResponse("All workers successfully reloaded"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
     }
 
@@ -497,7 +595,8 @@ public class WorkerResource {
             @PathParam("idOrName") final String idOrName,
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
-                    description = "The request"
+                    description = "The request",
+                    required = true
             ) final ProcessRequest request) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException {
         final List<Metadata> requestMetadata = new ArrayList<>();
         if (request.getMetaData() != null) {
@@ -714,4 +813,5 @@ public class WorkerResource {
     protected boolean checkWorkerNameAlreadyExists(String workerName) {
         return workerSession.getAllWorkerNames().contains(workerName);
     }
+
 }

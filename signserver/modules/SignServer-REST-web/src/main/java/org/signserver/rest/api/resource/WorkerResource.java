@@ -507,7 +507,9 @@ public class WorkerResource {
             throw new IllegalRequestException("There is no Worker ID to reload!");
         }
         for (int workerId : tempWorkerIDs) {
-            if (!workerSession.isWorkerExists(workerId)) {
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reload",
+                    String.valueOf(workerId));
+            if (!workerSession.isWorkerExists(adminInfo, workerId)) {
                 throw new NoSuchWorkerException(String.valueOf(workerId));
             }
         }

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
- *
+ * Represents a process request for REST.
  * @author Markus Kilås
  */
 @Schema(

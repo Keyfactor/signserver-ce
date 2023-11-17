@@ -14,40 +14,35 @@ package org.signserver.rest.api.io.request;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.util.Map;
+import java.util.List;
+
 
 /**
- * Represents a worker request for REST.
+ * Represents a reload request for REST.
  * @author Nima Saboonchi
  */
 @Schema(
-        name = "WorkerRequest",
-        description = "Represents a worker request."
+        name = "ReloadRequest",
+        description = "Represents a reload request."
 )
-public class WorkerRequest {
+public class ReloadRequest {
 
     @Schema(
-            required = false,
-            description = "Worker properties list"
+            required = true,
+            description = "List of worker IDs to reload."
 
     )
-    private Map<String, String> properties;
+    private List<Integer> workerIDs;
 
-
-    public WorkerRequest(Map<String, String> properties) {
-        this.properties = properties;
+    public List<Integer> getWorkerIDs() {
+        return workerIDs;
     }
 
-    public WorkerRequest() {
+    public void setWorkerIDs(List<Integer> workerIDs) {
+        this.workerIDs = workerIDs;
     }
 
-    public Map<String, String> getProperties() {
-        return properties;
+    public ReloadRequest() {
     }
-
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
 
 }

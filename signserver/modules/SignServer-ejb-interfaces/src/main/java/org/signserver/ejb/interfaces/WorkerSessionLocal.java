@@ -148,6 +148,14 @@ public interface WorkerSessionLocal extends WorkerSession {
     boolean isWorkerExists(int workerId);
 
     /**
+     * Checks the given worker Id exists.
+     *
+     * @param workerId
+     * @return true if the worker did exist otherwise false
+     */
+    boolean isWorkerExists(AdminInfo adminInfo, int workerId);
+
+    /**
      * Add a new worker by setting several parameters in the worker configuration.
      *
      * Observe that the worker isn't activated with this config until reload is

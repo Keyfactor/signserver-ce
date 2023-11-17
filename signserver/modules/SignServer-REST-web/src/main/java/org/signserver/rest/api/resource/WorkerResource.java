@@ -500,7 +500,7 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
                     description = "The request"
-            ) final ReloadRequest request) throws IllegalRequestException {
+            ) final ReloadRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         final List<Integer> tempWorkerIDs = request.getWorkerIDs();
         if (tempWorkerIDs == null || tempWorkerIDs.isEmpty()) {
             LOG.error("There is no Worker ID to reload!");
@@ -511,8 +511,11 @@ public class WorkerResource {
                 throw new NoSuchWorkerException(String.valueOf(workerId));
             }
         }
+
         for (int workerID : tempWorkerIDs) {
-            workerSession.reloadConfiguration(workerID);
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reload",
+                    String.valueOf(workerID));
+            workerSession.reloadConfiguration(adminInfo, workerID);
         }
 
         return Response.ok(new WorkerResponse("Workers successfully reloaded"))
@@ -535,10 +538,13 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    public Response reloadAll() {
+    public Response reloadAll(
+            @Context final HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException {
         List<Integer> allWorkerIDs = workerSession.getAllWorkers();
         for (int workerID : allWorkerIDs) {
-            workerSession.reloadConfiguration(workerID);
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reloadAll",
+                    String.valueOf(workerID));
+            workerSession.reloadConfiguration(adminInfo, workerID);
         }
         return Response.ok(new WorkerResponse("All workers successfully reloaded"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();

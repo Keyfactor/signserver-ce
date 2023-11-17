@@ -613,9 +613,9 @@ public class RestWorkersTest extends ModulesTestCase {
                     .extract().response();
 
             assertEquals("Check response status code 201", 201, response.statusCode());
-            assertFalse("Check worker with the given worker name created",getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
+            assertTrue("Check worker with the given worker name created", getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
 
-             response = given()
+            response = given()
                     .relaxedHTTPSValidation()
                     .accept(JSON)
                     .when()
@@ -625,7 +625,7 @@ public class RestWorkersTest extends ModulesTestCase {
                     .contentType("application/json")
                     .extract().response();
 
-            assertFalse("Check worker with the given worker name removed",getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
+            assertFalse("Check worker with the given worker name removed", getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker removed successfully!"));
             assertEquals("Check response status code 200", 200, response.statusCode());

@@ -933,4 +933,61 @@ public class RestWorkersTest extends ModulesTestCase {
             removeWorker(HELLO_WORKER_ID);
         }
     }
+
+    /**
+     * Test REST DELETE worker with a wrong worker ID. Should return status code 404.
+     */
+    @Test
+    public void testRestDeleteWorkerNoSuchWorkerExceptionStatusCode() {
+        LOG.debug("testRestDeleteWorkerNoSuchWorkerExceptionStatusCode");
+        int dummyWorkerID = 8787878;
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .when()
+                    .delete(baseHttpsURL + "/workers/" + dummyWorkerID)
+                    .then()
+                    .statusCode(404)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 404.", 404, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST DELETE worker with an invalid worker ID (Not an integer value). Should return status code 500.
+     */
+    @Test
+    public void testRestDeleteWorkerInternalServerExceptionStatusCode() {
+        LOG.debug("testRestDeleteWorkerInternalServerExceptionStatusCode");
+        String dummyWorkerID = "NotAnInteger";
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .when()
+                    .put(baseHttpsURL + "/workers/" + dummyWorkerID)
+                    .then()
+                    .statusCode(500)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 500.", 500, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
 }

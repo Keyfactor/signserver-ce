@@ -475,6 +475,106 @@ public class RestWorkersTest extends ModulesTestCase {
     }
 
     /**
+     * Test REST POST to create a worker with an empty body. Should return status code 400
+     */
+    @Test
+    public void testRestPostAddWorkerIllegalRequestExceptionStatusCode() {
+        LOG.debug("testRestPostAddWorkerIllegalRequestExceptionStatusCode");
+        JSONObject body = new JSONObject();
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(body)
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(400)
+                    .extract().response();
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code is 400.", 400, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST to create a worker with worker ID already exists. Should return status code 409
+     */
+    @Test
+    public void testRestPostWorkerExistsExceptionStatusCode() {
+        LOG.debug("testRestPostWorkerExistsExceptionStatusCode");
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(createPostWorkerAddRequestJsonBody())
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(201)
+                    .extract().response();
+            assertEquals("Check response status code is 201.", 201, response.statusCode());
+
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(createPostWorkerAddRequestJsonBody())
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(409)
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code is 409.", 409, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST to create a worker with a wrong request body. Should return status code 500
+     */
+    @Test
+    public void testRestPostAddWorkerInternalServerExceptionStatusCode() {
+        LOG.debug("testRestPostAddWorkerInternalServerExceptionStatusCode");
+        String dummyMessageBody = "Text";
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(dummyMessageBody)
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(500)
+                    .extract().response();
+
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 500.", 500, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
      * Test REST POST to create a worker with provided properties.
      */
     @Test
@@ -546,6 +646,106 @@ public class RestWorkersTest extends ModulesTestCase {
     }
 
     /**
+     * Test REST PATCH worker to update worker properties with a wrong message body. Should return status code 400.
+     */
+    @Test
+    public void testRestPatchWorkerIllegalRequestExceptionStatusCode() {
+        LOG.debug("testRestPatchWorkerIllegalRequestExceptionStatusCode");
+        JSONObject body = new JSONObject();
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(createPostWorkerAddRequestJsonBody())
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(201)
+                    .extract().response();
+
+            assertEquals("Check response status code 201", 201, response.statusCode());
+
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(body)
+                    .when()
+                    .patch(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(400)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 400.", 400, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST PATCH worker to update worker properties with a wrong worker ID. Should return status code 404.
+     */
+    @Test
+    public void testRestPatchWorkerNoSuchWorkerExceptionStatusCode() {
+        LOG.debug("testRestPatchWorkerNoSuchWorkerExceptionStatusCode");
+        int dummyWorkerID = 8787878;
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(createPutWorkerReplaceRequestJsonBody())
+                    .when()
+                    .patch(baseHttpsURL + "/workers/" + dummyWorkerID)
+                    .then()
+                    .statusCode(404)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 404.", 404, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST PATCH worker to update worker properties with a wrong message body. Should return status code 500.
+     */
+    @Test
+    public void testRestPatchWorkerInternalServerExceptionStatusCode() {
+        LOG.debug("testRestPatchWorkerInternalServerExceptionStatusCode");
+        String dummyMessageBody = "Text";
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(dummyMessageBody)
+                    .when()
+                    .patch(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(500)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 500.", 500, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
      * Test REST PUT worker to replace all worker properties.
      */
     @Test
@@ -588,6 +788,106 @@ public class RestWorkersTest extends ModulesTestCase {
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker properties successfully replaced"));
             assertEquals("Check response status code 200", 200, response.statusCode());
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST PUT worker to replace all worker properties with a wrong message body. Should return status code 400.
+     */
+    @Test
+    public void testRestPutWorkerIllegalRequestExceptionStatusCode() {
+        LOG.debug("testRestPutWorkerIllegalRequestExceptionStatusCode");
+        JSONObject body = new JSONObject();
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(createPostWorkerAddRequestJsonBody())
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(201)
+                    .extract().response();
+
+            assertEquals("Check response status code 201", 201, response.statusCode());
+
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(body)
+                    .when()
+                    .put(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(400)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 400.", 400, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST PUT worker to replace all worker properties with a wrong worker ID. Should return status code 404.
+     */
+    @Test
+    public void testRestPutWorkerNoSuchWorkerExceptionStatusCode() {
+        LOG.debug("testRestPutWorkerNoSuchWorkerExceptionStatusCode");
+        int dummyWorkerID = 8787878;
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(createPutWorkerReplaceRequestJsonBody())
+                    .when()
+                    .put(baseHttpsURL + "/workers/" + dummyWorkerID)
+                    .then()
+                    .statusCode(404)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 404.", 404, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST PUT worker to replace all worker properties with a wrong message body. Should return status code 500.
+     */
+    @Test
+    public void testRestPutWorkerInternalServerExceptionStatusCode() {
+        LOG.debug("testRestPutWorkerInternalServerExceptionStatusCode");
+        String dummyMessageBody = "Text";
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(dummyMessageBody)
+                    .when()
+                    .put(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(500)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertEquals("Check response status code is 500.", 500, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
         } finally {
             removeWorker(HELLO_WORKER_ID);
         }

@@ -297,7 +297,6 @@ public class RestAuthorizationTest extends ModulesTestCase {
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker removed successfully!"));
             assertEquals("Check response status code 200", 200, response.statusCode());
-            assertEquals("Check response status code is 200.", 200, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);
         }

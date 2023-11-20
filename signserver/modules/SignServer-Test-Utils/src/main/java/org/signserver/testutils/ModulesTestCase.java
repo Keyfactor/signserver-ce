@@ -14,6 +14,9 @@ package org.signserver.testutils;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.config.SSLConfig;
 import io.restassured.http.Method;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +36,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.HashMap;
@@ -946,6 +950,39 @@ public class ModulesTestCase {
         return response;
     }
 
+    /**
+     * Optional callRest method to call the REST api with the truststore and keystore of your choosing.
+     * @param method Request method i.e. POST, PATCH, PUT etc
+     * @param statusCode What status code you expect for the repsonse
+     * @param responseContentType Content type for response
+     * @param call Endpoint to call i.e /workers/
+     * @param body Body for the request
+     * @param storeInfo HashMap containing truststore and keystore.
+     * The HashMap must contain keys that's named as follows: keyStorePath, keyStorePassword, trustStorePath, trustStorePassword
+     * @return REST Assured Response object
+     */
+    public Response callRest(final Method method, final int statusCode,
+                             final String responseContentType,
+                             final String call, final JSONObject body, Map<String, String> storeInfo) {
+        final String baseURL = getSignServerBaseURL() + "/rest/v1";
+
+        final Response response = given()
+                .config(new RestAssuredConfig().sslConfig(new SSLConfig()
+                                .keyStore(storeInfo.get("keyStorePath"), storeInfo.get("keyStorePassword"))
+                                .trustStore(storeInfo.get("trustStorePath"), storeInfo.get("trustStorePassword"))))
+                .contentType(JSON)
+                .accept(JSON)
+                .body(body)
+                .when()
+                .request(method, baseURL + call)
+                .then()
+                .statusCode(statusCode)
+                .contentType(responseContentType)
+                .extract().response();
+
+        return response;
+    }
+
     public Response callRest(final Method method, final String call,
                              final JSONObject body) {
         return callRest(method, 200, "application/json", call, body);
@@ -1040,6 +1077,34 @@ public class ModulesTestCase {
         int pos = version.indexOf('.');
         pos = version.indexOf('.', pos + 1);
         return Double.parseDouble(version.substring(0, pos));
+    }
+
+    /**
+     * This method will return a HashMap that refers to a trusted truststore and a keystore that should be able to perform admin operations.
+     * @return HashMap
+     * @throws Exception
+     */
+    public HashMap<String, String> getAuthorizedStore() throws Exception {
+        HashMap<String, String> ret = new HashMap<>();
+        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12");
+        ret.put("keyStorePassword", "foo123");
+        ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
+        ret.put("trustStorePassword", "changeit");
+        return ret;
+    }
+
+    /**
+     * This method will return a HashMap that refers to a trusted truststore and a keystore that should not be allowed to do any admin operations.
+     * @return HashMap
+     * @throws Exception
+     */
+    public HashMap<String, String> getUnauthorizedStore() throws Exception {
+        HashMap<String, String> ret = new HashMap<>();
+        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_signer1.p12");
+        ret.put("keyStorePassword", "foo123");
+        ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
+        ret.put("trustStorePassword", "changeit");
+        return ret;
     }
 
     /**

@@ -950,6 +950,17 @@ public class ModulesTestCase {
         return response;
     }
 
+    /**
+     * Optional callRest method to call the REST api with the truststore and keystore of your choosing.
+     * @param method Request method i.e. POST, PATCH, PUT etc
+     * @param statusCode What status code you expect for the repsonse
+     * @param responseContentType Content type for response
+     * @param call Endpoint to call i.e /workers/
+     * @param body Body for the request
+     * @param storeInfo HashMap containing truststore and keystore.
+     * The HashMap must contain keys that's named as follows: keyStorePath, keyStorePassword, trustStorePath, trustStorePassword
+     * @return REST Assured Response object
+     */
     public Response callRest(final Method method, final int statusCode,
                              final String responseContentType,
                              final String call, final JSONObject body, Map<String, String> storeInfo) {

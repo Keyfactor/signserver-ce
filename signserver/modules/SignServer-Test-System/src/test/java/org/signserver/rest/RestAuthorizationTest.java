@@ -9,6 +9,7 @@ import org.signserver.testutils.ModulesTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -101,7 +102,7 @@ public class RestAuthorizationTest extends ModulesTestCase {
                     mt.getAuthorizedStore());
 
             workerID = getWorkerSession().getWorkerId("HelloWorker_REST");
-            assertTrue("Check new worker created with a new worker ID", workerID != 0);
+            assertNotEquals("Check new worker created with a new worker ID", 0, workerID);
             assertEquals("Check response status code 201", 201, response.statusCode());
         } finally {
             removeWorker(workerID);
@@ -149,7 +150,7 @@ public class RestAuthorizationTest extends ModulesTestCase {
                     mt.getAuthorizedStore());
 
             workerID = getWorkerSession().getWorkerId("HelloWorker_REST");
-            assertTrue("Check new worker created with a new worker ID", workerID != 0);
+            assertNotEquals("Check new worker created with a new worker ID", 0, workerID);
             assertEquals("Check response status code 201", 201, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);

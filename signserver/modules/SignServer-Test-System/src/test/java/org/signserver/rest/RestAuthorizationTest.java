@@ -1,16 +1,11 @@
 package org.signserver.rest;
 
-import io.restassured.RestAssured;
-import io.restassured.config.SSLConfig;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
 import org.signserver.testutils.ModulesTestCase;
-
-import java.io.FileNotFoundException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

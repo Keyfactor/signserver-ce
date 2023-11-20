@@ -1068,6 +1068,11 @@ public class ModulesTestCase {
         return Double.parseDouble(version.substring(0, pos));
     }
 
+    /**
+     * This method will return a HashMap that refers to a trusted truststore and a keystore that should be able to perform admin operations.
+     * @return HashMap
+     * @throws Exception
+     */
     public HashMap<String, String> getAuthorizedStore() throws Exception {
         HashMap<String, String> ret = new HashMap<>();
         ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12");
@@ -1077,9 +1082,14 @@ public class ModulesTestCase {
         return ret;
     }
 
+    /**
+     * This method will return a HashMap that refers to a trusted truststore and a keystore that should not be allowed to do any admin operations.
+     * @return HashMap
+     * @throws Exception
+     */
     public HashMap<String, String> getUnauthorizedStore() throws Exception {
         HashMap<String, String> ret = new HashMap<>();
-        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin2.p12");
+        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_signer1.p12");
         ret.put("keyStorePassword", "foo123");
         ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
         ret.put("trustStorePassword", "changeit");

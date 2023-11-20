@@ -17,6 +17,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerRequest'
+        required: true
       responses:
         "400":
           description: Bad request from the client
@@ -41,6 +42,37 @@ paths:
           description: Worker added successfully
           content:
             application/json: {}
+  /workers/reload:
+    post:
+      summary: Reload workers
+      description: Submit a list of worker IDs to reload configurations from the database.
+        The request without body reloads all the workers.
+      requestBody:
+        description: The request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReloadRequest'
+      responses:
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: No such worker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /workers/{idOrName}/process:
     post:
       summary: Submit data for processing
@@ -63,6 +95,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProcessRequest'
+        required: true
       responses:
         "400":
           description: Bad request from the client
@@ -113,6 +146,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerRequest'
+        required: true
       responses:
         "400":
           description: Bad request from the client
@@ -123,6 +157,12 @@ paths:
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: No such worker
           content:
             application/json:
               schema:
@@ -148,6 +188,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerRequest'
+        required: true
       responses:
         "400":
           description: Bad request from the client
@@ -221,6 +262,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerRequest'
+        required: true
       responses:
         "400":
           description: Bad request from the client
@@ -287,6 +329,18 @@ components:
           type: object
           additionalProperties:
             type: string
+    ReloadRequest:
+      description: Represents a reload request.
+      required:
+      - workerIDs
+      type: object
+      properties:
+        workerIDs:
+          description: List of worker IDs to reload.
+          type: array
+          items:
+            format: int32
+            type: integer
     WorkerRequest:
       description: Represents a worker request.
       type: object

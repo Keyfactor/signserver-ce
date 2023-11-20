@@ -20,7 +20,8 @@
                 "$ref" : "#/components/schemas/WorkerRequest"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "400" : {
@@ -62,6 +63,54 @@
         }
       }
     },
+    "/workers/reload" : {
+      "post" : {
+        "summary" : "Reload workers",
+        "description" : "Submit a list of worker IDs to reload configurations from the database. The request without body reloads all the workers.",
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReloadRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/workers/{idOrName}/process" : {
       "post" : {
         "summary" : "Submit data for processing",
@@ -89,7 +138,8 @@
                 "$ref" : "#/components/schemas/ProcessRequest"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "400" : {
@@ -166,7 +216,8 @@
                 "$ref" : "#/components/schemas/WorkerRequest"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "400" : {
@@ -181,6 +232,16 @@
           },
           "500" : {
             "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -217,7 +278,8 @@
                 "$ref" : "#/components/schemas/WorkerRequest"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "400" : {
@@ -326,7 +388,8 @@
                 "$ref" : "#/components/schemas/WorkerRequest"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "400" : {
@@ -420,6 +483,21 @@
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            }
+          }
+        }
+      },
+      "ReloadRequest" : {
+        "description" : "Represents a reload request.",
+        "required" : [ "workerIDs" ],
+        "type" : "object",
+        "properties" : {
+          "workerIDs" : {
+            "description" : "List of worker IDs to reload.",
+            "type" : "array",
+            "items" : {
+              "format" : "int32",
+              "type" : "integer"
             }
           }
         }

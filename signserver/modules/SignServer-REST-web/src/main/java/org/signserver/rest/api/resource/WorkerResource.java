@@ -353,6 +353,14 @@ public class WorkerResource {
             )
     )
     @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
             responseCode = "200",
             description = "Properties replaced successfully",
             content = @Content(
@@ -398,6 +406,14 @@ public class WorkerResource {
     @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)

@@ -14,6 +14,9 @@ package org.signserver.testutils;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.config.SSLConfig;
 import io.restassured.http.Method;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +36,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.HashMap;
@@ -946,6 +950,28 @@ public class ModulesTestCase {
         return response;
     }
 
+    public Response callRest(final Method method, final int statusCode,
+                             final String responseContentType,
+                             final String call, final JSONObject body, Map<String, String> storeInfo) {
+        final String baseURL = getSignServerBaseURL() + "/rest/v1";
+
+        final Response response = given()
+                .config(new RestAssuredConfig().sslConfig(new SSLConfig()
+                                .keyStore(storeInfo.get("keyStorePath"), storeInfo.get("keyStorePassword"))
+                                .trustStore(storeInfo.get("trustStorePath"), storeInfo.get("trustStorePassword"))))
+                .contentType(JSON)
+                .accept(JSON)
+                .body(body)
+                .when()
+                .request(method, baseURL + call)
+                .then()
+                .statusCode(statusCode)
+                .contentType(responseContentType)
+                .extract().response();
+
+        return response;
+    }
+
     public Response callRest(final Method method, final String call,
                              final JSONObject body) {
         return callRest(method, 200, "application/json", call, body);
@@ -1040,6 +1066,24 @@ public class ModulesTestCase {
         int pos = version.indexOf('.');
         pos = version.indexOf('.', pos + 1);
         return Double.parseDouble(version.substring(0, pos));
+    }
+
+    public HashMap<String, String> getAuthorizedStore() throws Exception {
+        HashMap<String, String> ret = new HashMap<>();
+        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12");
+        ret.put("keyStorePassword", "foo123");
+        ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
+        ret.put("trustStorePassword", "changeit");
+        return ret;
+    }
+
+    public HashMap<String, String> getUnauthorizedStore() throws Exception {
+        HashMap<String, String> ret = new HashMap<>();
+        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin2.p12");
+        ret.put("keyStorePassword", "foo123");
+        ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
+        ret.put("trustStorePassword", "changeit");
+        return ret;
     }
 
     /**

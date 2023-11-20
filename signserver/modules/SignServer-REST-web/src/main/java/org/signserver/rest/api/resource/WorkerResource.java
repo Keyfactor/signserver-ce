@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Base64;
+import org.signserver.admin.common.auth.AdminAuthHelper;
 import org.signserver.common.*;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.SignatureRequest;
@@ -53,6 +54,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import javax.xml.ws.WebServiceContext;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -61,8 +64,10 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponseSchema;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.rest.api.entities.ErrorMessage;
 import org.signserver.rest.api.entities.DataEncoding;
+import org.signserver.rest.api.helper.WorkerAuthHelper;
 
 /**
  * REST API implementation containing operations:
@@ -81,6 +86,9 @@ import org.signserver.rest.api.entities.DataEncoding;
 public class WorkerResource {
     private static final Logger LOG = Logger.getLogger(WorkerResource.class);
 
+    @Resource
+    private WebServiceContext wsContext;
+
     @EJB
     private ProcessSessionLocal processSession;
 
@@ -92,9 +100,13 @@ public class WorkerResource {
 
     private DataFactory dataFactory;
 
+    private WorkerAuthHelper auth;
+
+
     @PostConstruct
     protected void init() {
         dataFactory = DataUtils.createDataFactory();
+        auth = new WorkerAuthHelper(new AdminAuthHelper(globalSession));
     }
 
     /**
@@ -150,8 +162,7 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         final Map<String, String> tempProperties = request.getProperties();
         if (tempProperties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -167,6 +178,8 @@ public class WorkerResource {
                 throw new WorkerExistsException(workerName);
             }
         }
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "addWorker",
+                String.valueOf(id));
         workerSession.addWorker(adminInfo, id, properties);
         return Response.ok().status(201).build();
     }
@@ -225,8 +238,7 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         Map<String, String> tempProperties = request.getProperties();
         if (tempProperties == null) {
@@ -246,7 +258,8 @@ public class WorkerResource {
         }
 
         final int id = workerSession.genFreeWorkerId();
-
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "addWorkerWithoutID",
+                String.valueOf(id));
         workerSession.addWorker(adminInfo, id, properties);
         return Response.ok().status(201).build();
     }
@@ -259,6 +272,7 @@ public class WorkerResource {
      * @param request            Request data
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @PATCH
     @Path("{id}")
@@ -297,9 +311,13 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         Map<String, String> properties = request.getProperties();
+        if (properties == null) {
+            LOG.error("Properties in the request is not valid!");
+            throw new IllegalRequestException("Properties in the request body is not valid!");
+        }
         Map<String, String> tempProperty = new HashMap<>();
         List<String> propertiesToRemove = new ArrayList<>();
 
@@ -316,8 +334,9 @@ public class WorkerResource {
                     properties.put(x.getKey().substring(1), x.getValue());
                     properties.remove(x.getKey());
                 });
-
-        workerSession.addUpdateDeleteWorkerProperties(id, properties, propertiesToRemove);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "updateAndDeleteWorkerProperties",
+                String.valueOf(id), properties.entrySet().stream().findFirst().get().getKey());
+        workerSession.addUpdateDeleteWorkerProperties(adminInfo, id, properties, propertiesToRemove);
 
         return Response.ok(new WorkerResponse("Worker properties successfully updated"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -378,15 +397,15 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request",
                     required = true
-            ) final WorkerRequest request) throws IllegalRequestException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
+            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         final Map<String, String> properties = request.getProperties();
         if (properties == null) {
             LOG.error("Properties in the request is not valid!");
             throw new IllegalRequestException("Properties in the request body is not valid!");
         }
-
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "replaceAllWorkerProperties",
+                String.valueOf(id), properties.entrySet().stream().findFirst().get().getKey());
         workerSession.replaceWorkerProperties(adminInfo, id, properties);
         return Response.ok(new WorkerResponse("Worker properties successfully replaced"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -448,11 +467,10 @@ public class WorkerResource {
     public Response removeWorker(
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id
-    ) throws NoSuchWorkerException {
-        AdminInfo adminInfo = new AdminInfo("REST user", null, null);
-
+    ) throws NoSuchWorkerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "removeWorker",
+                String.valueOf(id));
         workerSession.removeWorker(adminInfo, id);
-
         return Response.ok(new WorkerResponse("Worker removed successfully!"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
     }
@@ -502,19 +520,24 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
                     description = "The request"
-            ) final ReloadRequest request) throws IllegalRequestException {
+            ) final ReloadRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         final List<Integer> tempWorkerIDs = request.getWorkerIDs();
         if (tempWorkerIDs == null || tempWorkerIDs.isEmpty()) {
             LOG.error("There is no Worker ID to reload!");
             throw new IllegalRequestException("There is no Worker ID to reload!");
         }
         for (int workerId : tempWorkerIDs) {
-            if (!workerSession.isWorkerExists(workerId)) {
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reload",
+                    String.valueOf(workerId));
+            if (!workerSession.isWorkerExists(adminInfo, workerId)) {
                 throw new NoSuchWorkerException(String.valueOf(workerId));
             }
         }
+
         for (int workerID : tempWorkerIDs) {
-            workerSession.reloadConfiguration(workerID);
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reload",
+                    String.valueOf(workerID));
+            workerSession.reloadConfiguration(adminInfo, workerID);
         }
 
         return Response.ok(new WorkerResponse("Workers successfully reloaded"))
@@ -537,10 +560,13 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    public Response reloadAll() {
+    public Response reloadAll(
+            @Context final HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException {
         List<Integer> allWorkerIDs = workerSession.getAllWorkers();
         for (int workerID : allWorkerIDs) {
-            workerSession.reloadConfiguration(workerID);
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reloadAll",
+                    String.valueOf(workerID));
+            workerSession.reloadConfiguration(adminInfo, workerID);
         }
         return Response.ok(new WorkerResponse("All workers successfully reloaded"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -830,4 +856,13 @@ public class WorkerResource {
         return workerSession.getAllWorkerNames().contains(workerName);
     }
 
+    private X509Certificate getCertificate(HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException {
+        final X509Certificate certificates = getClientCertificate(httpServletRequest);
+        if (certificates == null) {
+            throw new AdminNotAuthorizedException(
+                    "Admin not authorized to resource. "
+                    + "Client certificate authentication required.");
+        }
+        return certificates;
+    }
 }

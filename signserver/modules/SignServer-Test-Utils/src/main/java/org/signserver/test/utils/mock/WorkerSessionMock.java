@@ -117,6 +117,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
+    public boolean isWorkerExists(AdminInfo adminInfo, int workerId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

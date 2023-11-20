@@ -222,6 +222,11 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
+                    public boolean isWorkerExists(AdminInfo AdminInfo, int workerId) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                    @Override
                     public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }

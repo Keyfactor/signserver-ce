@@ -862,6 +862,12 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
+    public boolean isWorkerExists(AdminInfo adminInfo, int workerId) {
+        return getAllWorkers().contains(workerId);
+    }
+
+
+    @Override
     public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws WorkerExistsException {
         if (isWorkerExists(workerId)) {
             LOG.debug("Worker already exists: " + workerId);

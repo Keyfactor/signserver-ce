@@ -314,6 +314,10 @@ public class WorkerResource {
             ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
 
         Map<String, String> properties = request.getProperties();
+        if (properties == null) {
+            LOG.error("Properties in the request is not valid!");
+            throw new IllegalRequestException("Properties in the request body is not valid!");
+        }
         Map<String, String> tempProperty = new HashMap<>();
         List<String> propertiesToRemove = new ArrayList<>();
 

@@ -64,8 +64,4 @@ public class WorkerAuthHelper {
     public boolean hasAuthorization(X509Certificate cert, Set<ClientEntry> authSet) {
         return delegate.hasAuthorization(cert, authSet);
     }
-
-    /*public Set<ClientEntry> getWSClients(String propertyName) {
-        return delegate.getWSClients(propertyName);
-    }*/
 }

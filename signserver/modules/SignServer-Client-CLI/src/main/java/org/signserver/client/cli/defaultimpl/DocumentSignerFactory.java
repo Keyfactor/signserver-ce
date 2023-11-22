@@ -204,6 +204,11 @@ public class DocumentSignerFactory {
             }
             case REST: {
                 LOG.debug("Using REST as protocol");
+
+                if (sf != null) {
+                    HttpsURLConnection.setDefaultSSLSocketFactory(sf);
+                }
+
                 signer = new RESTDocumentSigner(hostsManager, port, baseUrlPath, servlet,
                         keyStoreOptions.isUseHTTPS(),
                         workerName, username,

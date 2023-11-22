@@ -251,7 +251,7 @@
             }
           },
           "200" : {
-            "description" : "Properties replaced successfully",
+            "description" : "Worker properties successfully replaced",
             "content" : {
               "application/json" : { }
             }
@@ -413,7 +413,7 @@
             }
           },
           "200" : {
-            "description" : "Properties replaced successfully",
+            "description" : "Worker properties successfully updated",
             "content" : {
               "application/json" : { }
             }

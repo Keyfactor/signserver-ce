@@ -296,7 +296,7 @@ public class WorkerResource {
     )
     @APIResponse(
             responseCode = "200",
-            description = "Properties replaced successfully",
+            description = "Worker properties successfully updated",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON)
     )
@@ -381,7 +381,7 @@ public class WorkerResource {
     )
     @APIResponse(
             responseCode = "200",
-            description = "Properties replaced successfully",
+            description = "Worker properties successfully replaced",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON)
     )
@@ -471,7 +471,7 @@ public class WorkerResource {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "removeWorker",
                 String.valueOf(id));
         workerSession.removeWorker(adminInfo, id);
-        return Response.ok(new WorkerResponse("Worker removed successfully!"))
+        return Response.ok(new WorkerResponse("Worker removed successfully"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
     }
 

@@ -168,7 +168,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
         "200":
-          description: Properties replaced successfully
+          description: Worker properties successfully replaced
           content:
             application/json: {}
     post:
@@ -278,7 +278,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
         "200":
-          description: Properties replaced successfully
+          description: Worker properties successfully updated
           content:
             application/json: {}
 components:

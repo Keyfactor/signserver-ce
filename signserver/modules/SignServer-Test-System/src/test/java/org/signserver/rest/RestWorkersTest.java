@@ -67,6 +67,7 @@ public class RestWorkersTest extends ModulesTestCase {
             addSigner(CMSSigner.class.getName(), CMSSIGNER_WORKER_ID, CMSSIGNER_WORKER_NAME, true);
             // Check statusCode is 200 and response content type is json
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostProcessRequestJsonBody())
@@ -98,6 +99,7 @@ public class RestWorkersTest extends ModulesTestCase {
             addSigner(PlainSigner.class.getName(), PLAINSIGNER_WORKER_ID, PLAINSIGNER_WORKER_NAME, true);
             // Check statusCode is 200 and response content type is json
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostProcessRequestJsonBody())
@@ -130,6 +132,7 @@ public class RestWorkersTest extends ModulesTestCase {
             addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
 
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostRequestJsonBodyPDF())
@@ -173,6 +176,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             // Check statusCode is 200 and response content type is json
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(body)
@@ -211,6 +215,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             // Check statusCode is 200 and response content type is json
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(body)
@@ -235,6 +240,7 @@ public class RestWorkersTest extends ModulesTestCase {
     public void testRestNoSuchWorkerExceptionStatusCode() {
         LOG.debug("testRestNoSuchWorkerExceptionStatusCode");
         Response response = given()
+                .header("X-Keyfactor-Requested-With", "1")
                 .contentType(JSON)
                 .accept(JSON)
                 .body(rtu.createPostProcessRequestJsonBody())
@@ -260,6 +266,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             addSigner(CMSSigner.class.getName(), CMSSIGNER_WORKER_ID, CMSSIGNER_WORKER_NAME, false);
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostProcessRequestJsonBody())
@@ -289,6 +296,7 @@ public class RestWorkersTest extends ModulesTestCase {
             addSigner(CMSSigner.class.getName(), CMSSIGNER_WORKER_ID, CMSSIGNER_WORKER_NAME, true);
             JSONObject body = new JSONObject();
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(body)
@@ -319,6 +327,7 @@ public class RestWorkersTest extends ModulesTestCase {
             getWorkerSession().removeWorkerProperty(CMSSIGNER_WORKER_ID, "IMPLEMENTATION_CLASS");
             getWorkerSession().reloadConfiguration(CMSSIGNER_WORKER_ID);
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostProcessRequestJsonBody())
@@ -349,6 +358,7 @@ public class RestWorkersTest extends ModulesTestCase {
             getWorkerSession().setWorkerProperty(CMSSIGNER_WORKER_ID, "ACCEPT_USERNAMES", "nonuser");
             getWorkerSession().reloadConfiguration(CMSSIGNER_WORKER_ID);
             Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostProcessRequestJsonBody())
@@ -369,6 +379,29 @@ public class RestWorkersTest extends ModulesTestCase {
     }
 
     /**
+     * Test REST POST without header. Should return status code 403
+     */
+    @Test
+    public void testAccessForbiddenStatusCode() {
+        LOG.debug("testAccessForbiddenStatusCode");
+        Response response = given()
+                .contentType(JSON)
+                .accept(JSON)
+                .body(rtu.createPostWorkerAddRequestJsonBody(CMSSIGNER_WORKER_NAME))
+                .when()
+                .post(baseURL + "/workers/" + CMSSIGNER_WORKER_ID)
+                .then()
+                .statusCode(403)
+                .contentType("application/json")
+                .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code 403.", 403, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
+    }
+
+    /**
      * Test REST POST to create a worker with provided properties and worker ID.
      */
     @Test
@@ -378,6 +411,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -405,6 +439,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(body)
@@ -433,6 +468,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -445,6 +481,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -475,6 +512,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(dummyMessageBody)
@@ -483,7 +521,6 @@ public class RestWorkersTest extends ModulesTestCase {
                     .then()
                     .statusCode(500)
                     .extract().response();
-
 
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertEquals("Check response status code is 500.", 500, response.statusCode());
@@ -504,6 +541,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -531,6 +569,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -546,6 +585,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPatchWorkerEditRequestJsonBody())
@@ -576,6 +616,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -589,6 +630,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(body)
@@ -618,6 +660,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPutWorkerReplaceRequestJsonBody(HELLO_WORKER_NAME))
@@ -647,6 +690,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(dummyMessageBody)
@@ -676,6 +720,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -693,6 +738,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPutWorkerReplaceRequestJsonBody(HELLO_WORKER_NAME))
@@ -724,6 +770,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -737,6 +784,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(body)
@@ -766,6 +814,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPutWorkerReplaceRequestJsonBody(HELLO_WORKER_NAME))
@@ -795,6 +844,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(dummyMessageBody)
@@ -823,6 +873,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
@@ -837,6 +888,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .accept(JSON)
                     .when()
                     .delete(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
@@ -847,7 +899,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             assertFalse("Check worker with the given worker name removed", getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
-            assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker removed successfully!"));
+            assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker removed successfully"));
             assertEquals("Check response status code 200", 200, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);
@@ -865,6 +917,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .when()
@@ -893,6 +946,7 @@ public class RestWorkersTest extends ModulesTestCase {
         try {
             Response response = given()
                     .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
                     .contentType(JSON)
                     .accept(JSON)
                     .when()

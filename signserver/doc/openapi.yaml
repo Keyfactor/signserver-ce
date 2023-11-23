@@ -19,8 +19,18 @@ paths:
               $ref: '#/components/schemas/WorkerRequest'
         required: true
       responses:
+        "201":
+          description: Worker added successfully
+          content:
+            application/json: {}
         "400":
           description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is forbidden!
           content:
             application/json:
               schema:
@@ -38,10 +48,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "201":
-          description: Worker added successfully
-          content:
-            application/json: {}
   /workers/reload:
     post:
       summary: Reload workers
@@ -54,8 +60,18 @@ paths:
             schema:
               $ref: '#/components/schemas/ReloadRequest'
       responses:
+        "200":
+          description: Workers successfully reloaded
+          content:
+            application/json: {}
         "400":
           description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is forbidden!
           content:
             application/json:
               schema:
@@ -103,14 +119,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
+        "403":
+          description: Access is forbidden!
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "503":
-          description: Crypto Token not available
+        "404":
+          description: No such worker
           content:
             application/json:
               schema:
@@ -118,6 +134,12 @@ paths:
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Crypto Token not available
           content:
             application/json:
               schema:
@@ -148,8 +170,24 @@ paths:
               $ref: '#/components/schemas/WorkerRequest'
         required: true
       responses:
+        "200":
+          description: Properties replaced successfully
+          content:
+            application/json: {}
         "400":
           description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: No such worker
           content:
             application/json:
               schema:
@@ -161,16 +199,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "200":
-          description: Worker properties successfully replaced
-          content:
-            application/json: {}
     post:
       summary: Submit data for adding a new worker from multiple properties
       description: Submit a worker ID and a list of worker properties to add a new
@@ -190,8 +218,16 @@ paths:
               $ref: '#/components/schemas/WorkerRequest'
         required: true
       responses:
+        "201":
+          description: Worker added successfully
         "400":
           description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is forbidden!
           content:
             application/json:
               schema:
@@ -209,8 +245,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "201":
-          description: Worker added successfully
     delete:
       summary: Removing worker
       description: Removing worker by ID.
@@ -222,6 +256,10 @@ paths:
           format: int32
           type: integer
       responses:
+        "200":
+          description: Worker removed successfully
+          content:
+            application/json: {}
         "400":
           description: Bad request from the client
           content:
@@ -234,6 +272,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
@@ -241,10 +285,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "200":
-          description: Worker removed successfully
-          content:
-            application/json: {}
     patch:
       summary: Submit data for update and delete worker properties
       description: Submit a worker ID and a list of worker properties to update or
@@ -264,8 +304,18 @@ paths:
               $ref: '#/components/schemas/WorkerRequest'
         required: true
       responses:
+        "200":
+          description: Worker properties successfully updated
+          content:
+            application/json: {}
         "400":
           description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is forbidden!
           content:
             application/json:
               schema:
@@ -277,10 +327,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "200":
-          description: Worker properties successfully updated
-          content:
-            application/json: {}
 components:
   schemas:
     DataEncoding:

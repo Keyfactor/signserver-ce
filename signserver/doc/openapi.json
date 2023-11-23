@@ -24,8 +24,24 @@
           "required" : true
         },
         "responses" : {
+          "201" : {
+            "description" : "Worker added successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          },
           "400" : {
             "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -53,12 +69,6 @@
                 }
               }
             }
-          },
-          "201" : {
-            "description" : "Worker added successfully",
-            "content" : {
-              "application/json" : { }
-            }
           }
         }
       }
@@ -78,8 +88,24 @@
           }
         },
         "responses" : {
+          "200" : {
+            "description" : "Workers successfully reloaded",
+            "content" : {
+              "application/json" : { }
+            }
+          },
           "400" : {
             "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -152,6 +178,16 @@
               }
             }
           },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
           "404" : {
             "description" : "No such worker",
             "content" : {
@@ -162,8 +198,8 @@
               }
             }
           },
-          "503" : {
-            "description" : "Crypto Token not available",
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -172,8 +208,8 @@
               }
             }
           },
-          "500" : {
-            "description" : "The server were unable to process the request. See server-side logs for more details.",
+          "503" : {
+            "description" : "Crypto Token not available",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -220,6 +256,12 @@
           "required" : true
         },
         "responses" : {
+          "200" : {
+            "description" : "Properties replaced successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          },
           "400" : {
             "description" : "Bad request from the client",
             "content" : {
@@ -230,8 +272,8 @@
               }
             }
           },
-          "500" : {
-            "description" : "The server were unable to process the request. See server-side logs for more details.",
+          "403" : {
+            "description" : "Access is forbidden!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -250,10 +292,14 @@
               }
             }
           },
-          "200" : {
-            "description" : "Worker properties successfully replaced",
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
             "content" : {
-              "application/json" : { }
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
             }
           }
         }
@@ -282,8 +328,21 @@
           "required" : true
         },
         "responses" : {
+          "201" : {
+            "description" : "Worker added successfully"
+          },
           "400" : {
             "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -311,9 +370,6 @@
                 }
               }
             }
-          },
-          "201" : {
-            "description" : "Worker added successfully"
           }
         }
       },
@@ -330,6 +386,12 @@
           }
         } ],
         "responses" : {
+          "200" : {
+            "description" : "Worker removed successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          },
           "400" : {
             "description" : "Bad request from the client",
             "content" : {
@@ -350,8 +412,8 @@
               }
             }
           },
-          "500" : {
-            "description" : "The server were unable to process the request. See server-side logs for more details.",
+          "403" : {
+            "description" : "Access is forbidden!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -360,10 +422,14 @@
               }
             }
           },
-          "200" : {
-            "description" : "Worker removed successfully",
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
             "content" : {
-              "application/json" : { }
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
             }
           }
         }
@@ -392,8 +458,24 @@
           "required" : true
         },
         "responses" : {
+          "200" : {
+            "description" : "Worker properties successfully updated",
+            "content" : {
+              "application/json" : { }
+            }
+          },
           "400" : {
             "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -410,12 +492,6 @@
                   "$ref" : "#/components/schemas/ErrorMessage"
                 }
               }
-            }
-          },
-          "200" : {
-            "description" : "Worker properties successfully updated",
-            "content" : {
-              "application/json" : { }
             }
           }
         }

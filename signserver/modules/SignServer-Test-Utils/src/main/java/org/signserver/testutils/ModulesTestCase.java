@@ -27,12 +27,14 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -934,9 +936,10 @@ public class ModulesTestCase {
     public Response callRest(final Method method, final int statusCode,
                              final String responseContentType,
                              final String call, final JSONObject body) {
-        final String baseURL = getSignServerBaseURL() + "/rest/v1";
+        final String baseURL = "https://" + getHTTPHost() + ":" + getPrivateHTTPSPort() + "/signserver/rest/v1";
 
         final Response response = given()
+                .header("X-Keyfactor-Requested-With", "1")
                 .contentType(JSON)
                 .accept(JSON)
                 .body(body)
@@ -964,9 +967,10 @@ public class ModulesTestCase {
     public Response callRest(final Method method, final int statusCode,
                              final String responseContentType,
                              final String call, final JSONObject body, Map<String, String> storeInfo) {
-        final String baseURL = getSignServerBaseURL() + "/rest/v1";
+        final String baseURL = "https://" + getHTTPHost() + ":" + getPrivateHTTPSPort() + "/signserver/rest/v1";
 
         final Response response = given()
+                .header("X-Keyfactor-Requested-With", "1")
                 .config(new RestAssuredConfig().sslConfig(new SSLConfig()
                                 .keyStore(storeInfo.get("keyStorePath"), storeInfo.get("keyStorePassword"))
                                 .trustStore(storeInfo.get("trustStorePath"), storeInfo.get("trustStorePassword"))))
@@ -1100,11 +1104,47 @@ public class ModulesTestCase {
      */
     public HashMap<String, String> getUnauthorizedStore() throws Exception {
         HashMap<String, String> ret = new HashMap<>();
-        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_signer1.p12");
+        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss11_signer6.p12");
         ret.put("keyStorePassword", "foo123");
         ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
         ret.put("trustStorePassword", "changeit");
         return ret;
+    }
+
+    /**
+     * This method will return the serial number for certificate identified by 'Admin One' inside the dss10_admin1.p12 keystore.
+     * @return Serial number for certificate 'Admin One'
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     */
+    public String getAdminOneSerialNumber() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance("pkcs12");
+        try (InputStream input = new FileInputStream(getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12")) {
+            keyStore.load(input, "foo123".toCharArray());
+        }
+        X509Certificate certFromKeyStore = (X509Certificate) keyStore.getCertificate("Admin One");
+
+        return certFromKeyStore.getSerialNumber().toString(16);
+    }
+
+    /**
+     * This method will return the issuer DN for certificate identified by 'Admin One' inside the dss10_admin1.p12 keystore.
+     * @return Issuer DN for certificate 'Admin One'
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     */
+    public String getAdminOneIssuerDn() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance("pkcs12");
+        try (InputStream input = new FileInputStream(getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12")) {
+            keyStore.load(input, "foo123".toCharArray());
+        }
+        X509Certificate certFromKeyStore = (X509Certificate) keyStore.getCertificate("Admin One");
+
+        return certFromKeyStore.getIssuerDN().getName();
     }
 
     /**

@@ -108,6 +108,7 @@ public class RESTDocumentSigner extends AbstractHTTPDocumentSigner {
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("X-Keyfactor-Requested-With", "signclient");
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
 

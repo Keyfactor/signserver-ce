@@ -1736,6 +1736,7 @@
 </li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-GettingStarted">Getting Started</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-OpenAPIDocument">OpenAPI Document</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-IntegratingwiththeRESTAPI">Integrating with the REST API</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-CustomHeaderrequires">Custom Header requires</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-Examples">Examples</a>    </p>
 </li></ul>    <p  >    </p>
     <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-APIOverview">
@@ -1902,6 +1903,14 @@ application/json    </span>
 </tbody>        </table>
             </div>
     </div>
+    </div>
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-CustomHeaderrequires">
+        <h1 class="heading "><span>Custom Header requires</span></h1>
+    <p  >    <span style="color: #000000;">
+    <span style="color: #172b4d;">
+The admin operations of the    </span>
+ SignServer REST API requires a custom header called &quot;<strong class=" ">X-Keyfactor-Requested-With</strong>&quot; to accept the request. This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.    </span>
+    </p>
     </div>
     <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-Examples">
         <h1 class="heading "><span>Examples</span></h1>

@@ -18,6 +18,7 @@ import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.admin.common.auth.AdminAuthHelper;
 import org.signserver.common.*;
+import org.signserver.common.ForbiddenException;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
@@ -102,7 +103,6 @@ public class WorkerResource {
 
     private WorkerAuthHelper auth;
 
-
     @PostConstruct
     protected void init() {
         dataFactory = DataUtils.createDataFactory();
@@ -117,14 +117,28 @@ public class WorkerResource {
      * @param request            Request data
      * @return The operation result in a JSON format.
      * @throws WorkerExistsException In case the given new worker ID already exists.
+     * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @POST
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
+            responseCode = "201",
+            description = "Worker added successfully"
+    )
+    @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -146,10 +160,6 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    @APIResponse(
-            responseCode = "201",
-            description = "Worker added successfully"
-    )
     @Operation(
             summary = "Submit data for adding a new worker from multiple properties",
             description = "Submit a worker ID and a list of worker properties to "
@@ -163,6 +173,7 @@ public class WorkerResource {
                     description = "The request",
                     required = true
             ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+        checkCustomHeader(httpServletRequest);
         final Map<String, String> tempProperties = request.getProperties();
         if (tempProperties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -192,14 +203,30 @@ public class WorkerResource {
      * @param request            Request data
      * @return The operation result in a JSON format.
      * @throws WorkerExistsException In case the given new worker ID already exists.
+     * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @POST
     @Path("/")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
+            responseCode = "201",
+            description = "Worker added successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -221,12 +248,6 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    @APIResponse(
-            responseCode = "201",
-            description = "Worker added successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON)
-    )
     @Operation(
             summary = "Submit data for adding a new worker from multiple properties",
             description = "Submit a worker ID and a list of worker properties to "
@@ -239,7 +260,7 @@ public class WorkerResource {
                     description = "The request",
                     required = true
             ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
-
+        checkCustomHeader(httpServletRequest);
         Map<String, String> tempProperties = request.getProperties();
         if (tempProperties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -273,14 +294,29 @@ public class WorkerResource {
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
      * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws ForbiddenException In case access is forbidden for the request.
      */
     @PATCH
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
+            responseCode = "200",
+            description = "Worker properties successfully updated",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -294,12 +330,6 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    @APIResponse(
-            responseCode = "200",
-            description = "Worker properties successfully updated",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON)
-    )
     @Operation(
             summary = "Submit data for update and delete worker properties",
             description = "Submit a worker ID and a list of worker properties to update or delete."
@@ -312,7 +342,7 @@ public class WorkerResource {
                     description = "The request",
                     required = true
             ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
-
+        checkCustomHeader(httpServletRequest);
         Map<String, String> properties = request.getProperties();
         if (properties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -350,11 +380,19 @@ public class WorkerResource {
      * @param request            Request data
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
+     * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "200",
+            description = "Properties replaced successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
     @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
@@ -364,8 +402,8 @@ public class WorkerResource {
             )
     )
     @APIResponse(
-            responseCode = "500",
-            description = "The server were unable to process the request. See server-side logs for more details.",
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -380,10 +418,12 @@ public class WorkerResource {
             )
     )
     @APIResponse(
-            responseCode = "200",
-            description = "Worker properties successfully replaced",
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON)
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
     )
     @Operation(
             summary = "Submit data for replace worker properties with the new properties",
@@ -398,7 +438,7 @@ public class WorkerResource {
                     description = "The request",
                     required = true
             ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
-
+        checkCustomHeader(httpServletRequest);
         final Map<String, String> properties = request.getProperties();
         if (properties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -418,10 +458,18 @@ public class WorkerResource {
      * @param httpServletRequest Http Servlet request to extract request context from it
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
+     * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @DELETE
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "200",
+            description = "Worker removed successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
     @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
@@ -439,8 +487,8 @@ public class WorkerResource {
             )
     )
     @APIResponse(
-            responseCode = "404",
-            description = "No such worker",
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -454,12 +502,6 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    @APIResponse(
-            responseCode = "200",
-            description = "Worker removed successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON)
-    )
     @Operation(
             summary = "Removing worker",
             description = "Removing worker by ID."
@@ -467,7 +509,8 @@ public class WorkerResource {
     public Response removeWorker(
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id
-    ) throws NoSuchWorkerException, AdminNotAuthorizedException {
+    ) throws IllegalRequestException, AdminNotAuthorizedException {
+        checkCustomHeader(httpServletRequest);
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "removeWorker",
                 String.valueOf(id));
         workerSession.removeWorker(adminInfo, id);
@@ -482,14 +525,30 @@ public class WorkerResource {
      * @return The operation result in a JSON format.
      * @throws InternalServerException In case the request could not be processed by some error at the server side.
      * @throws NoSuchWorkerException   In case any of the given worker IDs do not exist.
+     * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @POST
     @Path("reload")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @APIResponse(
+            responseCode = "200",
+            description = "Workers successfully reloaded",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -521,6 +580,7 @@ public class WorkerResource {
             @RequestBody(
                     description = "The request"
             ) final ReloadRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+        checkCustomHeader(httpServletRequest);
         final List<Integer> tempWorkerIDs = request.getWorkerIDs();
         if (tempWorkerIDs == null || tempWorkerIDs.isEmpty()) {
             LOG.error("There is no Worker ID to reload!");
@@ -548,10 +608,26 @@ public class WorkerResource {
      * REST operation for reload all workers.
      *
      * @return The operation result in a JSON format.
+     * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @POST
     @Path("reload")
     @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "200",
+            description = "Workers successfully reloaded",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON)
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
     @APIResponse(
             responseCode = "500",
             description = "The server were unable to process the request. See server-side logs for more details.",
@@ -561,7 +637,8 @@ public class WorkerResource {
             )
     )
     public Response reloadAll(
-            @Context final HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException {
+            @Context final HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException, IllegalRequestException {
+        checkCustomHeader(httpServletRequest);
         List<Integer> allWorkerIDs = workerSession.getAllWorkers();
         for (int workerID : allWorkerIDs) {
             final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(httpServletRequest), "reloadAll",
@@ -581,14 +658,28 @@ public class WorkerResource {
      * @return The response data
      * @throws RequestFailedException  In case the request could not be processed typically because some error in the request data.
      * @throws InternalServerException In case the request could not be processed by some error at the server side.
+     * @throws ForbiddenException In case access is forbidden for the request.
      */
     @POST
     @Path("{idOrName}/process")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @APIResponseSchema(
+            value = ProcessResponse.class,
+            responseCode = "200",
+            responseDescription = "The response data"
+    )
     @APIResponse(
             responseCode = "400",
             description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
@@ -603,14 +694,6 @@ public class WorkerResource {
             )
     )
     @APIResponse(
-            responseCode = "503",
-            description = "Crypto Token not available",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
-            )
-    )
-    @APIResponse(
             responseCode = "500",
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
@@ -618,10 +701,13 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    @APIResponseSchema(
-            value = ProcessResponse.class,
-            responseCode = "200",
-            responseDescription = "The response data"
+    @APIResponse(
+            responseCode = "503",
+            description = "Crypto Token not available",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
     )
     @Operation(
             summary = "Submit data for processing",
@@ -864,5 +950,12 @@ public class WorkerResource {
                     + "Client certificate authentication required.");
         }
         return certificates;
+    }
+
+    private void checkCustomHeader(HttpServletRequest httpServletRequest) throws ForbiddenException {
+        if (httpServletRequest.getHeader("X-Keyfactor-Requested-With") == null) {
+            LOG.error("Missing required hedear X-Keyfactor-Requested-With");
+            throw new ForbiddenException();
+        }
     }
 }

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="181288951">
+<body pageid="212959630">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.1.0</p>
+                    <p>Version: 6.2.0</p>
                 </div>
             </header>
 
@@ -141,6 +141,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Architecture_and_Concepts.html">Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Library_Manifest.html">Library Manifest</a>
 
             </li>
                                         <li class="leaf">
@@ -1724,7 +1728,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-179109893"> <span>MS Authenticode CMS Signer</span></h1>
+</div>            <h1 id="src-207323613"> <span>MS Authenticode CMS Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1733,9 +1737,9 @@
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
     <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner</strong>.    </p>
-    <div class="section section-1" id="src-179109893_id-.MSAuthenticodeCMSSignerv5.11.2-Overview">
+    <div class="section section-1" id="src-207323613_id-.MSAuthenticodeCMSSignerv6.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The MS Authenticode CMS signer is special-purpose version of the extended CMS signer, producing Authenticode-compatible CMS signatures suitable for embedding into portable executables (.exe, .dll) and MSI installer packages. This is intended for use with client-side hashing, where a client does the hashing of the original file and requests this hash to be signed by SignServer, giving a resulting signature which is then inserted into the resulting output file by the client.    </p>
+    <p  >The MS Authenticode CMS signer is special-purpose version of the extended CMS signer, producing Authenticode-compatible CMS signatures suitable for embedding into portable executables (.exe, .dll), MSI installer packages, and Cabinet archives (.cab). This is intended for use with client-side hashing, where a client does the hashing of the original file and requests this hash to be signed by SignServer, giving a resulting signature which is then inserted into the resulting output file by the client.    </p>
     <p  >This signer has all the properties of the <a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>, and also the same Authenticode-specific properties as the <a   href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>. Note however that setting CONTENTOID or allowing overriding content OID (by setting ALLOW_CONTENTOID_OVERRIDE to true) is not supported (as the content OID will be set to be compatible with Authenticode specification).     <span style="color: #172b4d;">
 Note also that setting DER_RE_ENCODE is not supported (as the sign method is overwritten to implement an authenticode-style signing). The resulting data structure will always be DER encoded.    </span>
     </p>
@@ -1747,7 +1751,7 @@ Note also that setting DER_RE_ENCODE is not supported (as the sign method is ove
         </div>
     </div>
     </div>
-    <div class="section section-1" id="src-179109893_id-.MSAuthenticodeCMSSignerv5.11.2-AvailableProperties">
+    <div class="section section-1" id="src-207323613_id-.MSAuthenticodeCMSSignerv6.2.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1797,7 +1801,7 @@ Note also that setting DER_RE_ENCODE is not supported (as the sign method is ove
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-179109893_id-.MSAuthenticodeCMSSignerv5.11.2-RequestProperties">
+    <div class="section section-2" id="src-207323613_id-.MSAuthenticodeCMSSignerv6.2.0-RequestProperties">
         <h2 class="heading "><span>Request Properties</span></h2>
     <p  >This worker can accept the following request metadata properties, given that they are configured to be allowed:    </p>
     <div  class="tablewrap">
@@ -1819,7 +1823,7 @@ Note also that setting DER_RE_ENCODE is not supported (as the sign method is ove
         <p  >FILE_TYPE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The file type for which the signature should be used in. Currently supported values are <strong class=" ">PE</strong> (for portable executables, such as Windows .exe and .dll files), <strong class=" ">MSI</strong> (for Windows installers), or <strong class=" ">PS1</strong> (for PowerShell scripts). This affects the layout of the content in the CMS structure. If not specified, PE is assumed.    </p>
+        <p  >The file type for which the signature should be used in. Currently supported values are <strong class=" ">PE</strong> (for portable executables, such as Windows .exe and .dll files), <strong class=" ">MSI</strong> (for Windows installers), <strong class=" ">PS1</strong> (for PowerShell scripts), or <strong class=" ">CAB </strong>(for Cabinet archives). This affects the layout of the content in the CMS structure. If not specified, PE is assumed.    </p>
             </td>
         </tr>
     <tr>
@@ -1842,11 +1846,11 @@ Note also that setting DER_RE_ENCODE is not supported (as the sign method is ove
             </div>
     </div>
     </div>
-    <div class="section section-1" id="src-179109893_id-.MSAuthenticodeCMSSignerv5.11.2-AlgorithmSupport">
+    <div class="section section-1" id="src-207323613_id-.MSAuthenticodeCMSSignerv6.2.0-AlgorithmSupport">
         <h1 class="heading auto-cursor-target"><span>Algorithm Support</span></h1>
     <p  >For information on supported algorithms, see <a   href="MS_Authenticode_Signer_Algorithm_Support.html">MS Authenticode Signer Algorithm Support</a>.    </p>
     <p  >    </p>
-    <div class="section section-2" id="src-179109893_generated-id-c1f72ab3-b020-424d-9ab5-d6f287dc6eab">
+    <div class="section section-2" id="src-207323613_generated-id-e34f300d-8974-408b-b88f-4279e02e5a72">
         <h2 class="heading "><span>Related Content</span></h2>
 <ul class="content-by-label "><li class=" ">    <p  >Sida:<a   href="MS_Authenticode_Signer_Algorithm_Support.html">MS Authenticode Signer Algorithm Support</a>    </p>
 </li><li class=" ">    <p  >Sida:<a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>    </p>

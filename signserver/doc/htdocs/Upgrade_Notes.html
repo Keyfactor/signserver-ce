@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="181288951">
+<body pageid="212959630">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.1.0</p>
+                    <p>Version: 6.2.0</p>
                 </div>
             </header>
 
@@ -141,6 +141,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Architecture_and_Concepts.html">Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Library_Manifest.html">Library Manifest</a>
 
             </li>
                                         <li class="leaf">
@@ -1736,13 +1740,15 @@ Upgrading to a major version may require manual changes in the database structur
     </p>
     <p  >    <span style="color: #000000;">
 For details of new features and improvements in a respective release, see the    </span>
- <a   href="https://confluence.primekey.com/display/SIGNDS/.SignServer+Release+Notes+v6.0.0">SignServer Release Notes</a>     <span style="color: #000000;">
+ <a   href="https://confluence.primekey.com/display/SIGNDS/.SignServer+Release+Notes+v6.2.0">SignServer Release Notes</a>     <span style="color: #000000;">
 and for instructions on upgrading SignServer, see    </span>
  <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
     <div class="section section-1" id="src-181292503_id-.UpgradeNotesv6.0.0-UpgradeNotes">
         <h1 class="heading "><span>Upgrade Notes</span></h1>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer5.11.xtoSignServer6.0.x">SignServer 5.11.x to SignServer 6.0.x</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer6.1.xtoSignServer6.2.x">SignServer 6.1.x to SignServer 6.2.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer6.0.xtoSignServer6.1.x">SignServer 6.0.x to SignServer 6.1.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer5.11.xtoSignServer6.0.x">SignServer 5.11.x to SignServer 6.0.x</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer5.10.xtoSignServer5.11.x">SignServer 5.10.x to SignServer 5.11.x</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer5.8.xtoSignServer5.9.x">SignServer 5.8.x to SignServer 5.9.x</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer5.6.xtoSignServer5.8.x">SignServer 5.6.x to SignServer 5.8.x</a>    </p>
@@ -1764,9 +1770,20 @@ and for instructions on upgrading SignServer, see    </span>
 </li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer3.3.xtoSignServer3.4.x">SignServer 3.3.x to SignServer 3.4.x</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-181292503_id-.UpgradeNotesv6.0.0-SignServer3.2.xtoSignServer3.3.x">SignServer 3.2.x to SignServer 3.3.x</a>    </p>
 </li></ul>    <p  >    </p>
+    <div class="section section-2" id="src-181292503_id-.UpgradeNotesv6.0.0-SignServer6.1.xtoSignServer6.2.x">
+        <h2 class="heading "><span>SignServer 6.1.x to SignServer 6.2.x</span></h2>
+    <p  >    <span style="color: #000000;">
+No database changes required.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-181292503_id-.UpgradeNotesv6.0.0-SignServer6.0.xtoSignServer6.1.x">
+        <h2 class="heading "><span>SignServer 6.0.x to SignServer 6.1.x</span></h2>
+    <p  >    <span style="color: #000000;">
+No database changes required.    </span>
+    </p>
+    </div>
     <div class="section section-2" id="src-181292503_id-.UpgradeNotesv6.0.0-SignServer5.11.xtoSignServer6.0.x">
         <h2 class="heading "><span>SignServer 5.11.x to SignServer 6.0.x</span></h2>
-<hr>
     <div class="section section-3" id="src-181292503_id-.UpgradeNotesv6.0.0-SignServer6.0.0Notice">
         <h3 class="heading "><span>SignServer 6.0.0 Notice</span></h3>
     <p  ><strong class=" ">    <span style="color: #000000;">
@@ -1796,33 +1813,6 @@ Changed signature algorithm used by the SignServer SignClient option for signing
 </strong>    </p>
     <p  >    <span style="color: #000000;">
 The signature algorithm used to sign the request when using the <tt class=" ">-signrequest</tt> option with an ECDSA key has been changed. As of SignServer 6.0, the algorithm uses a digest algorithm matching the key size (e.g. SHA256withECDSA for secp256r1 keys, SHA384 for secp384r1 keys). The change is a result of changes in the underlying JJWT library. For more information on the <tt class=" ">-signrequest</tt> option, see <a   href="signdocument.html">Client CLI signdocument Command</a>.    </span>
-    </p>
-    <p  ><strong class=" ">    <span style="color: #000000;">
-The standalone Administration GUI application has been removed    </span>
-</strong>    </p>
-    <p  >    <span style="color: #000000;">
-The previously deprecated Admin GUI has now been removed. Please instead use the <a   href="Administration_Web.html">Administration Web</a>.    </span>
-    </p>
-    <p  >    <span style="color: #000000;">
-This means that the bin/signserver-gui script is not available and also that the AdminGUI download bundle links on public web has been removed.    </span>
-    </p>
-    <p  ><strong class=" ">    <span style="color: #000000;">
-Running on Java 8 no longer supported    </span>
-</strong>    </p>
-    <p  >    <span style="color: #000000;">
-Running on Java 8 has previously been deprecated in SignServer 5 and SignServer 6 does not support running on Java 8. Please refer to the <a   href="Prerequisites.html">Prerequisites</a> in the installation guide for available options.<br/>    </span>
-    </p>
-    <p  ><strong class=" ">    <span style="color: #000000;">
-Old application servers not supported    </span>
-</strong>    </p>
-    <p  >    <span style="color: #000000;">
-Running SignServer 6 on WildFly 9, 10, 11, and 14 as well as JBoss EAP 7.0, 7.1, 7.2, 7.3 is not supported. Please refer to the <a   href="Prerequisites.html">Prerequisites</a> in the installation guide for available options.<br/>    </span>
-    </p>
-    <p  ><strong class=" ">    <span style="color: #000000;">
-OOXML signer and ODF signer not supported    </span>
-</strong>    </p>
-    <p  >    <span style="color: #000000;">
-The OOXML signer and ODF signer have previously been deprecated and are not supported in SignServer 6.    </span>
     </p>
     </div>
     </div>
@@ -1948,7 +1938,7 @@ Time-stamp requests with a structure not matching RFC#3161 are now being rejecte
 The logging framework has been updated from version 1 to the latest version 2. In order to still support the current configuration files for most CLI and standalone applications, those are running with a compatibility bridge and system property <tt class=" ">log4j1.compatibility=true</tt> set. This means that the current configuration (in most cases conf/log4j.properties) should still be working. However, if the user has modified this and added a more advanced configuration it might not be supported in version 2.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-The TimeMonitor application is an example where we had to change to version 2 configuration. For that reason, the TimeMonitor application is not running with the compatibility flag and instead of using the timemonitor-log4j.properties a new timemonitor-log4j2.properties file is used.     <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+The TimeMonitor application is an example where we had to change to version 2 configuration. For that reason, the TimeMonitor application is not running with the compatibility flag and instead of using the timemonitor-log4j.properties a new timemonitor-log4j2.properties file is used.     <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Note that any custom modifications in the old timemonitor-log4j.properties file needs to be manually migrated to the new timemonitor-log4j2.properties file in order to be kept.<br/>    </span>
     </p>
     </div>

@@ -21,6 +21,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.impl.Log4jContextFactory;
+import org.apache.logging.log4j.spi.LoggerContextFactory;
+import org.apache.logging.log4j.core.util.DefaultShutdownCallbackRegistry;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.signserver.common.InvalidWorkerIdException;
@@ -139,6 +143,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws RemoteException, InvalidWorkerIdException {
+        // Disable shutdown hook for log4j
+        final LoggerContextFactory factory = LogManager.getFactory();
+
+        if (factory instanceof Log4jContextFactory) {
+            LOG.info("register shutdown hook");
+            Log4jContextFactory contextFactory = (Log4jContextFactory) factory;
+            ((DefaultShutdownCallbackRegistry) contextFactory.getShutdownCallbackRegistry()).stop();
+        }
+
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("(Debug logging is enabled)");

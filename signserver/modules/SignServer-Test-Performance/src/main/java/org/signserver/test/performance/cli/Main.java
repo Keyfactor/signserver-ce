@@ -23,6 +23,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
+import org.signserver.cli.Log4jHelper;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
@@ -139,6 +140,9 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws RemoteException, InvalidWorkerIdException {
+        // Disable shutdown hook for log4j
+        Log4jHelper.disableShutdownHook();
+
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("(Debug logging is enabled)");

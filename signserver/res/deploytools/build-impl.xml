@@ -327,7 +327,7 @@ database.nodb.location              = ${database.nodb.location}
         <condition property="hibernate.dialect" value="org.hibernate.dialect.IngresDialect">
             <equals arg1="${database.name}" arg2="ingres"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect">
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect">
             <equals arg1="${database.name}" arg2="mssql"/>
         </condition>
         <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect">

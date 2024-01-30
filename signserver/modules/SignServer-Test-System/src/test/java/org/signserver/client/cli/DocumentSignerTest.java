@@ -522,9 +522,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             String res
                     = new String(execute("signdocument", "-protocol", "REST", "-workername", "TestXMLSigner", "-data", "<root/>"));
-            System.out.println("Res String: " + res);
+
             assertTrue("contains signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
+                    + res, res.contains("<root><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -549,7 +549,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                     = new String(execute("signdocument", "-protocol", "REST", "-workername",
                             "TestXMLSigner", "-infile", doc.getAbsolutePath()));
             assertTrue("contains signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
+                    + res, res.contains("<tag><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -577,7 +577,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                             "TestXMLSigner", "-infile", doc.getAbsolutePath(),
                             "-hosts", "nonexistinghost,localhost"));
             assertTrue("contains signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
+                    + res, res.contains("<tag><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -605,7 +605,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                             "TestXMLSigner", "-infile", doc.getAbsolutePath(),
                             "-hosts", "localhost, nonexisting"));
             assertTrue("contains signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
+                    + res, res.contains("<tag><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -638,13 +638,11 @@ public class DocumentSignerTest extends ModulesTestCase {
                             "-workername", "TestXMLSigner",
                             "-infile", inFile.getAbsolutePath(),
                             "-outfile", outFile.getAbsolutePath()));
-            assertFalse("not containing signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
 
             String file1Content = FileUtils.readFileToString(outFile);
 
             assertTrue("contains signature tag: "
-                    + file1Content, file1Content.contains("\"signerCertificate\":\""));
+                    + file1Content, file1Content.contains("<tag><Signature"));
 
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
@@ -1041,7 +1039,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                             "-username", "user1"));
             assertEquals("calls to readPassword", 1, called.size());
             assertTrue("contains signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
+                    + res, res.contains("<root><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -1222,7 +1220,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                             "-username", "user1",
                             "-truststore", signserverhome + "/p12/truststore.jks"));
             assertTrue("contains signature tag: "
-                    + res, res.contains("\"signerCertificate\":\""));
+                    + res, res.contains("<root><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());

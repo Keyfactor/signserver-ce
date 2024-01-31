@@ -14,6 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpRetryException;
@@ -32,6 +33,8 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.signserver.common.RequestContext;
 
 
@@ -165,7 +168,25 @@ public class RESTDocumentSigner extends AbstractHTTPDocumentSigner {
             }
 
             if (responseCode < 400) {
-                IOUtils.copy(responseIn, out);
+                final JSONParser parser = new JSONParser();
+                final InputStreamReader reader =
+                        new InputStreamReader(responseIn, "UTF-8");
+
+                try {
+                    final JSONObject jsonObject = (JSONObject) parser.parse(reader);
+
+                    final Object data = jsonObject.get("data");
+
+                    if (data == null) {
+                        throw new IOException("No data in response");
+                    } else if (!(data instanceof String)) {
+                        throw new IOException("Malformed data");
+                    }
+
+                    out.write(Base64.decode((String) data));
+                } catch (ParseException ex) {
+                    throw new IOException("Error parsing response", ex);
+                }
             } else {
                 final byte[] errorBody = IOUtils.toByteArray(responseIn);
 

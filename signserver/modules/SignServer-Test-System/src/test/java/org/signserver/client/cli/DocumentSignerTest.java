@@ -24,6 +24,9 @@ import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
+import org.signserver.common.CertificateMatchingRule;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.cli.spi.CommandContext;
@@ -32,6 +35,7 @@ import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.testutils.TestUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -63,7 +67,14 @@ public class DocumentSignerTest extends ModulesTestCase {
     /** Worker ID for the dummy metadata echo signer. */
     private static final int WORKERID3 = 6676;
 
-    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3};
+    /** Worker ID for XML Signer to use with CLIENTCERT authorization */
+    private static final int WORKERID4 = 6675;
+    private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
+    private final String SIGN_KEY_CERT_CN = "P11RequestSign";
+
+    private String dss10KeyStorePath;
+
+    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3, WORKERID4};
 
     private static File signserverhome;
 
@@ -79,6 +90,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         signserverhome = PathUtil.getAppHome();
+        dss10KeyStorePath = getSignServerHome() + "/res/test/dss10/dss10_keystore.p12";
         setupSSLKeystores();
         keyPair = CryptoUtils.generateRSA(2048);
     }
@@ -98,6 +110,9 @@ public class DocumentSignerTest extends ModulesTestCase {
 
         // Worker 3 (dummy signer echoing request metadata)
         addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", WORKERID3, "EchoRequestMetadataSigner", true);
+
+        // Worker 4 (Used for CLIENTCERT authorization)
+        addDummySigner(WORKERID4, "TestXMLSigner1", true);
     }
 
     @Test
@@ -533,7 +548,7 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /**
      * Tests the sample use case p from the documentation with protocol REST.
-     * 
+     *
      */
     @Test
     public void test02signDocumentFromFileWithProtocolRest() throws Exception {
@@ -1226,6 +1241,31 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
         assertEquals("calls to readPassword", 2, called.size());
+    }
+
+    @Test
+    public void test14SignDocumentViaTLSAndClientCertAuthorizer() throws Exception {
+        final CertificateMatchingRule authClient =
+                new CertificateMatchingRule(MatchSubjectWithType.SUBJECT_RDN_C,
+                        MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                        "SE",
+                        ISSUER_DN,
+                        "Request sign key rule");
+
+        workerSession.setWorkerProperty(WORKERID4, "AUTHTYPE", "CLIENTCERT");
+        workerSession.addAuthorizedClientGen2(WORKERID4, authClient);
+        workerSession.reloadConfiguration(WORKERID4);
+
+        String res = new String(execute("signdocument",
+                "-workername", "TestXMLSigner1",
+                "-data", "\"<root/>\"",
+                "-protocol", "REST",
+                "-port", String.valueOf(getPrivateHTTPSPort()),
+                "-truststore", TestUtils.getDefaultTruststoreFile().getAbsolutePath(), "-truststorepwd", TestUtils.getDefaultTruststorePassword(),
+                "-keystore", dss10KeyStorePath, "-keystorepwd", "foo123"
+        ));
+        assertTrue("contains signature tag: "
+                + res, res.contains("<root><Signature"));
     }
 
     @Test

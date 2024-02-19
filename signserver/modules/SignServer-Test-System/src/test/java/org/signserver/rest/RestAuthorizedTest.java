@@ -128,7 +128,7 @@ public class RestAuthorizedTest extends ModulesTestCase {
 
             assertEquals("value1", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("PROPERTY1"));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
-            assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker properties successfully updated"));
+            assertTrue("Response message: " + responseJsonObject, responseJsonObject.toString().contains("Worker properties successfully updated"));
             assertEquals("Check response status code is 200.", 200, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);
@@ -155,7 +155,7 @@ public class RestAuthorizedTest extends ModulesTestCase {
             assertEquals("Properties Replaced!", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("GREETING"));
             assertEquals(null, getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("AUTHTYPE"));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
-            assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker properties successfully replaced"));
+            assertTrue("Response message: " + responseJsonObject, responseJsonObject.toString().contains("Worker properties successfully replaced"));
             assertEquals("Check response status code 200", 200, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);
@@ -180,7 +180,7 @@ public class RestAuthorizedTest extends ModulesTestCase {
 
             assertFalse("Check worker with the given worker name removed", getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
-            assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker removed successfully!"));
+            assertTrue("Response message: " + responseJsonObject, responseJsonObject.toString().contains("Worker removed successfully"));
             assertEquals("Check response status code 200", 200, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);

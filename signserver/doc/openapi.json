@@ -2,7 +2,7 @@
   "openapi" : "3.0.3",
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.1.0"
+    "version" : "1.1.1"
   },
   "servers" : [ {
     "url" : "/signserver/rest/v1"
@@ -25,10 +25,7 @@
         },
         "responses" : {
           "201" : {
-            "description" : "Worker added successfully",
-            "content" : {
-              "application/json" : { }
-            }
+            "description" : ""
           },
           "400" : {
             "description" : "Bad request from the client",
@@ -89,7 +86,7 @@
         },
         "responses" : {
           "200" : {
-            "description" : "Workers successfully reloaded",
+            "description" : "All workers successfully reloaded",
             "content" : {
               "application/json" : { }
             }
@@ -257,7 +254,7 @@
         },
         "responses" : {
           "200" : {
-            "description" : "Properties replaced successfully",
+            "description" : "Worker properties successfully replaced",
             "content" : {
               "application/json" : { }
             }
@@ -329,7 +326,7 @@
         },
         "responses" : {
           "201" : {
-            "description" : "Worker added successfully"
+            "description" : ""
           },
           "400" : {
             "description" : "Bad request from the client",

@@ -126,7 +126,7 @@ public class WorkerResource {
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
             responseCode = "201",
-            description = "Worker added successfully"
+            description = ""
     )
     @APIResponse(
             responseCode = "400",
@@ -212,9 +212,7 @@ public class WorkerResource {
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
             responseCode = "201",
-            description = "Worker added successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON)
+            description = ""
     )
     @APIResponse(
             responseCode = "400",
@@ -389,7 +387,7 @@ public class WorkerResource {
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
             responseCode = "200",
-            description = "Properties replaced successfully",
+            description = "Worker properties successfully replaced",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON)
     )
@@ -616,7 +614,7 @@ public class WorkerResource {
     @Produces({MediaType.APPLICATION_JSON})
     @APIResponse(
             responseCode = "200",
-            description = "Workers successfully reloaded",
+            description = "All workers successfully reloaded",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON)
     )

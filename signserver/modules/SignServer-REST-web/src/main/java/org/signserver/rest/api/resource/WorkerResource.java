@@ -69,6 +69,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.rest.api.entities.ErrorMessage;
 import org.signserver.rest.api.entities.DataEncoding;
 import org.signserver.rest.api.helper.WorkerAuthHelper;
+import org.signserver.rest.api.io.response.WorkerConfigResponse;
 
 /**
  * REST API implementation containing operations:
@@ -78,6 +79,7 @@ import org.signserver.rest.api.helper.WorkerAuthHelper;
  * PATCH /workers/{id} : Update/add/remove worker properties for the given worker ID.
  * DELETE /workers/{id} : Removing the worker by the given ID.
  * POST /workers/reload : Reload the workers for the given worker IDs in the request.
+ * GET /workers/{id} : Get worker configuration for given ID.
  *
  * @author Nima Saboonchi
  * @version $Id$
@@ -644,6 +646,73 @@ public class WorkerResource {
             workerSession.reloadConfiguration(adminInfo, workerID);
         }
         return Response.ok(new WorkerResponse("All workers successfully reloaded"))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
+     * REST operation for getting a worker configuration.
+     *
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @param id Worker ID
+     * @return The operation result in a JSON format.
+     * @throws IllegalRequestException
+     * @throws AdminNotAuthorizedException 
+     */
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = WorkerConfigResponse.class))
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    public Response getConfig(
+            @Context final HttpServletRequest httpServletRequest,
+            @PathParam("id") final int id)
+            throws IllegalRequestException, AdminNotAuthorizedException {
+        checkCustomHeader(httpServletRequest);
+
+        final AdminInfo adminInfo =
+                auth.requireAdminAuthorization(getCertificate(httpServletRequest),
+                                               "getConfig", String.valueOf(id));
+
+        if (!workerSession.isWorkerExists(adminInfo, id)) {
+            throw new NoSuchWorkerException(String.valueOf(id));
+        }
+
+        final Properties workerConfig = workerSession.exportWorkerConfig(id);
+        final Map<String, String> properties = new HashMap<>();
+
+        for (final Object key : workerConfig.keySet()) {
+            properties.put((String) key, (String) workerConfig.get(key));
+        }
+        
+        return Response.ok(new WorkerConfigResponse(properties))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
     }
 

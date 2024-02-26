@@ -69,6 +69,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.rest.api.entities.ErrorMessage;
 import org.signserver.rest.api.entities.DataEncoding;
 import org.signserver.rest.api.helper.WorkerAuthHelper;
+import org.signserver.rest.api.io.response.ListWorkersResponse;
 import org.signserver.rest.api.io.response.WorkerConfigResponse;
 
 /**
@@ -79,6 +80,7 @@ import org.signserver.rest.api.io.response.WorkerConfigResponse;
  * PATCH /workers/{id} : Update/add/remove worker properties for the given worker ID.
  * DELETE /workers/{id} : Removing the worker by the given ID.
  * POST /workers/reload : Reload the workers for the given worker IDs in the request.
+ * GET /workers : Get list of workers (IDs and names).
  * GET /workers/{id} : Get worker configuration for given ID.
  *
  * @author Nima Saboonchi
@@ -713,6 +715,62 @@ public class WorkerResource {
         }
         
         return Response.ok(new WorkerConfigResponse(properties))
+                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+    }
+
+    /**
+     * REST operation to get a list of workers.
+     *
+     * @param httpServletRequest Http Servlet request to extract request context from it
+     * @return The operation result in a JSON format.
+     * @throws IllegalRequestException
+     * @throws AdminNotAuthorizedException 
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ListWorkersResponse.class))
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    public Response listWorkers(
+            @Context final HttpServletRequest httpServletRequest)
+            throws IllegalRequestException, AdminNotAuthorizedException {
+        checkCustomHeader(httpServletRequest);
+
+        final AdminInfo adminInfo =
+                auth.requireAdminAuthorization(getCertificate(httpServletRequest),
+                                               "listWorkers");
+
+        final List<ListWorkersResponse.Worker> workers = new ArrayList<>();
+        
+        for (final int id : workerSession.getAllWorkers()) {
+            final WorkerConfig config = workerSession.getCurrentWorkerConfig(id);
+            final String name = config.getProperty("NAME");
+            final ListWorkersResponse.Worker worker =
+                    new ListWorkersResponse.Worker(id, name);
+            
+            workers.add(new ListWorkersResponse.Worker(id, name));
+        }
+
+        return Response.ok(new ListWorkersResponse(workers))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
     }
 

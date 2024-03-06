@@ -197,6 +197,7 @@ public class RESTDocumentSigner extends AbstractHTTPDocumentSigner {
                 if (errorList != null) {
                     clientResponseMessage = errorList.toString();
                 }
+                out.write(clientResponseMessage.getBytes());
 
                 throw new HTTPException(processServlet, responseCode, clientResponseMessage, errorBody);
             }

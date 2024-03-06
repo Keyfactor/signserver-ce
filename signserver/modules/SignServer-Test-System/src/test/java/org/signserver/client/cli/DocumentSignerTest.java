@@ -69,12 +69,23 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /** Worker ID for XML Signer to use with CLIENTCERT authorization */
     private static final int WORKERID4 = 6675;
+
+    /** Worker ID for XML Signer to use with Username and Password authorization */
+    private static final int WORKERID5 = 6674;
+
+    /** Worker ID for XML Signer to use with accessToken authorization */
+    private static final int WORKERID6 = 6673;
+
+    /** Worker ID for XML Signer to use with Username authorization */
+    private static final int WORKERID7 = 6672;
+
+
     private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private final String SIGN_KEY_CERT_CN = "P11RequestSign";
 
     private String dss10KeyStorePath;
 
-    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3, WORKERID4};
+    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3, WORKERID4, WORKERID5, WORKERID6, WORKERID7};
 
     private static File signserverhome;
 
@@ -83,6 +94,34 @@ public class DocumentSignerTest extends ModulesTestCase {
     // key pair used to generate test JWT token
     private static KeyPair keyPair;
 
+    private final String JWT_TOKEN =
+            "eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw" +
+                    "ibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJncm91cHMiOlsic3R" +
+                    "hZmYiLCJTaWduU2VydmVyLXVzZXJzIiwicmVsZWFzZS1tYW5hZ2VycyIsIm1haWx" +
+                    "1c2VycyJdLCJpc3MiOiJNeUlEUCJ9.m2Ujaj1N3XF2jGgmBnDjtnmNPLEl_D46f3" +
+                    "tBtNRK8r_jQZdLaEQjbsQpL-dd5JgA4h6mknrBJLsHZBHnl46vU8Hftc4VosiLAA" +
+                    "sTDaf6TBa0fvlS32OSW1IWQBqcgNwPvyiGpKdGRViZAM2hX2HkQop9jY65PzAXQF" +
+                    "bBU4MSpHsQ6akXDeMIYiQB5gDXtcuowvaTooJ-tFGFDCM6EsSwQQiO28jziG0JAh" +
+                    "gmUyK7NSzAbqrEjV0KjUZ-BNLJm3_EPy_qV5B1fdmlkvuCoZURO2GzzN4NaLVAiz" +
+                    "4ynK35z7hfsdEeLubh64Y92_0KZIeOoffr27whV-rzrDpk7aYOGw";
+    private final String INVALID_JWT_TOKEN =
+            "eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVDEifQ.eyJzdWIiOiIxMjM0NTY3ODkwI" +
+                    "iwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJncm91cHMiOlsic" +
+                    "3RhZmYiLCJTaWduU2VydmVyLXVzZXJzMSIsInJlbGVhc2UtbWFuYWdlcnMiLCJtY" +
+                    "WlsdXNlcnMiXSwiaXNzIjoiTXlJRFAxIn0.p2c9VAuuwOxy_TiFWh7uBn1WLiyj_" +
+                    "83en54YuCoKndb3qZyC36fQ91QT4N3gFC7PDFfO7cKron6O7XNq4JxY0lOQiL_4M" +
+                    "XFEiQ7TJCTfvM3eOyDqYlLieQYIkS1dACheUyShYH2PvGM_bHpveTEHD8SYO4lDZ" +
+                    "zBD5qeJCzckpw0-uPJxBCnPLP9Cb-L2yy5OMQRHYL-8OUurzCTLwJghiPfZpOLf-" +
+                    "wQsuUXRsQnr0j0I7rca5JI-6tQWGoYC5t35skQJq1KbALZBbMAETzp8rs5F-uFtF" +
+                    "Rw29_bUeaalokjCDsE1aZuebi7AGM2GmI1atEuI5tgwJmql_OHl37gVsg";
+    private final String INVALID_JWT_PUBLICKEY =
+            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3HOAfm+cL/IwUxFjhGjA" +
+                    "hiHUshGZ/ID0c5P077Gt1GEdBEPOhxmycVygaVi+4HCB9Ir7y2TaMyl4Gc+WSmnb" +
+                    "6CzztAq/BJXt4z+r+nEqh2n3/sNC6K4xy6w+pr0EZz6nluQq35kWejelnhuBqTOZ" +
+                    "bHi9vVZHaKmX4VrsxMF8dxzEG91a3MbAaOAlyZpqFqamaZRULmCgKecT8eFk10Tu" +
+                    "bCdG59j9QkHPLA9Gsm0nSeULM3de2VGn+C0oDgg3gdH5wpH36iXsueQmaPFEPHXC" +
+                    "XAfqrY60jyS0l1ZLLCtTT2ig3rt8+DcuIJsdmyh03lVXHqOTjdB5bWghWj4gO9Ys" +
+                    "OwIDAQAB";
     @Rule
     public TemporaryFolder inDir = new TemporaryFolder();
 
@@ -113,6 +152,15 @@ public class DocumentSignerTest extends ModulesTestCase {
 
         // Worker 4 (Used for CLIENTCERT authorization)
         addDummySigner(WORKERID4, "TestXMLSigner1", true);
+
+        // Worker 5 (Used for username and password authorization)
+        addDummySigner(WORKERID5, "TestXMLSignerUserPassAuth", true);
+
+        // Worker 5 (Used for JWT authorization)
+        addDummySigner(WORKERID6, "TestXMLSignerJwtAuth", true);
+
+        // Worker 5 (Used for username authorization)
+        addDummySigner(WORKERID7, "TestXMLSignerUserAuth", true);
     }
 
     @Test
@@ -543,6 +591,206 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Tests the sample use case to sign xml document with username and password authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithUsernameAndPasswordWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithUsernameAndPasswordWithProtocolRest");
+        addUserPassAuthToWorker(WORKERID5);
+        workerSession.reloadConfiguration(WORKERID5);
+
+        try {
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-username", "USER1",
+                    "-password", "foo123", "-workername", "TestXMLSignerUserPassAuth", "-data", "<root/>"));
+
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Tests unauthorized sign request for a simple xml document with invalid password with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithInvalidPasswordWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithInvalidPasswordWithProtocolRest");
+        addUserPassAuthToWorker(WORKERID5);
+        workerSession.reloadConfiguration(WORKERID5);
+
+        try {
+            execute("signdocument", "-protocol", "REST", "-username", "USER1",
+                    "-password", "dummyPassword", "-workername", "TestXMLSignerUserPassAuth", "-data", "<root/>");
+
+            fail("Should not accept invalid password");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
+        }
+    }
+
+    /**
+     * Tests unauthorized sign request for a simple xml document with invalid username and valid password for authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithInvalidUsernameAndValidPasswordWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithInvalidUsernameAndValidPasswordWithProtocolRest");
+        addUserPassAuthToWorker(WORKERID5);
+        workerSession.reloadConfiguration(WORKERID5);
+
+        try {
+            execute("signdocument", "-protocol", "REST", "-username", "dummyUser",
+                    "-password", "foo123", "-workername", "TestXMLSignerUserPassAuth", "-data", "<root/>");
+
+            fail("Should not accept invalid username");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
+        }
+    }
+
+    /**
+     * Tests the sample use case to sign xml document with username authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithUsernameWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithUsernameWithProtocolRest");
+        addUsernameAuthToWorker(WORKERID7);
+        workerSession.reloadConfiguration(WORKERID7);
+
+        try {
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-username", "USER1",
+                    "-password", "No Need", "-workername", "TestXMLSignerUserAuth", "-data", "<root/>"));
+
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Tests unauthorized sign request for a simple xml document with invalid username for authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithInvalidUsernameWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithInvalidUsernameWithProtocolRest");
+        addUsernameAuthToWorker(WORKERID7);
+        workerSession.reloadConfiguration(WORKERID7);
+
+        try {
+            execute("signdocument", "-protocol", "REST", "-username", "dummyUSER1",
+                    "-password", "No Need", "-workername", "TestXMLSignerUserAuth", "-data", "<root/>");
+
+            fail("Should not accept invalid username");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
+        }
+    }
+
+    /**
+     * Tests the sample use case to sign xml document with JWT authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithJwtAuthWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithJwtAuthWithProtocolRest");
+        addJwtAuthToWorker(WORKERID6);
+        workerSession.reloadConfiguration(WORKERID6);
+
+        try {
+            String res
+                    = new String(execute("signdocument", "-protocol", "REST", "-workername", "TestXMLSignerJwtAuth", "-data", "<root/>",
+                    "-accesstoken", JWT_TOKEN));
+
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Tests unauthorized sign request for a simple xml document with an invalid JWT token with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithInvalidJwtAuthWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithInvalidJwtAuthWithProtocolRest");
+        addJwtAuthToWorker(WORKERID6);
+        workerSession.reloadConfiguration(WORKERID6);
+
+        try {
+            execute("signdocument", "-protocol", "REST", "-workername", "TestXMLSignerJwtAuth", "-data", "<root/>",
+                    "-accesstoken", INVALID_JWT_TOKEN);
+
+            fail("Should not accept invalid JWT token");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
+        }
+    }
+
+    /**
+     * Tests unauthorized sign request for a simple xml document with not matching issuer value for JWT token authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithInvalidIssuerJwtAuthWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithInvalidIssuerJwtAuthWithProtocolRest");
+        addJwtAuthToWorker(WORKERID6);
+        workerSession.setWorkerProperty(WORKERID6, "AUTHJWT1.ISSUER", "DummyMyIDP");
+        workerSession.reloadConfiguration(WORKERID6);
+
+        try {
+            execute("signdocument", "-protocol", "REST", "-workername", "TestXMLSignerJwtAuth", "-data", "<root/>",
+                    "-accesstoken", JWT_TOKEN);
+
+            fail("Should not accept invalid AUTHJWT1.ISSUER for JWT token");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
+        }
+    }
+
+    /**
+     * Tests unauthorized sign request for a simple xml document with invalid public key value for JWT token authorization with protocol REST.
+     */
+    @Test
+    public void test02signDocumentFromParameterWithInvalidPublicKeyJwtAuthWithProtocolRest() throws Exception {
+        LOG.info("test02signDocumentFromParameterWithInvalidPublicKeyJwtAuthWithProtocolRest");
+        addJwtAuthToWorker(WORKERID6);
+        workerSession.setWorkerProperty(WORKERID6, "AUTHSERVER1.PUBLICKEY", INVALID_JWT_PUBLICKEY);
+        workerSession.reloadConfiguration(WORKERID6);
+
+        try {
+            execute("signdocument", "-protocol", "REST", "-workername", "TestXMLSignerJwtAuth", "-data", "<root/>",
+                    "-accesstoken", JWT_TOKEN);
+
+            fail("Should not accept invalid AUTHSERVER1.PUBLICKEY for JWT token");
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
         }
     }
 

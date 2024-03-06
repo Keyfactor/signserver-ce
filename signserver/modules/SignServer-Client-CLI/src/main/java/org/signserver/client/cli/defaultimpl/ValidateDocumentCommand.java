@@ -105,6 +105,10 @@ public class ValidateDocumentCommand extends AbstractCommand {
         WEBSERVICES,
         /** HTTP servlet protocol. */
         HTTP,
+        /**
+         * The REST interface.
+         */
+        REST
     }
 
     static {
@@ -289,9 +293,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
             throw new IllegalCommandArgumentsException("Can not specify both -username and -accesstoken");
         }
 
-        // only support JWT auth with HTTP
-        if (accessToken != null && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -accesstoken with protocol HTTP");
+        // only support JWT auth with HTTP or REST
+        if (accessToken != null && protocol != Protocol.HTTP && protocol != Protocol.REST) {
+            throw new IllegalCommandArgumentsException("Can only use -accesstoken with protocol HTTP or REST");
         }
     }
 

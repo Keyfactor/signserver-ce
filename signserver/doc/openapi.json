@@ -2,13 +2,47 @@
   "openapi" : "3.0.3",
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.1.1"
+    "version" : "1.2.0"
   },
   "servers" : [ {
     "url" : "/signserver/rest/v1"
   } ],
   "paths" : {
     "/workers" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListWorkersResponse"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
       "post" : {
         "summary" : "Submit data for adding a new worker from multiple properties",
         "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
@@ -229,6 +263,59 @@
       }
     },
     "/workers/{id}" : {
+      "get" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/WorkerConfigResponse"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
       "put" : {
         "summary" : "Submit data for replace worker properties with the new properties",
         "description" : "Submit a worker ID and a list of worker properties to replace with current worker properties.",
@@ -510,6 +597,19 @@
           }
         }
       },
+      "ListWorkersResponse" : {
+        "description" : "POJO representing a response listing the workers",
+        "type" : "object",
+        "properties" : {
+          "workers" : {
+            "description" : "Workers list. Array with worker ID/name pairs. Empty when no workers available",
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Worker"
+            }
+          }
+        }
+      },
       "ProcessRequest" : {
         "description" : "POJO that represents a process request.",
         "required" : [ "data" ],
@@ -571,6 +671,31 @@
             "items" : {
               "format" : "int32",
               "type" : "integer"
+            }
+          }
+        }
+      },
+      "Worker" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "WorkerConfigResponse" : {
+        "description" : "POJO that represents a get configuration response.",
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "description" : "Worker properties list",
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
             }
           }
         }

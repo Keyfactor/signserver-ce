@@ -19,9 +19,13 @@ import java.io.FileNotFoundException;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+import java.util.List;
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 
 /**
@@ -904,6 +908,276 @@ public class RestWorkersTest extends ModulesTestCase {
         } finally {
             removeWorker(HELLO_WORKER_ID);
         }
+    }
+
+    /**
+     * Test REST get worker configuration operation.
+     */
+    @Test
+    public void testRestGetWorkerConfig() throws InvalidWorkerIdException {
+        LOG.debug("testRestGetWorkerConfig");
+
+        try {
+            final JSONObject body =
+                    rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME);
+            final JSONObject configProperties =
+                    (JSONObject) body.get("properties");
+            
+            configProperties.put("PIN", "foo123");
+
+            final int expectedNumberProperties = configProperties.size();
+            
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(body)
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(201)
+                    .extract().response();
+
+            assertEquals("Check response status code 201", 201,
+                         response.statusCode());
+            assertTrue("Check worker with the given worker name created",
+                       getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
+
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .accept(JSON)
+                    .when()
+                    .get(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            final JSONObject responseJsonObject =
+                    new JSONObject(response.jsonPath().getJsonObject("$"));
+            final Object properties = responseJsonObject.get("properties");
+            assertNotNull("Response contains properties", properties);
+            assertEquals("Check response status code 200", 200,
+                         response.statusCode());
+
+            final Map<String, String> propertiesMap =
+                    (Map<String, String>) properties;
+
+            // check expected worker properties
+            assertEquals("Number of properties", expectedNumberProperties,
+                         propertiesMap.size());
+            assertEquals("Name exists", HELLO_WORKER_NAME,
+                         propertiesMap.get("NAME"));
+            assertEquals("Type exists", "PROCESSABLE",
+                         propertiesMap.get("TYPE"));
+            assertEquals("Authtype exists", "NOAUTH",
+                         propertiesMap.get("AUTHTYPE"));
+            assertEquals("Greeting exists", "Hi",
+                         propertiesMap.get("GREETING"));
+            assertEquals("Implementation class exists",
+                         "org.signserver.module.sample.workers.HelloWorker",
+                         propertiesMap.get("IMPLEMENTATION_CLASS"));
+            assertEquals("PIN comes out as masked", "_MASKED_",
+                         propertiesMap.get("PIN"));
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test the list workers operation.
+     */
+    @Test
+    public void testRestListWorkers() {
+        LOG.debug("testRestListWorkers");
+
+        try {
+            // get list before adding a new worker
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .accept(JSON)
+                    .when()
+                    .get(baseHttpsURL + "/workers/")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject =
+                    new JSONObject(response.jsonPath().getJsonObject("$"));
+            List<Map<String, Object>> workers = (List<Map<String, Object>>) responseJsonObject.get("workers");
+            
+            assertNotNull("Workers object found", workers);
+            
+            int count = 0;
+            for (final Map<String, Object> w : workers) {
+                final Integer id = (Integer) w.get("id");
+                final String name = (String) w.get("name");
+
+                assertNotNull("Contains ID", id);
+                assertNotNull("Contains name", name);
+                count++;
+            }
+
+            // create new worker
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(201)
+                    .extract().response();
+
+            assertEquals("Check response status code 201", 201,
+                         response.statusCode());
+            assertTrue("Check worker with the given worker name created",
+                       getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
+
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .accept(JSON)
+                    .when()
+                    .get(baseHttpsURL + "/workers/")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            responseJsonObject =
+                    new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            workers = (List<Map<String, Object>>) responseJsonObject.get("workers");
+            
+            assertNotNull("Workers object found", workers);
+            
+            int newCount = 0;
+            boolean foundNew = false;
+
+            for (final Map<String, Object> w : workers) {
+                final Integer id = (Integer) w.get("id");
+                final String name = (String) w.get("name");
+
+                if (id == HELLO_WORKER_ID) {
+                    assertEquals("Got name of new worker", HELLO_WORKER_NAME, name);
+                    foundNew = true;
+                }
+                newCount++;
+            }
+
+            assertTrue("Found new worker in response", foundNew);
+            assertEquals("One new worker", count + 1, newCount);
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test the list workers operation. Not setting the custom header, should
+     * not be allowed.
+     */
+    @Test
+    public void testRestListWorkersNoHeader() {
+        LOG.debug("testRestListWorkersNoHeader");
+
+        // get list before adding a new worker
+        Response response = given()
+                .relaxedHTTPSValidation()
+                .accept(JSON)
+                .when()
+                .get(baseHttpsURL + "/workers/")
+                .then()
+                .statusCode(403)
+                .contentType("application/json")
+                .extract().response();
+
+        assertEquals("Response code", 403, response.getStatusCode());
+        
+        JSONObject responseJsonObject =
+                new JSONObject(response.jsonPath().getJsonObject("$"));
+        List<Map<String, Object>> workers = (List<Map<String, Object>>) responseJsonObject.get("workers");
+
+        assertNull("Workers object not found", workers);
+    }
+
+
+    /**
+     * Test REST get worker configuration operation when no custom header is set.
+     */
+    @Test
+    public void testRestGetWorkerConfigNoHeader() throws InvalidWorkerIdException {
+        LOG.debug("testRestGetWorkerConfigNoHeader");
+
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(JSON)
+                    .accept(JSON)
+                    .body(rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME))
+                    .when()
+                    .post(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(201)
+                    .extract().response();
+
+            assertEquals("Check response status code 201", 201,
+                         response.statusCode());
+            assertTrue("Check worker with the given worker name created",
+                       getWorkerSession().getAllWorkers().contains(HELLO_WORKER_ID));
+
+            response = given()
+                    .relaxedHTTPSValidation()
+                    .accept(JSON)
+                    .when()
+                    .get(baseHttpsURL + "/workers/" + HELLO_WORKER_ID)
+                    .then()
+                    .statusCode(403)
+                    .contentType("application/json")
+                    .extract().response();
+
+            final JSONObject responseJsonObject =
+                    new JSONObject(response.jsonPath().getJsonObject("$"));
+            final Object properties =
+                    responseJsonObject.get("properties");
+            assertNull("Response does not contain properties", properties);
+            assertEquals("Check response status code 403", 403,
+                         response.statusCode());
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST get worker configuration operation with a non-existing worker ID.
+     */
+    @Test
+    public void testRestGetWorkerConfigNonExistingWorker() {
+        LOG.debug("testRestDeleteWorker");
+
+        final Response response = given()
+                .relaxedHTTPSValidation()
+                .header("X-Keyfactor-Requested-With", "1")
+                .accept(JSON)
+                .when()
+                .get(baseHttpsURL + "/workers/1000000")
+                .then()
+                .statusCode(404)
+                .contentType("application/json")
+                .extract().response();
+
+        final JSONObject responseJsonObject =
+                new JSONObject(response.jsonPath().getJsonObject("$"));
+
+        assertEquals("Check response status code is 404.", 404, response.statusCode());
+        assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
     }
 
     /**

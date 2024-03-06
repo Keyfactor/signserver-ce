@@ -117,6 +117,26 @@ public class ModulesTestCase {
     private static final int XML_VALIDATOR_WORKER_ID = 5882;
     private static final String XML_VALIDATOR_WORKER_NAME = "TestXMLValidator";
 
+    private static final String KEY_AUTHJWT1CLAIMNAME = "AUTHJWT1.CLAIM.NAME";
+    private static final String KEY_AUTHJWT1CLAIMVALUE = "AUTHJWT1.CLAIM.VALUE";
+    private static final String KEY_AUTHJWT1ISSUER = "AUTHJWT1.ISSUER";
+    private static final String KEY_AUTHSERVER1ISSUER = "AUTHSERVER1.ISSUER";
+    private static final String KEY_AUTHSERVER1PUBLICKEY = "AUTHSERVER1.PUBLICKEY";
+    private static final String KEY_ACCEPT_USERNAMES = "ACCEPT_USERNAMES";
+
+    private static final String VALUE_USER_AUTHTYPE = "org.signserver.server.UsernameAuthorizer";
+    private static final String VALUE_USER_PASS_AUTHTYPE = "org.signserver.server.UsernamePasswordAuthorizer";
+    private static final String VALUE_JWT_AUTHTYPE = "org.signserver.server.jwtauth.JwtAuthorizer";
+
+    private final String JWT_PUBLICKEY =
+            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu1SU1LfVLPHCozMxH2Mo" +
+                    "4lgOEePzNm0tRgeLezV6ffAt0gunVTLw7onLRnrq0/IzW7yWR7QkrmBL7jTKEn5u" +
+                    "+qKhbwKfBstIs+bMY2Zkp18gnTxKLxoS2tFczGkPLPgizskuemMghRniWaoLcyeh" +
+                    "kd3qqGElvW/VDL5AaWTg0nLVkjRo9z+40RQzuVaE8AkAFmxZzow3x+VJYKdjykkJ" +
+                    "0iT9wCS0DRTXu269V264Vf/3jvredZiKRkgwlL9xNAwxXFg0x/XFw005UWVRIkdg" +
+                    "cKWTjpBP2dPwVZ4WWC+9aGVd+Gyn1o0CLelf4rEjGoXbAAEgAqeGUxrcIlbjXfbc" +
+                    "mwIDAQAB";
+
     protected static final String KEYSTORE_SIGNER00001_ALIAS = "signer00001";
     protected static final String KEYSTORE_SIGNER1_ALIAS = "signer00003";
     protected static final String KEYSTORE_TSSIGNER1_ALIAS = "ts00003";
@@ -843,6 +863,26 @@ public class ModulesTestCase {
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, KEY_AUTH_TYPE, VALUE_NO_AUTH);
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
         getWorkerSession().reloadConfiguration(XML_VALIDATOR_WORKER_ID);
+    }
+
+    public void addJwtAuthToWorker(final int workerID) throws Exception {
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTH_TYPE, VALUE_JWT_AUTHTYPE);
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTHJWT1CLAIMNAME, "groups");
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTHJWT1CLAIMVALUE, "SignServer-users");
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTHJWT1ISSUER, "MyIDP");
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTHSERVER1ISSUER, "MyIDP");
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTHSERVER1PUBLICKEY, JWT_PUBLICKEY);
+    }
+
+    public void addUserPassAuthToWorker(final int workerID) throws Exception {
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTH_TYPE, VALUE_USER_PASS_AUTHTYPE);
+        getWorkerSession().setWorkerProperty(workerID, KEY_ACCEPT_USERNAMES, "USER1");
+        getWorkerSession().setWorkerProperty(workerID, "USER.USER1", "foo123");
+    }
+
+    public void addUsernameAuthToWorker(final int workerID) throws Exception {
+        getWorkerSession().setWorkerProperty(workerID, KEY_AUTH_TYPE, VALUE_USER_AUTHTYPE);
+        getWorkerSession().setWorkerProperty(workerID, KEY_ACCEPT_USERNAMES, "USER1");
     }
 
     public int getWorkerIdXmlValidator() {

@@ -702,6 +702,9 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
+    @Operation(
+            description = "Required role: admin role \n\n"
+    )
     public Response getConfig(
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id)
@@ -758,6 +761,9 @@ public class WorkerResource {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
             )
+    )
+    @Operation(
+            description = "Required role: admin role \n\n"
     )
     public Response listWorkers(
             @Context final HttpServletRequest httpServletRequest)

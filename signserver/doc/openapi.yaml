@@ -8,6 +8,7 @@ servers:
 paths:
   /workers:
     get:
+      description: "Required role: admin role \n\n"
       responses:
         "200":
           description: OK
@@ -171,6 +172,7 @@ paths:
                 $ref: '#/components/schemas/ProcessResponse'
   /workers/{id}:
     get:
+      description: "Required role: admin role \n\n"
       parameters:
       - name: id
         in: path

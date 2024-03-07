@@ -1,8 +1,8 @@
 {
   "openapi" : "3.0.3",
   "info" : {
-        "title": "SignServer REST Interface",
-        "version": "1.2.1"
+    "title" : "SignServer REST Interface",
+    "version" : "1.2.1"
   },
   "servers" : [ {
     "url" : "/signserver/rest/v1"
@@ -10,6 +10,7 @@
   "paths" : {
     "/workers" : {
       "get" : {
+        "description" : "Required role: admin role \n\n",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -264,6 +265,7 @@
     },
     "/workers/{id}" : {
       "get" : {
+        "description" : "Required role: admin role \n\n",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",

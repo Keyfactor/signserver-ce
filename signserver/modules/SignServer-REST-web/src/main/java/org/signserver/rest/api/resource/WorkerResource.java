@@ -644,9 +644,6 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
-    @Operation(
-            description = "Required role: admin role \n\n"
-    )
     public Response reloadAll(
             @Context final HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException, IllegalRequestException {
         checkCustomHeader(httpServletRequest);

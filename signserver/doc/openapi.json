@@ -108,7 +108,7 @@
     "/workers/reload" : {
       "post" : {
         "summary" : "Reload workers",
-        "description" : "Required role: admin role \n\n",
+        "description" : "Required role: admin role \n\nSubmit a list of worker IDs to reload configurations from the database. The request without body reloads all the workers.",
         "requestBody" : {
           "description" : "The request",
           "content" : {

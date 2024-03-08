@@ -166,8 +166,9 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Submit data for adding a new worker from multiple properties",
-            description = "Submit a worker ID and a list of worker properties to "
-                    + "add a new worker."
+            description = "Required role: admin role \n\n"
+            + "Submit a worker ID and a list of worker properties to "
+            + "add a new worker."
     )
     public Response addWorker(
 
@@ -252,8 +253,9 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Submit data for adding a new worker from multiple properties",
-            description = "Submit a worker ID and a list of worker properties to "
-                    + "add a new worker."
+            description = "Required role: admin role \n\n"
+            + "Submit a worker ID and a list of worker properties to " 
+            + "add a new worker."
     )
     public Response addWorkerWithoutID(
 
@@ -334,7 +336,8 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Submit data for update and delete worker properties",
-            description = "Submit a worker ID and a list of worker properties to update or delete."
+            description = "Required role: admin role \n\n"
+            + "Submit a worker ID and a list of worker properties to update or delete."
     )
     public Response updateAndDeleteWorkerProperties(
 
@@ -429,8 +432,9 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Submit data for replace worker properties with the new properties",
-            description = "Submit a worker ID and a list of worker properties to replace "
-                    + "with current worker properties."
+            description = "Required role: admin role \n\n"
+            + "Submit a worker ID and a list of worker properties to replace " 
+            + "with current worker properties."
     )
     public Response replaceAllWorkerProperties(
 
@@ -506,7 +510,8 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Removing worker",
-            description = "Removing worker by ID."
+            description = "Required role: admin role \n\n"
+            + "Removing worker by ID."
     )
     public Response removeWorker(
             @Context final HttpServletRequest httpServletRequest,
@@ -574,8 +579,9 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Reload workers",
-            description = "Submit a list of worker IDs to reload configurations from the database." +
-                    " The request without body reloads all the workers."
+            description = "Required role: admin role \n\n"
+            + "Submit a list of worker IDs to reload configurations from the database."
+            +  " The request without body reloads all the workers."
     )
     public Response reload(
             @Context final HttpServletRequest httpServletRequest,
@@ -693,6 +699,9 @@ public class WorkerResource {
                     schema = @Schema(implementation = ErrorMessage.class)
             )
     )
+    @Operation(
+            description = "Required role: admin role \n\n"
+    )
     public Response getConfig(
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") final int id)
@@ -749,6 +758,9 @@ public class WorkerResource {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.class)
             )
+    )
+    @Operation(
+            description = "Required role: admin role \n\n"
     )
     public Response listWorkers(
             @Context final HttpServletRequest httpServletRequest)
@@ -836,7 +848,8 @@ public class WorkerResource {
     )
     @Operation(
             summary = "Submit data for processing",
-            description = "Submit data/document/file for processing such as for "
+            description = "Required role: set by AUTHTYPE in worker \n\n"
+                    + "Submit data/document/file for processing such as for "                    
                     + "instance signing and get back the result (i.e. signature)."
     )
     public Response process(

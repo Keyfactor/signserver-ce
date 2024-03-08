@@ -2,7 +2,7 @@
   "openapi" : "3.0.3",
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.2.0"
+    "version" : "1.2.1"
   },
   "servers" : [ {
     "url" : "/signserver/rest/v1"
@@ -10,6 +10,7 @@
   "paths" : {
     "/workers" : {
       "get" : {
+        "description" : "Required role: admin role \n\n",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -45,7 +46,7 @@
       },
       "post" : {
         "summary" : "Submit data for adding a new worker from multiple properties",
-        "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
+        "description" : "Required role: admin role \n\nSubmit a worker ID and a list of worker properties to add a new worker.",
         "requestBody" : {
           "description" : "The request",
           "content" : {
@@ -107,7 +108,7 @@
     "/workers/reload" : {
       "post" : {
         "summary" : "Reload workers",
-        "description" : "Submit a list of worker IDs to reload configurations from the database. The request without body reloads all the workers.",
+        "description" : "Required role: admin role \n\nSubmit a list of worker IDs to reload configurations from the database. The request without body reloads all the workers.",
         "requestBody" : {
           "description" : "The request",
           "content" : {
@@ -171,7 +172,7 @@
     "/workers/{idOrName}/process" : {
       "post" : {
         "summary" : "Submit data for processing",
-        "description" : "Submit data/document/file for processing such as for instance signing and get back the result (i.e. signature).",
+        "description" : "Required role: set by AUTHTYPE in worker \n\nSubmit data/document/file for processing such as for instance signing and get back the result (i.e. signature).",
         "parameters" : [ {
           "name" : "idOrName",
           "in" : "path",
@@ -264,6 +265,7 @@
     },
     "/workers/{id}" : {
       "get" : {
+        "description" : "Required role: admin role \n\n",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -318,7 +320,7 @@
       },
       "put" : {
         "summary" : "Submit data for replace worker properties with the new properties",
-        "description" : "Submit a worker ID and a list of worker properties to replace with current worker properties.",
+        "description" : "Required role: admin role \n\nSubmit a worker ID and a list of worker properties to replace with current worker properties.",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -390,7 +392,7 @@
       },
       "post" : {
         "summary" : "Submit data for adding a new worker from multiple properties",
-        "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
+        "description" : "Required role: admin role \n\nSubmit a worker ID and a list of worker properties to add a new worker.",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -459,7 +461,7 @@
       },
       "delete" : {
         "summary" : "Removing worker",
-        "description" : "Removing worker by ID.",
+        "description" : "Required role: admin role \n\nRemoving worker by ID.",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -520,7 +522,7 @@
       },
       "patch" : {
         "summary" : "Submit data for update and delete worker properties",
-        "description" : "Submit a worker ID and a list of worker properties to update or delete.",
+        "description" : "Required role: admin role \n\nSubmit a worker ID and a list of worker properties to update or delete.",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",

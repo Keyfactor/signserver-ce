@@ -1,0 +1,605 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "title" : "SignServer REST Interface",
+    "version" : "1.1.0"
+  },
+  "servers" : [ {
+    "url" : "/signserver/rest/v1"
+  } ],
+  "paths" : {
+    "/workers" : {
+      "post" : {
+        "summary" : "Submit data for adding a new worker from multiple properties",
+        "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Worker added successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Worker already exists.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workers/reload" : {
+      "post" : {
+        "summary" : "Reload workers",
+        "description" : "Submit a list of worker IDs to reload configurations from the database. The request without body reloads all the workers.",
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReloadRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Workers successfully reloaded",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workers/{idOrName}/process" : {
+      "post" : {
+        "summary" : "Submit data for processing",
+        "description" : "Submit data/document/file for processing such as for instance signing and get back the result (i.e. signature).",
+        "parameters" : [ {
+          "name" : "idOrName",
+          "in" : "path",
+          "description" : "Worker Id or name of the worker",
+          "required" : true,
+          "schema" : {
+            "anyOf" : [ {
+              "type" : "string"
+            }, {
+              "format" : "int32",
+              "type" : "integer"
+            } ]
+          },
+          "example" : "ExampleSigner1"
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ProcessRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Crypto Token not available",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "The response data",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProcessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workers/{id}" : {
+      "put" : {
+        "summary" : "Submit data for replace worker properties with the new properties",
+        "description" : "Submit a worker ID and a list of worker properties to replace with current worker properties.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Properties replaced successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Submit data for adding a new worker from multiple properties",
+        "description" : "Submit a worker ID and a list of worker properties to add a new worker.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Worker added successfully"
+          },
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Worker already exists.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Removing worker",
+        "description" : "Removing worker by ID.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Worker removed successfully",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such worker",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch" : {
+        "summary" : "Submit data for update and delete worker properties",
+        "description" : "Submit a worker ID and a list of worker properties to update or delete.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WorkerRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Worker properties successfully updated",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "400" : {
+            "description" : "Bad request from the client",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Access is forbidden!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The server were unable to process the request. See server-side logs for more details.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "DataEncoding" : {
+        "description" : "Choice of additional encoding of the data.",
+        "enum" : [ "NONE", "BASE64" ],
+        "type" : "string"
+      },
+      "ErrorMessage" : {
+        "type" : "object",
+        "properties" : {
+          "error" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ProcessRequest" : {
+        "description" : "POJO that represents a process request.",
+        "required" : [ "data" ],
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "description" : "The input data to be processed (i.e. signed).",
+            "type" : "string"
+          },
+          "encoding" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/DataEncoding"
+            }, {
+              "description" : "Additional encoding of the input data."
+            } ]
+          },
+          "metaData" : {
+            "description" : "Additional request metadata for the worker.",
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ProcessResponse" : {
+        "description" : "POJO that represents a process response.",
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "description" : "The resulting data (i.e the signature) in Base64 encoding",
+            "type" : "string"
+          },
+          "requestId" : {
+            "type" : "string"
+          },
+          "archiveId" : {
+            "type" : "string"
+          },
+          "signerCertificate" : {
+            "type" : "string"
+          },
+          "metaData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ReloadRequest" : {
+        "description" : "Represents a reload request.",
+        "required" : [ "workerIDs" ],
+        "type" : "object",
+        "properties" : {
+          "workerIDs" : {
+            "description" : "List of worker IDs to reload.",
+            "type" : "array",
+            "items" : {
+              "format" : "int32",
+              "type" : "integer"
+            }
+          }
+        }
+      },
+      "WorkerRequest" : {
+        "description" : "Represents a worker request.",
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "description" : "Worker properties list",
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "WorkerResponse" : {
+        "description" : "Represents a worker response.",
+        "type" : "object",
+        "properties" : {
+          "responseMessage" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}

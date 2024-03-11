@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="181288951">
+<body pageid="212959630">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.1.0</p>
+                    <p>Version: 6.2.0</p>
                 </div>
             </header>
 
@@ -141,6 +141,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Architecture_and_Concepts.html">Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Library_Manifest.html">Library Manifest</a>
 
             </li>
                                         <li class="leaf">
@@ -1721,20 +1725,21 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-181291931"> <span>REST Interface</span></h1>
+</div>            <h1 id="src-207324526"> <span>REST Interface</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The following covers information on the SignServer REST Interface.    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-181291931_id-.RESTInterfacev6.0.0-APIOverview">API Overview</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181291931_id-.RESTInterfacev6.0.0-GettingStarted">Getting Started</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181291931_id-.RESTInterfacev6.0.0-OpenAPIDocument">OpenAPI Document</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181291931_id-.RESTInterfacev6.0.0-IntegratingwiththeRESTAPI">Integrating with the REST API</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-181291931_id-.RESTInterfacev6.0.0-Examples">Examples</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-APIOverview">API Overview</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-GettingStarted">Getting Started</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-OpenAPIDocument">OpenAPI Document</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-IntegratingwiththeRESTAPI">Integrating with the REST API</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-CustomHeaderrequires">Custom Header requires</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-207324526_id-.RESTInterfacev6.2.0-Examples">Examples</a>    </p>
 </li></ul>    <p  >    </p>
-    <div class="section section-1" id="src-181291931_id-.RESTInterfacev6.0.0-APIOverview">
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-APIOverview">
         <h1 class="heading "><span>API Overview</span></h1>
     <p  >    <span style="color: #000000;">
 The SignServer REST Interface supports integration with SignServer over a RESTful Web Service.    </span>
@@ -1746,7 +1751,7 @@ In this initial version the API is limited to one flavor of the client operation
 In future versions, the interface may be extended to support additional API calls from the other interfaces and/or add new ones.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-181291931_id-.RESTInterfacev6.0.0-GettingStarted">
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-GettingStarted">
         <h1 class="heading "><span>Getting Started </span></h1>
     <p  >    <span style="color: #000000;">
 The SignServer REST interface is described using the OpenAPI Specification (OAS). The OpenAPI Specification is a community-driven specification for describing REST APIs.    </span>
@@ -1755,7 +1760,7 @@ The SignServer REST interface is described using the OpenAPI Specification (OAS)
 OpenAPI documents describe API services and are represented in YAML or JSON formats. These documents may be produced and served statically or generated dynamically from an application.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-181291931_id-.RESTInterfacev6.0.0-OpenAPIDocument">
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-OpenAPIDocument">
         <h1 class="heading "><span>OpenAPI Document</span></h1>
     <p  >    <span style="color: #000000;">
 The interface is documented in an OpenAPI document in YAML or JSON formats:    </span>
@@ -1780,13 +1785,13 @@ The interface is documented in an OpenAPI document in YAML or JSON formats:    <
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >SignServer REST Interface v1    </p>
+        <p  >SignServer REST Interface 1.1.0    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="attachments/181292772/1/openapi.json">openapi.json</a>    </p>
+        <p  ><a   href="attachments/207324529/7/openapi.json">openapi.json</a>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><a   href="attachments/181292773/1/openapi.yaml">openapi.yaml</a>    </p>
+        <p  ><a   href="attachments/207324528/8/openapi.yaml">openapi.yaml</a>    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1794,7 +1799,7 @@ The interface is documented in an OpenAPI document in YAML or JSON formats:    <
     <p  >    <span style="color: #000000;">
 Alternatively, you can also generate the document from a server running SignServer assuming that is enabled and supported by the application server.    </span>
     </p>
-    <div class="section section-2" id="src-181291931_id-.RESTInterfacev6.0.0-EnablingMicroProfileOpenAPIinWildFly">
+    <div class="section section-2" id="src-207324526_id-.RESTInterfacev6.2.0-EnablingMicroProfileOpenAPIinWildFly">
         <h2 class="heading "><span>Enabling MicroProfile OpenAPI in WildFly</span></h2>
     <p  >    <span style="color: #000000;">
 Using JBoss CLI, enable the extension and subsystem, and then restart the application server:    </span>
@@ -1811,9 +1816,9 @@ After restarting the application server and deploying SignServer, the OpenAPI do
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-181291931_id-.RESTInterfacev6.0.0-IntegratingwiththeRESTAPI">
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-IntegratingwiththeRESTAPI">
         <h1 class="heading "><span>Integrating with the REST API</span></h1>
-    <div class="section section-2" id="src-181291931_id-.RESTInterfacev6.0.0-Resources">
+    <div class="section section-2" id="src-207324526_id-.RESTInterfacev6.2.0-Resources">
         <h2 class="heading "><span>Resources</span></h2>
     <p  >    <span style="color: #000000;">
 The SignServer REST API provides the following resource:    </span>
@@ -1899,12 +1904,20 @@ application/json    </span>
             </div>
     </div>
     </div>
-    <div class="section section-1" id="src-181291931_id-.RESTInterfacev6.0.0-Examples">
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-CustomHeaderrequires">
+        <h1 class="heading "><span>Custom Header requires</span></h1>
+    <p  >    <span style="color: #000000;">
+    <span style="color: #172b4d;">
+The admin operations of the    </span>
+ SignServer REST API requires a custom header called &quot;<strong class=" ">X-Keyfactor-Requested-With</strong>&quot; to accept the request. This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.    </span>
+    </p>
+    </div>
+    <div class="section section-1" id="src-207324526_id-.RESTInterfacev6.2.0-Examples">
         <h1 class="heading "><span>Examples</span></h1>
     <p  >    <span style="color: #000000;">
 The following provides examples of how to use the SignServer REST API.    </span>
     </p>
-    <div class="section section-2" id="src-181291931_id-.RESTInterfacev6.0.0-Example-SignTextwithCMSSigner">
+    <div class="section section-2" id="src-207324526_id-.RESTInterfacev6.2.0-Example-SignTextwithCMSSigner">
         <h2 class="heading "><span>Example - Sign Text with CMS Signer</span></h2>
     <p  >    <span style="color: #000000;">
 The following provides an example of signing a sample text with the CMS Signer using the JSON request media type. This example assumes that you have a <a   href="CMS_Signer.html">SignServer CMS Signer</a> set up in SignServer.<br/>    </span>
@@ -1912,9 +1925,9 @@ The following provides an example of signing a sample text with the CMS Signer u
     <p  >    <span style="color: #000000;">
 Send a request to the CMS Signer using the worker name CMSSigner and use a JSON media type for sending the request in the body. The response is in JSON format and contains archiveId, data, requestId, and the signer certificate.    </span>
     </p>
-    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/181291931/Screenshot_from_2023-05-31_12-32-29.png" alt="images/download/attachments/181291931/Screenshot_from_2023-05-31_12-32-29.png" width="800"  />
+    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/207324526/Screenshot_from_2023-05-31_12-32-29-version-1-modificationdate-1698046312000-api-v2.png" alt="images/download/attachments/207324526/Screenshot_from_2023-05-31_12-32-29-version-1-modificationdate-1698046312000-api-v2.png" width="800"  />
         </p>
-    <div class="section section-3" id="src-181291931_safe-id-aWQtLlJFU1RJbnRlcmZhY2V2Ni4wLjAtVVJMOg">
+    <div class="section section-3" id="src-207324526_safe-id-aWQtLlJFU1RJbnRlcmZhY2V2Ni4yLjAtVVJMOg">
         <h3 class="heading "><span>URL:</span></h3>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1922,7 +1935,7 @@ Send a request to the CMS Signer using the worker name CMSSigner and use a JSON 
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-181291931_safe-id-aWQtLlJFU1RJbnRlcmZhY2V2Ni4wLjAtUmVxdWVzdEJvZHk6">
+    <div class="section section-3" id="src-207324526_safe-id-aWQtLlJFU1RJbnRlcmZhY2V2Ni4yLjAtUmVxdWVzdEJvZHk6">
         <h3 class="heading "><span>Request Body:</span></h3>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1937,7 +1950,7 @@ Send a request to the CMS Signer using the worker name CMSSigner and use a JSON 
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-181291931_safe-id-aWQtLlJFU1RJbnRlcmZhY2V2Ni4wLjAtUmVzcG9uc2U6">
+    <div class="section section-3" id="src-207324526_safe-id-aWQtLlJFU1RJbnRlcmZhY2V2Ni4yLjAtUmVzcG9uc2U6">
         <h3 class="heading "><span>Response:</span></h3>
     <div  class="confbox programlisting">
                 <div class="content">

@@ -646,7 +646,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         
         //First we add the added and changed properties to the config
         for (Map.Entry mapElement : propertiesAndValues.entrySet()) {
-            config.setProperty((String)mapElement.getKey(), (String)mapElement.getValue());
+            config.setProperty(((String)mapElement.getKey()).toUpperCase(Locale.ENGLISH), (String)mapElement.getValue());
         }
        
         //We extend the hashmap with all values that shall be removed
@@ -659,6 +659,99 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         for (String propertyToRemove: propertiesToRemove) {
             config.removeProperty(propertyToRemove.toUpperCase());
         }
+        updateWorkerConfig(adminInfo, workerId, config);
+
+        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId),
+                                     config, propertiesAndValues.keySet().toString(),
+                                     propertiesAndValues.values().toString());
+    }
+
+    @Override
+    public void addUpdateDeleteWorkerProperties(int workerId, Map<String, String> propertiesAndValues,
+                                                List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException {
+        addUpdateDeleteWorkerProperties(new AdminInfo("CLI user", null, null), workerId,
+                propertiesAndValues, propertiesToRemove);
+    }
+
+    @Override
+    public void addUpdateDeleteWorkerProperties(AdminInfo adminInfo, int workerId,
+                                                final Map<String, String> propertiesAndValues,
+                                                final List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException {
+        if (!isWorkerExists(workerId)) {
+            LOG.debug("No such worker: " + workerId);
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+        WorkerConfig config = getWorkerConfig(workerId);
+
+        if (propertiesAndValues.containsKey("NAME")
+                && !config.getProperties().getProperty("NAME").equalsIgnoreCase(propertiesAndValues.get("NAME"))) {
+            String workerName = propertiesAndValues.get("NAME");
+            if (checkWorkerNameAlreadyExists(workerName)) {
+                LOG.debug("Worker name already exists: " + workerName);
+                throw new WorkerExistsException(workerName);
+            }
+        }
+
+        //First we add the added and changed properties to the config
+        for (Map.Entry mapElement : propertiesAndValues.entrySet()) {
+            config.setProperty(((String) mapElement.getKey()).toUpperCase(Locale.ENGLISH), (String) mapElement.getValue());
+        }
+
+        //We copy the propertiesAndValues to a new hashmap and extend it with all values that shall be removed
+        //for logging purposes, the log will go through all items in the HM-hashmap
+        Map<String, String> propertiesAndValuesForAuditLog = new HashMap<>();
+        propertiesAndValuesForAuditLog.putAll(propertiesAndValues);
+
+        for (String toDelete : propertiesToRemove) {
+            propertiesAndValuesForAuditLog.put(toDelete, "REMOVED");
+        }
+
+        //Then we remove all properties that are on the remove-list
+        for (String propertyToRemove : propertiesToRemove) {
+            config.removeProperty(propertyToRemove.toUpperCase());
+        }
+        updateWorkerConfig(adminInfo, workerId, config);
+
+        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId),
+                config, propertiesAndValuesForAuditLog.keySet().toString(),
+                propertiesAndValuesForAuditLog.values().toString());
+    }
+
+    @Override
+    public void replaceWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws NoSuchWorkerException, WorkerExistsException {
+        if (!isWorkerExists(workerId)) {
+            LOG.debug("No such worker: " + workerId);
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+        WorkerConfig config = getWorkerConfig(workerId);
+
+        if (propertiesAndValues.containsKey("NAME")
+                && !config.getProperties().getProperty("NAME").equalsIgnoreCase(propertiesAndValues.get("NAME"))) {
+            String workerName = propertiesAndValues.get("NAME");
+            if (checkWorkerNameAlreadyExists(workerName)) {
+                LOG.debug("Worker name already exists: " + workerName);
+                throw new WorkerExistsException(workerName);
+            }
+        }
+
+        //First we remove all the properties from the config
+        for (Map.Entry mapEntry : config.getProperties().entrySet()) {
+            config.removeProperty(((String) mapEntry.getKey()).toUpperCase());
+        }
+
+        //We add new properties to the config
+        for (Map.Entry mapElement : propertiesAndValues.entrySet()) {
+            config.setProperty(((String) mapElement.getKey()).toUpperCase(Locale.ENGLISH), (String) mapElement.getValue());
+        }
+
+        updateWorkerConfig(adminInfo, workerId, config);
+
+        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId),
+                config, propertiesAndValues.keySet().toString(),
+                propertiesAndValues.values().toString());
+    }
+
+    private void updateWorkerConfig(AdminInfo adminInfo, int workerId, WorkerConfig config) {
         if (config.getProperties().size() <= config.getVirtualPropertiesNumber()) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
@@ -666,12 +759,8 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         } else {
             setWorkerConfig(adminInfo, workerId, config, null, null);
         }
-        
-        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId),
-                                     config, propertiesAndValues.keySet().toString(),
-                                     propertiesAndValues.values().toString());
     }
-    
+
     @Override
     public void setWorkerProperty(int workerId, String key, String value) {
     	setWorkerProperty(new AdminInfo("CLI user", null, null), workerId, key, value);
@@ -745,17 +834,48 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         WorkerConfig config = getWorkerConfig(workerId);
 
         result = config.removeProperty(key.toUpperCase(Locale.ENGLISH));
-        if (config.getProperties().size() <= config.getVirtualPropertiesNumber()) {
-            workerConfigService.removeWorkerConfig(workerId);
-            LOG.debug("WorkerConfig is empty and therefore removed.");
-            auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, new WorkerIdentifier(workerId));
-        } else {
-            setWorkerConfig(adminInfo, workerId, config, null, null);
-        }
+        updateWorkerConfig(adminInfo, workerId, config);
         auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId), config, key, "");
         return result;
     }
-    
+
+    @Override
+    public void removeWorker(AdminInfo adminInfo, int workerId) throws NoSuchWorkerException {
+        if (!isWorkerExists(workerId)) {
+            LOG.debug("No such worker: " + workerId);
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+        boolean result = workerConfigService.removeWorkerConfig(workerId);
+
+        if (result) {
+            LOG.debug("Worker " + workerId + " removed.");
+            auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, new WorkerIdentifier(workerId));
+        } else {
+            LOG.debug("Removing worker with ID " + workerId + " failed.");
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+    }
+
+    @Override
+    public boolean isWorkerExists(int workerId) {
+        return getAllWorkers().contains(workerId);
+    }
+
+    @Override
+    public boolean isWorkerExists(AdminInfo adminInfo, int workerId) {
+        return getAllWorkers().contains(workerId);
+    }
+
+
+    @Override
+    public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws WorkerExistsException {
+        if (isWorkerExists(workerId)) {
+            LOG.debug("Worker already exists: " + workerId);
+            throw new WorkerExistsException(String.valueOf(workerId));
+        }
+        updateWorkerProperties(adminInfo, workerId, propertiesAndValues, Collections.emptyList());
+    }
+
     private void auditLogWorkerPropertyChange(final AdminInfo adminInfo, final WorkerIdentifier workerId, final WorkerConfig config, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
             final HashMap<String, Object> auditMap = new HashMap<>();
@@ -1535,5 +1655,9 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public boolean isKeyGenerationDisabled() {
         return SignServerUtil.isKeyGenerationDisabled();
-    }  
+    }
+
+    public boolean checkWorkerNameAlreadyExists(String workerName) {
+        return workerManagerSession.getAllWorkerNames().contains(workerName);
+    }
 }

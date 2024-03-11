@@ -24,13 +24,10 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 
@@ -40,159 +37,54 @@ import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSA
  * @author Markus Kilås
  * @version $Id$
  */
-public class HTTPDocumentSigner extends AbstractDocumentSigner {
-    public static final String CRLF = "\r\n";   
-        
-    static final String DEFAULT_LOAD_BALANCING = "NONE";
-    
-    static final String ROUND_ROBIN_LOAD_BALANCING = "ROUND_ROBIN";    
+public class HTTPDocumentSigner extends AbstractHTTPDocumentSigner {
 
-    private static final String BASICAUTH_AUTHORIZATION = "Authorization";
-
-    private static final String BASICAUTH_BASIC = "Basic";
-    private static final String BASICAUTH_BEARER = "Bearer";
-
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(HTTPDocumentSigner.class);
-
-    private static final String BOUNDARY = "------------------signserver";
-
-    private final String workerName;
-    private final Optional<Integer> workerId;
-
-    /** List of host names to try to connect to, or distribute load on for
-     *  load balancing
+    /**
+     * Logger for this class.
      */
-    private final HostManager hostsManager;
-    private final int port;
-    private final String servlet;
-    private final boolean useHTTPS;
-
-    private String username;
-    private String password;
-
-    /** Access token when using JWT authentication. */
-    private String accessToken;
-    
-    /** Password used for changing the PDF if required (user or owner password). */
-    private String pdfPassword;
-    
-    private Map<String, String> metadata;
-    private final int timeOutLimit;
-    
-    private boolean connectionFailure;
+    private static final Logger LOG = Logger.getLogger(HTTPDocumentSigner.class);
 
     public HTTPDocumentSigner(final HostManager hostsManager,
             final int port,
+            final String baseUrlPath,
             final String servlet,
             final boolean useHTTPS,
             final String workerName,
-            final String username, final String password,
+            final String username,
+            final String password,
             final String accessToken,
             final String pdfPassword,
-            final Map<String, String> metadata, final int timeOutLimit) {        
-        this.hostsManager = hostsManager;
-        this.port = port;
-        this.servlet = servlet;
-        this.useHTTPS = useHTTPS;
-        this.workerName = workerName;
-        this.workerId = Optional.empty();
-        this.username = username;
-        this.password = password;
-        this.accessToken = accessToken;
-        this.pdfPassword = pdfPassword;
-        this.metadata = metadata;
-        this.timeOutLimit = timeOutLimit;
+            final Map<String, String> metadata,
+            final int timeOutLimit) {
+        super(hostsManager, port, baseUrlPath, servlet, useHTTPS, workerName, username, password, accessToken, pdfPassword, metadata, timeOutLimit);
     }
-    
+
     public HTTPDocumentSigner(final HostManager hostsManager,
             final int port,
+            final String baseUrlPath,
             final String servlet,
             final boolean useHTTPS,
-            final int workerId, 
+            final int workerId,
             final String username, final String password,
             final String accessToken,
             final String pdfPassword,
-            final Map<String, String> metadata, final int timeOutLimit) {        
-        this.hostsManager = hostsManager;
-        this.port = port;
-        this.servlet = servlet;
-        this.useHTTPS = useHTTPS;
-        this.workerName = null;
-        this.workerId = Optional.of(workerId);
-        this.username = username;
-        this.password = password;
-        this.accessToken = accessToken;
-        this.pdfPassword = pdfPassword;
-        this.metadata = metadata;
-        this.timeOutLimit = timeOutLimit;
+            final Map<String, String> metadata,
+            final int timeOutLimit) {
+        super(hostsManager, port, baseUrlPath, servlet, useHTTPS, workerId, username, password, accessToken, pdfPassword, metadata, timeOutLimit);
+
     }
 
     @Override
-    protected void doSign(final InputStream in, final long size, final String encoding,
-            final OutputStream out, final Map<String,Object> requestContext)
-            throws IllegalRequestException,
-                CryptoTokenOfflineException, SignServerException,
-                IOException {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending sign request "
-                    + " containing data of length " + size + " bytes"
-                    + (workerName != null ? " to worker " + workerName : ""));
-        }
-        
-        final String nextHost = hostsManager.getNextHostForRequest();
-        if (nextHost == null) {
-            throw new SignServerException("No more hosts to try");
+    protected URL createServletURL(String host) throws MalformedURLException, SignServerException {
+        if (servlet != null) {
+            return new URL(useHTTPS ? "https" : "http", host, port, servlet);
         } else {
-            internalDoSign(in, size, encoding, out, requestContext, nextHost);
+            return new URL(useHTTPS ? "https" : "http", host, port, baseUrlPath + "/process");
         }
     }
-    
-    protected void internalDoSign(final InputStream in, final long size, final String encoding,
-            final OutputStream out, final Map<String,Object> requestContext, String host)
-            throws IllegalRequestException,
-                CryptoTokenOfflineException, SignServerException,
-                IOException {
-        
-        final URL url = createServletURL(host);
-        
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending to URL: " + url.toString());
-            }
 
-            sendRequest(url, in, size, out, requestContext);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Got sign response");
-            }
-        } catch (IOException e) {
-            if (connectionFailure) {
-                hostsManager.removeHost(host);
-
-                // re-try with next host in list
-                final String nextHost = hostsManager.getNextHostForRequestWhenFailure();
-                if (nextHost == null) {
-                    throw new SignServerException("No more hosts to try");
-                } else {
-                    internalDoSign(in, size, encoding, out, requestContext, nextHost);
-                }
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed sending request ", e);
-                }
-                LOG.error("Failed sending request: " + e.getMessage());
-                throw e;
-            }
-        }
-    }
-    
-    private URL createServletURL(String host) throws MalformedURLException, SignServerException {
-        return new URL(useHTTPS ? "https" : "http", host, port, servlet);
-    }
-
-    private void sendRequest(final URL processServlet,
+    @Override
+    protected void sendRequest(final URL processServlet,
             final InputStream in,
             final long size,
             final OutputStream out, final Map<String, Object> requestContext) throws IOException {

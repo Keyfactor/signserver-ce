@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="181288951">
+<body pageid="212959630">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.1.0</p>
+                    <p>Version: 6.2.0</p>
                 </div>
             </header>
 
@@ -141,6 +141,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Architecture_and_Concepts.html">Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Library_Manifest.html">Library Manifest</a>
 
             </li>
                                         <li class="leaf">
@@ -1740,7 +1744,7 @@
     <p  >The OneTimeCryptoWorker internally requires a <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.PKCS11CryptoToken+v4.3.0">PKCS11CryptoToken</a> referenced by the CRYPTOTOKEN property to use as the source crypto token.    </p>
     <p  >When using the OneTimeCryptoWorker, enable the CESeCore keystore caching by setting <strong class=" ">cryptotoken.keystorecache=true</strong> in <tt class=" ">conf/cesecore.properties</tt> (by default disabled).    </p>
     <p  >The following displays an overview of the OneTimeCryptoWorker operations:    </p>
-    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/143730382/OneTimeKeysOverview.png" alt="images/download/attachments/143730382/OneTimeKeysOverview.png" width="500"  />
+    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/143730382/OneTimeKeysOverview-version-1-modificationdate-1649314673000-api-v2.png" alt="images/download/attachments/143730382/OneTimeKeysOverview-version-1-modificationdate-1649314673000-api-v2.png" width="500"  />
         </p>
 <ul class=" "><li class=" ">    <p  >The Source Crypto Worker contains a Crypto Token in order to communicate with the HSM and perform key operations. The TLS key is created in the HSM using the Source Crypto Token.    </p>
 </li></ul><ul class=" "><li class=" ">    <p  >The One Time Crypto Worker generates a new key-pair for each signing request, creates a certificate signing request (CSR), and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (i.e. the HSM) after signing.    </p>
@@ -1767,7 +1771,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Name of (crypto) worker holding (for instance) the <a  class="external-link" href="http://confluence.primekey.com/display/SIGNDS/.PKCS11CryptoToken+v4.3.0">PKCS11CryptoToken</a> to use as the source crypto token.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  When using the PKCS11CryptoToken, ensure to set <a   href="PKCS11CryptoToken.html">CACHE_PRIVATEKEY=false</a> as each request should use a new key pair.    </p>
             </td>
         </tr>
@@ -1898,7 +1902,7 @@
         <p  >SUBJECTDN_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
 </strong> The<strong class=" "> username</strong> is the name of the SignServer logged-in user, and the <strong class=" ">transactionId</strong> is a SignServer internal random alphanumeric number unique for each signing request.    </p>
     <p  >JWT Example: <strong class=" ">CN=${JWT.firstName} ${JWT.lastName},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/>The<strong class=" "> firstName</strong> and <strong class=" ">lastName </strong>are corresponding claims of JWT token.    </p>
             </td>
@@ -1908,7 +1912,7 @@
         <p  >USERNAME_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
 </strong> The <strong class=" ">transactionId</strong> is a SignServer internal random alpha numeric number unique for each signing request.    </p>
     <p  >JWT Example: <strong class=" ">onetime-${transactionId}-${JWT.iat}</strong><br/>The<strong class=" "> iat</strong><strong class=" "> </strong>is issued at time of JWT token.    </p>
             </td>
@@ -2005,7 +2009,7 @@
         <p  >SUBJECTDN_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+        <p  >Subject DN pattern used to derive the <strong class=" ">SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued. Required.<br/>Example: <strong class=" ">CN=User ${username},UID=${transactionId},O=SignServer</strong> Testing,C=SE<br/><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
 </strong> The<strong class=" "> username</strong> is the name of the SignServer logged-in user, and the <strong class=" ">transactionId</strong> is a SignServer internal random alpha numeric number unique for each signing request.    </p>
             </td>
         </tr>
@@ -2054,7 +2058,7 @@
         <p  >USERNAME_PATTERN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+        <p  >User name pattern used to derive the user name for the end entity which is registered before the certificate issuance. Required.<br/>Example: <strong class=" ">onetime-${transactionId}<br/></strong><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
 </strong> The <strong class=" ">transactionId</strong> is a SignServer internal random alpha numericnumber unique for each signing request.    </p>
             </td>
         </tr>

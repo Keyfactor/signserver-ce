@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="181288951">
+<body pageid="212959630">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.1.0</p>
+                    <p>Version: 6.2.0</p>
                 </div>
             </header>
 
@@ -141,6 +141,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Architecture_and_Concepts.html">Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Library_Manifest.html">Library Manifest</a>
 
             </li>
                                         <li class="leaf">
@@ -1724,7 +1728,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-181291859"> <span>MS Authenticode Signer</span></h1>
+</div>            <h1 id="src-207323599"> <span>MS Authenticode Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1733,12 +1737,12 @@
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
     <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.msauthcode.signer.MSAuthCodeSigner</strong>.    </p>
-    <div class="section section-1" id="src-181291859_id-.MSAuthenticodeSignerv6.0.0-Overview">
+    <div class="section section-1" id="src-207323599_id-.MSAuthenticodeSignerv6.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The MS Authenticode signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format, and also Windows installer packages (.msi), PowerShell scripts (.ps1, .psm1 and .psd1), and Windows Catalog Files (.cat). The signature can optionally include a timestamp response from a TSA using the RFC#3161, or legacy Authenticode format.    </p>
+    <p  >The MS Authenticode signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format, and also Windows installer packages (.msi), PowerShell scripts (.ps1, .psm1 and .psd1), Windows Catalog Files (.cat), and Cabinet archives (.cab). The signature can optionally include a timestamp response from a TSA using the RFC#3161, or legacy Authenticode format.    </p>
     <p  >Note that MSI files larger than 2 GB are currently not supported.    </p>
     </div>
-    <div class="section section-1" id="src-181291859_id-.MSAuthenticodeSignerv6.0.0-AvailableProperties">
+    <div class="section section-1" id="src-207323599_id-.MSAuthenticodeSignerv6.2.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1898,13 +1902,13 @@ KEEPSIGNATURES    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >True if existing signature should be kept. Optional, default: True.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  Property only available when signing PE and PS1 file types.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-181291859_id-.MSAuthenticodeSignerv6.0.0-RequestProperties">
+    <div class="section section-2" id="src-207323599_id-.MSAuthenticodeSignerv6.2.0-RequestProperties">
         <h2 class="heading "><span>Request Properties</span></h2>
     <p  >This worker can accept the following request metadata properties, given that they are configured to be allowed:    </p>
     <div  class="tablewrap">
@@ -1956,7 +1960,7 @@ KEEPSIGNATURES    </span>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-181291859_id-.MSAuthenticodeSignerv6.0.0-WorkerLogFields">
+    <div class="section section-2" id="src-207323599_id-.MSAuthenticodeSignerv6.2.0-WorkerLogFields">
         <h2 class="heading "><span>Worker Log Fields</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

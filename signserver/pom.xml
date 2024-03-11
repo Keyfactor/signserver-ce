@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer</artifactId>
-    <version>6.2.0.Beta1-SNAPSHOT</version>
+    <version>6.2.1.Alpha1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SignServer</name>
     <properties>
@@ -17,16 +17,17 @@
         <bouncycastle.bcutil.artifact>bcutil-jdk18on</bouncycastle.bcutil.artifact>
 
         <!-- Bouncy Castle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.74</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.74</bouncycastle.bcpkix.artifact.version>
-        <bouncycastle.bcprov.artifact.version>1.74</bouncycastle.bcprov.artifact.version>
-        <bouncycastle.bcutil.artifact.version>1.74</bouncycastle.bcutil.artifact.version>
+        <bouncycastle.bcpg.artifact.version>1.75</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.75</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcprov.artifact.version>1.75</bouncycastle.bcprov.artifact.version>
+        <bouncycastle.bcutil.artifact.version>1.75</bouncycastle.bcutil.artifact.version>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <dss.framework.version>5.9</dss.framework.version>
+        <rest-assured.version>5.3.0</rest-assured.version>
     </properties>
 
     <profiles>
@@ -242,12 +243,12 @@
             <dependency>
                 <groupId>com.keyfactor</groupId>
                 <artifactId>x509-common-util</artifactId>
-                <version>0.7.4</version>
+                <version>0.10.5</version>
             </dependency>
             <dependency>
-                <groupId>org.ejbca.cesecore</groupId>
+                <groupId>com.keyfactor.common</groupId>
                 <artifactId>p11ng</artifactId>
-                <version>0.2.1</version>
+                <version>0.5.4</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -272,10 +273,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <artifactId>cesecore-common</artifactId>
                 <groupId>org.ejbca.cesecore</groupId>
-                <type>jar</type>
-                <version>7.0.0.1</version>
+                <artifactId>cesecore-common</artifactId>
+                <version>7.0.0.1signserver6.2.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -389,9 +389,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.signserver.jacknji11</groupId>
+                <groupId>com.keyfactor</groupId>
                 <artifactId>jacknji11</artifactId>
-                <version>1.2-pk3</version>
+                <version>1.2.7</version>
             </dependency>
             <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -558,9 +558,9 @@
                 <version>30.0.2-signserver5-1</version>
             </dependency>
             <dependency>
-                <groupId>com.github.librepdf</groupId>
+                <groupId>org.signserver.librepdf</groupId>
                 <artifactId>openpdf</artifactId>
-                <version>1.3.30</version>
+                <version>1.3.30signserver6.2.0</version>
             </dependency>
 
             <dependency>
@@ -592,14 +592,14 @@
 
             <!-- DSS Framework dependencies -->
             <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <groupId>org.signserver.sd-dss</groupId>
                 <artifactId>dss-model</artifactId>
-                <version>${dss.framework.version}</version>
+                <version>5.9signserver6.2.0</version>
             </dependency>
             <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <groupId>org.signserver.sd-dss</groupId>
                 <artifactId>dss-spi</artifactId>
-                <version>${dss.framework.version}</version>
+                <version>5.9signserver6.2.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
@@ -632,9 +632,9 @@
                 <version>${dss.framework.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <groupId>org.signserver.sd-dss</groupId>
                 <artifactId>dss-crl-parser</artifactId>
-                <version>${dss.framework.version}</version>
+                <version>5.9signserver6.2.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
@@ -683,6 +683,36 @@
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-cades</artifactId>
                 <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>json-schema-validator</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-all</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-common</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>xml-path</artifactId>
+                <version>${rest-assured.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

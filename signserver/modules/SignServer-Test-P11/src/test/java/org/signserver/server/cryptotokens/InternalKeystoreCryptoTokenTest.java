@@ -52,6 +52,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
@@ -207,6 +208,26 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
                     @Override
                     public boolean removeWorkerProperty(AdminInfo adminInfo, int workerId, String key) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                    @Override
+                    public void removeWorker(AdminInfo adminInfo, int workerId) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                    @Override
+                    public boolean isWorkerExists(int workerId) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                    @Override
+                    public boolean isWorkerExists(AdminInfo AdminInfo, int workerId) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                    @Override
+                    public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 
@@ -521,7 +542,13 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                                                        List<String> propertiesToRemove) {
                         throw new UnsupportedOperationException("Not supported yet."); 
                     }
-                    
+
+                    @Override
+                    public void addUpdateDeleteWorkerProperties(int workerId, Map<String, String> propertiesAndValues,
+                                                                List<String> propertiesToRemove) {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
                     @Override
                     public void updateWorkerProperties(AdminInfo adminInfo,
                                                        int workerId,
@@ -530,7 +557,18 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                         throw new UnsupportedOperationException("Not supported yet."); 
                     }
 
-                    
+                    @Override
+                    public void addUpdateDeleteWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues,
+                                                                List<String> propertiesToRemove) {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
+                    @Override
+                    public void replaceWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+
+
                 };
             }
             return workerSession;

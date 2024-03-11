@@ -36,6 +36,9 @@ import java.util.zip.ZipOutputStream;
 import javax.naming.NamingException;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
+
+import io.restassured.RestAssured;
+import io.restassured.config.SSLConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
@@ -55,9 +58,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.FixMethodOrder;
-import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -96,14 +97,22 @@ public class JArchiveSignerTest {
     private static WorkerSessionRemote workerSession = getWorkerSessionS();
     private static ProcessSessionRemote processSession = getProcessSessionS();
 
-    private final ModulesTestCase helper = new ModulesTestCase();
+    private static final ModulesTestCase helper = new ModulesTestCase();
 
+    public JArchiveSignerTest() {
+        helper.setUseRestWorkerSession(true);
+    }
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         executableFile = new File(PathUtil.getAppHome(), "lib/SignServer-ejb.jar");
         if (!executableFile.exists()) {
             throw new Exception("Missing sample binary: " + executableFile);
         }
+
+        RestAssured.config = RestAssured.config().sslConfig(new SSLConfig()
+                .keyStore(helper.getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12", "foo123")
+                .trustStore(helper.getSignServerHome().getAbsolutePath() + "/p12/truststore.jks", "changeit"));
     }
 
     protected static WorkerSessionRemote getWorkerSessionS() {

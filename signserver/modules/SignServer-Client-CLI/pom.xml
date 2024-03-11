@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>6.2.0.Beta1-SNAPSHOT</version>
+        <version>6.2.1.Alpha1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Client-CLI</artifactId>
     <name>SignServer-Client-CLI</name>
@@ -175,6 +175,10 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
         </dependency>
     </dependencies>
     <build>

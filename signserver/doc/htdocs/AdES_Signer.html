@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="181288951">
+<body pageid="212959630">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 6.1.0</p>
+                    <p>Version: 6.2.0</p>
                 </div>
             </header>
 
@@ -141,6 +141,10 @@
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Architecture_and_Concepts.html">Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Library_Manifest.html">Library Manifest</a>
 
             </li>
                                         <li class="leaf">
@@ -1724,7 +1728,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-124518947"> <span>AdES Signer</span></h1>
+</div>            <h1 id="src-207323483"> <span>AdES Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1735,7 +1739,7 @@
     <p  >    <span style="color: #000000;">
 The signer has the fully qualified class name: <strong class=" ">org.signserver.module.ades.signer.AdESSigner</strong>.    </span>
     </p>
-    <div class="section section-1" id="src-124518947_id-.AdESSignerv5.8.0-Overview">
+    <div class="section section-1" id="src-207323483_id-.AdESSignerv6.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >    <span style="color: #000000;">
 The AdES signer signs PDF and XML documents using ETSI formats for advanced electronic signatures (AdES).    </span>
@@ -1750,7 +1754,7 @@ creates and maintains a set of technical standards for electronic signatures tha
     <p  >    <span style="color: #0e101a;">
 As of version 5.7, SignServer supports Baseline Signature Levels for XAdES (as defined in ETSI EN 319 132) and PAdES (as defined in ETSI EN 319 142). The signature formats fulfill the requirements for Advanced Electronic Signatures as per the EU eIDAS regulation.    </span>
     </p>
-    <div class="section section-2" id="src-124518947_id-.AdESSignerv5.8.0-SignatureLevels">
+    <div class="section section-2" id="src-207323483_id-.AdESSignerv6.2.0-SignatureLevels">
         <h2 class="heading "><span>Signature Levels</span></h2>
     <p  >    <span style="color: #0e101a;">
 The following list the signature levels:<br/>    </span>
@@ -1777,7 +1781,7 @@ Baseline-LTA    </span>
     </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-124518947_id-.AdESSignerv5.8.0-AvailableProperties">
+    <div class="section section-1" id="src-207323483_id-.AdESSignerv6.2.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1982,7 +1986,7 @@ SIGNATURE_PACKAGING    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property is not supported with PAdES.    </span>
     </p>
     <p  >    <span style="color: #000000;">
@@ -2023,7 +2027,7 @@ Required.    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  This property is only supported with PAdES.    </span>
     </p>
     <p  >    <span style="color: #000000;">
@@ -2094,7 +2098,7 @@ VISIBLE_SIGNATURE_PAGE    </span>
         <p  >    <span style="color: #000000;">
 Sets a page number where the signature field should be placed.    </span>
 <br/>    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/7clgp7/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg" alt="images/s/ndu796/8703/189cb2l/_/images/icons/emoticons/warning.svg"   />
  The counting starts from 1 (one) for the first page of the document.    </span>
     </p>
             </td>
@@ -2157,6 +2161,148 @@ EXTEND_VALIDITY    </span>
         <p  >    <span style="color: #000000;">
 When set to true and the signature level is BASELINE-LTA, will extend validity of a document if it was already signed (at any level) with an up-to-date archive timestamp. This can be set to true or false. True is only supported when SIGNATURE_LEVEL is BASELINE-LTA. Optional. Default: false.    </span>
     </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_NAME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sets the visible signature in the existing empty signature filed with this name.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >If you want the custom image to be resized to a specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE_LLX, VISIBLE_SIGNATURE_RECTANGLE_LLY, VISIBLE_SIGNATURE_RECTANGLE_URX and VISIBLE_SIGNATURE_RECTANGLE_URY), then set to True. If set to True, the image might look different than the original (as an effect of resizing). If set to False, the rectangle drawn will be resized to the specified image&#39;s sizes.<br/>If set to False, the llx and lly coordinates specified by VISIBLE_SIGNATURE_RECTANGLE_LLX and VISIBLE_SIGNATURE_RECTANGLE_LLY property will be used for drawing the rectangle (urx and ury will be calculated from the specified image size).<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False, or if the custom image to use is not specified. Possible values: True, False.<br/>Default: True.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ALLOW_PROPERTY_OVERRIDE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Comma-separated list of worker properties that are allowed to be overridden by request metadata properties with the same names.    </p>
+    <p  >See <a   href="#src-207323483_id-.AdESSignerv6.2.0-RequestMetadataProperties">Request Metadata Properties</a> for a list of properties that can be added to this property.    </p>
+    <p  >Default: not set (no properties are allowed to be overridden).    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-207323483_id-.AdESSignerv6.2.0-RequestMetadataProperties">
+        <h1 class="heading auto-cursor-target"><span>Request Metadata Properties</span></h1>
+    <p  >The following properties can be sent by the client with the request:    </p>
+    <div  class="tablewrap">
+        <table class="confluenceTable scroll-table-layout">
+                    <colgroup>
+                                    <col  width="30.0%"/>
+                                    <col  width="70.0%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ADD_VISIBLE_SIGNATURE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_IMAGE_BASE64    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_CONTENT_TYPE    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_PAGE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_RECTANGLE_LLX    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_RECTANGLE_LLY    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_RECTANGLE_URX    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_RECTANGLE_URY    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VISIBLE_SIGNATURE_NAME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE    </span>
+    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Overrides the worker property with the same name. Only allowed if listed in ALLOW_PROPERTY_OVERRIDE.    </p>
             </td>
         </tr>
 </tbody>        </table>

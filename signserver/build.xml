@@ -191,14 +191,14 @@ Installation Guide for details.
         <echo message="Filtering jars..."/>
 
         <!-- cesecore-common.jar -->
-        <property name="cesecore-common.jar" value="cesecore-common-7.0.0.1.jar"/>
+        <property name="cesecore-common.jar" value="cesecore-common-7.0.0.1signserver6.2.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-common.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${cesecore-common.jar}">
             <zipfileset src="${tmp}/${cesecore-common.jar}" excludes="${cesecore.common.excludes}"/>
         </jar>
 
         <!-- x509-common-util.jar -->
-        <property name="kfc-x509-common-util.jar" value="x509-common-util-0.7.4.jar"/>
+        <property name="kfc-x509-common-util.jar" value="x509-common-util-0.10.5.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${kfc-x509-common-util.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${kfc-x509-common-util.jar}">
             <zipfileset src="${tmp}/${kfc-x509-common-util.jar}" excludes="${kfc.x509.common.util.excludes}"/>
@@ -788,7 +788,6 @@ mvn install
             <exclude name=".eclipse/**" />
             <exclude name=".settings/**" />
             <exclude name="**/.cvsignore" />
-            <exclude name="**/*.sh" />
             <exclude name="**/nbproject/private/**" />
             <exclude name="**/target/**" />
             

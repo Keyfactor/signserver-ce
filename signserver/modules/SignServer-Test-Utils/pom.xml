@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>6.2.0.Beta1-SNAPSHOT</version>
+        <version>6.2.1.Alpha1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Test-Utils</artifactId>
     <name>SignServer-Test-Utils</name>
@@ -75,6 +75,10 @@
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jaxb-annotations</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
         </dependency>
     </dependencies>
 </project>

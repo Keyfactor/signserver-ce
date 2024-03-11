@@ -537,6 +537,18 @@ public class CryptoTokenHelper {
                 case "EdDSA":
                     alg = "Ed25519";
                     break;
+                case "DILITHIUM2":
+                    alg = "Dilithium2";
+                    break;
+                case "DILITHIUM3":
+                    alg = "Dilithium3";
+                    break;
+                case "DILITHIUM5":
+                    alg = "Dilithium5";
+                    break;
+                case "LMS":
+                    alg = "LMS";
+                    break;
             }
             if (alg == null) {
                 if (key instanceof ECKey) {
@@ -1000,7 +1012,7 @@ public class CryptoTokenHelper {
      * Utility method to get CKA attribute map from list of provided CKA attribute property.
      *
      * @param attributes list of CKA attribute property
-     * @return map of CKA attribute constant as key and its value 
+     * @return map of CKA attribute constant as key and its value
      */
     public static Map<Long, Object> convertCKAAttributeListToMap(List<AttributeProperties.Attribute> attributes) {
         if (attributes == null) {

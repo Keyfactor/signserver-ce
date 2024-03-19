@@ -724,6 +724,13 @@
                     <groupId>org.signserver.deploytools</groupId>
                     <artifactId>DeployTools-Maven</artifactId>
                     <version>2.2.1</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>jakarta.xml.bind</groupId>
+                            <artifactId>jakarta.xml.bind-api</artifactId>
+                            <version>2.3.3</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <plugin>

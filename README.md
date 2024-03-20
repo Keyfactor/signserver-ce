@@ -19,7 +19,7 @@ You can also easily run SignServer as a container from **[Docker Hub](https://hu
 In our Community we welcome contributions. The Community software is open source and community supported, there is no support SLA, but a helpful best-effort Community.
 
 * To report a problem or suggest a new feature, use the **[Issues](../../issues)** tab. 
-* If you want to contribute actual bug fixes or proposed enhancements, use the **[Pull requests](../../pulls)** tab.
+* If you want to contribute to the project, see our **[Contributing guidelines](CONTRIBUTING.md)**.
 * Ask the community for ideas: **[SignServer Discussions](https://github.com/Keyfactor/signserver-ce/discussions)**.  
 * Read more in our documentation: **[SignServer Documentation](https://doc.primekey.com/signserver)**.
 * See release information: **[SignServer Release Information](https://doc.primekey.com/signserver/signserver-release-information)**. 

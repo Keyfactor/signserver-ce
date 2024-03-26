@@ -4,7 +4,7 @@ Thank you for contributing to SignServer!
 
 In this guide, you get an overview of the contribution workflow from starting a discussion or opening an issue, to creating, reviewing, and merging a pull request.
 
-For an overview of the project, see [README](README-CE.md). 
+For an overview of the project, see [README](README.md). 
 
 ### Start a discussion
 If you have a question or problem, you can [search in discussions](../../discussions), if someone has already found a solution to your problem. 

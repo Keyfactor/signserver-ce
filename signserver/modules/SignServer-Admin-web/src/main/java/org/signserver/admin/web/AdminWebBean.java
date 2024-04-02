@@ -69,7 +69,7 @@ public class AdminWebBean {
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2023 Keyfactor";
+        return "Copyright © 2006–2024 Keyfactor";
     }
 
     public String getCurrentTime() {

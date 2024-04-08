@@ -17,29 +17,32 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.worker.impl.PreloadedWorkerConfig;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.ejb.worker.impl.WorkerWithComponents;
+import org.signserver.server.IServices;
+import org.signserver.server.IWorker;
 
 /**
  * Utility functions for session beans.
- * 
+ *
  * @author Marcus Lundblad
  * @version $Id$
  */
 public class SessionUtils {
     /**
      * Checks if a process request should be run inside a transaction.
-     * 
+     *
      * @param session
      * @param wi
      * @return true if the request needs a transaction
      */
     public static boolean needsTransaction(final WorkerManagerSingletonBean session,
-                                           final WorkerIdentifier wi) {
+                                           final WorkerIdentifier wi, IServices services) {
         try {
-            final WorkerWithComponents worker = session.getWorkerWithComponents(wi);
-            final PreloadedWorkerConfig pwc = worker.getPreloadedConfig();
+            final WorkerWithComponents workerWithComponents = session.getWorkerWithComponents(wi);
+            final IWorker worker = workerWithComponents.getWorker();
+            final PreloadedWorkerConfig pwc = workerWithComponents.getPreloadedConfig();
 
-            return !worker.getArchivers().isEmpty() ||
-                   !pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified();
+            return !workerWithComponents.getArchivers().isEmpty() ||
+                    !pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified() || worker.requiresTransaction(services);
         } catch (NoSuchWorkerException e) {
             return false;
         }

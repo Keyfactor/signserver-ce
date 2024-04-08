@@ -46,14 +46,14 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     private final Set<ITimedService.LogType> logTypes =
             EnumSet.noneOf(ITimedService.LogType.class);
     private final List<String> fatalErrors = new LinkedList<>();
-    
+
     protected BaseTimedService() {
     }
 
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        
+
         final String[] logTypeStrings =
                 config.getPropertyThatCouldBeEmpty(ServiceConfig.WORK_LOG_TYPES,
                         ServiceConfig.DEFAULT_WORK_LOG_TYPES).split(",");
@@ -68,8 +68,8 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
             }
         }
     }
-    
-    
+
+
 
     /**
      * @see org.signserver.server.timedservices.ITimedService#getNextInterval()
@@ -77,11 +77,11 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     @Override
     public long getNextInterval() {
         long retval = DONT_EXECUTE;
-    	final String interval
+        final String interval
                 = config.getProperties().getProperty(ServiceConfig.INTERVAL);
         final String intervalMs
                 = config.getProperties().getProperty(ServiceConfig.INTERVALMS);
-    	final String cronExpression
+        final String cronExpression
                 = config.getProperties().getProperty(ServiceConfig.CRON);
 
         if (interval == null && cronExpression == null && intervalMs == null) {
@@ -143,6 +143,11 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     }
 
     @Override
+    public boolean requiresTransaction(final IServices services) {
+        return false;
+    }
+
+    @Override
     public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrorsIncludingAdditionalErrors.addAll(getFatalErrors(services));
@@ -159,17 +164,17 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         Properties properties = config.getProperties();
         for (String key : properties.stringPropertyNames()) {
             final String value = config.shouldMaskProperty(key) ?
-                                 WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER :
-                                 properties.getProperty(key);
+                    WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER :
+                    properties.getProperty(key);
             configValue.append("  ").append(key).append("=").append(value).append("\n\n");
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
 
         return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
-                                    "Service", WorkerStatus.STATUS_ACTIVE,
-                                    briefEntries,
-                                    fatalErrorsIncludingAdditionalErrors,
-                                    completeEntries, config);
+                "Service", WorkerStatus.STATUS_ACTIVE,
+                briefEntries,
+                fatalErrorsIncludingAdditionalErrors,
+                completeEntries, config);
     }
 
     /**
@@ -189,7 +194,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     @Override
     protected List<String> getFatalErrors(IServices services) {
         final List<String> errors = new LinkedList<>(super.getFatalErrors(services));
-        
+
         errors.addAll(fatalErrors);
         return errors;
     }

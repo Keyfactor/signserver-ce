@@ -11,6 +11,7 @@
  *                                                                       *
  *************************************************************************/
 package org.signserver.server.cryptotokens;
+import org.signserver.server.IServices;
 
 /**
  * Base class for crypto tokens.
@@ -24,6 +25,11 @@ public abstract class BaseCryptoToken implements ICryptoTokenV4 {
 
     @Override
     public boolean isNoCertificatesRequired() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresTransactionForSigning() {
         return false;
     }
 

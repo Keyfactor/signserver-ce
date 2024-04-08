@@ -38,7 +38,7 @@ import org.signserver.server.timedservices.ITimedService;
  * @version $Id$
  */
 public class UnloadableWorker extends BaseSigner implements ITimedService {
-    
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(UnloadableWorker.class);
 
@@ -62,7 +62,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
     @Override
     public WorkerStatusInfo getStatus(List<String> additionalFatalErrors, final IServices services) {
         WorkerStatusInfo status = super.getStatus(additionalFatalErrors, services);
-        
+
         status.setWorkerType(WORKER_TYPE);
 
         return status;
@@ -70,7 +70,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
 
     /**
      * Get the fatal errors for this worker.
-     * 
+     *
      * @return List of errors which for this implementation always will contain
      * an error message
      */
@@ -98,14 +98,14 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
 
     /**
      * Receives timed service requests but only logs an error.
-     * @throws ServiceExecutionFailedException 
+     * @throws ServiceExecutionFailedException
      */
     @Override
     public void work(final ServiceContext context) throws ServiceExecutionFailedException {
         LOG.error("Service is misconfigured");
     }
 
-    /** 
+    /**
      * @return Always DONT_EXECUTE
      */
     @Override
@@ -126,6 +126,11 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
      */
     @Override
     public boolean isSingleton() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresTransaction(final IServices services) {
         return false;
     }
 

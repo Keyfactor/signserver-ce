@@ -38,20 +38,20 @@ public abstract class BaseWorker implements IWorker {
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(BaseWorker.class);
 
-            
+
     //Private Property constants
     protected int workerId = 0;
     protected WorkerConfig config = null;
     protected WorkerContext workerContext;
     private List<String> fatalErrors;
-    /** 
+    /**
      * @deprecated This EntityManager was created when the worker was 
      * initialized and is not safe to use from an other transaction. Instead 
      * use the entity manager available in the RequestContext.
      */
     @Deprecated
     protected EntityManager em;
-    /** 
+    /**
      * @deprecated This EntityManager was created when the worker was 
      * initialized and is not safe to use from an other transaction. Instead 
      * use the entity manager available in the RequestContext.
@@ -89,7 +89,7 @@ public abstract class BaseWorker implements IWorker {
             values.remove(WorkerType.UNKNOWN);
             fatalErrors.add("Incorrect Worker TYPE: " + ex.getMessage() + ". Specify one of " + values.toString());
         }
-        
+
     }
 
     protected SignServerContext getSignServerContext() {
@@ -106,14 +106,14 @@ public abstract class BaseWorker implements IWorker {
     public WorkerConfig getConfig() {
         return config;
     }
-    
+
     /**
      * Method that can be overridden by IWorker implementations to give an 
      * up to date list of errors that would prevent a call to the process 
      * method to succeed.
      * If the returned list is non empty the worker will be reported as offline 
      * in status listings and by the health check (unless the worker is disabled).
-     * 
+     *
      * @param services Services for the implementations to use
      * @return A list of (short) messages describing each error or an empty list
      * in case there are no errors
@@ -152,8 +152,8 @@ public abstract class BaseWorker implements IWorker {
         Properties properties = config.getProperties();
         for (String key : properties.stringPropertyNames()) {
             final String value = config.shouldMaskProperty(key) ?
-                                 WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER :
-                                 properties.getProperty(key);
+                    WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER :
+                    properties.getProperty(key);
             configValue.append(key).append("=").append(value).append("\n\n");
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Worker properties", configValue.toString()));
@@ -166,13 +166,13 @@ public abstract class BaseWorker implements IWorker {
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
         // Return everything
-        return new WorkerStatusInfo(workerId, 
-                config.getProperty("NAME"), 
-                "Worker", 
-                active ? WorkerStatus.STATUS_ACTIVE : WorkerStatus.STATUS_OFFLINE, 
-                briefEntries, 
-                errors, 
-                completeEntries, 
+        return new WorkerStatusInfo(workerId,
+                config.getProperty("NAME"),
+                "Worker",
+                active ? WorkerStatus.STATUS_ACTIVE : WorkerStatus.STATUS_OFFLINE,
+                briefEntries,
+                errors,
+                completeEntries,
                 config);
     }
 
@@ -208,5 +208,9 @@ public abstract class BaseWorker implements IWorker {
             type = WorkerType.SPECIAL;
         }
         return type;
+    }
+
+    public boolean requiresTransaction(final IServices services) {
+        return false;
     }
 }

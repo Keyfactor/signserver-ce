@@ -335,8 +335,8 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process: " + wi);
         }
-        
-        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
+
+        if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
             // use separate transaction bean to avoid deadlock
             return processTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {

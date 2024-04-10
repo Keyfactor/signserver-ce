@@ -89,6 +89,9 @@ public class SignServerConstants {
      */
     public static final String KEYUSAGELIMIT = "KEYUSAGELIMIT";
     public static String DISABLEKEYUSAGECOUNTER = "DISABLEKEYUSAGECOUNTER";
+
+    public static String PROCESSINTRANSACTION = "PROCESSINTRANSACTION";
+
     /**
      * Constant used to set the default value of configuration property to NULL if not setting property means property value is NULL.
      * 

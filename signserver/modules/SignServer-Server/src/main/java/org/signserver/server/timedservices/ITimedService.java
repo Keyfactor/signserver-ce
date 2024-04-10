@@ -14,13 +14,12 @@ package org.signserver.server.timedservices;
 
 import java.util.Set;
 import org.signserver.common.ServiceContext;
-import org.signserver.server.IServices;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 
 /**
  * ITimedService is an interface that all services should implement.
- *
+ * 
  * There exists a BaseTimedService that can be extended covering some of it's functions
  *
  * @author Philip Vendil
@@ -37,7 +36,7 @@ public interface ITimedService extends IWorker {
      * Method that should do the actual work and should
      * be implemented by all services. The method is run
      * at a periodical interval defined in getNextInterval.
-     *
+     * 
      * @param context Additional context for the execution
      * @throws ServiceExecutionFailedException if execution of a service failed
      */
@@ -46,9 +45,9 @@ public interface ITimedService extends IWorker {
     /**
      * @return should return the milliseconds to next time the service should
      * execute, or -1 (DONE_EXECUTE) if the service should stop executing.
-     *
-     * IMPORTANT, this have changed since 2.0 version were seconds were
-     * specified. This shouldn't be confused with the INTERVAL setting
+     * 
+     * IMPORTANT, this have changed since 2.0 version were seconds were 
+     * specified. This shouldn't be confused with the INTERVAL setting 
      * that is still configured in seconds.
      */
     long getNextInterval();
@@ -63,19 +62,14 @@ public interface ITimedService extends IWorker {
      * the time, of false if it should be run on all nodes simultaneously.
      */
     boolean isSingleton();
-
-    /**
-     * @return true if the service requires a transaction to be executed successfully
-     */
-    boolean requiresTransaction(final IServices services);
-
+    
     /**
      * Get log types for logging work invocations.
-     *
+     * 
      * @return A list of log types to use
      */
     Set<LogType> getLogTypes();
-
+    
     /**
      * Representation of logging options for logging of service invocations.
      */
@@ -84,7 +78,7 @@ public interface ITimedService extends IWorker {
          * Using CESeCore secure audit logging.
          */
         SECURE_AUDITLOGGING,
-
+        
         /**
          * Using Log4J info logging.
          */

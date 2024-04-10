@@ -60,26 +60,26 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ServiceTimerSessionBean.class);
-
+    
     @Resource
     private SessionContext sessionCtx;
-
+    
     private IKeyUsageCounterDataService keyUsageCounterDataService;
-
+    
     @EJB
     private GlobalConfigurationSessionLocal globalConfigurationSession;
-
+    
     @EJB
     private WorkerManagerSingletonBean workerManagerSession;
-
+    
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
 
     /** Injected by ejb-jar.xml. */
     EntityManager em;
-
+    
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
-
+    
     /**
      * Constant indicating the Id of the "service loader" service.
      * Used in a clustered environment to periodically load available
@@ -87,7 +87,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
      */
     private static final Integer SERVICELOADER_ID = 0;
     private static final long SERVICELOADER_PERIOD = 5 * 60 * 1000;
-
+    
     // Don't persist the timer
     private static final TimerConfig SERVICELOADER_CONFIG = new TimerConfig(SERVICELOADER_ID, false);
 
@@ -107,7 +107,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             }
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
-
+        
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
         InternalProcessSessionLocal internalSession = null;
@@ -138,11 +138,11 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             }
         }
     }
-
+    
     /**
      * Method implemented from the TimerObject and is the main method of this
      * session bean. It calls the work object for each object.
-     *
+     * 
      * @param timer
      */
     @Timeout
@@ -160,7 +160,6 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             ITimedService timedService = null;
             boolean run = false;
             boolean isSingleton = false;
-            boolean requiresTransaction = false;
             UserTransaction ut = sessionCtx.getUserTransaction();
             try {
                 ut.begin();
@@ -169,7 +168,6 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 timedService = (ITimedService) worker;
                 sessionCtx.getTimerService().createSingleActionTimer(timedService.getNextInterval(), new TimerConfig(timerInfo, false));
                 isSingleton = timedService.isSingleton();
-                requiresTransaction = timedService.requiresTransaction(servicesImpl);
                 if (!isSingleton) {
                     run = true;
                 } else {
@@ -197,17 +195,11 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 }
             }
 
-            ut = sessionCtx.getUserTransaction();
             if (run) {
                 if (serviceConfig != null && timedService != null) {
                     try {
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
-                            if(requiresTransaction) {
-                                ut.begin();
-                                timedService.work(new ServiceContext(servicesImpl));
-                                ut.commit();
-                            }
-
+                            timedService.work(new ServiceContext(servicesImpl));
                             serviceConfig.setLastRunTimestamp(new Date());
                             for (final ITimedService.LogType logType :
                                     timedService.getLogTypes()) {
@@ -231,14 +223,13 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                                         LOG.warn("Unknown log type: " + logType);
                                 }
                             }
-
+                            
                         }
-                    } catch (ServiceExecutionFailedException | SystemException | HeuristicRollbackException | NotSupportedException |
-                             HeuristicMixedException | RollbackException e) {
+                    } catch (ServiceExecutionFailedException e) {
                         // always log to error log, regardless of log types
                         // setup for service run logging
                         LOG.error("Service" + timerInfo + " execution failed. ", e);
-
+                        
                         if (timedService.getLogTypes().contains(ITimedService.LogType.SECURE_AUDITLOGGING)) {
                             logSession.log(
                                     SignServerEventTypes.TIMED_SERVICE_RUN,
@@ -248,11 +239,6 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                                     "Service invocation", null, null,
                                     timerInfo.toString(),
                                     Collections.<String, Object>singletonMap("Message", e.getMessage()));
-                        }
-                        try {
-                            ut.rollback();
-                        } catch (SystemException ex) {
-                            LOG.error("Rollback failed.", e);
                         }
                     } catch (RuntimeException e) {
                         /*
@@ -265,11 +251,6 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                          * since it is some kind of catastrophic failure..
                          */
                         LOG.error("Service worker execution failed.", e);
-                        try {
-                            ut.rollback();
-                        } catch (SystemException ex) {
-                            throw new RuntimeException("Rollback failed", ex);
-                        }
                     }
                 } else {
                     LOG.error("Service with ID " + timerInfo + " not found.");
@@ -374,10 +355,10 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             }
         }
     }
-
+    
     /**
      * Adds a timer to the bean.
-     *
+     * 
      * @param interval Interval of the timer
      * @param id ID of the timer
      */

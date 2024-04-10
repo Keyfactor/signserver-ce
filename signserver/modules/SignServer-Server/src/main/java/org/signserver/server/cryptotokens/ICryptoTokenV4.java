@@ -42,42 +42,42 @@ import org.signserver.server.IServices;
  * Forth version of the crypto token interface.
  *
  * Merging: V2, V3, KeyGenerator and KeyRemover
- *
+ * 
  * @author Marcus Lundblad
  * @author Markus Kilås
  * @version $Id$
  */
 public interface ICryptoTokenV4 {
-
+    
     int PURPOSE_SIGN = 1;
-
+    
     int PURPOSE_DECRYPT = 2;
-
-    /**
+    
+    /** 
      * Indicating the next key. Property: "nextCertSignKey".
      * @see org.ejbca.core.model.SecConst#CAKEYPURPOSE_CERTSIGN_NEXT
      */
     int PURPOSE_NEXTKEY = 7;
-
+    
     int PROVIDERUSAGE_SIGN = 1;
-
+    
     int PROVIDERUSAGE_DECRYPT = 2;
-
+    
     /** Crypto token parameter with value of type Boolean telling if the crypto instance should be cached or not. */
     String PARAM_CACHEPRIVATEKEY = "CACHEPRIVATEKEY";
-
+    
     /** Crypto token parameter with the value of type Map&lt;String, Object&gt; containing a cache local to this worker instance but possible shared among multiple threads. */
     String PARAM_WORKERCACHE = "WORKERCACHE";
-
+    
     String ALL_KEYS = "all";
-
+    
     String PARAM_INCLUDE_DUMMYCERTIFICATE = "INCLUDE_DUMMYCERTIFICATE";
 
     void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException;
 
     /**
      * Method used to activate SignTokens when connected after being off-line.
-     *
+     * 
      * @param authenticationcode used to unlock crypto token, i.e PIN for smartcard HSMs
      * @param services services for implementations to use
      * @throws CryptoTokenOfflineException if SignToken is not available or connected.
@@ -88,7 +88,7 @@ public interface ICryptoTokenV4 {
     /**
      * Method used to deactivate crypto tokens. 
      * Used to set a crypto token too off-line status and to reset the HSMs authorization code.
-     *
+     * 
      * @param services services for implementations to use
      * @return true if deactivation was successful.
      * @throws CryptoTokenOfflineException
@@ -117,15 +117,15 @@ public interface ICryptoTokenV4 {
 
     /**
      * Get token status.
-     *
+     * 
      * @param services Services for implementations to use
      * @return The current state of the crypto token
      */
     int getCryptoTokenStatus(IServices services);
-
+    
     /**
      * Import certificate chain to a crypto token.
-     *
+     * 
      * @param certChain Certificate chain to import, should contain signing certificate
      * @param alias Key alias to import certificate chain in
      * @param athenticationCode Alias-specific authentication code. If this is null
@@ -139,14 +139,14 @@ public interface ICryptoTokenV4 {
      * @throws UnsupportedCryptoTokenParameter In case the supplied crypto token parameter was not known or supported by the token
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
-                                char[] athenticationCode, Map<String, Object> params,
-                                IServices services) throws
+            char[] athenticationCode, Map<String, Object> params,
+            IServices services) throws 
             TokenOutOfSpaceException,
             CryptoTokenOfflineException,
             NoSuchAliasException,
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter;
-
+    
     /**
      * Queries the entries in the token.
      * @param startIndex Start index of first result (0-based)
@@ -166,14 +166,14 @@ public interface ICryptoTokenV4 {
             QueryException,
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter;
-
+    
     /**
      * Acquire a crypto instance in order to perform crypto operations during
      * a limited scope.
-     *
+     * 
      * It is the caller's responsibility to make sure the call is followed up
      * by a call to releaseCryptoInstance() for each instance. Use try-final.
-     *
+     * 
      * @param alias of the entry in the CryptoToken to quire an crypto instance for
      * @param params Additional parameters to pass to the crypto token
      * @param context the request context
@@ -186,11 +186,11 @@ public interface ICryptoTokenV4 {
      * @throws SignServerException For other internal (not to be leaked to the client side) errors
      */
     ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
-            CryptoTokenOfflineException,
-            NoSuchAliasException,
+            CryptoTokenOfflineException, 
+            NoSuchAliasException, 
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
-            IllegalRequestException,
+            IllegalRequestException, 
             SignServerException;
 
     /**
@@ -204,8 +204,8 @@ public interface ICryptoTokenV4 {
      * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
      * @throws IllegalArgumentException
      */
-
-
+    
+    
     /**
      * Generate a new key.
      * @param keyAlgorithm Key algorithm
@@ -222,10 +222,10 @@ public interface ICryptoTokenV4 {
      * @throws UnsupportedCryptoTokenParameter If one or more crypto token parameters was unknown or not supported by the token implementation
      */
     void generateKey(String keyAlgorithm, String keySpec, String alias,
-                     char[] authCode, Map<String, Object> params, IServices services) throws
+            char[] authCode, Map<String, Object> params, IServices services) throws
             TokenOutOfSpaceException,
             CryptoTokenOfflineException,
-            DuplicateAliasException,
+            DuplicateAliasException, 
             NoSuchAlgorithmException,
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter;
@@ -241,7 +241,7 @@ public interface ICryptoTokenV4 {
      * @throws NoSuchAliasException In case the alias did not exist in the token
      */
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-                                       boolean explicitEccParameters, String keyAlias, IServices services)
+            boolean explicitEccParameters, String keyAlias, IServices services)
             throws
             CryptoTokenOfflineException,
             NoSuchAliasException;
@@ -256,10 +256,10 @@ public interface ICryptoTokenV4 {
      * @throws KeyStoreException In case of error accessing the key
      */
     Collection<KeyTestResult> testKey(String alias,
-                                      char[] authCode,
-                                      IServices Services)
+            char[] authCode,
+            IServices Services)
             throws CryptoTokenOfflineException, KeyStoreException;
-
+    
     /**
      * Remove a key from the token (if supported).
      *
@@ -270,20 +270,13 @@ public interface ICryptoTokenV4 {
      * @throws KeyStoreException for keystore related errors
      * @throws SignServerException if the keystore did not contain a key with the specified alias
      */
-    boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException,
+    boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, 
             KeyStoreException, SignServerException;
-
+    
     /**
      * If signer requires no certificates when using this crypto token.
      *
      * @return True or false
      */
     boolean isNoCertificatesRequired();
-
-    /**
-     * If worker requires a database transaction for signing operation.
-     *
-     * @return True or false
-     */
-    boolean requiresTransactionForSigning();
 }

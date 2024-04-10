@@ -68,4 +68,11 @@ public interface IWorker {
      * @return a WorkerStatus object.
      */
     WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services);
+
+    /**
+     * If worker requires a database transaction when using this crypto token.
+     *
+     * @return True or false
+     */
+    boolean requiresTransaction(final IServices services);
 }

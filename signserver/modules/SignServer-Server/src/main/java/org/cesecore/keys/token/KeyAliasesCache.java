@@ -23,12 +23,18 @@ import org.signserver.server.cesecore.internal.CommonCacheBase;
  */
 public class KeyAliasesCache extends CommonCacheBase<PublicKey> {
 
+    long lastUpdate = 0L;
+
     @Override
     public PublicKey getEntry(final Integer id) {
         if (id == null) {
             return null;
         }
         return super.getEntry(id);
+    }
+
+    public void updateCacheTimeStamp() {
+        this.lastUpdate = System.currentTimeMillis();
     }
 
     @Override

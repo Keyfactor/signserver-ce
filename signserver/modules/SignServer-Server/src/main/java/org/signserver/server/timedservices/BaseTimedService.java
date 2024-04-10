@@ -143,6 +143,11 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     }
 
     @Override
+    public boolean requiresTransaction(final IServices services) {
+        return false;
+    }
+
+    @Override
     public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrorsIncludingAdditionalErrors.addAll(getFatalErrors(services));

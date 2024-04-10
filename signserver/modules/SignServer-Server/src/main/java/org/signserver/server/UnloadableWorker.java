@@ -130,6 +130,14 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
     }
 
     /**
+     * @return Always false
+     */
+    @Override
+    public boolean requiresTransaction(final IServices services) {
+        return false;
+    }
+
+    /**
      * @return No log types
      */
     @Override

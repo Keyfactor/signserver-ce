@@ -160,6 +160,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             ITimedService timedService = null;
             boolean run = false;
             boolean isSingleton = false;
+            boolean requiresTransaction = false;
             UserTransaction ut = sessionCtx.getUserTransaction();
             try {
                 ut.begin();
@@ -168,6 +169,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 timedService = (ITimedService) worker;
                 sessionCtx.getTimerService().createSingleActionTimer(timedService.getNextInterval(), new TimerConfig(timerInfo, false));
                 isSingleton = timedService.isSingleton();
+                requiresTransaction = timedService.requiresTransaction(servicesImpl);
                 if (!isSingleton) {
                     run = true;
                 } else {
@@ -195,11 +197,16 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 }
             }
 
+            ut = sessionCtx.getUserTransaction();
             if (run) {
                 if (serviceConfig != null && timedService != null) {
                     try {
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
-                            timedService.work(new ServiceContext(servicesImpl));
+                            if(requiresTransaction) {
+                                ut.begin();
+                                timedService.work(new ServiceContext(servicesImpl));
+                                ut.commit();
+                            }
                             serviceConfig.setLastRunTimestamp(new Date());
                             for (final ITimedService.LogType logType :
                                     timedService.getLogTypes()) {
@@ -225,7 +232,8 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                             }
                             
                         }
-                    } catch (ServiceExecutionFailedException e) {
+                    } catch (ServiceExecutionFailedException | SystemException | HeuristicRollbackException | NotSupportedException |
+                             HeuristicMixedException | RollbackException e) {
                         // always log to error log, regardless of log types
                         // setup for service run logging
                         LOG.error("Service" + timerInfo + " execution failed. ", e);
@@ -240,6 +248,11 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                                     timerInfo.toString(),
                                     Collections.<String, Object>singletonMap("Message", e.getMessage()));
                         }
+                        try {
+                            ut.rollback();
+                        } catch (SystemException ex) {
+                            LOG.error("Rollback failed.", e);
+                        }
                     } catch (RuntimeException e) {
                         /*
                          * DSS-377:
@@ -251,6 +264,11 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                          * since it is some kind of catastrophic failure..
                          */
                         LOG.error("Service worker execution failed.", e);
+                        try {
+                            ut.rollback();
+                        } catch (SystemException ex) {
+                            throw new RuntimeException("Rollback failed", ex);
+                        }
                     }
                 } else {
                     LOG.error("Service with ID " + timerInfo + " not found.");

@@ -20,10 +20,10 @@ import org.signserver.common.WorkerType;
 
 /**
  * IWorker is an interface that all signers and services should implement.
- *
+ * 
  * There exists a BaseWorker that can be extended covering some of it's 
  * functions.
- *
+ * 
  * @author Philip Vendil
  * @version $Id$
  */
@@ -40,7 +40,7 @@ public interface IWorker {
      * @return The suggested worker type describing this implementation
      */
     WorkerType getWorkerType();
-
+    
     /**
      * Initialization method that should be called directly after creation.
      * @param workerId the unique id of the worker
@@ -50,12 +50,12 @@ public interface IWorker {
      * implementation and MailSignerContext for mail processors.
      */
     void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager);
-
+    
     /**
      * @return The worker configuration
      */
     WorkerConfig getConfig();
-
+    
     /**
      * Should return the actual status of the worker, status could be if
      * the signer is activated or not, or equivalent for a service.
@@ -63,16 +63,9 @@ public interface IWorker {
      * for instance by the WorkerSessionBean and that would not be discovered 
      * by the worker it self. Example are errors in the configuration of an 
      * IAuthorizer.
-     *
+     * 
      * @param services services for the implementations to use
      * @return a WorkerStatus object.
      */
     WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services);
-
-    /**
-     * If worker requires a database transaction when using this crypto token.
-     *
-     * @return True or false
-     */
-    boolean requiresTransaction(final IServices services);
 }

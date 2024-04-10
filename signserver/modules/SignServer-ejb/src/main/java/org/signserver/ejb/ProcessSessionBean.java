@@ -96,24 +96,24 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
 
     /** Log4j instance for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerSessionBean.class);
-
+    
     private IKeyUsageCounterDataService keyUsageCounterDataService;
 
     @EJB
     private GlobalConfigurationSessionLocal globalConfigurationSession;
-
+    
     @EJB
     private WorkerManagerSingletonBean workerManagerSession;
-
+    
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
-
+    
     @EJB
     ProcessTransactionSessionLocal processTransSession;
-
+    
     @Resource
     private SessionContext ctx;
-
+    
     EntityManager em;
 
     private WorkerProcessImpl processImpl;
@@ -139,7 +139,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
 
         session = ctx.getBusinessObject(ProcessSessionLocal.class);
-
+        
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
         InternalProcessSessionLocal internalSession = null;
@@ -170,20 +170,20 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             }
         }
     }
-
+    
     // Note: This is the remote interface
     @Override
     public ProcessResponse process(final WorkerIdentifier wi,
-                                   final ProcessRequest request, final RemoteRequestContext remoteContext)
+            final ProcessRequest request, final RemoteRequestContext remoteContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
-
+        
         // XXX This is somewhat duplicated in SignSeverWS and other places
         CloseableReadableData requestData = null;
         CloseableWritableData responseData = null;
         try {
             final Request req2;
-
+            
             // Use the new request types with large file support for
             // GenericSignRequest and GenericValidationRequest
             if (request instanceof GenericSignRequest) {
@@ -214,10 +214,10 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 req2 = new SODRequest(sod.getRequestID(), sod.getDataGroupHashes(), sod.getLdsVersion(), sod.getUnicodeVersion(), responseData);
             } else if (request instanceof GenericPropertiesRequest) {
                 GenericPropertiesRequest prop = (GenericPropertiesRequest) request;
-
+                
                 try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
                     prop.getProperties().store(bout, null);
-
+                
                     // Upload handling
                     UploadConfig uploadConfig = UploadConfig.create(globalConfigurationSession);
                     requestData = dataFactory.createReadableData(bout.toByteArray(), uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
@@ -231,10 +231,10 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 // Passthrough for all legacy requests
                 req2 = new LegacyRequest(request);
             }
-
+            
             ProcessResponse result;
             Response response = process(wi, req2, remoteContext, servicesImpl);
-
+            
             if (response instanceof SODResponse) {
                 SODResponse sigResp = (SODResponse) response;
                 result = new SODSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
@@ -260,12 +260,12 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 result = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), cvr == null ? null : new ValidateResponse(cvr.getValidation(), cvr.getValidCertificatePurposes()));
             } else if (response instanceof CertificateValidationResponse) {
                 CertificateValidationResponse certResp = (CertificateValidationResponse) response;
-
+                
                 result = new ValidateResponse(certResp.getValidation(), certResp.getValidCertificatePurposes());
             } else {
                 throw new SignServerException("Unexpected response type: " + response);
             }
-
+            
             return result;
 
         } catch (FileUploadBase.SizeLimitExceededException ex) {
@@ -295,7 +295,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             }
         }
     }
-
+    
     private Response process(WorkerIdentifier wi, Request request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         // Create a new RequestContext at server-side
         final RequestContext requestContext = new RequestContext(true);
@@ -314,7 +314,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 requestContext.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
             }
         }
-
+        
         // Put transaction ID
         requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
 
@@ -322,26 +322,26 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         requestContext.setServices(servicesImpl);
         return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
-
-
-
-
+    
+    
+    
+    
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-                            final Request request, final RequestContext requestContext)
+            final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process: " + wi);
         }
-
-        if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
+        
+        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
             // use separate transaction bean to avoid deadlock
             return processTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);
         }
-    }
-
+    }        
+    
 }

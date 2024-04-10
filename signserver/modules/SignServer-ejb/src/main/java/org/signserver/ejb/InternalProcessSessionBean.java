@@ -70,13 +70,13 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
-
+    
     @EJB
     InternalProcessTransactionSessionLocal internalProcessTransSession;
-
+    
     /** Injected by ejb-jar.xml. */
     EntityManager em;
-
+    
     @Resource
     private SessionContext ctx;
 
@@ -99,7 +99,7 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
         }
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
         session = ctx.getBusinessObject(InternalProcessSessionLocal.class);
-
+        
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
         ProcessSessionLocal processSession = null;
@@ -133,16 +133,16 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
 
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-                            final Request request, final RequestContext requestContext)
+            final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
+        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
             // use separate transaction bean to avoid deadlock
             return internalProcessTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);
         }
-    }
-
+    }    
+    
 }

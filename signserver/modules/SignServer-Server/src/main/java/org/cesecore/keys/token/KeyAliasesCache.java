@@ -18,12 +18,10 @@ import org.signserver.server.cesecore.internal.CommonCacheBase;
 
 /**
  * Cache for Key aliases (used in Azure Crypto Token, but is generic). Caches a public key, with alias as key
- *
+ * 
  * @version $Id$
  */
 public class KeyAliasesCache extends CommonCacheBase<PublicKey> {
-
-    long lastUpdate = 0L;
 
     @Override
     public PublicKey getEntry(final Integer id) {
@@ -31,10 +29,6 @@ public class KeyAliasesCache extends CommonCacheBase<PublicKey> {
             return null;
         }
         return super.getEntry(id);
-    }
-
-    public void updateCacheTimeStamp() {
-        this.lastUpdate = System.currentTimeMillis();
     }
 
     @Override

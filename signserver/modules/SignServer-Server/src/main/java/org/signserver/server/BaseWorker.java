@@ -209,4 +209,8 @@ public abstract class BaseWorker implements IWorker {
         }
         return type;
     }
+
+    public boolean requiresTransaction(final IServices services) {
+        return false;
+    }
 }

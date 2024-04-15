@@ -387,18 +387,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                         algorithmParameterSpec = DilithiumParameterSpec.dilithium5;
                         sigAlgName = "DILITHIUM5";
                         break;
-                    case "DILITHIUM2_AES":
-                        algorithmParameterSpec = DilithiumParameterSpec.dilithium2_aes;
-                        sigAlgName = "dilithium2-aes";
-                        break;
-                    case "DILITHIUM3_AES":
-                        algorithmParameterSpec = DilithiumParameterSpec.dilithium3_aes;
-                        sigAlgName = "dilithium3-aes";
-                        break;
-                    case "DILITHIUM5_AES":
-                        algorithmParameterSpec = DilithiumParameterSpec.dilithium5_aes;
-                        sigAlgName = "dilithium5-aes";
-                        break;
                     default:
                         algorithmParameterSpec = DilithiumParameterSpec.dilithium3;
                         sigAlgName = "DILITHIUM3";

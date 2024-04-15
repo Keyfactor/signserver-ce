@@ -17,10 +17,10 @@
         <bouncycastle.bcutil.artifact>bcutil-jdk18on</bouncycastle.bcutil.artifact>
 
         <!-- Bouncy Castle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.75</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.75</bouncycastle.bcpkix.artifact.version>
-        <bouncycastle.bcprov.artifact.version>1.75</bouncycastle.bcprov.artifact.version>
-        <bouncycastle.bcutil.artifact.version>1.75</bouncycastle.bcutil.artifact.version>
+        <bouncycastle.bcpg.artifact.version>1.78</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.78</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcprov.artifact.version>1.78</bouncycastle.bcprov.artifact.version>
+        <bouncycastle.bcutil.artifact.version>1.78</bouncycastle.bcutil.artifact.version>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -593,7 +593,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQ, config, null, false, "SPHINCS+");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQ, config, null, false, "SPHINCS+-SHA2-256S");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -621,7 +621,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenPQ, config, requestContext, true, "SPHINCS+");
+        SimplifiedResponse response = signAndVerify(data, tokenPQ, config, requestContext, true, "SPHINCS+-SHA2-256S");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);

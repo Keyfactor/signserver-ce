@@ -626,7 +626,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
 
     /**
-     * Test request a timestamp using a made-up dummy hash algorithm name
+     * Test request a timestamp using RSA OID for hash algorithm
      */
     @Test
     public void test10HashWithIllegalAlgorithm() throws Exception {
@@ -635,9 +635,9 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.ACCEPTEDALGORITHMS);
     	workerSession.reloadConfiguration(WORKER1.getId());
 
-        // Dummy OID used for testing an invalid hashing algorithm
-        String DUMMY_OID = "1.42.42.42.42";
-        ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(DUMMY_OID);
+        // RSA OID used for testing an invalid hashing algorithm
+        String RSA_OID = "1.3.112.4.1.66";
+        ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(RSA_OID);
     	int status = testWithHash(oid, null, true);
 
     	assertEquals("Should not accept an invalid hash algorithm", PKIStatus.REJECTION, status);

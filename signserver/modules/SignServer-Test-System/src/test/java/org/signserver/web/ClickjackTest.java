@@ -34,6 +34,8 @@ public class ClickjackTest extends WebTestCase {
     private static final Logger LOG = Logger.getLogger(ClickjackTest.class);
 
     private String baseURL;
+    private final String DENY = "DENY";
+    private final String SAMEORIGIN = "SAMEORIGIN";
 
     @Override
     protected String getServletURL() {
@@ -50,20 +52,20 @@ public class ClickjackTest extends WebTestCase {
      */
     @Test
     public void testXFrameOptionsHeaderOnPublicWeb() throws Exception {
-        assertHeaderEquals(baseURL + "/", "GET");
-        assertHeaderEquals(baseURL + "/", "POST");
-        assertHeaderEquals(baseURL + "/process", "GET");
-        assertHeaderEquals(baseURL + "/process", "POST");
-        assertHeaderEquals(baseURL + "/worker/_non_existing_", "GET");
-        assertHeaderEquals(baseURL + "/worker/_non_existing_", "POST");
-        assertHeaderEquals(baseURL + "/process", "POST");
-        assertHeaderEquals(baseURL + "/_non_existing_", "GET");
-        assertHeaderEquals(baseURL + "/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/", "GET", DENY);
+        assertHeaderEquals(baseURL + "/", "POST", DENY);
+        assertHeaderEquals(baseURL + "/process", "GET", DENY);
+        assertHeaderEquals(baseURL + "/process", "POST", DENY);
+        assertHeaderEquals(baseURL + "/worker/_non_existing_", "GET", DENY);
+        assertHeaderEquals(baseURL + "/worker/_non_existing_", "POST", DENY);
+        assertHeaderEquals(baseURL + "/process", "POST", DENY);
+        assertHeaderEquals(baseURL + "/_non_existing_", "GET", DENY);
+        assertHeaderEquals(baseURL + "/_non_existing_", "POST", DENY);
 
-        assertHeaderEquals(baseURL + "/demo", "GET");
-        assertHeaderEquals(baseURL + "/demo", "POST");
-        assertHeaderEquals(baseURL + "/demo/_non_existing_", "GET");
-        assertHeaderEquals(baseURL + "/demo/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/demo", "GET", DENY);
+        assertHeaderEquals(baseURL + "/demo", "POST", DENY);
+        assertHeaderEquals(baseURL + "/demo/_non_existing_", "GET", DENY);
+        assertHeaderEquals(baseURL + "/demo/_non_existing_", "POST", DENY);
     }
 
     /**
@@ -71,10 +73,10 @@ public class ClickjackTest extends WebTestCase {
      */
     @Test
     public void testXFrameOptionsHeaderInDoc() throws Exception {
-        assertHeaderEquals(baseURL + "/doc", "GET");
-        assertHeaderEquals(baseURL + "/doc", "POST");
-        assertHeaderEquals(baseURL + "/doc/_non_existing_", "GET");
-        assertHeaderEquals(baseURL + "/doc/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/doc", "GET", SAMEORIGIN);
+        assertHeaderEquals(baseURL + "/doc", "POST", SAMEORIGIN);
+        assertHeaderEquals(baseURL + "/doc/_non_existing_", "GET", SAMEORIGIN);
+        assertHeaderEquals(baseURL + "/doc/_non_existing_", "POST", SAMEORIGIN);
     }
 
     /**
@@ -82,12 +84,12 @@ public class ClickjackTest extends WebTestCase {
      */
     @Test
     public void testXFrameOptionsHeaderInHealthCheck() throws Exception {
-        assertHeaderEquals(baseURL + "/healthcheck", "GET");
-        assertHeaderEquals(baseURL + "/healthcheck", "POST");
-        assertHeaderEquals(baseURL + "/healthcheck/signserverhealth", "GET");
-        assertHeaderEquals(baseURL + "/healthcheck/signserverhealth", "POST");
-        assertHeaderEquals(baseURL + "/healthcheck/_non_existing_", "GET");
-        assertHeaderEquals(baseURL + "/healthcheck/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/healthcheck", "GET", DENY);
+        assertHeaderEquals(baseURL + "/healthcheck", "POST", DENY);
+        assertHeaderEquals(baseURL + "/healthcheck/signserverhealth", "GET", DENY);
+        assertHeaderEquals(baseURL + "/healthcheck/signserverhealth", "POST", DENY);
+        assertHeaderEquals(baseURL + "/healthcheck/_non_existing_", "GET", DENY);
+        assertHeaderEquals(baseURL + "/healthcheck/_non_existing_", "POST", DENY);
     }
 
     /**
@@ -96,13 +98,13 @@ public class ClickjackTest extends WebTestCase {
      * @param method to use
      * @throws IOException IO Exception
      */
-    private void assertHeaderEquals(String url, String method) throws IOException {
+    private void assertHeaderEquals(String url, String method, String expected) throws IOException {
         HttpURLConnection conn = null;
         try {
             String message = method + " " + url;
             LOG.info("Testing " + message);
             conn = WebTestCase.send(url, Collections.emptyMap(), method);
-            assertEquals(message, "DENY", conn.getHeaderField("X-FRAME-OPTIONS"));
+            assertEquals(message, expected, conn.getHeaderField("X-FRAME-OPTIONS"));
         } finally {
             if (conn != null) {
                 conn.disconnect();

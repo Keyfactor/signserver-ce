@@ -22,20 +22,25 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
+import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
@@ -43,14 +48,28 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLSocketFactory;
+import javax.security.auth.x500.X500Principal;
 
 import io.restassured.response.Response;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.cesecore.util.CertTools;
 import org.json.simple.JSONObject;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
@@ -63,6 +82,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
@@ -80,6 +100,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
 import org.signserver.test.conf.SignerConfigurationBuilder;
 import org.signserver.test.conf.WorkerPropertiesBuilder;
+import org.signserver.test.utils.builders.CryptoUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -1143,8 +1164,21 @@ public class ModulesTestCase {
      * @throws Exception
      */
     public HashMap<String, String> getUnauthorizedStore() throws Exception {
+        SignServerUtil.installBCProvider();
         HashMap<String, String> ret = new HashMap<>();
-        ret.put("keyStorePath", getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss11_signer6.p12");
+
+        KeyPair keyPair = CryptoUtils.generateRSA(1024);
+        X509Certificate[] chain = generateCertificateIssuedByDSSRootCA10(keyPair, "SHA256withRSA", "ModulesTestCase CN", null);
+
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        ks.load(null, "foo123".toCharArray());
+        ks.setKeyEntry("ModulesTestCaseKey", keyPair.getPrivate(), "foo123".toCharArray(), chain);
+
+        // Store away the keystore.
+        File ksFile = File.createTempFile("modulestestcase", "p12");
+        ks.store(new FileOutputStream(ksFile), "foo123".toCharArray());
+
+        ret.put("keyStorePath", ksFile.getAbsolutePath());
         ret.put("keyStorePassword", "foo123");
         ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
         ret.put("trustStorePassword", "changeit");
@@ -1250,6 +1284,82 @@ public class ModulesTestCase {
         }
         workerSession.reloadConfiguration(workerId);
         LOG.info("Got current config after: " + workerSession.getCurrentWorkerConfig(workerId).getProperties());
+    }
+
+    /**
+     * Generates an X509Certificate chain containing a cert that has been issued by DSS Root CA 10.
+     * @param keyPair Key pair i.e. RSA, EC, etc...
+     * @param signatureAlgorithm Signature algorithm to use to sign cert with
+     * @param CN Common name
+     * @param ekus Array containing KeyPurpose ID's
+     * @return
+     * @throws IOException
+     * @throws KeyStoreException
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws OperatorCreationException
+     * @throws UnrecoverableKeyException
+     */
+    public X509Certificate[] generateCertificateIssuedByDSSRootCA10(final KeyPair keyPair, final String signatureAlgorithm, final String CN,
+                              final KeyPurposeId[] ekus)
+            throws IOException, KeyStoreException,
+            NoSuchProviderException, NoSuchAlgorithmException, CertificateException,
+            OperatorCreationException, UnrecoverableKeyException {
+        SignServerUtil.installBCProvider();
+
+        // Generate RSA key pair and CSR
+        PKCS10CertificationRequestBuilder p10Builder = new JcaPKCS10CertificationRequestBuilder(
+                new X500Principal("CN=" + CN), keyPair.getPublic());
+        JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
+        ContentSigner signer = csBuilder.build(keyPair.getPrivate());
+        PKCS10CertificationRequest csr = p10Builder.build(signer);
+
+        // Get CA cert from file
+        File caPemFile = new File(getSignServerHome().getAbsolutePath() + "/res/test/dss10/DSSRootCA10.cacert.pem");
+        X509Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
+
+        // Get DSS root CA 10 private key
+        char[] password = "foo123".toCharArray();
+        final KeyStore dssRootCa10P12 = KeyStore.getInstance("PKCS12");
+        final String ksPath = getSignServerHome().getAbsolutePath() + "/res/test/dss10/DSSRootCA10.p12";
+        dssRootCa10P12.load(new FileInputStream(ksPath), "foo123".toCharArray());
+        PrivateKey issuerPrivKey = (PrivateKey) dssRootCa10P12.getKey("SignatureKeyAlias", password);
+
+        // Setup builder for certificate
+        X509v3CertificateBuilder builder =
+                new X509v3CertificateBuilder(new X500Name(caCert.getIssuerDN().getName()),
+                        BigInteger.ONE, new Date(),
+                        new Date(System.currentTimeMillis() +
+                                TimeUnit.DAYS.toMillis(365)),
+                        csr.getSubject(),
+                        csr.getSubjectPublicKeyInfo());
+        if (ekus != null) {
+            final ExtendedKeyUsage eku = new ExtendedKeyUsage(ekus);
+
+            builder.addExtension(Extension.extendedKeyUsage, true, eku);
+        }
+
+        final X509CertificateHolder certHolder =
+                builder
+                        .build(new JcaContentSignerBuilder("SHA256WithRSA")
+                                .setProvider("BC")
+                                .build(issuerPrivKey));
+        if (ekus != null) {
+            final ExtendedKeyUsage eku = new ExtendedKeyUsage(ekus);
+
+            builder.addExtension(Extension.extendedKeyUsage, true, eku);
+        }
+
+        // Generate actual certificate
+        Certificate cert = CertTools.getCertfromByteArray(certHolder.getEncoded());
+
+        // Add DSS root CA 10 cert to cert chain
+        X509Certificate[] chain = new X509Certificate[2];
+        chain[0] = (X509Certificate) cert;
+        chain[1] = caCert;
+
+        return chain;
     }
 
 }

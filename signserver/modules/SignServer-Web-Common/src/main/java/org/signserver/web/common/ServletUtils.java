@@ -14,7 +14,7 @@ package org.signserver.web.common;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 /**

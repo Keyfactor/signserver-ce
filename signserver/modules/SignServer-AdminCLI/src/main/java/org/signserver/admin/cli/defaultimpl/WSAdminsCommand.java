@@ -16,7 +16,7 @@ import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Set;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;

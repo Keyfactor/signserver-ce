@@ -14,7 +14,7 @@ package org.signserver.server;
 
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.entities.IKeyUsageCounterDataService;

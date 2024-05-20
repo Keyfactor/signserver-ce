@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;

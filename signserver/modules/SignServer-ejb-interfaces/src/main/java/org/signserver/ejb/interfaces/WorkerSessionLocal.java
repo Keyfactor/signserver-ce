@@ -21,7 +21,7 @@ import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;

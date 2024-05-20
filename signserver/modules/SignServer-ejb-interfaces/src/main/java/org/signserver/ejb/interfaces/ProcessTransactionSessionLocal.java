@@ -12,7 +12,7 @@
  ************************************************************************ */
 package org.signserver.ejb.interfaces;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;

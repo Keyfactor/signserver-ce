@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.adminws;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 import org.signserver.common.ArchiveMetadata;
 
 /**

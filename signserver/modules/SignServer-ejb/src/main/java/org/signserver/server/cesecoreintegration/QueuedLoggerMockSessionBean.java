@@ -15,7 +15,7 @@ package org.signserver.server.cesecoreintegration;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.enums.EventType;

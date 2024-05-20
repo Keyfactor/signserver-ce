@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.server.entities;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.apache.log4j.Logger;
 
 /**

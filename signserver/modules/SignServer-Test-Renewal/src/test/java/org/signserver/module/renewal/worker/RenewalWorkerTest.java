@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 import static junit.framework.TestCase.assertNotNull;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;

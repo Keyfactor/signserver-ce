@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
 import org.signserver.common.GlobalConfiguration;
 
 import org.signserver.common.ResyncException;

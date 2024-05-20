@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.common;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Exception indicating that the query could not be finished successfully.

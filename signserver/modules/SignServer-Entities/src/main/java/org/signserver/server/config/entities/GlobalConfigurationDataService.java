@@ -13,8 +13,8 @@
 package org.signserver.server.config.entities;
 
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 /**
  * Entity Service class that acts as migration layer for

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.module.renewal.worker;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 /**
  * Tool for running the mock stand-alone.

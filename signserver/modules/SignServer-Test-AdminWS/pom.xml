@@ -58,10 +58,6 @@
             <artifactId>jakarta.xml.ws-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>jakarta.jws</groupId>
-            <artifactId>jakarta.jws-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.sun.activation</groupId>
             <artifactId>jakarta.activation</artifactId>
         </dependency>
@@ -96,7 +92,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.helger.maven</groupId>
+                <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -117,9 +113,9 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>javax.xml</groupId>
-                        <artifactId>webservices-api</artifactId>
-                        <version>2.0</version>
+                        <groupId>jakarta.xml.ws</groupId>
+                        <artifactId>jakarta.xml.ws-api</artifactId>
+                        <version>4.0.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -128,7 +124,7 @@
                     <verbose>true</verbose>
                     <extension>true</extension>
                     <catalog>${basedir}/catalog.xml</catalog>
-                    <target>2.0</target>
+                    <target>3.0</target>
                 </configuration>
             </plugin>
             <plugin>

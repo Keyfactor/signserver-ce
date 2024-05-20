@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;

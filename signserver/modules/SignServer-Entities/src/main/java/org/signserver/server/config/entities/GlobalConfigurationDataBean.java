@@ -13,7 +13,7 @@
 package org.signserver.server.config.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Entity Bean storing the global configuration dynamically

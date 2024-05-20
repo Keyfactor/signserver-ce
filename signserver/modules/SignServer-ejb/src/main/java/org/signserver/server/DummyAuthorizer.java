@@ -15,7 +15,7 @@ package org.signserver.server;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.cesecore.util.CertTools;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.statusrepo;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  * Interface towards the status repository session bean.

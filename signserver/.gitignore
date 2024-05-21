@@ -82,6 +82,8 @@ dist-*/
 /doc/api/
 /doc/howto-wrap*/
 /doc/htdocs/docs/TimeMonitor-Manual.pdf
+/doc/openapi-managed.yaml
+/doc/openapi-managed.json
 
 /doc/sample-configs/ms_authcode_cms_signer.properties
 /doc/sample-configs/jarchive_cms_signer.properties

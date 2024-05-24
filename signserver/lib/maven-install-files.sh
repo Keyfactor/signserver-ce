@@ -28,6 +28,9 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/cesec
 JACKNJI11_VERSION=1.2.7
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/jacknji11-${JACKNJI11_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=jacknji11 -Dversion=${JACKNJI11_VERSION} -Dpackaging=jar
 
+FILEUPLOAD_VERSION=1.5signserver6.3.0
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/commons-fileupload-${FILEUPLOAD_VERSION}.jar" -DgroupId=commons-fileupload -DartifactId=commons-fileupload -Dversion=${FILEUPLOAD_VERSION} -Dpackaging=jar
+
 # Install EE dependencies as well if available
 if [ -f "${DIR}/maven-install-files-ee.sh" ]; then
     source "${DIR}/maven-install-files-ee.sh"

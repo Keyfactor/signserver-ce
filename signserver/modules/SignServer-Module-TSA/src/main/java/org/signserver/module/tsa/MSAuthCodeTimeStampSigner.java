@@ -20,7 +20,7 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.util.*;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1EncodableVector;

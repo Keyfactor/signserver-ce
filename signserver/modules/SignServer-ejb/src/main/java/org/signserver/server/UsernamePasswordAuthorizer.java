@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.AuthorizationRequiredException;

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.common;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Exception thrown to indicate that a request or operation failed. This 

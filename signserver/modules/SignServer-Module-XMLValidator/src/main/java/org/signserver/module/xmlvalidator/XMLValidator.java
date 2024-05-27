@@ -18,7 +18,7 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;

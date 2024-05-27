@@ -13,7 +13,7 @@
 package org.signserver.clientws;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  * Request data to be sent to the processSOD operation.

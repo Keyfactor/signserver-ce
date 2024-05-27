@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.common;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Class thrown if a resync to data base failed. 

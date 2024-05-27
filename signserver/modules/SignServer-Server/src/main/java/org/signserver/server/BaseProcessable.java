@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;

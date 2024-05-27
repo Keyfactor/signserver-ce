@@ -27,8 +27,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.ejb.EJBException;
-import javax.persistence.EntityManager;
+import jakarta.ejb.EJBException;
+import jakarta.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.*;

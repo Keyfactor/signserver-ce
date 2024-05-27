@@ -23,7 +23,7 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import junit.framework.TestCase;
 

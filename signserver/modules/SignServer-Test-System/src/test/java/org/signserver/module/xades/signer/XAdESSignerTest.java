@@ -19,7 +19,7 @@ import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.List;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;

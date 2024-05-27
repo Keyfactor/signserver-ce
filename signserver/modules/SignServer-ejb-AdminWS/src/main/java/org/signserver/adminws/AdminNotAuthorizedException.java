@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.adminws;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Exception indicating that the user is not authorized to perform the

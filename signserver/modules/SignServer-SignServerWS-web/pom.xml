@@ -48,10 +48,6 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>jakarta.jws</groupId>
-            <artifactId>jakarta.jws-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Web-Common</artifactId>
             <version>${project.version}</version>
@@ -61,7 +57,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.helger.maven</groupId>
+                <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
                 <executions>
                     <execution>

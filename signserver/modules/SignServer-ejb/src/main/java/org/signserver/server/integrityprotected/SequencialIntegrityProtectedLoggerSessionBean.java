@@ -15,13 +15,13 @@ package org.signserver.server.integrityprotected;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
@@ -57,9 +57,9 @@ public class SequencialIntegrityProtectedLoggerSessionBean implements Sequencial
 
     /**
      * Initialization of the log sequence number in combination with nodeId should be performed exactly once.
-     * 
+     *
      * This callback will be invoked on the first call to NodeSequenceHolder.getNext(...) to perform this initialization.
-     * 
+     *
      * In this callback implementation, the nodeId is first read from the configuration (which may default to reading
      * the current hostname from the system). This hostname is then passed to the next method to figure out what the
      * highest present sequenceNumber for this nodeId is in the database (e.g. last write before shutting down).
@@ -86,7 +86,7 @@ public class SequencialIntegrityProtectedLoggerSessionBean implements Sequencial
             final Map<String, Object> additionalDetails, final Properties properties) throws AuditRecordStorageException {
         throw new AuditRecordStorageException("Not supported by " + getClass().getName());
     }
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     // Always persist audit log

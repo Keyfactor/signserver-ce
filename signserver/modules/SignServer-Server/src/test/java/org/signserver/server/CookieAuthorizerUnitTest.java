@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;

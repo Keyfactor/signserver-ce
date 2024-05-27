@@ -14,11 +14,11 @@ package org.signserver.statusrepo.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;

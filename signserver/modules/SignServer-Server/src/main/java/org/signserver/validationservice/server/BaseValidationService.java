@@ -15,7 +15,7 @@ package org.signserver.validationservice.server;
 import java.util.*;
 
 import java.util.Map.Entry;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;

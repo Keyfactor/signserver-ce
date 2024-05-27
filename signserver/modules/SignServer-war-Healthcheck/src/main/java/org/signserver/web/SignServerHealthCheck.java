@@ -24,9 +24,9 @@ import java.util.Properties;
 
 import java.util.List;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

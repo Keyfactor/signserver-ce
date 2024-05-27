@@ -13,7 +13,7 @@
 package org.signserver.ejb.worker.impl;
 
 import java.util.*;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.common.WorkerIdentifier;

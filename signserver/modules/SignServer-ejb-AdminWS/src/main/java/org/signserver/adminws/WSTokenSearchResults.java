@@ -14,7 +14,7 @@ package org.signserver.adminws;
 
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 import org.signserver.server.cryptotokens.TokenEntry;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 

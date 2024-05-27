@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;

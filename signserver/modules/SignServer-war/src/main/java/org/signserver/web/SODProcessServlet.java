@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.ejb.EJB;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;

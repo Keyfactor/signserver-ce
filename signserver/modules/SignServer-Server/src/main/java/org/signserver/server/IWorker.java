@@ -13,7 +13,7 @@
 package org.signserver.server;
 
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.WorkerType;

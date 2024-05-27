@@ -15,7 +15,7 @@ package org.signserver.module.xades.validator;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Collections;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;

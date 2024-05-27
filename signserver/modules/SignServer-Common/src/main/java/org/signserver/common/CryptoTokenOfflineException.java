@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.common;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Exception thrown if a singing operation is performed but

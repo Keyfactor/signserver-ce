@@ -23,14 +23,14 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;

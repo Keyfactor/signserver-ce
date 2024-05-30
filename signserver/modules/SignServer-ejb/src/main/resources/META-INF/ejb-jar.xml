@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ejb-jar
-	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns="http://jakarta.ee/xml/ns/jakartaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_2.xsd"
-	version="3.2">
+	xsi:schemaLocation="http://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/ejb-jar_4_0.xsd"
+	version="4.0">
 
 	<!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USED FOR POSTPROCESSING DURING BUILD -->
     <!--COMMENT-REPLACEMENT(ejbjarheader)-->

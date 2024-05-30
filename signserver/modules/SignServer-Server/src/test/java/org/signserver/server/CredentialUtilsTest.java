@@ -451,11 +451,6 @@ public class CredentialUtilsTest {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        @SuppressWarnings("deprecation")
-        public boolean isRequestedSessionIdFromUrl() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
         @Override
         public Object getAttribute(String string) {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -573,11 +568,6 @@ public class CredentialUtilsTest {
 
         @Override
         public RequestDispatcher getRequestDispatcher(String string) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @SuppressWarnings("deprecation")
-        public String getRealPath(String string) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

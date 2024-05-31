@@ -59,7 +59,7 @@ import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.Loggable;
 import org.signserver.validationservice.common.Validation;
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import org.apache.commons.fileupload.FileCountLimitExceededException;
 import org.signserver.common.RequestContext;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;

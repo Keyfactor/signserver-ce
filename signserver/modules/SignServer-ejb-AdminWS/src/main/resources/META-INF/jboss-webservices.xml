@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<webservices version="1.0" 
+<webservices version="2.0"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-             xmlns="http://www.jboss.com/xml/ns/javaee" 
-             xsi:schemalocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_webservices_1_0.xsd">
+             xmlns="http://jakarta.ee/xml/ns/jakartaee"
+             xsi:schemalocation="http://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/webservices_2_0.xsd">
     <context-root>${httpserver.context.root}/AdminWSService</context-root>
     
     <port-component>

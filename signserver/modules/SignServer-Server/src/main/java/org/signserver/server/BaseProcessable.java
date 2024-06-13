@@ -169,7 +169,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     private String getAliasAndLog(final int purpose, final Request request,
                             final RequestContext context)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        final String alias = aliasSelector.getAlias(purpose, this, request, context);
+        final String alias = getAlias(purpose, request, context); 
 
         if (context != null) {
             LogMap.getInstance(context).put(IWorkerLogger.LOG_KEYALIAS, alias);

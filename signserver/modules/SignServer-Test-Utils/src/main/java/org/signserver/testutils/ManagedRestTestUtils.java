@@ -1,12 +1,21 @@
 package org.signserver.testutils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.security.KeyStore;
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
+import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 
 /**
  * Class containing utility methods used to simplify MANAGEDREST api testing.
  *
  */
 public class ManagedRestTestUtils {
+    
+    protected static final String pin = "foo123";
+    private static final String SIGN_KEY_ALIAS = "p12signkey1234";
+    private File keystoreFile;
 
     /**
      * Generate a test Json Object with sample data, metaData in it.
@@ -92,6 +101,36 @@ public class ManagedRestTestUtils {
         properties.put("AUTHTYPE", "NOAUTH");
         properties.put("GREETING", "Hi");
         properties.put("IMPLEMENTATION_CLASS", "org.signserver.module.sample.workers.HelloWorker");
+
+        JSONObject patchRequestJsonBody = new JSONObject();
+        patchRequestJsonBody.put("properties", properties);
+
+        return patchRequestJsonBody;
+    }
+    
+    public JSONObject createPostCryptoWorkerAddRequestJsonBody(final String workerName) throws Exception {
+        // Create keystore
+        keystoreFile = File.createTempFile("testkeystore", ".p12");
+        FileOutputStream out = null;
+        try {
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            ks.load(null, null);
+            out = new FileOutputStream(keystoreFile);
+            ks.store(out, pin.toCharArray());
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+        
+        // Setup crypto token    
+        JSONObject properties = new JSONObject();
+        properties.put("NAME", workerName);
+        properties.put("TYPE", "CRYPTO_WORKER");
+        properties.put("KEYSTORETYPE", "PKCS12");
+        properties.put("IMPLEMENTATION_CLASS", "org.signserver.server.signers.CryptoWorker");
+        properties.put("CRYPTOTOKEN_IMPLEMENTATION_CLASS", KeystoreCryptoToken.class.getName());
+        properties.put("KEYSTOREPATH", keystoreFile.getAbsolutePath());
+        properties.put("DEFAULTKEY", SIGN_KEY_ALIAS);
+        properties.put("KEYSTOREPASSWORD", pin);
 
         JSONObject patchRequestJsonBody = new JSONObject();
         patchRequestJsonBody.put("properties", properties);

@@ -33,12 +33,29 @@ public class ManagedRestTestUtils {
     }
 
     /**
+     * Generate a test Json Object with cryptotoken.
+     */
+    public JSONObject createPostProcessRequestJsonBodyWithCryptotoken() {
+        JSONObject metaData = new JSONObject();
+        metaData.put("name1", "value1");
+        metaData.put("name2", "value2");
+        metaData.put("CRYPTOTOKEN", "SIGNUM_CryptoTokenP12");
+
+        JSONObject postRequestJsonBody = new JSONObject();
+        postRequestJsonBody.put("metaData", metaData);
+        postRequestJsonBody.put("data", "Sample Text!");
+
+        return postRequestJsonBody;
+    }
+
+    /**
      * Generate a test Json Object with sample data, metaData with defaultkey in
      * it.
      */
     public JSONObject createPostProcessRequestWithKey() {
         JSONObject metaData = new JSONObject();
         metaData.put("DEFAULTKEY", "signer00003");
+        metaData.put("CRYPTOTOKEN", "SIGNUM_CryptoTokenP12");
 
         JSONObject postRequestJsonBody = new JSONObject();
         postRequestJsonBody.put("metaData", metaData);
@@ -54,6 +71,7 @@ public class ManagedRestTestUtils {
     public JSONObject createPostProcessRequestWithSignatureAlgorithm() {
         JSONObject metaData = new JSONObject();
         metaData.put("SIGNATUREALGORITHM", "SHA256withRSA");
+        metaData.put("CRYPTOTOKEN", "SIGNUM_CryptoTokenP12");
 
         JSONObject postRequestJsonBody = new JSONObject();
         postRequestJsonBody.put("metaData", metaData);
@@ -70,6 +88,7 @@ public class ManagedRestTestUtils {
         JSONObject metaData = new JSONObject();
         metaData.put("DEFAULTKEY", "signer00003");
         metaData.put("SIGNATUREALGORITHM", "SHA256withRSA");
+        metaData.put("CRYPTOTOKEN", "SIGNUM_CryptoTokenP12");
 
         JSONObject postRequestJsonBody = new JSONObject();
         postRequestJsonBody.put("metaData", metaData);
@@ -86,6 +105,7 @@ public class ManagedRestTestUtils {
         JSONObject metaData = new JSONObject();
         metaData.put("DEFAULTKEY", "signer00003"); // RSA key
         metaData.put("SIGNATUREALGORITHM", "SHA256withECDSA"); // missmatch with provided key
+        metaData.put("CRYPTOTOKEN", "SIGNUM_CryptoTokenP12");
 
         JSONObject postRequestJsonBody = new JSONObject();
         postRequestJsonBody.put("metaData", metaData);

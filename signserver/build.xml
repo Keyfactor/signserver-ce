@@ -191,7 +191,7 @@ Installation Guide for details.
         <echo message="Filtering jars..."/>
 
         <!-- cesecore-common.jar -->
-        <property name="cesecore-common.jar" value="cesecore-common-7.0.0.1signserver6.2.0.jar"/>
+        <property name="cesecore-common.jar" value="cesecore-common-7.0.0.1signserver7.0.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-common.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${cesecore-common.jar}">
             <zipfileset src="${tmp}/${cesecore-common.jar}" excludes="${cesecore.common.excludes}"/>
@@ -205,14 +205,14 @@ Installation Guide for details.
         </jar>
 
         <!-- cesecore-ejb.jar -->
-        <property name="cesecore-ejb.jar" value="cesecore-ejb-7.0.0.1.jar"/>
+        <property name="cesecore-ejb.jar" value="cesecore-ejb-7.0.0.1signserver7.0.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/${cesecore-ejb.jar}"/>
         <jar destfile="${app.ear.dir}/${cesecore-ejb.jar}">
             <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
         </jar>
 
         <!-- cesecore-entities.jar -->
-        <property name="cesecore-entities.jar" value="cesecore-entity-7.0.0.1.jar"/>
+        <property name="cesecore-entities.jar" value="cesecore-entity-7.0.0.1signserver7.0.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-entities.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${cesecore-entities.jar}">
             <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>

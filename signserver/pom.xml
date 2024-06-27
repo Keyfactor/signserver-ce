@@ -251,7 +251,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-entity</artifactId>
-                <version>7.0.0.1</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
@@ -267,7 +267,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-common</artifactId>
-                <version>7.0.0.1signserver6.2.0</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -286,7 +286,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-interfaces</artifactId>
-                <version>7.0.0.1</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -305,7 +305,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-ejb</artifactId>
-                <version>7.0.0.1</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>

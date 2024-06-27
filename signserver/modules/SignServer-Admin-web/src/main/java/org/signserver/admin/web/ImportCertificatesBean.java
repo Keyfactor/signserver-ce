@@ -25,10 +25,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import jakarta.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
@@ -42,7 +44,7 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class ImportCertificatesBean extends BulkBean {
 

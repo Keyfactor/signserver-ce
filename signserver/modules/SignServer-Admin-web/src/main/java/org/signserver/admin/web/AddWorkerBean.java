@@ -12,11 +12,18 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.signserver.admin.web.ejb.NotLoggedInException;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,10 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+import jakarta.ejb.EJB;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,9 +47,9 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class AddWorkerBean {
+public class AddWorkerBean implements Serializable {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(AddWorkerBean.class);
@@ -53,6 +57,7 @@ public class AddWorkerBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 

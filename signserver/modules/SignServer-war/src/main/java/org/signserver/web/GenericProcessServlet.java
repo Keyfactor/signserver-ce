@@ -22,7 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -484,7 +484,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
         // Client certificate
         Certificate clientCertificate = null;
-        Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
+        Certificate[] certificates = (X509Certificate[]) req.getAttribute("jakarta.servlet.request.X509Certificate");
         if (certificates != null) {
             clientCertificate = certificates[0];
         }

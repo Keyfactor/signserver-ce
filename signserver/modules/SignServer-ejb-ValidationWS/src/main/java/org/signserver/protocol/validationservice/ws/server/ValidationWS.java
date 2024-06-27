@@ -220,7 +220,7 @@ public class ValidationWS implements IValidationWS {
     private X509Certificate getClientCertificate() {
         MessageContext msgContext = wsContext.getMessageContext();
         HttpServletRequest request = (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST);
-        X509Certificate[] certificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+        X509Certificate[] certificates = (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
 
         if (certificates != null) {
             return certificates[0];

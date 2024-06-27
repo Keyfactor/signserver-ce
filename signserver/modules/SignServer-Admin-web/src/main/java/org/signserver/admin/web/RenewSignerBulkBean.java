@@ -19,8 +19,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
@@ -38,7 +40,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named("RenewSignerBulkBean")
 @ViewScoped
 public class RenewSignerBulkBean extends BulkBean {
 

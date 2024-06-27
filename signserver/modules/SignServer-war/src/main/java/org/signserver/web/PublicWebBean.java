@@ -15,16 +15,16 @@ package org.signserver.web;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+
+import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.web.common.ThemeHelper;
-
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
-import javax.inject.Named;
 
 /**
  * JSF managed bean exposing settings to the JSF pages.
@@ -35,7 +35,6 @@ import javax.inject.Named;
  */
 @Named("publicWebBean")
 @ApplicationScoped
-@ManagedBean
 public class PublicWebBean {
 
     /** Logger for this class. */

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.web.ejb;
 
+import jakarta.annotation.PostConstruct;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,9 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;

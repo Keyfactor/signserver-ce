@@ -24,7 +24,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -263,7 +263,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
 
             // Get the client certificate, if any is passed in an https exchange, to be used for client authentication
             Certificate clientCertificate = null;
-            Certificate[] certificates = (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
+            Certificate[] certificates = (X509Certificate[]) req.getAttribute("jakarta.servlet.request.X509Certificate");
             if (certificates != null) {
                 clientCertificate = certificates[0];
             }

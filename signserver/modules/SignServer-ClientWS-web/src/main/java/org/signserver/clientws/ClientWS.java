@@ -331,7 +331,7 @@ public class ClientWS {
     }
 
     private X509Certificate getClientCertificate() {
-        X509Certificate[] certificates = (X509Certificate[]) getServletRequest().getAttribute("javax.servlet.request.X509Certificate");
+        X509Certificate[] certificates = (X509Certificate[]) getServletRequest().getAttribute("jakarta.servlet.request.X509Certificate");
 
         if (certificates != null) {
             return certificates[0];

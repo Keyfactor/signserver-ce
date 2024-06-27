@@ -12,12 +12,15 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 import org.signserver.admin.web.ejb.NotLoggedInException;
+
+import java.io.Serializable;
 import java.security.cert.X509Certificate;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import org.cesecore.util.CertTools;
 
 /**
@@ -26,9 +29,9 @@ import org.cesecore.util.CertTools;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class AuthenticationBean {
+public class AuthenticationBean implements Serializable {
 
     private X509Certificate adminCertificate;
 
@@ -44,7 +47,7 @@ public class AuthenticationBean {
 
     public X509Certificate getAdminCertificate() throws NotLoggedInException {
         if (adminCertificate == null) {
-            final X509Certificate[] certificates = (X509Certificate[]) getHttpServletRequest().getAttribute("javax.servlet.request.X509Certificate");
+            final X509Certificate[] certificates = (X509Certificate[]) getHttpServletRequest().getAttribute("jakarta.servlet.request.X509Certificate");
             if (certificates != null && certificates.length != 0) {
                 adminCertificate = certificates[0];
             }

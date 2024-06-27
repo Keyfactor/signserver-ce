@@ -1374,7 +1374,7 @@ public class AdminWS {
                         .get(MessageContext.SERVLET_REQUEST);
         final X509Certificate[] certificates =
                 (X509Certificate[]) req.getAttribute(
-                        "javax.servlet.request.X509Certificate");
+                        "jakarta.servlet.request.X509Certificate");
         return certificates;
     }
 

@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <faces-config version="4.0"
-              xmlns="http://jakarta.ee/xml/ns/jakartaee"
+              xmlns="https://jakarta.ee/xml/ns/jakartaee"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-              xsi:schemaLocation="http://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd">
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd">
 
     <application>
         <locale-config>
@@ -20,11 +20,4 @@
         </resource-bundle>
     </application>
 
-    <managed-bean>
-        <description>Holder of all component bindings.</description>
-        <managed-bean-name>components</managed-bean-name>
-        <managed-bean-class>java.util.HashMap</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>    
-    
 </faces-config>

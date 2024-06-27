@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  *
  * The {@link #getInstance(File)} method must be called before any PKCS#11 provider is created.
  *
- *  @version $Id$ : Pkcs11Wrapper.java 27614 2017-12-21 08:55:51Z bastianf (from cesecore-common-7.0.0.1)
+ *  @version $Id$ : Pkcs11Wrapper.java 27614 2017-12-21 08:55:51Z bastianf (from cesecore-common-7.0.0.1signserver7.0.0)
  *
  */
 public class Pkcs11Wrapper {

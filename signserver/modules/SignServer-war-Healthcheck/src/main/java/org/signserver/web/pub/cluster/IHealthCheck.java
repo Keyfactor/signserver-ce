@@ -13,9 +13,9 @@
 
 package org.signserver.web.pub.cluster;
 
-import javax.persistence.EntityManager;
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

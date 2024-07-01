@@ -87,20 +87,17 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <version>2.17.1</version>
-                <scope>provided</scope>
+                <version>2.20.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <version>2.17.1</version>
-                <scope>provided</scope>
+                <version>2.20.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-1.2-api</artifactId>
-                <version>2.17.1</version>
-                <scope>provided</scope>
+                <version>2.20.0</version>
             </dependency>
 
             <dependency>
@@ -146,7 +143,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.5</version>
+                <version>1.5signserver7.0.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -195,14 +192,14 @@
             <dependency>
                 <groupId>jakarta.platform</groupId>
                 <artifactId>jakarta.jakartaee-api</artifactId>
-                <version>8.0.0</version>
+                <version>10.0.0</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>2.3.3</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
@@ -212,23 +209,18 @@
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>3.0.2</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
-                <version>2.3.3</version>
+                <version>4.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>2.1.0</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.activation</groupId>
@@ -259,7 +251,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-entity</artifactId>
-                <version>7.0.0.1</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
@@ -275,7 +267,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-common</artifactId>
-                <version>7.0.0.1signserver6.2.0</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -294,7 +286,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-interfaces</artifactId>
-                <version>7.0.0.1</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -313,7 +305,7 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-ejb</artifactId>
-                <version>7.0.0.1</version>
+                <version>7.0.0.1signserver7.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -365,7 +357,7 @@
             <dependency>
                 <groupId>com.googlecode.xades4j</groupId>
                 <artifactId>xades4j</artifactId>
-                <version>2.0.0</version>
+                <version>2.2.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
@@ -728,7 +720,7 @@
                         <dependency>
                             <groupId>jakarta.xml.bind</groupId>
                             <artifactId>jakarta.xml.bind-api</artifactId>
-                            <version>2.3.3</version>
+                            <version>4.0.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -789,9 +781,9 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>com.helger.maven</groupId>
+                    <groupId>com.sun.xml.ws</groupId>
                     <artifactId>jaxws-maven-plugin</artifactId>
-                    <version>2.6.2</version>
+                    <version>4.0.0</version>
                 </plugin>
 
                 <plugin>

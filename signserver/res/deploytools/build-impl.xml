@@ -330,7 +330,7 @@ database.nodb.location              = ${database.nodb.location}
         <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect">
             <equals arg1="${database.name}" arg2="mssql"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect">
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect">
             <equals arg1="${database.name}" arg2="mysql"/>
         </condition>
         <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
@@ -489,7 +489,6 @@ app.edition.lc=${app.edition.lc}
                 <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.12.jar"/>
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
-                <pathelement path="${basedir}/lib/ext/ext/jakarta.jakartaee-api-8.0.0-LocalStrings.jar"/>
             </classpath>
         </junit>
     </target>

@@ -14,6 +14,7 @@ package org.signserver.admin.web;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
@@ -25,12 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
-import javax.xml.ws.soap.SOAPFaultException;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.lang.StringUtils;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -46,9 +51,9 @@ import org.signserver.common.WorkerType;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class WorkerBean {
+public class WorkerBean implements Serializable {
 
     //@ManagedProperty(value = "#{param.id}")
     private Integer id;
@@ -63,9 +68,11 @@ public class WorkerBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 
+    @Inject
     @ManagedProperty("#{text}")
     private ResourceBundle text;
     

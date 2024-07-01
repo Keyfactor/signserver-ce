@@ -13,12 +13,11 @@
 package org.signserver.admin.web;
 
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.validator.FacesValidator;
-import javax.faces.validator.RequiredValidator;
-import javax.faces.validator.ValidatorException;
-
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.validator.FacesValidator;
+import jakarta.faces.validator.RequiredValidator;
+import jakarta.faces.validator.ValidatorException;
 import org.apache.log4j.Logger;
 
 /**

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestMetadata;

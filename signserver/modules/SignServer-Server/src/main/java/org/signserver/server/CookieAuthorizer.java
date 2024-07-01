@@ -14,8 +14,8 @@ package org.signserver.server;
 
 import java.util.LinkedList;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.servlet.http.Cookie;
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.Cookie;
 import org.apache.log4j.Logger;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;

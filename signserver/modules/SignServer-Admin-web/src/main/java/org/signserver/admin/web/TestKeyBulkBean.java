@@ -19,10 +19,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.apache.commons.lang.StringUtils;
-import javax.ejb.EJBException;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.ejb.EJBException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
@@ -34,7 +36,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class TestKeyBulkBean extends BulkBean {
 

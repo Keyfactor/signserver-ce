@@ -16,7 +16,7 @@ import java.net.ConnectException;
 import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Properties;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;

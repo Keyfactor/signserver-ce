@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import static java.net.URLEncoder.encode;
 import java.util.ArrayList;
@@ -22,10 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.ejb.EJB;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
@@ -35,9 +39,9 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class GlobalConfigurationBean {
+public class GlobalConfigurationBean implements Serializable {
     /**
      * Logger for this class.
      */
@@ -46,6 +50,7 @@ public class GlobalConfigurationBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;

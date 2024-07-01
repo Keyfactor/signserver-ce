@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.util.Collection;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.bouncycastle.util.encoders.Base64;
 
 import org.signserver.common.ProcessResponse;

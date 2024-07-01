@@ -14,7 +14,7 @@ package org.signserver.server.aliasselectors;
 
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;

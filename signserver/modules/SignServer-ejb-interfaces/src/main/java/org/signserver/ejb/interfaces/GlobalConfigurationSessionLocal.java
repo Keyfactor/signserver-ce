@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 import org.signserver.common.ResyncException;
 import org.signserver.server.log.AdminInfo;

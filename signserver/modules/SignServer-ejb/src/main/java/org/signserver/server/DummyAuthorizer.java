@@ -37,7 +37,7 @@ public class DummyAuthorizer implements IAuthorizer {
      * Initialize a DummyAuthorizer.
      * 
      * @throws org.signserver.common.SignServerException
-     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)

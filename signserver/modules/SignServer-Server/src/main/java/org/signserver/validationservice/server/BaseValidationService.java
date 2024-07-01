@@ -49,7 +49,7 @@ public abstract class BaseValidationService implements IValidationService {
     private ICertPurposeChecker certTypeChecker;
 
     /**
-     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
+     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) {

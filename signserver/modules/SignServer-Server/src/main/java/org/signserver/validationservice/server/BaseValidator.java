@@ -65,7 +65,7 @@ public abstract class BaseValidator implements IValidator {
 
     /**
      * @throws SignServerException
-     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
+     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, jakarta.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(int workerId, int validatorId, Properties props, EntityManager em) throws SignServerException {

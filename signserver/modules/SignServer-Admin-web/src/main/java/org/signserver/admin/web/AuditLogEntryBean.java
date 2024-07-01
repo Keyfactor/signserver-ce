@@ -12,14 +12,19 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
@@ -36,9 +41,9 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class AuditLogEntryBean {
+public class AuditLogEntryBean implements Serializable {
 
     /**
      * Logger for this class.
@@ -50,6 +55,7 @@ public class AuditLogEntryBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 
@@ -127,7 +133,7 @@ public class AuditLogEntryBean {
                         entry = WebAuditLogEntry.fromAuditLogEntry(results.get(0));
                     }
 
-                } catch (javax.ejb.EJBTransactionRolledbackException ex) {
+                } catch (jakarta.ejb.EJBTransactionRolledbackException ex) {
                     queryError = ex.getMessage();
                     queryErrorMain = AuditLogFields.ERR_DB_PROTECTION_FAILED;
                     LOG.error(queryErrorMain + ex.getMessage());

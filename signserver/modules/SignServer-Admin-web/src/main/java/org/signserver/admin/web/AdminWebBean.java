@@ -14,11 +14,14 @@ package org.signserver.admin.web;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Properties;
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
-import javax.faces.context.FacesContext;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
@@ -31,8 +34,8 @@ import org.signserver.web.common.ThemeHelper;
  * @version $Id$
  */
 @ApplicationScoped
-@ManagedBean
-public class AdminWebBean {
+@Named
+public class AdminWebBean implements Serializable {
 
     private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
 

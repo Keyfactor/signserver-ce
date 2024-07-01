@@ -12,16 +12,21 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -38,9 +43,9 @@ import static org.signserver.common.SignServerConstants.DISABLED;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class BulkBean {
+public class BulkBean implements Serializable {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(BulkBean.class);
@@ -48,6 +53,7 @@ public class BulkBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 

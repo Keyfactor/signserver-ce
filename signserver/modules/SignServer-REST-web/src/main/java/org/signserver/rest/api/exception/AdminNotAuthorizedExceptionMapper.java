@@ -12,10 +12,10 @@
  *************************************************************************/
 package org.signserver.rest.api.exception;
 
-import javax.ws.rs.core.Response;
-import static javax.ws.rs.core.Response.status;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Response;
+import static jakarta.ws.rs.core.Response.status;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.rest.api.entities.ErrorMessage;
 

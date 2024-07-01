@@ -17,8 +17,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
@@ -29,7 +31,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class RemoveBulkBean extends BulkBean {
 

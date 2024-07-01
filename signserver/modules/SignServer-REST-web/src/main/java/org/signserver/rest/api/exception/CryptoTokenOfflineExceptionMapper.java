@@ -15,11 +15,11 @@ package org.signserver.rest.api.exception;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.rest.api.entities.ErrorMessage;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
-import static javax.ws.rs.core.Response.status;
+import static jakarta.ws.rs.core.Response.status;
 
 @Provider
 public class CryptoTokenOfflineExceptionMapper implements ExceptionMapper<CryptoTokenOfflineException> {

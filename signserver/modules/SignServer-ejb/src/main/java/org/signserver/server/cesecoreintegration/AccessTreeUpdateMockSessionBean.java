@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.server.cesecoreintegration;
 
-// No persistence: import javax.ejb.EJBException;
+// No persistence: import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;

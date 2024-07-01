@@ -452,7 +452,7 @@ public class SignServerWS {
     private X509Certificate getClientCertificate() {
         final HttpServletRequest request = getHttpServletRequest();
         X509Certificate[] certificates =
-                (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+                (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
         if (certificates != null) {
             return certificates[0];
         }

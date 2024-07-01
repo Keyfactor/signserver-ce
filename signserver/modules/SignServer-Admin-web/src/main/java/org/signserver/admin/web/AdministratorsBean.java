@@ -12,7 +12,16 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.model.ListDataModel;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.signserver.admin.web.ejb.NotLoggedInException;
+
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
@@ -23,11 +32,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ServiceLoader;
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
-import javax.faces.model.ListDataModel;
+import jakarta.ejb.EJB;
 import org.apache.log4j.Logger;
 import org.cesecore.authentication.tokens.X509CertificateAuthenticationToken;
 import org.cesecore.util.CertTools;
@@ -46,9 +51,9 @@ import org.signserver.serviceprovider.PeersProvider;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
-public class AdministratorsBean {
+public class AdministratorsBean implements Serializable {
 
     /**
      * Logger for this class.
@@ -63,6 +68,7 @@ public class AdministratorsBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 

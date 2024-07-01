@@ -56,7 +56,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
      * @param workerConfig Worker configuration
      * @throws org.signserver.common.SignServerException
      * @see org.signserver.server.IAuthorizer#init(int,
-     * org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(final int workerId, final WorkerConfig workerConfig,

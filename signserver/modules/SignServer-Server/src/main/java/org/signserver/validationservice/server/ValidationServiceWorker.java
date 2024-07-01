@@ -53,7 +53,7 @@ public class ValidationServiceWorker extends BaseProcessable {
      * @param config Worker configuration
      * @param workerContext Worker context
      * @param workerEntityManager Enitity manager
-     * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {

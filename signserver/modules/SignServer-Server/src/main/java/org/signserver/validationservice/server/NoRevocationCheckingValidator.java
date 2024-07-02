@@ -55,7 +55,7 @@ public class NoRevocationCheckingValidator extends BaseValidator {
      * @param em
      * @throws org.signserver.common.SignServerException
      * @see org.signserver.validationservice.server.IValidator#init(int, int,
-     * java.util.Properties, javax.persistence.EntityManager,
+     * java.util.Properties, jakarta.persistence.EntityManager,
      * org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override

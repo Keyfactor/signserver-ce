@@ -53,7 +53,7 @@ public class DummyValidator extends BaseValidator {
      * @param props
      * @param entityManager
      * @throws SignServerException
-     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
+     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, jakarta.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(final int workerId, final int validatorId,

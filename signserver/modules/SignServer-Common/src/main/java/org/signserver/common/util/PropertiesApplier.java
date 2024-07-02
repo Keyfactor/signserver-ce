@@ -161,7 +161,7 @@ public abstract class PropertiesApplier {
             }
             
         } catch (PropertiesApplierException e) {
-            if (e.getCause() != null && "java.lang.ClassNotFoundException: javax.persistence.PersistenceException".equals(e.getCause().getMessage())) {
+            if (e.getCause() != null && "java.lang.ClassNotFoundException: jakarta.persistence.PersistenceException".equals(e.getCause().getMessage())) {
                 error = "Persistence failure. Check that the worker name does not already exist.";
             } else {
                 error = ExceptionUtils.catCauses(e, ": ");

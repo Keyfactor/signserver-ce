@@ -131,8 +131,30 @@ public class PropertiesApplierTest extends TestCase {
             + "WORKER42.AUTHCLIENT111.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
             + "WORKER42.AUTHCLIENT111.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
             + "WORKER42.AUTHCLIENT111.SUBJECT.VALUE=1212121212\n"
-            + "WORKER42.AUTHCLIENT111.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
-        
+            + "WORKER42.AUTHCLIENT111.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+    
+            + "WORKER421.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER421.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER421.AUTHCLIENT1.SUBJECT.VALUE=723507815f93666666\n"
+            + "WORKER421.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            + "WORKER421.AUTHCLIENT1.DESCRIPTION= test rule 1\n"
+            
+            + "WORKER421.AUTHCLIENT2.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER421.AUTHCLIENT2.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER421.AUTHCLIENT2.SUBJECT.VALUE=12345678\n"
+            + "WORKER421.AUTHCLIENT2.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            
+            + "WORKER421.AUTHCLIENT11.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER421.AUTHCLIENT11.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER421.AUTHCLIENT11.SUBJECT.VALUE=987654321\n"
+            + "WORKER421.AUTHCLIENT11.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            + "WORKER421.AUTHCLIENT11.DESCRIPTION= test rule 2\n"
+            
+            + "WORKER421.AUTHCLIENT111.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER421.AUTHCLIENT111.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER421.AUTHCLIENT111.SUBJECT.VALUE=1212121212\n"
+            + "WORKER421.AUTHCLIENT111.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
+//        
     /**
      *
      * /**
@@ -142,8 +164,12 @@ public class PropertiesApplierTest extends TestCase {
             = "-WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
             + "-WORKER42.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
             + "-WORKER42.AUTHCLIENT1.SUBJECT.VALUE=12345678\n"
-            + "-WORKER42.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
-    
+            + "-WORKER42.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            
+            + "-WORKER421.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "-WORKER421.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "-WORKER421.AUTHCLIENT1.SUBJECT.VALUE=12345678\n"
+            + "-WORKER421.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
     
     /**
      * Test config with a malformed GENID.
@@ -319,11 +345,25 @@ public class PropertiesApplierTest extends TestCase {
                     MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "987654321", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "test rule 2");
             CertificateMatchingRule cmrToBeAdded4 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
                     MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "1212121212", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+            
+            CertificateMatchingRule cmrToBeAdded11 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "723507815f93666666", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "test rule 1");
+            CertificateMatchingRule cmrToBeAdded21 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "12345678", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+            CertificateMatchingRule cmrToBeAdded31 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "987654321", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "test rule 2");
+            CertificateMatchingRule cmrToBeAdded41 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "1212121212", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
 
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded1));
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded2));
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded3));
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded4));
+            
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded11));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded21));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded31));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded41));
             assertFalse("No errors", applier.hasError());
             
             // test removing an gen2 auth client
@@ -337,6 +377,12 @@ public class PropertiesApplierTest extends TestCase {
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded1));
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded3));
             assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded4));
+            assertFalse("No errors", applier.hasError());
+            
+            assertFalse("Not authorized", applier.isAuthorizedGen2(421, cmrToBeAdded2));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded1));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded3));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(421, cmrToBeAdded4));
             assertFalse("No errors", applier.hasError());
             
         } catch (IOException e) {

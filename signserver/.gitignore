@@ -104,6 +104,8 @@ dist-*/
 /doc/sample-configs/ades.properties
 /doc/sample-configs/fortanix-*
 
+/res/test/test-zone-file-server-side-signer.properties
+
 /indir*/
 /jarsigner-test-files/
 

@@ -45,4 +45,4 @@ SignServer Community is licensed under the LGPL license, please see **[LICENSE](
 
 * [Keyfactor/ansible-ejbca-signserver-playbooks](https://github.com/Keyfactor/ansible-ejbca-signserver-playbooks) 
 * [Keyfactor/signserver-tools](https://github.com/Keyfactor/signserver-tools)
-* [All Keyfactor SignServer repositories](https://github.com/orgs/Keyfactor/repositories?q=signserver)
+* [All Keyfactor SignServer repositories](https://github.com/orgs/Keyfactor/repositories?q=signserver+sort%3Astars)

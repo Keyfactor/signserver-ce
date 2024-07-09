@@ -31,7 +31,9 @@ In our Community we welcome contributions. The Community software is open source
 * Ask the community for ideas: **[SignServer Discussions](https://github.com/Keyfactor/signserver-ce/discussions)**.  
 * Read more in our documentation: **[SignServer Documentation](https://docs.keyfactor.com/signserver)**.
 * See release information: **[SignServer Release Information](https://docs.keyfactor.com/signserver/latest/signserver-release-information)**. 
-* Read more on the open source project website: **[SignServer website](https://www.signserver.org/)**.   
+* Read more on the open source project website: **[SignServer website](https://www.signserver.org/)**. 
+* Download options: **[Download SignServer](https://www.signserver.org/download)**. 
+* Differences between Community and Enterprise: **[SignServer Community vs Enterprise](https://www.signserver.org/community-vs-enterprise/)**. 
 
 ## Commercial Support
 Commercial support is available for **[SignServer Enterprise](https://www.keyfactor.com/products/signserver-enterprise/)**.

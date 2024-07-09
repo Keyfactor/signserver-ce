@@ -8,11 +8,11 @@
 
 [![Discuss](https://img.shields.io/badge/discuss-signserver-ce?style=flat)](https://github.com/Keyfactor/signserver-ce/discussions) 
 
-Welcome to SignServer – the Open Source Signing Software. 
+The open-source signing software **SignServer** digitally signs your documents and code while keeping signature keys secure and workflows easy and auditable. Start securely signing documents and code today.
 
-There are two versions of SignServer: 
-* **SignServer Community** (SignServer CE) - free and open source, OSI Certified Open Source Software, LGPL-licensed subset of SignServer Enterprise
-* **SignServer Enterprise** (SignServer EE) - developed and commercially supported by PrimeKey® Solutions
+SignServer is developed in Java and runs on a JVM such as OpenJDK, available on most platforms, such as Linux and Windows. There are two versions of SignServer: 
+* **[SignServer Community](https://www.signserver.org/)** (SignServer CE) - free and open source, OSI Certified Open Source Software, LGPL-licensed subset of SignServer Enterprise
+* **[SignServer Enterprise](https://www.keyfactor.com/products/signserver-enterprise/)** (SignServer EE) - commercial and Common Criteria certified 
 
 OSI Certified is a certification mark of the Open Source Initiative.
 

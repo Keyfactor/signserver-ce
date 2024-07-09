@@ -26,7 +26,7 @@ You are welcome to send patches, under the LGPLv2.1+ license, as pull requests. 
 * Create a JUnit test case for your change, it may be a simple addition to an existing test. If you do not know how to do this, ask us and we will help you. 
 * If you run into any merge issues, check out this [git tutorial](https://github.com/skills/resolve-merge-conflicts) to help you resolve merge conflicts and other issues.
 
-For instructions on building and developing SignServer, refer to the SignServer documentation on [Developer Reference](https://doc.primekey.com/signserver/signserver-reference/developer-reference).
+For instructions on building and developing SignServer, refer to the SignServer documentation on [Developer Reference](https://docs.keyfactor.com/signserver/latest/developer-reference).
 
 #### Self-review
 

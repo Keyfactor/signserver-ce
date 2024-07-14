@@ -273,7 +273,7 @@ public class ModulesTestCase {
     private final TestUtils testUtils = new TestUtils();
     protected static Random random = new Random(1234);
 
-    private boolean useRestWorkerSession = false;
+    public boolean useRestWorkerSession = false;
 
     public ModulesTestCase() {
         final Properties defaultConfig = new Properties();
@@ -529,13 +529,6 @@ public class ModulesTestCase {
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
-    public void addSigner(final String className,
-            final int signerId, final String signerName, final int cryptoTokenId, final String cryptoTokenName, final boolean autoActivate)
-            throws FileNotFoundException {
-        addP12DummySigner(className, signerId, signerName, cryptoTokenId, cryptoTokenName,
-                new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
-    }
-
     /**
      * Adds a test Signer with default p12 keystore using configuration of SignerConfigurationBuilder. Defaults are:
      * <ul>
@@ -658,17 +651,6 @@ public class ModulesTestCase {
         );
     }
 
-    public void addP12DummySigner(
-            final String className,
-            final int signerId, final String signerName, final int cryptoTokenId, final String cryptoTokenName,
-            final File keystore, final String password, final String alias
-    ) {
-        addDummySigner(
-                className, "org.signserver.server.cryptotokens.P12CryptoToken",
-                signerId, signerName, cryptoTokenId, cryptoTokenName, keystore, password, alias
-        );
-    }
-
     public void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addDummySigner(className, "org.signserver.server.cryptotokens.JKSCryptoToken", signerId, signerName, keystore, password, alias);
     }
@@ -723,92 +705,6 @@ public class ModulesTestCase {
         } catch (InvalidWorkerIdException ex) {
             fail("Worker was not added successfully: " + ex.getMessage());
         }
-    }
-
-    public void addDummySigner(
-            final String className, final String cryptoTokenClassName,
-            final int signerId, final String signerName, final int CryptoTokenId, final String CryptoTokenName,
-            final File keystore, final String password, final String alias
-    ) {
-        addCryptoToken(cryptoTokenClassName, CryptoTokenId, CryptoTokenName, keystore, password);
-        HashMap<String, String> properties = new HashMap<>();
-        properties.put(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
-        properties.put(KEY_IMPL_CLASS, className);
-        properties.put(KEY_NAME, signerName);
-        properties.put(KEY_AUTH_TYPE, VALUE_NO_AUTH);
-        properties.put("CRYPTOTOKEN", CryptoTokenName);
-
-        if (alias != null) {
-            properties.put(KEY_DEFAULT_KEY, alias);
-        }
-
-        /* when using the REST interface, call the POST operation to
-         * create the worker directly, as the corresponding update operation
-         * for REST assumes a worker already exists with that ID
-         */
-        if (useRestWorkerSession) {
-            final JSONObject body = new JSONObject();
-            final JSONObject props = new JSONObject();
-
-            for (final String property : properties.keySet()) {
-                props.put(property, properties.get(property));
-            }
-
-            body.put("properties", props);
-
-            callRest(Method.POST, 201, "", "/workers/" + signerId, body);
-        } else {
-            getWorkerSession().updateWorkerProperties(signerId, properties, new LinkedList<>());
-        }
-
-        getWorkerSession().reloadConfiguration(signerId);
-
-        try {
-            assertNotNull("Check signer available",
-                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)));
-        } catch (InvalidWorkerIdException ex) {
-            fail("Worker was not added successfully: " + ex.getMessage());
-        }
-    }
-
-    private void addCryptoToken(final String cryptoTokenClassName, final int CryptoTokenId, final String CryptoTokenName, final File keystore, final String password) {
-        HashMap<String, String> properties = new HashMap<>();
-
-        properties.put(KEY_CRYPTO_TOKEN_IMPL_CLASS, cryptoTokenClassName);
-        properties.put("IMPLEMENTATION_CLASS", "org.signserver.server.signers.CryptoWorker");
-        if (password != null) {
-            properties.put(KEY_KEYSTORE_PASSWORD, password);
-
-        }
-        properties.put(KEY_KEYSTORE_PATH, keystore.getAbsolutePath());
-        properties.put("KEYSTORETYPE", "PKCS12");
-        properties.put(KEY_NAME, CryptoTokenName);
-        properties.put(WorkerConfig.TYPE, "CRYPTO_WORKER");
-
-        if (useRestWorkerSession) {
-            final JSONObject body = new JSONObject();
-            final JSONObject props = new JSONObject();
-
-            for (final String property : properties.keySet()) {
-                props.put(property, properties.get(property));
-            }
-
-            body.put("properties", props);
-
-            callRest(Method.POST, 201, "", "/workers/" + CryptoTokenId, body);
-        } else {
-            getWorkerSession().updateWorkerProperties(CryptoTokenId, properties, new LinkedList<>());
-        }
-
-        getWorkerSession().reloadConfiguration(CryptoTokenId);
-
-        try {
-            assertNotNull("Check signer available",
-                    getWorkerSession().getStatus(new WorkerIdentifier(CryptoTokenId)));
-        } catch (InvalidWorkerIdException ex) {
-            fail("Worker was not added successfully: " + ex.getMessage());
-        }
-
     }
 
     /**

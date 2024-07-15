@@ -49,8 +49,21 @@ public class SetPropertiesHelper {
     private List<AuthClientEntry> addAuthClientGen2Entries = new ArrayList<>();
     private List<AuthClientEntry> removeAuthClientGen2Entries = new ArrayList<>();
 
-    public SetPropertiesHelper(PrintStream out) {
+    private static final String WORKER_PROPERTY_MASK_PLACEHOLDER = "_MASKED_";
+    private static final Set<String> DEFAULT_MASKED_PROPERTIES;
+
+    private final Properties configuration;
+
+    static {
+        DEFAULT_MASKED_PROPERTIES =
+                new HashSet<>(Arrays.asList("PIN", "KEYSTOREPASSWORD",
+                                            "KEYDATA"));
+    }
+
+    public SetPropertiesHelper(final PrintStream out,
+                               final Properties configuration) {
         this.out = out;
+        this.configuration = configuration;
     }
 
     public void process(Properties properties) throws RemoteException, Exception {
@@ -267,10 +280,42 @@ public class SetPropertiesHelper {
                     }
                     helper.getWorkerSession().uploadSignerCertificateChain(workerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
                 } else {
-                    out.println("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerId);
+                    final String value =
+                            shouldMaskProperty(propertykey) ?
+                            WORKER_PROPERTY_MASK_PLACEHOLDER: propertyvalue;
+
+                    out.println("Setting the property " + propertykey + " to " + value + " for worker " + workerId);
                     helper.getWorkerSession().setWorkerProperty(workerId, propertykey, propertyvalue);
                 }
             }
+        }
+    }
+
+    /**
+     * Determine if a worker property should be masked out in
+     * sensitive contexts such as logging and dumping.
+     * The list of masked properties are determined at deploy time.
+     * Also, properties prefixed or postfixed with a _ is considered as well.
+     * 
+     * @param propertyName
+     * @return True if property should be masked
+     */
+    private boolean shouldMaskProperty(final String propertyName) {
+        final String propertyNameTrimmed =
+                StringUtils.removeEnd(StringUtils.removeStart(propertyName, "_"), "_");
+
+        return getMaskedProperties(configuration).contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
+    }
+
+    private Set<String> getMaskedProperties(final Properties configuration) {
+        final String maskedProperties =
+                configuration.getProperty("admincli.maskedworkerproperties");
+
+        // if configuration is unset, or empty, use default value
+        if (StringUtils.isNotEmpty(maskedProperties)) {
+            return new HashSet<>(Arrays.asList(Arrays.stream(maskedProperties.split(",")).map(String::trim).toArray(String[]::new)));
+        } else {
+            return DEFAULT_MASKED_PROPERTIES;
         }
     }
 

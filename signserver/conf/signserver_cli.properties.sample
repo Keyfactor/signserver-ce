@@ -30,3 +30,8 @@
 # Database password
 #dbcli.database.password=
 #dbcli.database.password=foo123
+
+# Masked worker properties, whose value will not be
+# echoed by the signserver setproperties command
+#admincli.maskedworkerproperties=PIN,KEYSTOREPASSWORD,KEYDATA
+

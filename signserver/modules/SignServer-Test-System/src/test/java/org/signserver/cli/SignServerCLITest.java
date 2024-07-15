@@ -301,6 +301,36 @@ public class SignServerCLITest extends ModulesTestCase {
     }
 
     /**
+     * Test that masked worker properties are not exposed by the setproperties
+     * command.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test01SetPropertiesMasked() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test-masked-properties.properties").exists());
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test-masked-properties.properties"));
+            // expect masked properties not showinhg the actual value
+            assertPrinted("", cli.getOut(), "Setting the property PIN to _MASKED_ for worker 9999");
+            assertPrinted("", cli.getOut(), "Setting the property KEYSTOREPASSWORD to _MASKED_ for worker 9999");
+            assertPrinted("", cli.getOut(), "Setting the property KEYDATA to _MASKED_ for worker 9999");
+
+            // make sure the actual values are not printed
+            assertNotPrinted("", cli.getOut(), "Setting the property PIN to foo123 for worker 9999");
+            assertNotPrinted("", cli.getOut(), "Setting the property KEYSTOREPASSWORD to foo123 for worker 9999");
+            assertNotPrinted("", cli.getOut(), "Setting the property KEYDATA to private-key for worker 9999");
+        } finally {
+            // remove worker
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("removeworker", "9999"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("reload", "9999"));
+        }
+    }
+
+    /**
      * Test that applying a properties file with a new worker with the same
      * name as an existing worker fails.
      */

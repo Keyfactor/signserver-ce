@@ -38,7 +38,7 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
                     + "Example 1: signserver setproperties mysettings.properties\n"
                     + "Example 2: signserver setproperties -host node3.someorg.com mysettings.properties\n\n";
     }
-
+    
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 1) {
@@ -46,7 +46,8 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
         }
         try {
 
-            SetPropertiesHelper helper = new SetPropertiesHelper(getOutputStream());
+            SetPropertiesHelper helper =
+                    new SetPropertiesHelper(getOutputStream(), getConfiguration());
             Properties properties = loadProperties(args[0]);
 
             getOutputStream().println("Configuring properties as defined in the file : " + args[0]);

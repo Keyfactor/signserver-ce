@@ -76,6 +76,6 @@ public class ApkHelper {
      */
     public static void writeSignatureFile(Manifest manifest, OutputStream out,
                                            String digestAlgorithm, String createdBy) throws IOException, GeneralSecurityException {
-        SignApk.writeSignatureFile(manifest, out, digestAlgorithm, createdBy);
+        SignApk.writeSignatureFile(manifest, null, out, digestAlgorithm, createdBy);
     }
 }

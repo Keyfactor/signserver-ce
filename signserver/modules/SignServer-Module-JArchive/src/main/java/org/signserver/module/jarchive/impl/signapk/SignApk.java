@@ -316,7 +316,7 @@ class SignApk {
         }
     }
     /** Write a .SF file with a digest of the specified manifest. */
-    static void writeSignatureFile(Manifest manifest, OutputStream out,
+    static void writeSignatureFile(Manifest manifest, Manifest sfManifest, OutputStream out,
                                            String digestAlgorithm, String createdBy)
         throws IOException, GeneralSecurityException {
         Manifest sf = new Manifest();
@@ -364,8 +364,17 @@ class SignApk {
             print.print("\r\n");
             print.flush();
             Attributes sfAttr = new Attributes();
-            sfAttr.putValue(digestAlgorithm + "-Digest",
-                            new String(Base64.encode(md.digest()), "ASCII"));
+
+            // If the sfManifest file is not null it means jar file already signed, so we copy the digest values from the
+            // first signature SF file instead of recalculate it.
+            String digestValue;
+            if (sfManifest != null) {
+                digestValue = sfManifest.getEntries().get(entry.getKey()).getValue(digestAlgorithm + "-Digest");
+            } else {
+                digestValue = new String(Base64.encode(md.digest()), "ASCII");
+            }
+
+            sfAttr.putValue(digestAlgorithm + "-Digest", digestValue);
             sf.getEntries().put(entry.getKey(), sfAttr);
         }
         CountOutputStream cout = new CountOutputStream(out);
@@ -621,7 +630,7 @@ class SignApk {
                         throw new UnsupportedOperationException("TODO: signFile modified to not write the signature. Handle here!"); // TODO !!!!!
                     }
                     // for now just add a dummy 0 alignment argument, but this is never called...
-                    signFile(manifest, inputJar,
+                    signFile(manifest, inputJar, null,
                             new X509Certificate[][]{ certificateChain },
                             new PrivateKey[]{ privateKey },
                             provider,
@@ -717,6 +726,7 @@ class SignApk {
         temp.writeTo(outputStream);
     }
     static void signFile(Manifest manifest, JarFile inputJar,
+                                 Manifest sfManifest,
                                  X509Certificate[][] certificateChains, PrivateKey[] privateKey,
                                  Provider provider,
                                  JarOutputStream outputJar,
@@ -743,7 +753,7 @@ class SignApk {
             if (digestAlg == null) {
                 digestAlg = (getDigestAlgorithm(certificateChains[k][0]) == USE_SHA256) ? "SHA-256" : "SHA1";
             }
-            writeSignatureFile(manifest, baos, digestAlg, createdBy);
+            writeSignatureFile(manifest, sfManifest, baos, digestAlg, createdBy);
             byte[] signedData = baos.toByteArray();
             outputJar.write(signedData);
             // CERT.{EC,RSA} / CERT#.{EC,RSA}

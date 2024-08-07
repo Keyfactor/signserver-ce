@@ -27,7 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <dss.framework.version>5.9</dss.framework.version>
-        <rest-assured.version>5.3.0</rest-assured.version>
+        <rest-assured.version>5.5.0</rest-assured.version>
     </properties>
 
     <profiles>
@@ -572,10 +572,9 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.12.6</version>
+                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+                <version>2.17.0</version>
             </dependency>
-            
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>

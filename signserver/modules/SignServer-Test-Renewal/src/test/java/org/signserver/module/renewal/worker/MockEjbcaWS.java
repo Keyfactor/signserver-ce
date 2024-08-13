@@ -17,7 +17,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.certificates.certificate.request.PKCS10RequestMessage;

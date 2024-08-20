@@ -15,6 +15,21 @@ XCU_VERSION=0.10.5
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-${XCU_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-${XCU_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar -Dclassifier=sources
 
+# Install DeployTools dependencies
+DEPLOYTOOLS_VERSION=2.3
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Maven-${DEPLOYTOOLS_VERSION}.jar" -DgroupId=org.signserver.deploytools.maven -DartifactId=DeployTools-Maven -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/DeployTools-Maven-${DEPLOYTOOLS_VERSION}-sources.jar" -DgroupId=org.signserver.deploytools.maven -DartifactId=DeployTools-Maven -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar -Dclassifier=sources
+
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-CLI-${DEPLOYTOOLS_VERSION}.jar" -DgroupId=org.signserver.deploytools.cli -DartifactId=DeployTools-CLI -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/DeployTools-CLI-${DEPLOYTOOLS_VERSION}-sources.jar" -DgroupId=org.signserver.deploytools.cli -DartifactId=DeployTools-CLI -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar -Dclassifier=sources
+
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Ant-${DEPLOYTOOLS_VERSION}.jar" -DgroupId=org.signserver.deploytools.ant -DartifactId=DeployTools-Ant -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/DeployTools-Ant-${DEPLOYTOOLS_VERSION}-sources.jar" -DgroupId=org.signserver.deploytools.ant -DartifactId=DeployTools-Ant -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar -Dclassifier=sources
+
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEPLOYTOOLS_VERSION}.jar" -DgroupId=org.signserver.deploytools.common -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/DeployTools-Common-${DEPLOYTOOLS_VERSION}-sources.jar" -DgroupId=org.signserver.deploytools.common -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar -Dclassifier=sources
+
+
 # Add next group of dependencies here
 OPENPDF_VERSION=1.3.30signserver6.2.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/openpdf-${OPENPDF_VERSION}.jar" -DgroupId=org.signserver.librepdf -DartifactId=openpdf -Dversion=${OPENPDF_VERSION} -Dpackaging=jar

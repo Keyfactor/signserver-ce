@@ -15,6 +15,7 @@ package org.signserver.module.jarchive.impl.signapk;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,6 +25,7 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -137,6 +139,7 @@ public abstract class SignApkSigner {
         final int alignment = zipAlign ? 4 : 0;
 
         JarFile inputJar = null;
+        JarFile inputJarNotChanged;
         FileOutputStream outputFile = null;
         try {
             // TODO: Future: Make optional:
@@ -146,7 +149,9 @@ public abstract class SignApkSigner {
             long timestamp = certificateChain[0].getNotBefore().getTime() + 3600L * 1000;
 
             inputJar = new JarFile(input, false);  // Don't verify.
+            inputJarNotChanged = new JarFile(input, false);  // Don't verify.
             outputFile = new FileOutputStream(output);
+            Manifest sfManifest = null;
             if (signWholeFile) {
                 SignApk.signWholeFile(inputJar, /*publicKeyFile*/ null,
                         certificateChain, privateKey, provider, outputFile, signatureAlgorithm, digestAlgorithm, timeStamping, keepSignatures, replaceSignature, signatureName, CREATED_BY);
@@ -216,19 +221,56 @@ public abstract class SignApkSigner {
                     // Put the manifest and count its length
                     jarOut.putNextEntry(mfEntry);
                     cout.resetByteCount();
-                    manifest.write(jarOut);
+
+                    boolean inputJarContainsSignature = inputJarNotChanged.stream()
+                            .map(JarEntry::getName)
+                            .anyMatch(name -> name.startsWith("META-INF/") && name.endsWith(".SF"));
+                    Manifest inputJarManifest = new Manifest();
+                    if (inputJarContainsSignature) {
+                        inputJarManifest = inputJarNotChanged.getManifest();
+                    }
+
+                    boolean manifestsAreEqual = manifest.equals(inputJarManifest);
+
+                    if (inputJarContainsSignature && manifestsAreEqual) {
+                        // Jar file already signed and digest of all files are same.
+                        // Manifest.MF file in the input jar file is equal to the calculated one.
+                        // DSS-2796
+                        // To fix the verification failure of the first signature, copy the MANIFEST.MF from inputJar to outputJar.
+                        int num;
+                        byte[] buffer = new byte[4096];
+                        final JarEntry inEntry = new JarEntry("META-INF/MANIFEST.MF");
+                        InputStream data = inputJar.getInputStream(inEntry);
+                        while ((num = data.read(buffer)) > 0) {
+                            jarOut.write(buffer, 0, num);
+                            offset += num;
+                        }
+                        jarOut.flush();
+
+                        // Extract the first signature SF file content
+                        Enumeration<JarEntry> entries = inputJarNotChanged.entries();
+                        while (entries.hasMoreElements()) {
+                            JarEntry entry = entries.nextElement();
+                            if (entry.getName().endsWith(".SF")) {
+                                sfManifest = new Manifest(inputJarNotChanged.getInputStream(entry));
+                                break;
+                            }
+                        }
+                    } else {
+                        manifest.write(jarOut);
+                    }
+
                     jarOut.closeEntry();
                     offset += cout.getByteCount();
 
                     // Copy the rest of the files
                     SignApk.copyFiles(offset, manifest, inputJar, jarOut, timestamp, alignment, keepSignatures, replaceSignature, signatureName);
-                    
-                    SignApk.signFile(manifest, inputJar,
-                                     new X509Certificate[][]{certificateChain},
-                                     new PrivateKey[]{privateKey}, provider,
-                                     jarOut, signatureAlgorithm, 
-                                     digestAlgorithm, timeStamping,
-                                     keepSignatures, signatureName, CREATED_BY);
+                    SignApk.signFile(manifest, inputJar, sfManifest,
+                            new X509Certificate[][]{certificateChain},
+                            new PrivateKey[]{privateKey}, provider,
+                            jarOut, signatureAlgorithm,
+                            digestAlgorithm, timeStamping,
+                            keepSignatures, signatureName, CREATED_BY);
                 }
             }
         } finally {

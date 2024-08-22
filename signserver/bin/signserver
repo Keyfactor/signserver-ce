@@ -98,6 +98,7 @@ fi
 
 if [ -f $APPSRV_HOME/bin/standalone.sh ]; then
     CP="$APPSRV_HOME/bin/client/jboss-client.jar":$CP
+    CP="$APPSRV_HOME/bin/client/jboss-cli-client.jar":$CP
     CP="${SIGNSRV_HOME}/conf/jboss7":$CP
 fi
 

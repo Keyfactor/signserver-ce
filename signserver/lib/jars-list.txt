@@ -113,7 +113,7 @@ cb914bfe888da7d9162e965ac8b0d6f28f2f32eca944a00fbbf6dd3cf1aacc13  ./ext/jboss-lo
 a310a50b9bdc44aaf36362dc9bb212235a147ffa8ef72dc9544a39c329eabbc3  ./ext/jboss-transaction-api_1.2_spec-1.1.1.Final.jar;   "Hibernate dependencies"
 90e44ea0dba911fe23b7cc4554ea8761e92dfd803401e3888fe6eb10a07944e7  ./ext/jetty-http-9.4.54.v20240208.jar;                  "Eclipse Jetty"
 b73b26c5a531b02af0d775f0574c2889665449168723e4322d36de6e8e74848f  ./ext/jetty-io-9.4.51.v20230217.jar;                    "Eclipse Jetty"
-72f19a7f88e91244d5170045d7d44143508845b01196f87b2a1b56a5ad16d378  ./ext/jetty-server-9.4.51.v20230217.jar;                "Eclipse Jetty"
+299b992e50c7d9871b450fa33aa0e36d5641218ae10ffbf4449f59d845fe2e22  ./ext/jetty-server-12.0.12.jar;                         "Eclipse Jetty"
 9fac4168b1ae543c5c29f48008cd118c70779aa701d60f37f52b57c104b6536e  ./ext/jetty-util-9.4.51.v20230217.jar;                  "Eclipse Jetty"
 bb806aa583bafce595a780f9fe8876e583a24067758688022027840f21b2723b  ./ext/jjwt-api-0.11.5.jar;                              "Java JWT"
 01269a421e89c611a5a91103f5e7c8d4d014fc8974214f083a247642020807a5  ./ext/jjwt-impl-0.11.5.jar;                             "Java JWT"

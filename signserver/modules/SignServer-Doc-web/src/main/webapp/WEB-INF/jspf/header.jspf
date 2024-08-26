@@ -1,5 +1,5 @@
 <%@page import="org.signserver.common.CompileTimeSettings"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page pageEncoding="UTF-8" %>
 
     <p class="logo">

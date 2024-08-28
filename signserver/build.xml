@@ -14,7 +14,7 @@
 <!-- Version: $Id$ -->
 <project xmlns:if="ant:if" name="signserver" default="usage" basedir=".">
     <description>SignServer targets.</description>
-    <property name="deploytools.version" value="2.2.1"/>
+    <property name="deploytools.version" value="2.3"/>
 
     <!-- copy in from ../signserver-custom -->
     <property name="customsignserver.home" location="${basedir}/../signserver-custom" />

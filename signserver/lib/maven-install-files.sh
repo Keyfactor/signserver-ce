@@ -38,9 +38,8 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/Deplo
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEPLOYTOOLS_VERSION}.pom" -DgroupId=org.signserver.deploytools -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=pom
 
 # Add next group of dependencies here
-OPENPDF_VERSION=1.3.30signserver6.2.0
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/openpdf-${OPENPDF_VERSION}.jar" -DgroupId=org.signserver.librepdf -DartifactId=openpdf -Dversion=${OPENPDF_VERSION} -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/openpdf-${OPENPDF_VERSION}-sources.jar" -DgroupId=org.signserver.librepdf -DartifactId=openpdf -Dversion=${OPENPDF_VERSION} -Dpackaging=jar -Dclassifier=sources
+XADES4J_VERSION=2.2.1signserver7.0.0
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/xades4j-${XADES4J_VERSION}.jar" -DgroupId=com.googlecode.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar
 
 CESECORE_VERSION=7.0.0.1signserver7.0.0
 # cesecore-common jar

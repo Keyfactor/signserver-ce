@@ -628,6 +628,26 @@
                 <artifactId>dss-crl-parser-x509crl</artifactId>
                 <version>${dss.framework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-xml-common</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>specs-xmldsig</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>validation-policy</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-xml-utils</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>

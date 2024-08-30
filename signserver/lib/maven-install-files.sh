@@ -38,7 +38,7 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/Deplo
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEPLOYTOOLS_VERSION}.pom" -DgroupId=org.signserver.deploytools -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=pom
 
 # Add next group of dependencies here
-XADES4J_VERSION=2.2.1signserver7.0.0
+XADES4J_VERSION=2.2.1-signserver7.0.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/xades4j-${XADES4J_VERSION}.jar" -DgroupId=com.googlecode.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar
 
 CESECORE_VERSION=7.0.0.1signserver7.0.0

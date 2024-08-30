@@ -40,6 +40,7 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEP
 # Add next group of dependencies here
 XADES4J_VERSION=2.2.1-signserver7.0.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/xades4j-${XADES4J_VERSION}.jar" -DgroupId=com.googlecode.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/xades4j-${XADES4J_VERSION}-sources.jar" -DgroupId=com.googlecode.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar -Dclassifier=sources
 
 CESECORE_VERSION=7.0.0.1signserver7.0.0
 # cesecore-common jar

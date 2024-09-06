@@ -3,7 +3,7 @@
 "ASM";                        "BSD-3-Clause";                                  "https://asm.ow2.io/";                                  "Dependency of CXF and JackNJI11";     "No.";
 "Android";                    "Apache 2.0";                                    "https://android.googlesource.com/";                    "Dependency of the APK Signer";        "No.";
 "Apache CXF";                 "Apache 2.0";                                    "https://cxf.apache.org/";                              "Needed for client CLI webservices on Java 10+";  "No." ;
-"Apache Commons";             "Apache 2.0";                                    "http://commons.apache.org";                            "Core dependency used for multiple tasks such as file handling, configuration and collections support.";  "No.";
+"Apache Commons";             "Apache 2.0";                                    "http://commons.apache.org";                            "Core dependency used for multiple tasks such as file handling, configuration and collections support.";  "Yes, commons-fileupload 1.5 updated with JEE 10 dependencies.";
 "Apache Geronimo";            "Apache 2.0";                                    "https://geronimo.apache.org/";                         "Needed for client CLI webservices on Java 10+";  "No." ;
 "Apache HttpComponents";      "Apache 2.0";                                    "https://hc.apache.org";                                "Dependency of EJBCA Peer Connectors" ;  "No." ;
 "Apache POI";                 "Apache 2.0";                                    "https://poi.apache.org";                               "Dependency used for signing MSI installers.";  "Yes. Fixed checksum calculation DSS-2158.";

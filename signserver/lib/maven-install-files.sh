@@ -58,8 +58,9 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/cesecore-entity-${CESECO
 JACKNJI11_VERSION=1.2.7
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/jacknji11-${JACKNJI11_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=jacknji11 -Dversion=${JACKNJI11_VERSION} -Dpackaging=jar
 
-FILEUPLOAD_VERSION=1.5signserver7.0.0
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/commons-fileupload-${FILEUPLOAD_VERSION}.jar" -DgroupId=commons-fileupload -DartifactId=commons-fileupload -Dversion=${FILEUPLOAD_VERSION} -Dpackaging=jar
+FILEUPLOAD_VERSION=1.5-signserver7.0.0
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/commons-fileupload-${FILEUPLOAD_VERSION}.jar" -DgroupId=org.signserver.commons-fileupload -DartifactId=commons-fileupload -Dversion=${FILEUPLOAD_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/commons-fileupload-${FILEUPLOAD_VERSION}-sources.jar" -DgroupId=org.signserver.commons-fileupload -DartifactId=commons-fileupload -Dversion=${FILEUPLOAD_VERSION} -Dpackaging=jar -Dclassifier=sources
 
 # Install EE dependencies as well if available
 if [ -f "${DIR}/maven-install-files-ee.sh" ]; then

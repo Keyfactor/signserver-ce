@@ -141,9 +141,9 @@
                 <version>1.2</version> <!-- Old but latest 1.x -->
             </dependency>
             <dependency>
-                <groupId>commons-fileupload</groupId>
+                <groupId>org.signserver.commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.5signserver7.0.0</version>
+                <version>1.5-signserver7.0.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>

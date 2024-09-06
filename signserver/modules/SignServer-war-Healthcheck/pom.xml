@@ -28,7 +28,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>commons-fileupload</groupId>
+            <groupId>org.signserver.commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
         <dependency>

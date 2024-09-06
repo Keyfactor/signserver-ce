@@ -623,7 +623,15 @@ public class CryptoTokenHelper {
                                                 String provider) throws OperatorCreationException, CertificateException {
         final long currentTime = new Date().getTime();
         final Date firstDate = new Date(currentTime - backdate * 1000);
-        final Date lastDate = new Date(currentTime + validity * 1000);
+        final Date lastDate;
+
+        // If the validity is greater than the maxYear variable, which java.util.Date translates to 99991231235959, it is set to maxYear instead.
+        final long maxYear = 253402297199L;
+        if (validity > maxYear) {
+            lastDate = new Date(maxYear * 1000);
+        } else {
+            lastDate = new Date(currentTime + validity * 1000);
+        }
 
         // Add all mandatory attributes
         if (LOG.isDebugEnabled()) {

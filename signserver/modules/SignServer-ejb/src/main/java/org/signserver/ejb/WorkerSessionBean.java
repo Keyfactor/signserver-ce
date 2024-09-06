@@ -464,7 +464,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                     final long validity = Long.parseLong(validityValue);
                     params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY, validity);
                 } catch (NumberFormatException ex) {
-                    throw new IllegalArgumentException("Incorrect nummeric value for property " + CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY + ": " + ex.getLocalizedMessage());
+                    throw new IllegalArgumentException("Incorrect numeric value for property " + CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY + ": " + ex.getLocalizedMessage());
                 }
             }
 

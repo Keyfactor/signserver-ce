@@ -13,8 +13,8 @@
 package org.signserver.server.key.entities;
 
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 /**
  * Service for interacting with the key data entities.

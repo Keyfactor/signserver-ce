@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
@@ -55,7 +55,7 @@ public class NoRevocationCheckingValidator extends BaseValidator {
      * @param em
      * @throws org.signserver.common.SignServerException
      * @see org.signserver.validationservice.server.IValidator#init(int, int,
-     * java.util.Properties, javax.persistence.EntityManager,
+     * java.util.Properties, jakarta.persistence.EntityManager,
      * org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override

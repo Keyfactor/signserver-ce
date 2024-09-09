@@ -15,7 +15,7 @@ package org.signserver.server;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.cesecore.util.CertTools;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
@@ -37,7 +37,7 @@ public class DummyAuthorizer implements IAuthorizer {
      * Initialize a DummyAuthorizer.
      * 
      * @throws org.signserver.common.SignServerException
-     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)

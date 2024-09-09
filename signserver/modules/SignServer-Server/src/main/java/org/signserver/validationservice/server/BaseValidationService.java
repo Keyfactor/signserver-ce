@@ -15,7 +15,7 @@ package org.signserver.validationservice.server;
 import java.util.*;
 
 import java.util.Map.Entry;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;
@@ -49,7 +49,7 @@ public abstract class BaseValidationService implements IValidationService {
     private ICertPurposeChecker certTypeChecker;
 
     /**
-     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
+     * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) {

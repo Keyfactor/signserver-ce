@@ -312,34 +312,28 @@ database.nodb.location              = ${database.nodb.location}
         <fail unless="datasource.jndi-name" message="Bug in project setup: Must specify a default value for datasource.jndi-name, this should have been done after including this file."/>
         <echo message="Database type:      ${database.name}"/>
         <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="db2"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="derby"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="hsqldb"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.InformixDialect">
-            <equals arg1="${database.name}" arg2="informix"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.IngresDialect">
-            <equals arg1="${database.name}" arg2="ingres"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="mssql"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="mysql"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="oracle"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="postgres"/>
         </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
+        <condition property="hibernate.dialect" value="">
             <equals arg1="${database.name}" arg2="sybase"/>
         </condition>
         <condition property="hibernate.dialect" value="dummy">
@@ -489,7 +483,6 @@ app.edition.lc=${app.edition.lc}
                 <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.12.jar"/>
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
-                <pathelement path="${basedir}/lib/ext/ext/jakarta.jakartaee-api-8.0.0-LocalStrings.jar"/>
             </classpath>
         </junit>
     </target>

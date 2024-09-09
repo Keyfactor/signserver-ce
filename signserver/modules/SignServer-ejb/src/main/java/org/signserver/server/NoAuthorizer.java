@@ -14,7 +14,7 @@ package org.signserver.server;
 
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
@@ -32,7 +32,7 @@ public class NoAuthorizer implements IAuthorizer {
 
     /**
      * @throws org.signserver.common.SignServerException
-     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)

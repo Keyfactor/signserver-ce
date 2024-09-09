@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Common interface containing all the session bean methods.

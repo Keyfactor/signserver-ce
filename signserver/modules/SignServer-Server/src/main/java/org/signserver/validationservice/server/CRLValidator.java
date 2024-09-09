@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.signserver.server.cesecore.util.CertTools;
@@ -56,7 +56,7 @@ public class CRLValidator extends BaseValidator {
      * @param props
      * @param em
      * @throws org.signserver.common.SignServerException
-     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
+     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, jakarta.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(int workerId, int validatorId, Properties props, EntityManager em) throws SignServerException {

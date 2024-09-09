@@ -1167,7 +1167,7 @@ public class ModulesTestCase {
         SignServerUtil.installBCProvider();
         HashMap<String, String> ret = new HashMap<>();
 
-        KeyPair keyPair = CryptoUtils.generateRSA(1024);
+        KeyPair keyPair = CryptoUtils.generateRSA(2048);
         X509Certificate[] chain = generateCertificateIssuedByDSSRootCA10(keyPair, "SHA256withRSA", "ModulesTestCase CN", null);
 
         KeyStore ks = KeyStore.getInstance("PKCS12");

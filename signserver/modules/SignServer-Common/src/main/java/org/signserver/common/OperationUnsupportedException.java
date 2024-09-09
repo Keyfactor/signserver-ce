@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.common;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Exception thrown when a runtime implementation doesn't support a given operation.

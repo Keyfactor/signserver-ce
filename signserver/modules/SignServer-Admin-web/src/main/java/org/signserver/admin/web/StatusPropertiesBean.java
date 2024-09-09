@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,11 +21,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+
+import jakarta.faces.annotation.ManagedProperty;
+import jakarta.faces.view.ViewScoped;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -42,9 +48,9 @@ import static org.signserver.common.SignServerConstants.DISABLED;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named("statusPropertiesBean")
 @ViewScoped
-public class StatusPropertiesBean {
+public class StatusPropertiesBean implements Serializable {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(StatusPropertiesBean.class);
@@ -59,9 +65,11 @@ public class StatusPropertiesBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
-    
+
+    @Inject
     @ManagedProperty("#{text}")
     private ResourceBundle text;
 

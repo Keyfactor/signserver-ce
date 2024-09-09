@@ -14,7 +14,7 @@ package org.signserver.adminws;
 
 import java.util.Date;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 import org.signserver.server.cryptotokens.TokenEntry;
 
 /**

@@ -16,8 +16,8 @@ package org.signserver.web.pub.cluster;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 

@@ -13,11 +13,11 @@
 package org.signserver.ejb.worker.impl;
 
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Singleton;
-import javax.persistence.EntityManager;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.ConcurrencyManagementType;
+import jakarta.ejb.Singleton;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerIdentifier;

@@ -25,10 +25,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Optional;
-import javax.ejb.EJBException;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.xml.ws.soap.SOAPFaultException;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJBException;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
@@ -46,7 +48,7 @@ import org.signserver.common.InvalidWorkerIdException;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class CertificatesBulkBean extends BulkBean {
 

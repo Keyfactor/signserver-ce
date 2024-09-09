@@ -38,7 +38,7 @@ if exist %APPSRV_HOME%\client\jbossall-client.jar  (
 )
 
 if exist %APPSRV_HOME%\bin\standalone.bat  (
-    set JEE_CLASSPATH=%SIGNSRV_HOME%\conf\jboss7;%APPSRV_HOME%\bin\client\jboss-client.jar
+    set JEE_CLASSPATH=%SIGNSRV_HOME%\conf\jboss7;%APPSRV_HOME%\bin\client\jboss-client.jar;%APPSRV_HOME%\bin\client\jboss-cli-client.jar
 )
 
 set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%

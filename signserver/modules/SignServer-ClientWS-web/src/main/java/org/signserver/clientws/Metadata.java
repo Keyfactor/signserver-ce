@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.clientws;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlValue;
 
 /**
  * Representation of additional request or response meta data in a key value 

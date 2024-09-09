@@ -14,7 +14,7 @@ package org.signserver.validationservice.server;
 
 import java.util.LinkedList;
 import java.util.List;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -53,7 +53,7 @@ public class ValidationServiceWorker extends BaseProcessable {
      * @param config Worker configuration
      * @param workerContext Worker context
      * @param workerEntityManager Enitity manager
-     * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {

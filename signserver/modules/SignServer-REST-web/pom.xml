@@ -26,7 +26,7 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>8.0.0</version>
+            <version>10.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -47,10 +47,6 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.jws</groupId>
-            <artifactId>jakarta.jws-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

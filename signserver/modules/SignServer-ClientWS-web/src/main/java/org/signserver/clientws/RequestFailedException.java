@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.clientws;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Representation of a failure likely caused by the client not providing a 

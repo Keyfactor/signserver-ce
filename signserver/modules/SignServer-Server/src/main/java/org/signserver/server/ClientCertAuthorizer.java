@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.certificates.util.DNFieldExtractor;
 import org.cesecore.util.CertTools;
@@ -56,7 +56,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
      * @param workerConfig Worker configuration
      * @throws org.signserver.common.SignServerException
      * @see org.signserver.server.IAuthorizer#init(int,
-     * org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
+     * org.signserver.common.WorkerConfig, jakarta.persistence.EntityManager)
      */
     @Override
     public void init(final int workerId, final WorkerConfig workerConfig,

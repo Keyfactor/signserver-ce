@@ -12,13 +12,16 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
 
@@ -27,9 +30,9 @@ import org.signserver.common.CompileTimeSettings;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @RequestScoped
-public class LoginBean {
+public class LoginBean implements Serializable {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(LoginBean.class);

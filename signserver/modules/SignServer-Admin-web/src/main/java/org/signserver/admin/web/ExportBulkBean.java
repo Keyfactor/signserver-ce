@@ -23,10 +23,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.util.PropertiesDumper;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
@@ -37,7 +39,7 @@ import org.signserver.common.CertificateMatchingRule;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class ExportBulkBean extends BulkBean {
 

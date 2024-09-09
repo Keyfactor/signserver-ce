@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.rest.api.exception;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Representation of a failure at the server side.

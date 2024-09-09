@@ -14,7 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.io.Console;
 import java.util.Properties;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;

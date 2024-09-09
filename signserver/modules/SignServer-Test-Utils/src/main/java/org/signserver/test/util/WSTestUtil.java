@@ -15,7 +15,7 @@ package org.signserver.test.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector;
 
 /**
  * A helper class for WS testing.
@@ -34,7 +34,7 @@ public class WSTestUtil {
      */
     public static String toJsonString(final Object wsObject) throws JsonProcessingException {
         final ObjectMapper mapper = new ObjectMapper();
-        final AnnotationIntrospector introspector = new JaxbAnnotationIntrospector(mapper.getTypeFactory());
+        final AnnotationIntrospector introspector = new JakartaXmlBindAnnotationIntrospector(mapper.getTypeFactory());
         mapper.setAnnotationIntrospector(introspector);
         return mapper.writeValueAsString(wsObject);
     }

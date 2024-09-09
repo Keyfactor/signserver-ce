@@ -19,7 +19,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;
@@ -65,7 +65,7 @@ public abstract class BaseValidator implements IValidator {
 
     /**
      * @throws SignServerException
-     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
+     * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, jakarta.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(int workerId, int validatorId, Properties props, EntityManager em) throws SignServerException {

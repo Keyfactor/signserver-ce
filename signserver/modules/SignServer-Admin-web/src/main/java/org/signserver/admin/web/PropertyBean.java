@@ -12,28 +12,35 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.annotation.ManagedProperty;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
+
+import java.io.Serializable;
 
 /**
  *
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @RequestScoped
-public class PropertyBean {
+public class PropertyBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSession;
 
+    @Inject
     @ManagedProperty(value = "#{param.id}")
     private Integer id;
 
+    @Inject
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 

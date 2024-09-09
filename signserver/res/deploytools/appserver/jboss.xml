@@ -1,7 +1,7 @@
 <project name="jboss" basedir="../.." default="j2ee:deploy">
 
     <!-- Declare the JAR files needed to run EJB CLI/system tests using this appserver. -->
-    <property name="appserver.client.jars" value="${appserver.home}/bin/client/jboss-client.jar"/>
+    <property name="appserver.client.jars" value="${appserver.home}/bin/client/jboss-client.jar:${appserver.home}/bin/client/jboss-cli-client.jar"/>
 
     <property name="datasource.jndi-name-prefix" value="java:/"/>
 

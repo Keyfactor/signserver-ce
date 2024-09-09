@@ -17,8 +17,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.HashSet;
 import java.util.HashMap;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
+import jakarta.annotation.ManagedBean;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -32,7 +34,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
  * @author Markus Kilås
  * @version $Id$
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class RenewKeyBulkBean extends BulkBean {
 

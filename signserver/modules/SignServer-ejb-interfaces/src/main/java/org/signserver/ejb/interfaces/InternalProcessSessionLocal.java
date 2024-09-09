@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  * Interface for the internal worker session bean.

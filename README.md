@@ -6,8 +6,8 @@
     <span>SignServer Community </span>
 </h1>
 
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/727/badge)](https://www.bestpractices.dev/projects/727)
 [![Discuss](https://img.shields.io/badge/discuss-signserver-ce?style=flat)](https://github.com/Keyfactor/signserver-ce/discussions) 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/727/badge)](https://www.bestpractices.dev/projects/727)
 
 The open-source signing software **SignServer** digitally signs your documents and code while keeping signature keys secure and workflows easy and auditable. Start securely signing documents and code today.
 

@@ -11,10 +11,14 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.interfaces.EdECKey;
 
 import static org.junit.Assert.*;
 
@@ -70,14 +74,22 @@ public class RenewalUtilsUnitTest {
         final String expected = "Ed25519";
         final String signatureAlgorithm = "SHA512withRSA";
         final String actual = RenewalUtils.getRequestSignatureAlgorithm(expected, signatureAlgorithm, null);
-
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testGetRequestSignatureAlgorithmSignerCertKeyAlgorithm() throws CertificateException, IOException {
-        LOG.info("testGetRequestSignatureAlgorithmSignerCertKeyAlgorithm");
+    public void testGetRequestSignatureAlgorithmSignerCertKeyAlgorithm_JCE() throws CertificateException, IOException, NoSuchProviderException {
+        internalGetRequestSignatureAlgorithmSignerCertKeyAlgorithm(null);
+    }
+    @Test
+    public void testGetRequestSignatureAlgorithmSignerCertKeyAlgorithm_BC() throws
+            CertificateException, IOException, NoSuchProviderException {
+        internalGetRequestSignatureAlgorithmSignerCertKeyAlgorithm("BC");
+    }
 
+    private void internalGetRequestSignatureAlgorithmSignerCertKeyAlgorithm(String provider) throws CertificateException, IOException, NoSuchProviderException {
+        LOG.info("testGetRequestSignatureAlgorithmSignerCertKeyAlgorithm(" +
+                provider + ")");
         final String pem = "-----BEGIN CERTIFICATE-----\n" +
                 "MIIBMTCB5KADAgECAgYBhpIxOBkwBQYDK2VwMD8xCzAJBgNVBAYTAlNFMSAwHgYD\n" +
                 "VQQHDBdfU2lnblNlcnZlcl9EVU1NWV9DRVJUXzEOMAwGA1UEAxMFRURLRVkwIBcN\n" +
@@ -89,8 +101,12 @@ public class RenewalUtilsUnitTest {
                 "-----END CERTIFICATE-----\n";
 
         Certificate cert;
-        try (InputStream inputStream = new ByteArrayInputStream(pem.getBytes())) {
-            cert = CertificateFactory.getInstance("X509").generateCertificate(inputStream);
+        try (InputStream inputStream = new ByteArrayInputStream(pem.getBytes(StandardCharsets.US_ASCII))) {
+            if (provider == null) {
+                cert = CertificateFactory.getInstance("X509").generateCertificate(inputStream);
+            } else {
+                cert = CertificateFactory.getInstance("X509", provider).generateCertificate(inputStream);
+            }
         }
 
         final String expected = "Ed25519";

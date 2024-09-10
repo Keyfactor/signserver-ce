@@ -1,6 +1,8 @@
 package org.signserver.server;
 
+import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.interfaces.EdECKey;
 
 /**
  * Utility class that helps with renewal of worker certificate.
@@ -28,8 +30,17 @@ public class RenewalUtils {
             if (!signatureAlgorithm.startsWith("NONEwith") && !signatureAlgorithm.trim().isEmpty()) {
                 ret = signatureAlgorithm;
             } else if (signerCert != null) {
-                final String keyAlg = "EC".equalsIgnoreCase(signerCert.getPublicKey().getAlgorithm()) ? "ECDSA" : signerCert.getPublicKey().getAlgorithm();
-                ret = keyAlg.startsWith("Ed") ? keyAlg : "SHA512with" + keyAlg;
+                PublicKey pubKey = signerCert.getPublicKey();
+                String algorithm = pubKey.getAlgorithm();
+
+                final String keyAlg = "EC".equalsIgnoreCase(algorithm) ? "ECDSA" : algorithm;
+                if (pubKey instanceof EdECKey && ((EdECKey) pubKey).getParams() != null) {
+                    ret = ((EdECKey) pubKey).getParams().getName();
+                } else if (keyAlg.startsWith("Ed")) {
+                    ret = keyAlg;
+                } else {
+                    ret = "SHA512with" + keyAlg;
+                }
             } else {
                 ret = "SHA512withRSA";
             }

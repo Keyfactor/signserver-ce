@@ -11,9 +11,9 @@
 
 The open-source signing software **SignServer** digitally signs your documents and code while keeping signature keys secure and workflows easy and auditable. Start securely signing documents and code today.
 
-SignServer is developed in Java and runs on a JVM such as OpenJDK, available on most platforms, such as Linux and Windows. There are two versions of SignServer: 
+SignServer is developed in Java, runs on a JVM such as OpenJDK, and is available on most platforms, such as Linux and Windows. There are two versions of SignServer: 
 * **[SignServer Community](https://www.signserver.org/)** (SignServer CE) - free and open source, OSI Certified Open Source Software, LGPL-licensed subset of SignServer Enterprise
-* **[SignServer Enterprise](https://www.keyfactor.com/products/signserver-enterprise/)** (SignServer EE) - commercially supported by Keyfactor 
+* **[SignServer Enterprise](https://www.keyfactor.com/products/signserver-enterprise/)** (SignServer EE) - full-featured and commercially supported by Keyfactor 
 
 OSI Certified is a certification mark of the Open Source Initiative.
 

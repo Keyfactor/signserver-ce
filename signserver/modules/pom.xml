@@ -4,10 +4,10 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer</artifactId>
-        <version>7.0.0-Beta-1</version>
+        <version>7.0.0-Beta-2-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Modules</artifactId>
-    <version>7.0.0-Beta-1</version>
+    <version>7.0.0-Beta-2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SignServer Modules</name>
     <properties>

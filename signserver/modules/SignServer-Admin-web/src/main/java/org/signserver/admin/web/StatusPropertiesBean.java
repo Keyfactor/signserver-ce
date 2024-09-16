@@ -48,7 +48,7 @@ import static org.signserver.common.SignServerConstants.DISABLED;
  * @author Markus Kilås
  * @version $Id$
  */
-@Named("statusPropertiesBean")
+@Named
 @ViewScoped
 public class StatusPropertiesBean implements Serializable {
 

@@ -40,7 +40,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
  * @author Markus Kilås
  * @version $Id$
  */
-@Named("RenewSignerBulkBean")
+@Named
 @ViewScoped
 public class RenewSignerBulkBean extends BulkBean {
 

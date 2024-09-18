@@ -269,7 +269,7 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
         assertEquals("New validity time about 1 hour", 1L, TimeUnit.MILLISECONDS.toHours(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()));
 
-        // Custom validity exceeding GeneralizedTime format (YYYY-MM-DD)
+        // Custom validity exceeding GeneralizedTime format (YYYY-MM-DD) using Long.MAX_VALUE
         params.clear();
         params.put("SELFSIGNED_VALIDITY", Long.valueOf(Long.MAX_VALUE)); // Over 100000 years in milliseconds
         CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params,delegator, "BC");
@@ -278,7 +278,18 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
         assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
         // The expected long is the number of milliseconds Date() registers as being year 9999-12-31 23h59m59s
-        assertEquals("Certificate validity set to date: 9999-12-31_23:59:59", 253402297199000L, certAfter.getNotAfter().getTime());
+        assertEquals("Certificate validity set to date: 9999-12-31_23:59:59 UTC", 253402300799000L, certAfter.getNotAfter().getTime());
+
+        // Custom validity exceeding GeneralizedTime format (YYYY-MM-DD) using a date in seconds close to 9999-12-31
+        params.clear();
+        params.put("SELFSIGNED_VALIDITY", Long.valueOf(253402257150L)); // 49 milliseconds under date 9999-12-31 23:59:59
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params,delegator, "BC");
+        certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
+        assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
+        assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
+        assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
+        // The expected long is the number of milliseconds Date() registers as being year 9999-12-31 23h59m59s
+        assertEquals("Certificate validity set to date: 9999-12-31_23:59:59 UTC", 253402300799000L, certAfter.getNotAfter().getTime());
 
         // All at once
         params.clear();

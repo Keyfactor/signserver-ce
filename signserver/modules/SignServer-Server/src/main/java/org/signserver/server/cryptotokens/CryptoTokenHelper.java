@@ -626,8 +626,10 @@ public class CryptoTokenHelper {
         final Date lastDate;
 
         // If the validity is greater than the maxYear variable, which java.util.Date translates to 99991231235959, it is set to maxYear instead.
-        final long maxYear = 253402297199L;
+        final long maxYear = 253402300799L;
         if (validity > maxYear) {
+            lastDate = new Date(maxYear * 1000);
+        } else if (validity * 1000 + currentTime > maxYear * 1000) {
             lastDate = new Date(maxYear * 1000);
         } else {
             lastDate = new Date(currentTime + validity * 1000);

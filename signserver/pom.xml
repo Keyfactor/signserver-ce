@@ -235,12 +235,17 @@
             <dependency>
                 <groupId>com.keyfactor</groupId>
                 <artifactId>x509-common-util</artifactId>
-                <version>0.10.5</version>
+                <version>4.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.keyfactor</groupId>
+                <artifactId>cryptotokens-api</artifactId>
+                <version>2.2.0</version>
             </dependency>
             <dependency>
                 <groupId>com.keyfactor.common</groupId>
                 <artifactId>p11ng</artifactId>
-                <version>0.21.9</version>
+                <version>0.24.0</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -368,7 +373,7 @@
             <dependency>
                 <groupId>com.keyfactor</groupId>
                 <artifactId>jacknji11</artifactId>
-                <version>1.2.7</version>
+                <version>1.3.0</version>
             </dependency>
             <dependency>
             <groupId>net.java.dev.jna</groupId>

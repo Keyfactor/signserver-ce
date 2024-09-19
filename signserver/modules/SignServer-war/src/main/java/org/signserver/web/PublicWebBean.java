@@ -33,7 +33,7 @@ import org.signserver.web.common.ThemeHelper;
  * @version $Id$
  *
  */
-@Named("publicWebBean")
+@Named
 @ApplicationScoped
 public class PublicWebBean {
 

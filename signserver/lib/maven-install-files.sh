@@ -61,6 +61,8 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/cesecore-entity-${CESECO
 
 JACKNJI11_VERSION=1.3.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/jacknji11-${JACKNJI11_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=jacknji11 -Dversion=${JACKNJI11_VERSION} -Dpackaging=jar
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/jacknji11-${JACKNJI11_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=jacknji11 -Dversion=${JACKNJI11_VERSION} -Dpackaging=jar -Dclassifier=sources
+
 
 FILEUPLOAD_VERSION=1.5-signserver7.0.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/commons-fileupload-${FILEUPLOAD_VERSION}.jar" -DgroupId=org.signserver.commons-fileupload -DartifactId=commons-fileupload -Dversion=${FILEUPLOAD_VERSION} -Dpackaging=jar

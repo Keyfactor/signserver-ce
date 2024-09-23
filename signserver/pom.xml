@@ -245,7 +245,7 @@
             <dependency>
                 <groupId>com.keyfactor.common</groupId>
                 <artifactId>p11ng</artifactId>
-                <version>0.24.0</version>
+                <version>0.24.2</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

@@ -166,26 +166,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 .setSignatureAlgorithm(signatureAlgorithm)
                 .setIssuer(caDN)
                 .setSubject(caDN)
-                .build());
-
-        // Create signer key-pair (DSA) and issue certificate
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {
-                        // Code Signer
-                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                                .setIssuerPrivateKey(caKeyPair.getPrivate())
-                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
-                                .setNotBefore(new Date(currentTime - 60000))
-                                .setSignatureAlgorithm(signatureAlgorithm)
-                                .setIssuer(caDN)
-                                .setSubject("CN=Code Signer DSA 2")
-                                .addExtension(new CertExt(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping).toASN1Primitive()))
-                                .build()),
-
-                        // CA
-                        caCertificate
-                };
+                        .build());
 
         // Create signer key-pair (ECDSA) and issue certificate
         final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
@@ -210,8 +191,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         char[] password = "foo123".toCharArray();
 
         ks.load(null, password);
-        ks.setKeyEntry("mykeydsa", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
-        ks.setKeyEntry("mykeyec", signerKeyPairECDSA.getPrivate(),"foo123".toCharArray(), certChainECDSA);
+        ks.setKeyEntry("mykeyec", signerKeyPairECDSA.getPrivate(), "foo123".toCharArray(), certChainECDSA);
 
         // Store away the keystore.
         try (FileOutputStream fos = new FileOutputStream("tmp/TimeStampSignerTest.p12")) {
@@ -1116,35 +1096,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
             si = token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
             assertEquals("sha256withecdsa", "1.2.840.10045.4.3.2", si.getEncryptionAlgOID());
 
-        } finally {
-            removeWorker(workerId);
-        }
-    }
-
-    /** Tests issuance of time-stamp token when an DSA key is specified. */
-    @Test
-    public void test21BasicTimeStampDSA() throws Exception {
-        LOG.info("test21BasicTimeStampDSA");
-        final int workerId = WORKER20.getId();
-        try {
-            // Setup signer
-            final File keystore = new File(getSignServerHome(), "tmp/TimeStampSignerTest.p12");
-            if (!keystore.exists()) {
-                throw new FileNotFoundException(keystore.getAbsolutePath());
-            }
-            addP12DummySigner(TimeStampSigner.class.getName(), workerId, "TestTimeStampP12DSA", keystore, "foo123", "mykeydsa");
-            workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
-            workerSession.setWorkerProperty(workerId, "ACCEPTANYPOLICY", "true");
-            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA1WithDSA");
-            workerSession.reloadConfiguration(workerId);
-
-            // Test signing
-            TimeStampResponse response = assertSuccessfulTimestamp(WORKER20, true);
-
-            // Test that it is using the right algorithm
-            TimeStampToken token = response.getTimeStampToken();
-            SignerInformation si = token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
-            assertEquals("sha1withdsa", "1.2.840.10040.4.3", si.getEncryptionAlgOID());
         } finally {
             removeWorker(workerId);
         }

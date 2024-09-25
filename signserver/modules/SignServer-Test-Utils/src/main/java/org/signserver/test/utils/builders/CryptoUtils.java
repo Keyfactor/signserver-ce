@@ -80,18 +80,6 @@ public class CryptoUtils {
         g.initialize(keySize, new SecureRandom());
         return g.generateKeyPair();
     }
-    
-    public static KeyPair generateDSA(int keySize) throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DSA", "BC");
-        g.initialize(keySize, new SecureRandom());
-        return g.generateKeyPair();
-    }
-    
-    public static KeyPair generateDSA(int keySize, Provider provider) throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DSA", provider);
-        g.initialize(keySize, new SecureRandom());
-        return g.generateKeyPair();
-    }
 
     public static KeyPair generateSphincsPlus() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator g = KeyPairGenerator.getInstance("SPHINCS+", "BC");

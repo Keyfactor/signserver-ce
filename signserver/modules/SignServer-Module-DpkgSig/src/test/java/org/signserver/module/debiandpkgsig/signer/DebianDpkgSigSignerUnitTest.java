@@ -67,7 +67,6 @@ public class DebianDpkgSigSignerUnitTest {
     private static final String EXPECTED_DATE_STRING = "Wed May 15 08:51:48 2019";
 
     private static MockedCryptoToken tokenRSA;
-    private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
 
     @BeforeClass
@@ -85,17 +84,6 @@ public class DebianDpkgSigSignerUnitTest {
         final Certificate signerCertificateRSA = certChainRSA[0];
         tokenRSA = new MockedCryptoToken(signerKeyPairRSA.getPrivate(), signerKeyPairRSA.getPublic(), signerCertificateRSA, Arrays.asList(certChainRSA), "BC");
 
-        // DSA
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPairDSA).
-                        setNotBefore(new Date()).
-                        setSignatureAlgorithm("SHA256withDSA")
-                        .build())};
-        final Certificate signerCertificateDSA = certChainDSA[0];
-        tokenDSA = new MockedCryptoToken(signerKeyPairDSA.getPrivate(), signerKeyPairDSA.getPublic(), signerCertificateDSA, Arrays.asList(certChainDSA), "BC");
-        
         // ECDSA
         final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
         final Certificate[] certChainECDSA =
@@ -234,25 +222,7 @@ public class DebianDpkgSigSignerUnitTest {
 
         sign(FileUtils.readFileToByteArray(sampleFile), instance);
     }
-    
-    /**
-     * Test signing using a DSA key.
-     * 
-     * @throws Exception 
-     */
-    @Test
-    public void testSignDSA() throws Exception {
-        LOG.info("testSignDSA");
-        WorkerConfig config = new WorkerConfig();
-        config.setProperty("TYPE", "PROCESSABLE");
-        config.setProperty("DIGEST_ALGORITHM", "SHA-256");
 
-        final DebianDpkgSigSigner instance = createMockSigner(tokenDSA);
-        instance.init(1, config, new SignServerContext(), null);
-
-        sign(FileUtils.readFileToByteArray(sampleFile), instance);
-    }
-    
     /**
      * Test signing using an ECDSA key.
      * 

@@ -71,7 +71,6 @@ public class PlainSignerTest {
     private static final Logger LOG = Logger.getLogger(PlainSignerTest.class);
 
     private static MockedCryptoToken tokenRSA;
-    private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
 
     public PlainSignerTest() {
@@ -115,28 +114,7 @@ public class PlainSignerTest {
                     caCertificate
                 };
         tokenRSA = new MockedCryptoToken(signerKeyPairRSA.getPrivate(), signerKeyPairRSA.getPublic(), certChainRSA[0], Arrays.asList(certChainRSA), "BC");
-        
-        // Create signer key-pair (DSA) and issue certificate
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {
-                    // Code Signer
-                    new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                        .setIssuerPrivateKey(caKeyPair.getPrivate())
-                        .setSubjectPublicKey(signerKeyPairDSA.getPublic())
-                        .setNotBefore(new Date(currentTime - 60000))
-                        .setSignatureAlgorithm(signatureAlgorithm)
-                        .setIssuer(caDN)
-                        .setSubject("CN=Code Signer DSA 2")
-                        .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairDSA.getPublic())))
-                        .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
-                        .build()),
 
-                    // CA
-                    caCertificate
-                };
-        tokenDSA = new MockedCryptoToken(signerKeyPairDSA.getPrivate(), signerKeyPairDSA.getPublic(), certChainDSA[0], Arrays.asList(certChainDSA), "BC");
-        
         // Create signer key-pair (ECDSA) and issue certificate
         final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
         final Certificate[] certChainECDSA =
@@ -196,18 +174,6 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an DSA key-pair.
-     * @throws Exception 
-     */
-    @Test
-    public void testNormalSigning_DSA() throws Exception {
-        LOG.info("testNormalSigning_DSA");
-        byte[] plainText = "some-data".getBytes("ASCII");
-        SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig(null));
-        assertSignedAndVerifiable(plainText, "SHA256withDSA", tokenDSA, resp);
-    }
-
-    /**
      * Test signing using an ECDSA key-pair.
      * @throws Exception 
      */
@@ -229,18 +195,6 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("SHA1withRSA"));
         assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
-    }
-
-    /**
-     * Test signing using when SHA1withDSA is explicitly specified.
-     * @throws Exception 
-     */
-    @Test
-    public void testNormalSigning_SHA1withDSA() throws Exception {
-        LOG.info("testNormalSigning_DSA");
-        byte[] plainText = "some-data".getBytes("ASCII");
-        SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig("SHA1withDSA"));
-        assertSignedAndVerifiable(plainText, "SHA1withDSA", tokenDSA, resp);
     }
     
     /**
@@ -277,18 +231,6 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSAandMGF1"));
         assertSignedAndVerifiable(plainText, "SHA256withRSAandMGF1", tokenRSA, resp);
-    }
-
-    /**
-     * Test signing using when SHA256withDSA is explicitly specified.
-     * @throws Exception 
-     */
-    @Test
-    public void testNormalSigning_SHA256withDSA() throws Exception {
-        LOG.info("testNormalSigning_DSA");
-        byte[] plainText = "some-data".getBytes("ASCII");
-        SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig("SHA256withDSA"));
-        assertSignedAndVerifiable(plainText, "SHA256withDSA", tokenDSA, resp);
     }
     
     /**

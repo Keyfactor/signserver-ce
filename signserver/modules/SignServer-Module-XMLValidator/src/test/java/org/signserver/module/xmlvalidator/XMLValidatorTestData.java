@@ -53,8 +53,8 @@ public class XMLValidatorTestData {
 	+ "e/Dyg243sP75ZO7HfOYPd2Sp+p5R5szWOuZp5UtLFBhuwlI41LnpuL+4t25LjNHo"
 	+ "GhzZCl1rxqcSBGVKLG2sN0XVXfqrt/EykOAV0WW+S72tRPI73eq0AeRJRRfzcZie"
 	+ "qui694eP10Ehh/iiOpQ28yfhsWDvMIxu8o8oK+hpgQvCwecP7rupdqM9OQYnePb5"
-	+ "3dd8Tt4hw4WhvSWC/9aNfFXc3jwbHVy5Rw==";
-
+        + "3dd8Tt4hw4WhvSWC/9aNfFXc3jwbHVy5Rw==";
+	  
     /**
      * Certificate for xmlsigner4.
      * <pre>
@@ -85,9 +85,9 @@ public class XMLValidatorTestData {
         +"MBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQEAwIGwDAJBgcqhkjO"
         +"OAQDAy8AMCwCFDnp413fYl32LXvI/FrHLxfo5hW6AhRv3xxzl07QDdL/oWCtW0rs"
         +"tmtQmg==";
-	  
-    /**
-      * SerialNumber: 32:4d:41:38:af:02:c1:3c
+
+     /**
+      * SerialNumber: 32:4d:41:38:af:02:c1:3c      
       * IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
       * Not Before: May 27 08:14:27 2011 GMT
       * Not After : May 27 08:14:27 2036 GMT

@@ -54,9 +54,6 @@ public class OpenPGPUtils {
             case "EC":
                 keyAlg = PublicKeyAlgorithmTags.ECDSA;
                 break;
-            case "DSA":
-                keyAlg = PublicKeyAlgorithmTags.DSA;
-                break;
             default:
                 throw new SignServerException("Unsupported key algorithm: " + x509Cert.getPublicKey().getAlgorithm());
         }

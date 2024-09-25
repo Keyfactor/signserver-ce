@@ -37,10 +37,14 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
@@ -59,10 +63,10 @@ import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.util.PropertiesConstants;
 import org.signserver.module.openpgp.signer.OpenPGPUtils;
 import org.signserver.openpgp.utils.ClearSignedFileProcessorUtils;
 import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
@@ -89,8 +93,7 @@ public class DebianDpkgSigSignTest {
 
     private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);
     private static final String ECDSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
-    private static final String DSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.DSA);
-    
+
     private static String MYKEY_KEYID;
     private static String MYKEY_KEY_FINGERPRINT;
     private static final String TS40003_KEYID = "019B2B04267FE968";
@@ -108,6 +111,7 @@ public class DebianDpkgSigSignTest {
 
         // Create CA
         final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
+        final KeyPair caKeyPairEC = CryptoUtils.generateEcCurve("prime256v1");
         final String caDN = "CN=Test CA";
         long currentTime = System.currentTimeMillis();
         final X509Certificate caCertificate
@@ -119,33 +123,33 @@ public class DebianDpkgSigSignTest {
                 .setSubject(caDN)
                 .build());
 
-        // Create signer key-pair (DSA) and issue certificate
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {
-                        // Code Signer
-                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                                .setIssuerPrivateKey(caKeyPair.getPrivate())
-                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
-                                .setNotBefore(new Date(currentTime - 60000))
-                                .setSignatureAlgorithm(signatureAlgorithm)
-                                .setIssuer(caDN)
-                                .setSubject("CN=Code Signer DSA 2")
-                                .build()),
-
-                        // CA
-                        caCertificate
+        // Create signer key-pair (ECDSA) and issue certificate
+        final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
+        final Certificate[] certChainECDSA
+                = new Certificate[]{
+                    // Code Signer
+                    new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                            .setIssuerPrivateKey(caKeyPairEC.getPrivate())
+                            .setSubjectPublicKey(signerKeyPairECDSA.getPublic())
+                            .setNotBefore(new Date(currentTime - 60000))
+                            .setSignatureAlgorithm("SHA256withECDSA")
+                            .setIssuer(caDN)
+                            .setSubject("CN=Code Signer ECDSA 3")
+                            .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairECDSA.getPublic())))
+                            .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
+                            .build()),
+                    // CA
+                    caCertificate
                 };
 
         final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
-        PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm((X509Certificate) certChainDSA[0]), certChainDSA[0].getPublicKey(), ((X509Certificate) certChainDSA[0]).getNotBefore());
+        PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm((X509Certificate) certChainECDSA[0]), certChainECDSA[0].getPublicKey(), ((X509Certificate) certChainECDSA[0]).getNotBefore());
         MYKEY_KEYID = Long.toHexString(pgpPublicKey.getKeyID());
         MYKEY_KEY_FINGERPRINT = Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH);
 
         KeyStore ks = KeyStore.getInstance("pkcs12");
         char[] password = "foo123".toCharArray();
         ks.load(null, password);
-        ks.setKeyEntry("mykeyDSA", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
 
         // Store away the keystore.
         try (FileOutputStream fos = new FileOutputStream("tmp/DebianDpkgSigSignTest.p12")) {
@@ -231,24 +235,6 @@ public class DebianDpkgSigSignTest {
         LOG.info("testSigning_RSA4096_SHA512_ServerSide");
         signAndVerify("rsa4096", "SHA-512", HashAlgorithmTags.SHA512, RSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
     }
-
-    @Test
-    public void testSigning_DSA1024_SHA256_ServerSide() throws Exception {
-        LOG.info("testSigning_DSA1024_SHA256_ServerSide");
-        signAndVerify("dsa1024", "SHA-256", HashAlgorithmTags.SHA256, DSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
-    }
-
-    @Test
-    public void testSigning_DSA1024_SHA1_ServerSide() throws Exception {
-        LOG.info("testSigning_DSA1024_SHA1_ServerSide");
-        signAndVerify("dsa1024", "SHA-1", HashAlgorithmTags.SHA1, DSA_KEY_ALGORITHM, HELLO_DEB, ClientCLI.RETURN_SUCCESS);
-    }
-
-    // Not supported by BC/ArmoredOutputStream
-    //@Test
-    //public void testSigning_DSA1024_SHA224() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-224", HELLO_DEB);
-    //}
     
     /**
      * Sets up a signer using a key with the chosen algorithm, 
@@ -296,15 +282,6 @@ public class DebianDpkgSigSignTest {
                     helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "signer00002");
                     keyId = SIGNER00002_KEYID;
                     keyFingerPrint = SIGNER00002_KEY_FINGERPRINT;
-                    break;
-                }
-                case "dsa1024": {
-                    final File keystore = new File(helper.getSignServerHome(), "tmp/DebianDpkgSigSignTest.p12");
-                    helper.getWorkerSession().setWorkerProperty(workerId, PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
-                    helper.getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystore.getAbsolutePath());
-                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykeydsa");
-                    keyId = MYKEY_KEYID;
-                    keyFingerPrint = MYKEY_KEY_FINGERPRINT;
                     break;
                 }
                 case "INVALIDFINGERPRINT": {

@@ -31,7 +31,6 @@ import org.cesecore.util.StringTools;
  */
 public class KeyUtils {
     private static final int[] RSA_KEY_SIZES = {1024, 2048, 3072, 4096, 6144, 8192};
-    private static final int[] DSA_KEY_SIZES = {1024};
     private static final int[] AES_KEY_SIZES = {128, 192, 256};
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
     private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
@@ -77,7 +76,6 @@ public class KeyUtils {
         final List<SelectItem> algMenuValues = new ArrayList<>();
 
         algMenuValues.add(new SelectItem("RSA", "RSA"));
-        algMenuValues.add(new SelectItem("DSA", "DSA"));
         algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
         algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
@@ -101,12 +99,6 @@ public class KeyUtils {
         switch (keyAlg) {
             case "RSA":
                 for (final int keySize : RSA_KEY_SIZES) {
-                    keySpecMenuValues.add(new SelectItem(Integer.toString(keySize),
-                            Integer.toString(keySize)));
-                }
-                break;
-            case "DSA":
-                for (final int keySize : DSA_KEY_SIZES) {
                     keySpecMenuValues.add(new SelectItem(Integer.toString(keySize),
                             Integer.toString(keySize)));
                 }

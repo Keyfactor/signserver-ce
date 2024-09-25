@@ -390,11 +390,6 @@ public class XMLValidatorTest extends ModulesTestCase {
     // tests using SHA-2 RSA variants for the signature algorithm.
 
     @Test
-    public void test12SigOkCertOkDSA() {
-        testSigOkCertOk(23, WORKERID, XMLValidatorTestData.TESTXML1_DSA, "CN=xmlsigner4", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE");
-    }
-
-    @Test
     public void test13SigOkCertOkSHA256withRSA() {
         testSigOkCertOk(24, WORKERID, XMLValidatorTestData.TESTXML_SHA256withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }

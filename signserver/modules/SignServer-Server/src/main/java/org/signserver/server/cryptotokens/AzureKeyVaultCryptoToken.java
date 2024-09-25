@@ -288,12 +288,6 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        // Keyspec for DSA is prefixed with "dsa"
-        if (keyAlgorithm != null && keyAlgorithm.equalsIgnoreCase("DSA")
-                && !keySpec.contains("dsa")) {
-            keySpec = "dsa" + keySpec;
-        }
-   
         try {
             delegate.generateKeyPair(keySpec, alias);
         } catch (InvalidAlgorithmParameterException | org.cesecore.keys.token.CryptoTokenOfflineException  ex) {

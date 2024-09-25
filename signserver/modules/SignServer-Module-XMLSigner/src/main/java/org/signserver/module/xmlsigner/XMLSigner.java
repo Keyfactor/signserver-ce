@@ -21,7 +21,6 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;
 import java.util.Collection;
@@ -102,9 +101,7 @@ public class XMLSigner extends BaseSigner {
     private static final String SIGNATURE_METHOD_ECDSA_SHA384 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
     private static final String SIGNATURE_METHOD_ECDSA_SHA512 =
-            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
-    private static final String SIGNATURE_METHOD_DSA_SHA256 =
-            "http://www.w3.org/2009/xmldsig11#dsa-sha256";
+ "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
 
     private String signatureAlgorithm;
     private String digestAlgorithmString;
@@ -287,11 +284,7 @@ public class XMLSigner extends BaseSigner {
             throws NoSuchAlgorithmException {
         String result;
 
-        if ("SHA1withDSA".equals(sigAlg)) {
-            result = SignatureMethod.DSA_SHA1;
-        } else if ("SHA256withDSA".equals(sigAlg)) {
-            result = SIGNATURE_METHOD_DSA_SHA256;
-        } else if ("SHA1withRSA".equals(sigAlg)) {
+        if ("SHA1withRSA".equals(sigAlg)) {
             result = SignatureMethod.RSA_SHA1;
         } else if ("SHA256withRSA".equals(sigAlg)) {
             result = SIGNATURE_METHOD_RSA_SHA256;
@@ -323,9 +316,7 @@ public class XMLSigner extends BaseSigner {
     private String getDefaultSignatureAlgorithm(final PrivateKey privKey) {
         final String result;
 
-        if (privKey instanceof DSAPrivateKey) {
-            result = "SHA256withDSA";
-        } else if (privKey instanceof ECPrivateKey || "EC".equalsIgnoreCase(privKey.getAlgorithm())) {
+        if (privKey instanceof ECPrivateKey || "EC".equalsIgnoreCase(privKey.getAlgorithm())) {
             result = "SHA256withECDSA";
         } else {
             result = "SHA256withRSA";

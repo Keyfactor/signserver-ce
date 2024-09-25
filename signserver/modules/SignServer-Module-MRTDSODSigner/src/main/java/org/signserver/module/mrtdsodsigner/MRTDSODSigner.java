@@ -426,9 +426,6 @@ public class MRTDSODSigner extends BaseSigner {
             case "ECDSA":
                 result = "SHA256withECDSA";
                 break;
-            case "DSA":
-                result = "SHA256withDSA";
-                break;
             case "Ed25519":
                 result = "Ed25519";
                 break;

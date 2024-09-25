@@ -83,7 +83,6 @@ public class OpenPGPSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(OpenPGPSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
-    private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
     private static MockedCryptoToken tokenNonExisting; 
          
@@ -102,17 +101,6 @@ public class OpenPGPSignerUnitTest {
         final Certificate signerCertificateRSA = certChainRSA[0];
         tokenRSA = new MockedCryptoToken(signerKeyPairRSA.getPrivate(), signerKeyPairRSA.getPublic(), signerCertificateRSA, Arrays.asList(certChainRSA), "BC");
 
-        // DSA
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPairDSA).
-                        setNotBefore(new Date()).
-                        setSignatureAlgorithm("SHA256withDSA")
-                        .build())};
-        final Certificate signerCertificateDSA = certChainDSA[0];
-        tokenDSA = new MockedCryptoToken(signerKeyPairDSA.getPrivate(), signerKeyPairDSA.getPublic(), signerCertificateDSA, Arrays.asList(certChainDSA), "BC");
-        
         // ECDSA
         final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
         final Certificate[] certChainECDSA =
@@ -487,97 +475,7 @@ public class OpenPGPSignerUnitTest {
         LOG.info("testClearTextSign_RSA_SHA512_byNumber");
         signWithAlgorithm(tokenRSA, "10", PGPUtil.SHA512, false); // 10 = SHA-512
     }
-    
-    /**
-     * Test default signing with DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testDetachedSign_DSA_default_SHA256() throws Exception {
-        LOG.info("testDetachedSign_DSA_default_SHA256");
-        signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256, true);
-    }
-    
-    /**
-     * Test default signing with DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClearTextSign_DSA_default_SHA256() throws Exception {
-        LOG.info("testClearTextSign_DSA_default_SHA256");
-        signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256, false);
-    }
-    
-    /**
-     * Test signing with SHA1 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testDetachedSign_DSA_SHA1() throws Exception {
-        LOG.info("testDetachedSign_DSA_SHA1");
-        signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1, true);
-    }
-    
-    /**
-     * Test signing with SHA1 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClearTextSign_DSA_SHA1() throws Exception {
-        LOG.info("testClearTextSign_DSA_SHA1");
-        signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1, false);
-    }
-    
-    /**
-     * Test signing with SHA-224 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testDetachedSign_DSA_SHA224() throws Exception {
-        LOG.info("testDetachedSign_DSA_SHA224");
-        signWithAlgorithm(tokenDSA, "SHA-224", PGPUtil.SHA224, true);
-    }
-    
-    /**
-     * Test signing with SHA-384 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testDetachedSign_DSA_SHA384() throws Exception {
-        LOG.info("testDetachedSign_DSA_SHA384");
-        signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384, true);
-    }
-    
-    /**
-     * Test signing with SHA-384 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClearTextSign_DSA_SHA384() throws Exception {
-        LOG.info("testClearTextSign_DSA_SHA384");
-        signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384, false);
-    }
-    
-    /**
-     * Test signing with SHA-512 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testDetachedSign_DSA_SHA512() throws Exception {
-        LOG.info("testDetachedSign_DSA_SHA512");
-        signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512, true);
-    }
-    
-    /**
-     * Test signing with SHA-512 and DSA.
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClearTextSign_DSA_SHA512() throws Exception {
-        LOG.info("testClearTextSign_DSA_SHA512");
-        signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512, false);
-    }
-    
+
     /**
      * Test default signing with ECDSA.
      * @throws java.lang.Exception
@@ -883,9 +781,6 @@ public class OpenPGPSignerUnitTest {
                 break;
             case "EC":
                 keyAlg = PublicKeyAlgorithmTags.ECDSA;
-                break;
-            case "DSA":
-                keyAlg = PublicKeyAlgorithmTags.DSA;
                 break;
             default:
                 throw new SignServerException("Unsupported key algorithm: " + x509Cert.getPublicKey().getAlgorithm());

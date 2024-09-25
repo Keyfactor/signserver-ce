@@ -96,7 +96,6 @@ public class XAdESSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(XAdESSignerUnitTest.class);
     
     private static MockedCryptoToken tokenRSA;
-    private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
     private static MockedCryptoToken tokenWithIntermediateCert;
     
@@ -104,14 +103,12 @@ public class XAdESSignerUnitTest {
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         tokenRSA = generateToken(KeyType.RSA);
-        tokenDSA = generateToken(KeyType.DSA);
         tokenECDSA = generateToken(KeyType.ECDSA);
         tokenWithIntermediateCert = generateTokenWithIntermediateCert();
     }
 
     private enum KeyType {
         RSA,
-        DSA,
         ECDSA
     };
     
@@ -124,11 +121,7 @@ public class XAdESSignerUnitTest {
             signerKeyPair = CryptoUtils.generateRSA(1024);
             signatureAlgorithm = "SHA1withRSA";
             break;
-        case DSA:
-            signerKeyPair = CryptoUtils.generateDSA(1024);
-            signatureAlgorithm = "SHA1withDSA";
-            break;
-        case ECDSA:
+            case ECDSA:
             signerKeyPair = CryptoUtils.generateEcCurve("prime256v1");
             signatureAlgorithm = "SHA1withECDSA";
             break;
@@ -409,10 +402,7 @@ public class XAdESSignerUnitTest {
         case RSA:
             token = tokenRSA;
             break;
-        case DSA:
-            token = tokenDSA;
-            break;
-        case ECDSA:
+            case ECDSA:
             token = tokenECDSA;
             break;
         default:
@@ -607,19 +597,7 @@ public class XAdESSignerUnitTest {
                 "SHA512withRSA", SignatureMethod.RSA_SHA512,
                 "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
-    
-    /**
-     * Test signing with signature algorithm SHA1withDSA.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testProcessData_basicSigningDSASHA1() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.DSA,
-                "SHA1withDSA", SignatureMethod.DSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
-    }
-    
+
     /**
      * Test signing with signature algorithm SHA1withECDSA.
      * 
@@ -669,18 +647,6 @@ public class XAdESSignerUnitTest {
     }
     
     /**
-     * Test that the default signature algorithm works when using DSA keys.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testProcessData_basicSigningDefaultDSA() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.DSA,
-                null, SignatureMethod.DSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
-    }
-    
-    /**
      * Test that the default signature algorithm works when using ECDSA keys.
      * 
      * @throws Exception
@@ -720,7 +686,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningMismatchedSigAlg() throws Exception {
         try {
             testProcessData_basicSigningInternal(KeyType.RSA,
-                    "SHA1withDSA", SignatureMethod.ECDSA_SHA1,
+                    "SHA256withECDSA", SignatureMethod.ECDSA_SHA1,
                     "NONE", Collections.<String>emptyList(), null, false, false, null, null);
             fail("Should throw a SignServerException");
         } catch (SignServerException e) { //NOPMD

@@ -237,9 +237,7 @@ public class Sign implements Task {
             throw new KeySelectorException("No key found!");
         }
         private boolean algEquals(String algURI, String algName) {
-            if ((algName.equalsIgnoreCase("DSA") &&
-                algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1)) ||
-                (algName.equalsIgnoreCase("RSA") &&
+            if ((algName.equalsIgnoreCase("RSA") &&
                 algURI.equalsIgnoreCase(SignatureMethod.RSA_SHA1))) {
                 return true;
             } else {

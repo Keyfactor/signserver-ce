@@ -1,8 +1,8 @@
 <entity-mappings
-        xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+        xmlns="https://jakarta.ee/xml/ns/persistence"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm orm_2_1.xsd"
-        version="2.1">
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
+        version="3.1">
     <entity class="org.cesecore.audit.impl.integrityprotected.AuditRecordData" access="PROPERTY" metadata-complete="false">
         <attributes>
             <id name="pk"><column name="pk" column-definition="VARCHAR(256)"/></id>

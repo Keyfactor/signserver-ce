@@ -419,9 +419,6 @@ public class KeyStoreOptions {
             case "ECDSA":
                 result = digestAlgorithm + "withECDSA";
                 break;
-            case "DSA":
-                result = digestAlgorithm + "withDSA";
-                break;
             case "RSA":
                 result = digestAlgorithm + "withRSA";
                 break;
@@ -457,9 +454,6 @@ public class KeyStoreOptions {
                 }
 
                 result = "SHA" + Integer.toString(digestSize);
-                break;
-            case "DSA":
-                result = "SHA256"; 
                 break;
             case "RSA":
                 result = "SHA256";

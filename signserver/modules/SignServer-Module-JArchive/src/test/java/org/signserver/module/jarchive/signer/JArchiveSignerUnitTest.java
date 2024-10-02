@@ -1988,7 +1988,7 @@ public class JArchiveSignerUnitTest {
             final byte[] cmsData;
             Collection<JarEntry> newCMSEntries = new LinkedList<>(cmsEntries);
             newCMSEntries.removeAll(previousSigEntries);
-            assertEquals("expected 1 new .RSA/.DSA/.EC in " + newCMSEntries, 1, newCMSEntries.size());
+            assertEquals("expected 1 new .RSA/.EC in " + newCMSEntries, 1, newCMSEntries.size());
             cmsData = IOUtils.toByteArray(jar.getInputStream(newCMSEntries.iterator().next()));
 
             //System.out.println(ASN1Dump.dumpAsString(new ASN1InputStream(cmsData).readObject()));

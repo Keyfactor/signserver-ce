@@ -72,9 +72,9 @@ public class XMLValidatorTestData {
      */
     static final String CERT_XMLSIGNER4 =
         "MIIDLDCCAuugAwIBAgIUc5ovEG6BugR3LQMaZgKgpUl4sWAwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTAeFw0xOTEyMzAxMzQxMTVaFw0zNDExMTAxNjA5NDhaMBUxEzARBgNVBAMMCnhtbHNpZ25lcjQwggG4MIIBLAYHKoZIzjgEATCCAR8CgYEA/X9TgR11EilS30qcLuzk5/YRt1I870QAwx4/gLZRJmlFXUAiUftZPY1Y+r/F9bow9subVWzXgTuAHTRv8mZgt2uZUKWkn5/oBHsQIsJPu6nX/rfGG/g7V+fGqKYVDwT7g/bTxR7DAjVUE1oWkTL2dfOuK2HXKu/yIgMZndFIAccCFQCXYFCPFSMLzLKSuYKi64QL8Fgc9QKBgQD34aCF1ps93su8q1w2uFe5eZSvu/o66oL5V0wLPQeCZ1FZV4661FlP5nEHEIGAtEkWcSPoTCgWE7fPCTKMyKbhPBZ6i1R8jSjgo64eK7OmdZFuo38L+iE1YvH7YnoBJDvMpPG+qFGQiaiD3+Fa5Z8GkotmXoB7VSVkAUw7/s9JKgOBhQACgYEA1CXfT00olSOapmZl4zT1/tUQzOzttQ/DCB8qYwH5fKD4cw1O2IutdntOP+Pd+Q6PV6r/cckmpvO12/sMpxWOmY1oio44L8Pl76MWqKiBecAsNgxjXkXiFdJ8llhTj9Z8vSYP8TUyY4UaITm3oZOp60eamFL93LjvpOkrDj7orXijfzB9MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUSd8VLspema6A95RZt58PwIQj3iUwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBRqEubbKMwapnZFeqgUNRFEkKGpWjAOBgNVHQ8BAf8EBAMCBeAwCQYHKoZIzjgEAwMwADAtAhQ9OV4HFv9pTpRM4okw/R+H+jtgBgIVAIJfnJ5H8FRcjOANlGL61tg5ciJC";
-	  
+
     /**
-      * SerialNumber: 32:4d:41:38:af:02:c1:3c
+      * SerialNumber: 32:4d:41:38:af:02:c1:3c      
       * IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
       * Not Before: May 27 08:14:27 2011 GMT
       * Not After : May 27 08:14:27 2036 GMT
@@ -144,6 +144,7 @@ public class XMLValidatorTestData {
         +"AQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQE"
         +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
         +"++YIS2fHyu+H4Pjgnodx5zI=";
+
 
     /**
      * Test CA certificate for ECDSA signatures.
@@ -370,7 +371,7 @@ public class XMLValidatorTestData {
             +"        </X509Data>"
             +"    </KeyInfo>"
             +"</Signature ></root>";
-    
+
     /**
      * Ok sig, ok cert. Using SHA256 with RSA
      */

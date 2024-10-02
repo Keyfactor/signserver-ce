@@ -19,7 +19,6 @@ import java.nio.file.Files;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assume;
@@ -30,7 +29,6 @@ import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.util.PropertiesConstants;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ComplianceTestUtils;
 import org.signserver.testutils.ModulesTestCase;
@@ -190,34 +188,6 @@ public class DebianDpkgSigComplianceTest {
         signAndVerify("rsa4096", "SHA-512", HELLO_DEB);
     }
 
-    @Test
-    public void testSigning_DSA1024_SHA256_ServerSide() throws Exception {
-        signAndVerify("dsa1024", "SHA-256", HELLO_DEB);
-    }
-
-    @Test
-    public void testSigning_DSA1024_SHA1_ServerSide() throws Exception {
-        signAndVerify("dsa1024", "SHA-1", HELLO_DEB);
-    }
-
-    // Not supported by BC/ArmoredOutputStream
-    //@Test
-    //public void testSigning_DSA1024_SHA224() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-224", HELLO_DEB);
-    //}
-
-    // Note: Not supported with SUN/JKS:
-    //@Test
-    //public void testSigning_DSA1024_SHA384() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-384");
-    //}
-
-    // Note: Not supported with SUN/JKS:
-    //@Test
-    //public void testSigning_DSA1024_SHA512() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-512");
-    //}    
-
     // Note: Not supported by BC:
     //@Test
     //public void testSigning_RSA_SHA224_clearText() throws Exception {
@@ -229,12 +199,6 @@ public class DebianDpkgSigComplianceTest {
     //public void testSigning_RSA4096_SHA224_clearText() throws Exception {
     //    signAndVerify("rsa4096", "SHA-224", false, false);
     //}    
-
-    // Note: Not supported by BC:
-    //@Test
-    //public void testSigning_DSA1024_SHA224_clearText() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-224", false, false);
-    //}
 
     /**
      * Sets up a signer using a key with the chosen algorithm,
@@ -282,16 +246,6 @@ public class DebianDpkgSigComplianceTest {
                     helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "signer00002");
                     keyId = SIGNER00002_KEYID;
                     keyFingerPrint = SIGNER00002_KEY_FINGERPRINT;
-                    break;
-                }
-                case "dsa1024": {
-                    final File keystore = new File(helper.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
-                    helper.getWorkerSession().setWorkerProperty(workerId, PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
-                    helper.getWorkerSession().setWorkerProperty(workerId, "CHECKCERTVALIDITY", "false");
-                    helper.getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystore.getAbsolutePath());
-                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykey");
-                    keyId = MYKEY_KEYID;
-                    keyFingerPrint = MYKEY_KEY_FINGERPRINT;
                     break;
                 }
                 default: {

@@ -30,7 +30,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 import java.security.spec.RSAKeyGenParameterSpec;
@@ -522,9 +521,6 @@ public class CryptoTokenHelper {
                 case "RSA":
                     alg = "SHA256withRSA";
                     break;
-                case "DSA":
-                    alg = "SHA256withDSA";
-                    break;
                 case "Ed25519":
                     alg = "Ed25519";
                     break;
@@ -555,8 +551,6 @@ public class CryptoTokenHelper {
                     alg = "SHA256withECDSA";
                 } else if (key instanceof RSAKey) {
                     alg = "SHA256withRSA";
-                } else if (key instanceof DSAKey) {
-                    alg = "SHA256withDSA";
                 } else {
                     alg = null;
                 }

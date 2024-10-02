@@ -51,19 +51,16 @@ public class XMLSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(XMLSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
-    private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         tokenRSA = generateToken(KeyType.RSA);
-        tokenDSA = generateToken(KeyType.DSA);
         tokenECDSA = generateToken(KeyType.ECDSA);
     }
 
     private enum KeyType {
         RSA,
-        DSA,
         ECDSA
     };
 
@@ -77,11 +74,7 @@ public class XMLSignerUnitTest {
             signerKeyPair = CryptoUtils.generateRSA(1024, provider);
             signatureAlgorithm = "SHA1withRSA";
             break;
-        case DSA:
-            signerKeyPair = CryptoUtils.generateDSA(1024, provider);
-            signatureAlgorithm = "SHA1withDSA";
-            break;
-        case ECDSA:
+            case ECDSA:
             signerKeyPair = CryptoUtils.generateEcCurve("prime256v1", provider);
             signatureAlgorithm = "SHA1withECDSA";
             break;
@@ -163,10 +156,7 @@ public class XMLSignerUnitTest {
         case RSA:
             token = tokenRSA;
             break;
-        case DSA:
-            token = tokenDSA;
-            break;
-        case ECDSA:
+            case ECDSA:
             token = tokenECDSA;
             break;
         default:
@@ -251,17 +241,6 @@ public class XMLSignerUnitTest {
     }
 
     /**
-     * Test signing with signature algorithm SHA1withDSA.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testProcessData_basicSigningDSASHA1() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.DSA,
-                "SHA1withDSA", false, null);
-    }
-
-    /**
      * Test signing with signature algorithm SHA1withECDSA.
      *
      * @throws Exception
@@ -306,17 +285,6 @@ public class XMLSignerUnitTest {
     }
 
     /**
-     * Test that the default signature algorithm works when using DSA keys.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testProcessData_basicSigningDefaultDSA() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.DSA,
-                null, false, null);
-    }
-
-    /**
      * Test that the default signature algorithm works when using ECDSA keys.
      *
      * @throws Exception
@@ -356,7 +324,7 @@ public class XMLSignerUnitTest {
     public void testProcessData_basicSigningMismatchedSigAlg() throws Exception {
         try {
             testProcessData_basicSigningInternal(KeyType.RSA,
-                "SHA1withDSA", false, null);
+                    "SHA256withECDSA", false, null);
             fail("Should throw a SignServerException");
         } catch (SignServerException e) { //NOPMD
             // expected

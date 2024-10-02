@@ -51,15 +51,6 @@ public class JKSCryptoTokenUnitTest extends TestCase {
         signTester("SHA256WITHRSA", "/res/test/xmlsigner2.jks", "xmlsigner2aalias");
     }
 
-    /**
-     * Makes sure that the private key verifies with the public key in the
-     * certificate.
-     * @throws Exception
-     */
-    public final void testGetPrivateKeyWithDSA() throws Exception {
-        signTester("SHA1WITHDSA", "/res/test/xmlsigner4.jks", "xmlsigner4");
-    }
-
     public final void signTester(final String signatureAlgorithm, final String file, final String alias)
             throws Exception {
         Signature sig = null;

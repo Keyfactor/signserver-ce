@@ -39,8 +39,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -320,8 +318,6 @@ public class PDFSigner extends BaseSigner {
     protected List<String> getCryptoTokenFatalErrors(final IServices services) {
         final List<String> errors = super.getCryptoTokenFatalErrors(services);
 
-        // according to the PDF specification, only SHA1 is permitted as digest algorithm
-        // for DSA public/private keys
         final RequestContext context = new RequestContext(true);
         context.setServices(services);
         ICryptoInstance crypto = null;
@@ -332,16 +328,8 @@ public class PDFSigner extends BaseSigner {
             if (token != null) {
                 final PublicKey pub = crypto.getPublicKey();
                 final PrivateKey priv = crypto.getPrivateKey();
-
-                if (pub instanceof DSAPublicKey || priv instanceof DSAPrivateKey) {
-                    if (!"SHA1".equals(digestAlgorithm)) {
-                        errors.add("Only SHA1 is permitted as digest algorithm for DSA public/private keys");
-                    }
-                }
             }
         } catch (CryptoTokenOfflineException | SignServerException | InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException e) { // NOPMD
-            // In this case, we can't tell if the keys are DSA
-            // appropriate crypto token errors should be handled by the base class
         } finally {
             if (crypto != null) {
                 try {
@@ -692,14 +680,6 @@ public class PDFSigner extends BaseSigner {
             theDigestAlgorithm = params.getDigestAlgorithm();
 
             LOG.debug("Use the digestAlgorithm given in parameters : " + theDigestAlgorithm);
-        }
-
-        // need to check digest algorithms for DSA private key at signing
-        // time since we can't be sure what key a configured alias selector gives back
-        if (privKey instanceof DSAPrivateKey) {
-            if (!"SHA1".equals(theDigestAlgorithm)) {
-                throw new IllegalRequestException("Only SHA1 is permitted as digest algorithm for DSA private keys");
-            }
         }
 
         final PdfReader reader;

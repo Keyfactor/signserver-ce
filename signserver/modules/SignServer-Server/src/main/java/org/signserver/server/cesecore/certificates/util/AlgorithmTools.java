@@ -24,7 +24,6 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.ECGenParameterSpec;
@@ -103,11 +102,6 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_SHA3_512_WITH_RSA
     ));
 
-    /** Signature algorithms supported by DSA keys */
-    public static final List<String> SIG_ALGS_DSA = Collections.unmodifiableList(Arrays.asList(
-            AlgorithmConstants.SIGALG_SHA1_WITH_DSA
-    ));
-
     /** Signature algorithms supported by ECDSA keys */
     public static final List<String> SIG_ALGS_ECDSA = Collections.unmodifiableList(Arrays.asList(
             AlgorithmConstants.SIGALG_SHA1_WITH_ECDSA,
@@ -160,16 +154,11 @@ public abstract class AlgorithmTools {
      * @param publickey Public key to find matching key algorithm for.
      * @return Name of the matching key algorithm or null if no match.
      * @see AlgorithmConstants#KEYALGORITHM_RSA
-     * @see AlgorithmConstants#KEYALGORITHM_DSA
      * @see AlgorithmConstants#KEYALGORITHM_ECDSA
      */
     public static String getKeyAlgorithm(final PublicKey publickey) {
         String keyAlg = null;
-        if ( publickey instanceof RSAPublicKey ) {
-            keyAlg  = AlgorithmConstants.KEYALGORITHM_RSA;
-        } else if ( publickey instanceof DSAPublicKey ) {
-            keyAlg = AlgorithmConstants.KEYALGORITHM_DSA;
-        } else if( publickey instanceof EdDSAPublicKey)  {
+        if (publickey instanceof EdDSAPublicKey) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_EDDSA;
         } else if ( publickey instanceof ECPublicKey ) {
             final String algo = publickey.getAlgorithm();
@@ -190,7 +179,7 @@ public abstract class AlgorithmTools {
 
     /** @return a list of all available key algorithms */
     public static List<String> getAvailableKeyAlgorithms() {
-        final List<String> ret = new ArrayList<>(Arrays.asList(AlgorithmConstants.KEYALGORITHM_DSA, AlgorithmConstants.KEYALGORITHM_ECDSA,
+        final List<String> ret = new ArrayList<>(Arrays.asList(AlgorithmConstants.KEYALGORITHM_ECDSA,
                 AlgorithmConstants.KEYALGORITHM_RSA));
         for (final String algName : CesecoreConfiguration.getExtraAlgs()) {
             ret.add(CesecoreConfiguration.getExtraAlgTitle(algName));
@@ -324,9 +313,6 @@ public abstract class AlgorithmTools {
         if ( publickey instanceof RSAPublicKey ) {
             return SIG_ALGS_RSA;
         }
-        if ( publickey instanceof DSAPublicKey ) {
-            return SIG_ALGS_DSA;
-        }
         if ( publickey instanceof ECPublicKey ) {
             final String algo = publickey.getAlgorithm();
             if (StringUtils.equals(algo, AlgorithmConstants.KEYALGORITHM_ECGOST3410)) {
@@ -355,8 +341,6 @@ public abstract class AlgorithmTools {
             ret = AlgorithmConstants.KEYALGORITHM_ECGOST3410;
         } else if ( signatureAlgorithm.contains("DSTU4145")) {
             ret = AlgorithmConstants.KEYALGORITHM_DSTU4145;
-        } else if ( signatureAlgorithm.contains("DSA") ) {
-            ret = AlgorithmConstants.KEYALGORITHM_DSA;
         } else {
             ret = AlgorithmConstants.KEYALGORITHM_RSA;
         }
@@ -365,7 +349,7 @@ public abstract class AlgorithmTools {
 
     /**
      * Gets the key specification from a public key. Example: "2048" for a RSA
-     * or DSA key or "secp256r1" for EC key. The EC curve is only detected
+     * or "secp256r1" for EC key. The EC curve is only detected     
      * if <i>publickey</i> is an object known by the bouncy castle provider.
      * @param publicKey The public key to get the key specification from
      * @return The key specification, "unknown" if it could not be determined and
@@ -378,9 +362,7 @@ public abstract class AlgorithmTools {
         String keyspec = null;
         if ( publicKey instanceof RSAPublicKey ) {
             keyspec = Integer.toString( ((RSAPublicKey) publicKey).getModulus().bitLength() );
-        } else if ( publicKey instanceof DSAPublicKey ) {
-            keyspec = Integer.toString( ((DSAPublicKey) publicKey).getParams().getP().bitLength() );
-        } else if( publicKey instanceof  EdDSAPublicKey) {
+        } else if (publicKey instanceof EdDSAPublicKey) {
             final EdDSAPublicKey edPublickKey = (EdDSAPublicKey) publicKey;
             keyspec = edPublickKey.getAlgorithm();
         } else if (publicKey instanceof DilithiumPublicKey) {
@@ -535,7 +517,7 @@ public abstract class AlgorithmTools {
 
     /**
      * Gets the algorithm to use for encryption given a specific signature algorithm.
-     * Some signature algorithms (i.e. DSA and ECDSA) can not be used for
+     * Some signature algorithms (i.e. ECDSA) can not be used for
      * encryption so they are instead substituted with RSA with equivalent hash
      * algorithm.
      * @param signatureAlgorithm to find a encryption algorithm for
@@ -561,8 +543,6 @@ public abstract class AlgorithmTools {
         } else if (signatureAlgorithm.equals(AlgorithmConstants.SIGALG_SHA224_WITH_ECDSA)) {
             encSigAlg = AlgorithmConstants.SIGALG_SHA256_WITH_RSA;
         } else if (signatureAlgorithm.equals(AlgorithmConstants.SIGALG_SHA1_WITH_ECDSA)) {
-            encSigAlg = AlgorithmConstants.SIGALG_SHA1_WITH_RSA;
-        } else if (signatureAlgorithm.equals(AlgorithmConstants.SIGALG_SHA1_WITH_DSA)) {
             encSigAlg = AlgorithmConstants.SIGALG_SHA1_WITH_RSA;
         } else if (signatureAlgorithm.equals(AlgorithmConstants.SIGALG_GOST3411_WITH_ECGOST3410)) {
             encSigAlg = AlgorithmConstants.SIGALG_SHA1_WITH_RSA;
@@ -594,10 +574,6 @@ public abstract class AlgorithmTools {
             }
         } else if (StringUtils.contains(signatureAlgorithm, AlgorithmConstants.KEYALGORITHM_ECDSA)) {
             if (publicKey instanceof ECPublicKey && !isSpecialECC) {
-                ret = true;
-            }
-        } else if (StringUtils.contains(signatureAlgorithm, AlgorithmConstants.KEYALGORITHM_DSA)) {
-            if (publicKey instanceof DSAPublicKey) {
                 ret = true;
             }
         } else if (StringUtils.contains(signatureAlgorithm, AlgorithmConstants.KEYALGORITHM_ECGOST3410)) {
@@ -722,8 +698,6 @@ public abstract class AlgorithmTools {
                     signatureAlgorithm = AlgorithmConstants.SIGALG_SHA512_WITH_RSA_AND_MGF1;
                 }
             }
-        } else if (publickey instanceof DSAPublicKey) {
-            signatureAlgorithm = AlgorithmConstants.SIGALG_SHA1_WITH_DSA;
         } else {
             if (certSignatureAlgorithm.contains("SHA3-")) {
                 if (certSignatureAlgorithm.contains("256")) {
@@ -811,8 +785,10 @@ public abstract class AlgorithmTools {
      * Calculates which signature algorithm to use given a key type and a digest algorithm
      *
      * @param digestAlg objectId of a digest algorithm, CMSSignedGenerator.DIGEST_SHA256 etc
-     * @param keyAlg RSA, EC, DSA
-     * @return ASN1ObjectIdentifier with the id of PKCSObjectIdentifiers.sha1WithRSAEncryption, X9ObjectIdentifiers.ecdsa_with_SHA1, X9ObjectIdentifiers.id_dsa_with_sha1, etc
+     * @param keyAlg RSA, EC
+     * @return ASN1ObjectIdentifier with the id of
+     * PKCSObjectIdentifiers.sha1WithRSAEncryption,
+     * X9ObjectIdentifiers.ecdsa_with_SHA1, etc
      */
     public static ASN1ObjectIdentifier getSignAlgOidFromDigestAndKey(final String digestAlg, final String keyAlg) {
         if (log.isTraceEnabled()) {
@@ -822,8 +798,6 @@ public abstract class AlgorithmTools {
         ASN1ObjectIdentifier oid = PKCSObjectIdentifiers.sha1WithRSAEncryption;
         if (keyAlg.equals(AlgorithmConstants.KEYALGORITHM_EC) || keyAlg.equals(AlgorithmConstants.KEYALGORITHM_ECDSA)) {
             oid = X9ObjectIdentifiers.ecdsa_with_SHA1;
-        } else if (keyAlg.equals(AlgorithmConstants.KEYALGORITHM_DSA)) {
-            oid = X9ObjectIdentifiers.id_dsa_with_sha1;
         } else if (keyAlg.equals(AlgorithmConstants.KEYALGORITHM_ECGOST3410)) {
             oid = CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001;
         } else if (keyAlg.equals(AlgorithmConstants.KEYALGORITHM_DSTU4145)) {
@@ -844,10 +818,6 @@ public abstract class AlgorithmTools {
                 oid = X9ObjectIdentifiers.ecdsa_with_SHA384;
             } else if (digestAlg.equals(CMSSignedGenerator.DIGEST_SHA512) && (keyAlg.equals(AlgorithmConstants.KEYALGORITHM_ECDSA) || keyAlg.equals(AlgorithmConstants.KEYALGORITHM_EC)) ) {
                 oid = X9ObjectIdentifiers.ecdsa_with_SHA512;
-            } else if (digestAlg.equals(CMSSignedGenerator.DIGEST_SHA256) && keyAlg.equals(AlgorithmConstants.KEYALGORITHM_DSA)) {
-                oid = NISTObjectIdentifiers.dsa_with_sha256;
-            } else if (digestAlg.equals(CMSSignedGenerator.DIGEST_SHA512) && keyAlg.equals(AlgorithmConstants.KEYALGORITHM_DSA)) {
-                oid = NISTObjectIdentifiers.dsa_with_sha512;
             } else if (digestAlg.equals(NISTObjectIdentifiers.id_sha3_256.toString()) && keyAlg.equals(AlgorithmConstants.KEYALGORITHM_RSA)) {
                 oid = NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_256;
             } else if (digestAlg.equals(NISTObjectIdentifiers.id_sha3_384.toString()) && keyAlg.equals(AlgorithmConstants.KEYALGORITHM_RSA)) {

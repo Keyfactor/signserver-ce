@@ -27,7 +27,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
@@ -399,9 +398,6 @@ public class PlainSigner extends BaseSigner {
             case "EC":
             case "ECDSA":
                 result = "SHA256withECDSA";
-                break;
-            case "DSA":
-                result = "SHA256withDSA";
                 break;
             case "Ed25519":
                 result = "Ed25519";

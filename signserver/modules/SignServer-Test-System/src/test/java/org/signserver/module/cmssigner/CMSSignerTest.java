@@ -77,7 +77,6 @@ public class CMSSignerTest  {
     private static final Logger LOG = Logger.getLogger(CMSSignerTest.class);
 
     private static final int WORKERID_ECDSA = 8000;
-    private static final int WORKERID_DSA = 8001;
 
     private final WorkerSession workerSession;
     private final ProcessSessionRemote processSession;
@@ -110,24 +109,6 @@ public class CMSSignerTest  {
                 .setSubject(caDN)
                 .build());
 
-        // Create signer key-pair (DSA) and issue certificate
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {
-                        // Code Signer
-                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                                .setIssuerPrivateKey(caKeyPair.getPrivate())
-                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
-                                .setNotBefore(new Date(currentTime - 60000))
-                                .setSignatureAlgorithm(signatureAlgorithm)
-                                .setIssuer(caDN)
-                                .setSubject("CN=Code Signer DSA 2")
-                                .build()),
-
-                        // CA
-                        caCertificate
-                };
-
         // Create signer key-pair (ECDSA) and issue certificate
         final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
         final Certificate[] certChainECDSA =
@@ -152,8 +133,7 @@ public class CMSSignerTest  {
         char[] password = "foo123".toCharArray();
 
         ks.load(null, password);
-        ks.setKeyEntry("mykeydsa", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
-        ks.setKeyEntry("mykeyec", signerKeyPairECDSA.getPrivate(),"foo123".toCharArray(), certChainECDSA);
+        ks.setKeyEntry("mykeyec", signerKeyPairECDSA.getPrivate(), "foo123".toCharArray(), certChainECDSA);
 
         // Store away the keystore.
         try (FileOutputStream fos = new FileOutputStream("tmp/CMSSignerTest.p12")) {
@@ -218,42 +198,6 @@ public class CMSSignerTest  {
         helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1", null, 1);
 
         mt.removeWorker(WORKERID_ECDSA);
-    }
-
-    /**
-     * Test with DSA encryption algorithm.
-     */
-    @Test
-    public void test04BasicCMSSignSHA1withDSA() throws Exception {
-        // Setup signer
-        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
-        if (!keystore.exists()) {
-            throw new FileNotFoundException(keystore.getAbsolutePath());
-        }
-        mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerP12DSA", keystore, "foo123", "mykeydsa");
-        workerSession.reloadConfiguration(WORKERID_DSA);
-
-        helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3", null, 1);
-
-        mt.removeWorker(WORKERID_DSA);
-    }
-
-    /**
-     * Test with SHA256withDSA encryption algorithm.
-     */
-    @Test
-    public void test08BasicCMSSignSHA256withDSA() throws Exception {
-        // Setup signer
-        final File keystore = new File(mt.getSignServerHome(), "tmp/CMSSignerTest.p12");
-        if (!keystore.exists()) {
-            throw new FileNotFoundException(keystore.getAbsolutePath());
-        }
-        mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerP12DSA", keystore, "foo123", "mykeydsa");
-        workerSession.reloadConfiguration(WORKERID_DSA);
-
-        helperBasicCMSSign(WORKERID_DSA, "SHA256withDSA", "2.16.840.1.101.3.4.2.1", "2.16.840.1.101.3.4.3.2", null, 1);
-
-        mt.removeWorker(WORKERID_DSA);
     }
 
     /**

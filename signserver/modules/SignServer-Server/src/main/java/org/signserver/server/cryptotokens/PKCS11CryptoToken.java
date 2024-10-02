@@ -430,11 +430,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        // Keyspec for DSA is prefixed with "dsa"
-        if (keyAlgorithm != null && keyAlgorithm.equalsIgnoreCase("DSA")
-                && !keySpec.contains("dsa")) {
-            keySpec = "dsa" + keySpec;
-        }
                 
         try {
             // Construct the apropriate AlgorithmParameterSpec
@@ -445,8 +440,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 } else {
                     spec = new RSAKeyGenParameterSpec(Integer.valueOf(keySpec), RSAKeyGenParameterSpec.F4);
                 }
-            } else if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
-                spec = null; // We don't currently support setting attributes for DSA keys. This could be added in future if needed but requires changes in underlaying APIs
             } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
                 // Convert it to the OID if possible since the human friendly name might differ in the provider
                 if (ECUtil.getNamedCurveOid(keySpec) != null) {

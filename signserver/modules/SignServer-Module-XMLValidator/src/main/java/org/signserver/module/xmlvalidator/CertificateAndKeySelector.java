@@ -158,8 +158,6 @@ class CertificateAndKeySelector extends KeySelector {
                     SIGNATURE_METHOD_RSA_SHA256.equals(signAlg) ||
                     SIGNATURE_METHOD_RSA_SHA384.equals(signAlg) ||
                     SIGNATURE_METHOD_RSA_SHA512.equals(signAlg);
-        } else if ("DSA".equalsIgnoreCase(keyAlg)) {
-            return SignatureMethod.DSA_SHA1.equalsIgnoreCase(signAlg);
         } else if ("EC".equalsIgnoreCase(keyAlg)) {
             return SIGNATURE_METHOD_ECDSA_SHA1.equals(signAlg) ||
                     SIGNATURE_METHOD_ECDSA_SHA256.equals(signAlg) ||

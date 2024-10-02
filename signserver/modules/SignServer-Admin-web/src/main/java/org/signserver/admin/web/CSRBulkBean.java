@@ -399,9 +399,6 @@ public class CSRBulkBean extends BulkBean {
                 AlgorithmTools.SIG_ALGS_RSA.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
-                AlgorithmTools.SIG_ALGS_DSA.forEach((alg) -> {
-                    signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
-                });
                 AlgorithmTools.SIG_ALGS_ECDSA.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });

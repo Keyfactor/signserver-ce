@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -31,7 +32,11 @@ import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import static org.junit.Assert.assertEquals;
 
@@ -49,6 +54,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
+import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ComplianceTestUtils;
@@ -78,13 +84,12 @@ public class OpenPGPSignerGpgComplianceTest {
     private static final String RSA2048_ALIAS = "signer00001";    
     private static final String RSA4096_ALIAS = "ts40003";    
     private static final String NISTP256_ALIAS = "signer00002";   
-    private static final String DSA2048_ALIAS = "signer00004";    
 
     private static boolean enabled;
     private static boolean ecdsaSupported;
 
     @BeforeClass
-    public static void setUpClass() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, CertBuilderException, CertificateException, KeyStoreException {
+    public static void setUpClass() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, CertBuilderException, CertificateException, KeyStoreException, InvalidAlgorithmParameterException {
         enabled = Boolean.valueOf(new ModulesTestCase().getConfig().getProperty(GPG_ENABLED));
         if (enabled) {
             final ComplianceTestUtils.ProcResult res =
@@ -99,6 +104,7 @@ public class OpenPGPSignerGpgComplianceTest {
 
         // Create CA
         final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
+        final KeyPair caKeyPairEC = CryptoUtils.generateEcCurve("prime256v1");
         final String caDN = "CN=Test CA";
         long currentTime = System.currentTimeMillis();
         final X509Certificate caCertificate
@@ -108,30 +114,31 @@ public class OpenPGPSignerGpgComplianceTest {
                 .setSignatureAlgorithm(signatureAlgorithm)
                 .setIssuer(caDN)
                 .setSubject(caDN)
-                .build());
+                        .build());
 
-        // Create signer key-pair (DSA) and issue certificate
-        final KeyPair signerKeyPairDSA = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChainDSA =
-                new Certificate[] {
-                        // Code Signer
-                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                                .setIssuerPrivateKey(caKeyPair.getPrivate())
-                                .setSubjectPublicKey(signerKeyPairDSA.getPublic())
-                                .setNotBefore(new Date(currentTime - 60000))
-                                .setSignatureAlgorithm(signatureAlgorithm)
-                                .setIssuer(caDN)
-                                .setSubject("CN=Code Signer DSA 2")
-                                .build()),
-
-                        // CA
-                        caCertificate
+        // Create signer key-pair (ECDSA) and issue certificate
+        final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
+        final Certificate[] certChainECDSA
+                = new Certificate[]{
+                    // Code Signer
+                    new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                            .setIssuerPrivateKey(caKeyPairEC.getPrivate())
+                            .setSubjectPublicKey(signerKeyPairECDSA.getPublic())
+                            .setNotBefore(new Date(currentTime - 60000))
+                            .setSignatureAlgorithm("SHA256withECDSA")
+                            .setIssuer(caDN)
+                            .setSubject("CN=Code Signer ECDSA 3")
+                            .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairECDSA.getPublic())))
+                            .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
+                            .build()),
+                    // CA
+                    caCertificate
                 };
 
         char[] password = "foo123".toCharArray();
         KeyStore ks = KeyStore.getInstance("pkcs12");
         ks.load(null, password);
-        ks.setKeyEntry("mykeyDSA", signerKeyPairDSA.getPrivate(), "foo123".toCharArray(), certChainDSA);
+        ks.setKeyEntry("mykeyECDSA", signerKeyPairECDSA.getPrivate(), "foo123".toCharArray(), certChainECDSA);
 
         // Store away the keystore.
         try (FileOutputStream fos = new FileOutputStream("tmp/OpenPGPSignerGpgComplianceTest.p12")) {
@@ -264,36 +271,6 @@ public class OpenPGPSignerGpgComplianceTest {
     }
 
     @Test
-    public void testDetachedSigning_DSA1024_SHA256() throws Exception {
-        LOG.info("testDetachedSigning_DSA1024_SHA256");
-        signAndVerify("dsa1024", "SHA-256", false, true);
-    }
-
-    @Test
-    public void testDetachedSigning_DSA1024_SHA1() throws Exception {
-        LOG.info("testDetachedSigning_DSA1024_SHA1");
-        signAndVerify("dsa1024", "SHA-1", false, true);
-    }
-
-    @Test
-    public void testDetachedSigning_DSA1024_SHA224() throws Exception {
-        LOG.info("testDetachedSigning_DSA1024_SHA224");
-        signAndVerify("dsa1024", "SHA-224", false, true);
-    }
-
-    // Note: Not supported with SUN/JKS:
-    //@Test
-    //public void testSigning_DSA1024_SHA384() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-384");
-    //}
-
-    // Note: Not supported with SUN/JKS:
-    //@Test
-    //public void testSigning_DSA1024_SHA512() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-512");
-    //}
-
-    @Test
     public void testClearTextSigning_RSA_SHA256() throws Exception {
         LOG.info("testClearTextSigning_RSA_SHA256");
         signAndVerify("rsa2048", "SHA-256", false, false);
@@ -374,24 +351,6 @@ public class OpenPGPSignerGpgComplianceTest {
         signAndVerify("rsa4096", "SHA-512", false, false);
     }
 
-    @Test
-    public void testClearTextSigning_DSA1024_SHA256() throws Exception {
-        LOG.info("testClearTextSigning_DSA1024_SHA256");
-        signAndVerify("dsa1024", "SHA-256", false, false);
-    }
-
-    @Test
-    public void testClearTextSigning_DSA1024_SHA1() throws Exception {
-        LOG.info("testClearTextSigning_DSA1024_SHA1");
-        signAndVerify("dsa1024", "SHA-1", false, false);
-    }
-
-    // Note: Not supported by BC:
-    //@Test
-    //public void testSigning_DSA1024_SHA224_clearText() throws Exception {
-    //    signAndVerify("dsa1024", "SHA-224", false, false);
-    //}
-
     /**
      * Test signing and later revoking with RSA and SHA256
      * @throws Exception 
@@ -421,16 +380,6 @@ public class OpenPGPSignerGpgComplianceTest {
         LOG.info("testDetachedSigning_ECDSA_SHA256withRevocation");
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256", true, true);
-    }
-    
-    /**
-     * Test signing and later revoking with DSA and SHA256
-     * @throws Exception 
-     */
-    @Test
-    public void testDetachedSigning_DSA1024_SHA256withRevocation() throws Exception {
-        LOG.info("testDetachedSigning_DSA1024_SHA256withRevocation");
-        signAndVerify("dsa1024", "SHA-256", true, true);
     }
     
     /**
@@ -483,17 +432,6 @@ public class OpenPGPSignerGpgComplianceTest {
                 }
                 case "nistp256": {
                     helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", NISTP256_ALIAS);                    
-                    break;
-                }
-                case "dsa1024": {
-                    final File keystore = new File(helper.getSignServerHome(), "tmp/OpenPGPSignerGpgComplianceTest.p12");
-                    helper.getWorkerSession().setWorkerProperty(workerId, PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
-                    helper.getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystore.getAbsolutePath());
-                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "mykeydsa");
-                    break;
-                }
-                case "dsa2048": {
-                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", DSA2048_ALIAS);                   
                     break;
                 }
                 default: {
@@ -649,9 +587,6 @@ public class OpenPGPSignerGpgComplianceTest {
                 break;
             case "nistp256":
                 keyalgoPart = "ECDSA";
-                break;
-            case "dsa1024":
-                keyalgoPart = "DSA";
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);

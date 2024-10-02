@@ -23,7 +23,6 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
@@ -607,9 +606,6 @@ public class CMSSigner extends BaseSigner {
             case "EC":
             case "ECDSA":
                 result = "SHA256withECDSA";
-                break;
-            case "DSA":
-                result = "SHA256withDSA";
                 break;
             case "Ed25519":
                 result = "Ed25519";

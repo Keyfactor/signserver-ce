@@ -114,6 +114,7 @@ import static org.junit.Assert.fail;
 import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.PdfObject;
+import java.security.InvalidAlgorithmParameterException;
 
 /**
  * Unit tests for PDFSigner.
@@ -142,8 +143,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
     private final String SAMPLE_OPEN123_PASSWORD = "open123";
 
-    private final String ILLEGAL_DIGEST_FOR_DSA_MESSAGE = "Only SHA1 is permitted as digest algorithm for DSA public/private keys";
-    
     /**
      * Alternative certificate chain for dss10_signer1.p12.
      * Different certificate, subject DN and issued from sub CA.
@@ -1865,47 +1864,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
 
     /**
-     * Test that setting a hash algorithm other than SHA1
-     * gives an error when using DSA keys.
-     */
-    @Test
-    public void test17OnlySHA1AcceptedForDSA() throws Exception {
-        final MockedCryptoToken token = generateToken(true, null);
-        final MockedPDFSigner instance = new MockedPDFSigner(token);
-
-        final WorkerConfig workerConfig = new WorkerConfig();
-
-        workerConfig.setProperty("NAME", "TestSignerDSA");
-        workerConfig.setProperty("DIGESTALGORITHM", "SHA256");
-
-        instance.init(WORKER2, workerConfig, null, null);
-
-        final List<String> fatalErrors = instance.getFatalErrors(null);
-
-        assertTrue("Should contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
-    }
-
-    /**
-     * Test that explicitly setting SHA1 for DSA keys works.
-     */
-    @Test
-    public void test18SHA1acceptedForDSA() throws Exception {
-        final MockedCryptoToken token = generateToken(true, null);
-        final MockedPDFSigner instance = new MockedPDFSigner(token);
-
-        final WorkerConfig workerConfig = new WorkerConfig();
-
-        workerConfig.setProperty("NAME", "TestSignerDSA");
-        workerConfig.setProperty("DIGESTALGORITHM", "SHA1");
-
-        instance.init(WORKER2, workerConfig, null, null);
-
-        final List<String> fatalErrors = instance.getFatalErrors(null);
-
-        assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
-    }
-
-    /**
      * Test that setting the hash algorithm to SHA256
      * is accepted for RSA keys.
      */
@@ -1916,14 +1874,14 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final WorkerConfig workerConfig = new WorkerConfig();
 
-        workerConfig.setProperty("NAME", "TestSignerDSA");
+        workerConfig.setProperty("NAME", "TestSignerRSA");
         workerConfig.setProperty("DIGESTALGORITHM", "SHA256");
 
         instance.init(WORKER2, workerConfig, null, null);
 
         final List<String> fatalErrors = instance.getFatalErrors(null);
 
-        assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
+        assertFalse("Should not contain error", fatalErrors.isEmpty());
     }
 
     @Test
@@ -2198,16 +2156,16 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
 
     /**
-     * Helper method creating a mocked token, using DSA or RSA keys.
+     * Helper method creating a mocked token ECDSA keys.
      *
-     * @param useDSA True if DSA is to be used, otherwise RSA
+     * @param useRSA True if ECDSA is to be used, otherwise RSA
      * @param cdpUrl URL to use if a CDP URL should be included in the signing
      *               cert, if null, no CDP URL is added.
      * @return Mocked crypto token
      */
-    private MockedCryptoToken generateToken(final boolean useDSA, final String cdpUrl) throws NoSuchAlgorithmException, NoSuchProviderException,
-            CertBuilderException, CertificateException {
-        final KeyPair signerKeyPair = useDSA ? CryptoUtils.generateDSA(1024) : CryptoUtils.generateRSA(1024);
+    private MockedCryptoToken generateToken(final boolean useECDSA, final String cdpUrl) throws NoSuchAlgorithmException, NoSuchProviderException,
+            CertBuilderException, CertificateException, InvalidAlgorithmParameterException {
+        final KeyPair signerKeyPair = useECDSA ? CryptoUtils.generateEcCurve("prime256v1") : CryptoUtils.generateRSA(1024);
         CertBuilder certBuilder = new CertBuilder();
 
         if (cdpUrl != null) {
@@ -2357,7 +2315,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     private void setupWorkers()
             throws NoSuchAlgorithmException, NoSuchProviderException,
-            CertBuilderException, CertificateException, IOException {
+            CertBuilderException, CertificateException, IOException, InvalidAlgorithmParameterException {
 
         final WorkerSessionMock workerMock = new WorkerSessionMock();
         workerSession = workerMock;

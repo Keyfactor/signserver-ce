@@ -63,7 +63,7 @@ public class XMLSignerTest {
     
     private static final int DEBUGWORKER = 5805;
     
-    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3, DEBUGWORKER};
+    private static final int[] WORKERS = new int[] {WORKERID, WORKERID3, DEBUGWORKER};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
@@ -86,15 +86,6 @@ public class XMLSignerTest {
         mt.addSigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID, "TestXMLSigner", true);
         
         // Update path to JKS file
-        workerSession.setWorkerProperty(WORKERID2, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
-        workerSession.setWorkerProperty(WORKERID2, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
-        workerSession.setWorkerProperty(WORKERID2, "NAME", "TestXMLSignerDSA");
-        workerSession.setWorkerProperty(WORKERID2, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
-                new File(mt.getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
-        workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPASSWORD", "foo123");
-        workerSession.setWorkerProperty(WORKERID2, "DEFAULTKEY", "xmlsigner4");
-        workerSession.reloadConfiguration(WORKERID2);
         
         workerSession.setWorkerProperty(WORKERID3, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(WORKERID3, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.P12CryptoToken");
@@ -237,7 +228,7 @@ public class XMLSignerTest {
     @Test
     public void test06BasicXmlSignRSAInvalidAlgorithm() throws Exception {
         try {
-            testBasicXmlSign(WORKERID, "SHA1withDSA", null, "http://www.w3.org/2000/09/xmldsig#dsa-sha1", DIGEST_METHOD_URI_SHA1);
+            testBasicXmlSign(WORKERID, "SHA256withECDSA", null, "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256", DIGEST_METHOD_URI_SHA256);
             fail("Should fail using incorrect signature algorithm for the key");
         } catch (SignServerException e) {
             // expected
@@ -267,16 +258,6 @@ public class XMLSignerTest {
     public void test07GetStatus() throws Exception {
         final StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertSame("Status", stat.getTokenStatus(), WorkerStatus.STATUS_ACTIVE);
-    }
-
-    @Test
-    public void test08BasicXmlSignDSADefaultSigAlg() throws Exception {
-        testBasicXmlSign(WORKERID2, null, null, "http://www.w3.org/2009/xmldsig11#dsa-sha256", DIGEST_METHOD_URI_SHA256);
-    }
-    
-    @Test
-    public void test09BasicXmlSignDSASHA1() throws Exception {
-        testBasicXmlSign(WORKERID2, "SHA1withDSA", null, "http://www.w3.org/2000/09/xmldsig#dsa-sha1", DIGEST_METHOD_URI_SHA1);
     }
 
     @Test

@@ -338,7 +338,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
                         "-indir", inDir.getRoot().getAbsolutePath(),
                         "-outdir", outDir.getRoot().getAbsolutePath(),
                         "-threads", "100", "-loadbalancing", "ROUND_ROBIN",
-                        "-hosts", "primekey.com, localhost,localhost,localhost",
+                        "-hosts", "signserver.org, localhost,localhost,localhost",
                         "-timeout", "1000")
         );
         // then

@@ -49,7 +49,7 @@ public class SetPropertiesHelper {
     private List<AuthClientEntry> addAuthClientGen2Entries = new ArrayList<>();
     private List<AuthClientEntry> removeAuthClientGen2Entries = new ArrayList<>();
 
-    private static final String WORKER_PROPERTY_MASK_PLACEHOLDER = "_MASKED_";
+    protected static final String WORKER_PROPERTY_MASK_PLACEHOLDER = "_MASKED_";
     private static final Set<String> DEFAULT_MASKED_PROPERTIES;
 
     private final Properties configuration;
@@ -59,7 +59,7 @@ public class SetPropertiesHelper {
                 new HashSet<>(Arrays.asList("PIN", "KEYSTOREPASSWORD",
                                             "KEYDATA"));
     }
-
+    
     public SetPropertiesHelper(final PrintStream out,
                                final Properties configuration) {
         this.out = out;
@@ -300,14 +300,14 @@ public class SetPropertiesHelper {
      * @param propertyName
      * @return True if property should be masked
      */
-    private boolean shouldMaskProperty(final String propertyName) {
+    protected boolean shouldMaskProperty(final String propertyName) {
         final String propertyNameTrimmed =
                 StringUtils.removeEnd(StringUtils.removeStart(propertyName, "_"), "_");
 
         return getMaskedProperties(configuration).contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
     }
 
-    private Set<String> getMaskedProperties(final Properties configuration) {
+    static private Set<String> getMaskedProperties(final Properties configuration) {
         final String maskedProperties =
                 configuration.getProperty("admincli.maskedworkerproperties");
 

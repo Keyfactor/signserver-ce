@@ -8,9 +8,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/css/default.css.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" type="text/css"/>
-        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/css/cssLayout.css.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" type="text/css"/>
-        <link rel="shortcut icon" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../../jakarta.faces.resource/images/favicon.png.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>"/>
+        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../jakarta.faces.resource/css/default.css.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" type="text/css"/>
+        <link rel="stylesheet" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../jakarta.faces.resource/css/cssLayout.css.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" type="text/css"/>
+        <link rel="shortcut icon" href="<c:out value='${pageContext.servletContext.contextPath}'/>/../jakarta.faces.resource/images/favicon.png.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" type="image/png"/>
         <title>SignServer - Error report</title>
     </head>
     <body>

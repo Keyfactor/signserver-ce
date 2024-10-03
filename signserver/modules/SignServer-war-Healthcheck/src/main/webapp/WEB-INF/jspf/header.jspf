@@ -7,7 +7,7 @@
         <div class="kfds-header-brand">
             <div class="kfds-header-logo">
                 <a href="../">
-                    <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../javax.faces.resource/images/logo.svg.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" alt="SignServer by Keyfactor"/>
+                    <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../jakarta.faces.resource/images/logo.svg.xhtml?ln=<%=org.signserver.web.common.ThemeHelper.getInstance().getTheme()%>" alt="SignServer by Keyfactor"/>
                 </a>
             </div>
             </div>

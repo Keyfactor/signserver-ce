@@ -244,7 +244,7 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
-    public WorkerConfig getCurrentWorkerConfig(int signerId) {
+    public WorkerConfig getCurrentWorkerConfig(AdminInfo admin, int signerId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

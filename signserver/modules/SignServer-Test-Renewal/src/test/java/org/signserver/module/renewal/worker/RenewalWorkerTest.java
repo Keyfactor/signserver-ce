@@ -68,6 +68,7 @@ import org.signserver.server.IProcessable;
 import org.signserver.server.IServices;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
@@ -186,11 +187,11 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertEquals("Requested DN", "CN=" + SIGNER_6102_ENDENTITY + ",C=SE", mockEjbcaWs.getLastPKCS10().getRequestDN());
         
         // Should not be any NEXTCERTSIGNKEY
-        assertNull("no NEXTCERTSIGNKEY", getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNull("no NEXTCERTSIGNKEY", getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be an DEFAULTKEY
-        assertNotNull("DEFAULTKEY", getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNotNull("DEFAULTKEY", getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
         
         // Should have certificate and chain
@@ -230,7 +231,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 nextCertSignAlias);
         getWorkerSession().reloadConfiguration(SIGNERID_6102);
         assertEquals("New nextcertsignkey alias", nextCertSignAlias,
-                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
 
@@ -267,17 +268,17 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertTrue(chain.contains(cert));
 
         // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be an DEFAULTKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNotNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
 
 
         // DEFAULTKEY should now have the right alias
         assertEquals(nextCertSignAlias,  getWorkerSession()
-                .getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
+                .exportWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
     }
 
     /**
@@ -307,7 +308,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 nextCertSignAlias);
         getWorkerSession().reloadConfiguration(SIGNERID_6102);
         assertEquals("New defaultkey alias", defaultKeyAlias,
-                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
 
 
@@ -347,16 +348,16 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         // Should still be a NEXTCERTSIGNKEY
         assertEquals(nextCertSignAlias,
-                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be an DEFAULTKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNotNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
 
         // DEFAULTKEY should not have changed
         assertEquals(defaultKeyAlias,  getWorkerSession()
-                .getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
+                .exportWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
     }
 
     /**
@@ -382,7 +383,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 defaultKeyAlias);
         getWorkerSession().reloadConfiguration(SIGNERID_6102);
         assertEquals("New defaultkey alias", defaultKeyAlias,
-                getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
 
 
@@ -422,7 +423,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         // DEFAULTKEY should not have changed
         assertEquals(defaultKeyAlias,  getWorkerSession()
-                .getCurrentWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
+                .exportWorkerConfig(SIGNERID_6102).getProperty("DEFAULTKEY"));
     }
 
     /**
@@ -442,11 +443,11 @@ public class RenewalWorkerTest extends AbstractTestCase {
         mockSetupEjbcaSearchResult();
 
         // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Store DEFAULTKEY value
-        final String defaultKey = getWorkerSession().getCurrentWorkerConfig(
+        final String defaultKey = getWorkerSession().exportWorkerConfig(
                 SIGNERID_6102).getProperty("DEFAULTKEY");
 
         // Test starts here
@@ -470,12 +471,12 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 RenewalWorkerProperties.RESPONSE_RESULT));
 
         // Should now be a NEXTCERTSIGNKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNotNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be the same DEFAULTKEY
         assertEquals(defaultKey, getWorkerSession()
-                .getCurrentWorkerConfig(SIGNERID_6102)
+                .exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
     }
 
@@ -494,11 +495,11 @@ public class RenewalWorkerTest extends AbstractTestCase {
         mockEjbcaWs.setAuthenticationFail(true);
 
         // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Store DEFAULTKEY value
-        final String defaultKey = getWorkerSession().getCurrentWorkerConfig(
+        final String defaultKey = getWorkerSession().exportWorkerConfig(
                 SIGNERID_6102).getProperty("DEFAULTKEY");
 
         // Test starts here
@@ -522,12 +523,12 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 RenewalWorkerProperties.RESPONSE_RESULT));
 
         // Should now be a NEXTCERTSIGNKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNotNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be the same DEFAULTKEY
         assertEquals(defaultKey, getWorkerSession()
-                .getCurrentWorkerConfig(SIGNERID_6102)
+                .exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
     }
 
@@ -767,11 +768,11 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertTrue(chain.contains(cert));
 
         // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("NEXTCERTSIGNKEY"));
 
         // Should be an DEFAULTKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+        assertNotNull(getWorkerSession().exportWorkerConfig(SIGNERID_6102)
                 .getProperty("DEFAULTKEY"));
     }
     
@@ -1025,7 +1026,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         }
 
         @Override
-        public WorkerConfig getCurrentWorkerConfig(int signerId) {
+        public WorkerConfig getCurrentWorkerConfig(AdminInfo adminInfo, int signerId) {
             // always return latest added worker's config...
             return workerConfig;
         }

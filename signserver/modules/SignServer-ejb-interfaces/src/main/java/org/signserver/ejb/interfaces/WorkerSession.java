@@ -96,20 +96,6 @@ public interface WorkerSession {
     boolean deactivateSigner(WorkerIdentifier signerId) throws CryptoTokenOfflineException,
             InvalidWorkerIdException;
 
-    /**
-     * Returns the current configuration of a worker. Only the worker properties
-     * are included in the WorkerConfig instance returned.
-     * Prior to version 3.7.0 the returned WorkerConfig instance also contained
-     * authorized clients and the signer certificate and chain.
-     * Use the dedicated methods to retrieve this data.
-     *
-     * Observe that this config might not be active until a reload command
-     * has been excecuted.
-     *
-     * @param signerId
-     * @return the current (not always active) configuration
-     */
-    WorkerConfig getCurrentWorkerConfig(int signerId);
 
     /**
      * Exports a worker's properties excluding sensitive ones

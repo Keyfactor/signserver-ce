@@ -16,11 +16,11 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Properties;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.WorkerConfig;
 
 /**
  * Removes all properties for a given worker.
@@ -91,8 +91,8 @@ public class RemoveWorkerCommand extends AbstractAdminCommand {
 
         removeGlobalProperties(workerId);
 
-        WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
-        Iterator<Object> iter = wc.getProperties().keySet().iterator();
+        final Properties config = getWorkerSession().exportWorkerConfig(workerId);
+        Iterator<Object> iter = config.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
             if (getWorkerSession().removeWorkerProperty(workerId, key)) {

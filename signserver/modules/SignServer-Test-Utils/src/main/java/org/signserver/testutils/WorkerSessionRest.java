@@ -113,16 +113,8 @@ public class WorkerSessionRest implements WorkerSessionRemote {
     }
 
     @Override
-    public WorkerConfig getCurrentWorkerConfig(int signerId) {
-        /* delegate to the EJB implementation, as this is not supported by REST
-         * interface yet
-         */
-        return workerSessionEjb.getCurrentWorkerConfig(signerId);
-    }
-
-    @Override
     public Properties exportWorkerConfig(int signerId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return workerSessionEjb.exportWorkerConfig(signerId);
     }
 
     @Override

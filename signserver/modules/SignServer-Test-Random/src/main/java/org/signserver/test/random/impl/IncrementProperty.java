@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.test.random.impl;
 
+import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
@@ -40,7 +40,7 @@ public class IncrementProperty implements Runnable {
     @Override
     public void run() {
         LOG.debug(">run");
-        WorkerConfig currentWorkerConfig = workerSession.getCurrentWorkerConfig(signerId);
+        final Properties currentWorkerConfig = workerSession.exportWorkerConfig(signerId);
         String stringValue = currentWorkerConfig.getProperty(propertyName, "0");
         long value = Long.parseLong(stringValue);
         LOG.info("Old WORKER" + signerId + "." + propertyName + "=" + value);

@@ -130,7 +130,7 @@ public class ValidationWS implements IValidationWS {
         }
 
         if (retval != 0) {
-            String classPath = getWorkerSession().getCurrentWorkerConfig(retval).getImplementationClass();
+            String classPath = getWorkerSession().exportWorkerConfig(retval).getProperty(WorkerConfig.IMPLEMENTATION_CLASS);
             if (classPath == null || !classPath.trim().equals(ValidationServiceWorker.class.getName())) {
                 retval = 0;
             }

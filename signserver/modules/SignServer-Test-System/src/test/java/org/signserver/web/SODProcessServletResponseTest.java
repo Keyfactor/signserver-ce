@@ -184,7 +184,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         fields.put("encoding", "base64");
 
         // Set any bad properties that will make the signer fail with an exception
-        final String originalSignatureAlgorithm = getWorkerSession().getCurrentWorkerConfig(
+        final String originalSignatureAlgorithm = getWorkerSession().exportWorkerConfig(
                 getSignerIdDummy1()).getProperty("SIGNATUREALGORITHM");
 
         final String badKeyData = "_any-non-existing-alg_";

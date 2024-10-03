@@ -284,7 +284,7 @@ public class StartupSingletonBean {
                         final int workerid = Integer.parseInt(splittedKey);
 
                         if (propertykey.equalsIgnoreCase(GlobalConfiguration.WORKERPROPERTY_CLASSPATH.substring(1))) {
-                            if (!workerSession.getCurrentWorkerConfig(workerid).getProperties().containsKey(WorkerConfig.IMPLEMENTATION_CLASS)) {
+                            if (!workerSession.getCurrentWorkerConfig(admin, workerid).getProperties().containsKey(WorkerConfig.IMPLEMENTATION_CLASS)) {
                                 workerSession.setWorkerProperty(admin, workerid, WorkerConfig.IMPLEMENTATION_CLASS, globalConfig.getProperty(key));
                                 LOG.info("Upgraded config for worker " + workerid);
                             } else {
@@ -295,7 +295,7 @@ public class StartupSingletonBean {
                         } else if (propertykey.equalsIgnoreCase("CRYPTOTOKEN.CLASSPATH") 
                                     || propertykey.equalsIgnoreCase("SIGNERTOKEN.CLASSPATH")) {
                             
-                            if (!workerSession.getCurrentWorkerConfig(workerid).getProperties().containsKey(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS)) {
+                            if (!workerSession.getCurrentWorkerConfig(admin, workerid).getProperties().containsKey(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS)) {
                                 workerSession.setWorkerProperty(admin, workerid, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, globalConfig.getProperty(key));
                                 LOG.info("Upgraded crypto config for worker " + workerid);
                             } else {

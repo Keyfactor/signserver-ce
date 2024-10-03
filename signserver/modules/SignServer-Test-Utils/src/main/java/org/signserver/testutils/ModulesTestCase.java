@@ -932,23 +932,23 @@ public class ModulesTestCase {
     }
 
     public void removeWorker(final int workerId) {
-         WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
+        Properties config = getWorkerSession().exportWorkerConfig(workerId);
         
         if (useRestWorkerSession) {
             callRest(Method.DELETE, "/workers/" + workerId, new JSONObject());
         } else {
             removeGlobalProperties(workerId);
 
-            LOG.info("Got current config: " + wc.getProperties());
-            for (Object o : wc.getProperties().keySet()) {
+            LOG.info("Got current config: " + config);
+            for (Object o : config.keySet()) {
                 final String key = (String) o;
                 getWorkerSession().removeWorkerProperty(workerId, key);
             }
         }
 
         getWorkerSession().reloadConfiguration(workerId);
-        wc = getWorkerSession().getCurrentWorkerConfig(workerId);
-        LOG.info("Got current config after: " + wc.getProperties());
+        config = getWorkerSession().exportWorkerConfig(workerId);
+        LOG.info("Got current config after: " + config);
     }
 
     public File getSignServerHome() throws FileNotFoundException {
@@ -1276,14 +1276,14 @@ public class ModulesTestCase {
     public static void removeWorkerById(final int workerId) {
         resetGlobalProperties(workerId);
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
-        final WorkerConfig wc = workerSession.getCurrentWorkerConfig(workerId);
-        LOG.info("Got current config before: " + wc.getProperties());
-        for (Object o : wc.getProperties().keySet()) {
+        final Properties config = workerSession.exportWorkerConfig(workerId);
+        LOG.info("Got current config before: " + config);
+        for (Object o : config.keySet()) {
             final String key = (String) o;
             workerSession.removeWorkerProperty(workerId, key);
         }
         workerSession.reloadConfiguration(workerId);
-        LOG.info("Got current config after: " + workerSession.getCurrentWorkerConfig(workerId).getProperties());
+        LOG.info("Got current config after: " + workerSession.exportWorkerConfig(workerId));
     }
 
     /**

@@ -92,7 +92,7 @@ public class GetPropertyCommand extends AbstractAdminCommand {
     }
 
     private void getWorkerProperty(int workerId, String propertykey) throws RemoteException, CommandFailureException {
-        final String propertyValue = getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(propertykey);
+        final String propertyValue = getWorkerSession().exportWorkerConfig(workerId).getProperty(propertykey);
     
         if (propertyValue != null) {
             this.getOutputStream().print(propertyValue);

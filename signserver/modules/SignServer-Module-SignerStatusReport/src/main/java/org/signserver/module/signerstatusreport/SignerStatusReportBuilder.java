@@ -124,7 +124,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
 
                 if (signings != null) {
                     final long keyUsageLimit = Long.valueOf(
-                            workerSession.getCurrentWorkerConfig(workerId)
+                            workerSession.exportWorkerConfig(workerId)
                                     .getProperty(
                                             SignServerConstants.KEYUSAGELIMIT, "-1"));
                     sb.append("signings=");

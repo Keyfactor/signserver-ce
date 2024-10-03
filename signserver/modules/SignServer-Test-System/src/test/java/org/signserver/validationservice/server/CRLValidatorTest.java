@@ -400,7 +400,7 @@ public class CRLValidatorTest extends ModulesTestCase {
      */
     @Test
     public void test09NoCRLPath() throws Exception {
-        String crlPaths = sSSession.getCurrentWorkerConfig(15).getProperty("VAL1.ISSUER2.CRLPATHS");
+        String crlPaths = sSSession.exportWorkerConfig(15).getProperty("VAL1.ISSUER2.CRLPATHS");
 
         sSSession.setWorkerProperty(15, "VAL1.ISSUER2.CRLPATHS", "");
         sSSession.reloadConfiguration(15);

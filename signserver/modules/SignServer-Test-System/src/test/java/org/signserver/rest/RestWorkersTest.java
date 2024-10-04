@@ -425,7 +425,7 @@ public class RestWorkersTest extends ModulesTestCase {
                     .statusCode(201)
                     .extract().response();
 
-            assertEquals("HelloWorker_REST", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("NAME"));
+            assertEquals("HelloWorker_REST", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("NAME"));
             assertEquals("Check response status code 201", 201, response.statusCode());
         } finally {
             removeWorker(HELLO_WORKER_ID);
@@ -585,7 +585,7 @@ public class RestWorkersTest extends ModulesTestCase {
 
             assertEquals("Check response status code 201", 201, response.statusCode());
             assertEquals("Check there is no worker property called PROPERTY1",
-                    null, getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("PROPERTY1"));
+                    null, getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("PROPERTY1"));
 
             response = given()
                     .relaxedHTTPSValidation()
@@ -600,7 +600,7 @@ public class RestWorkersTest extends ModulesTestCase {
                     .contentType("application/json")
                     .extract().response();
 
-            assertEquals("value1", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("PROPERTY1"));
+            assertEquals("value1", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("PROPERTY1"));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker properties successfully updated"));
             assertEquals("Check response status code 200", 200, response.statusCode());
@@ -736,9 +736,9 @@ public class RestWorkersTest extends ModulesTestCase {
 
             assertEquals("Check response status code 201", 201, response.statusCode());
             assertEquals("Check worker property before replace",
-                    "Hi", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("GREETING"));
+                    "Hi", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("GREETING"));
             assertEquals("Check worker property before replace",
-                    "NOAUTH", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("AUTHTYPE"));
+                    "NOAUTH", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("AUTHTYPE"));
 
             response = given()
                     .relaxedHTTPSValidation()
@@ -753,8 +753,8 @@ public class RestWorkersTest extends ModulesTestCase {
                     .contentType("application/json")
                     .extract().response();
 
-            assertEquals("Properties Replaced!", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("GREETING"));
-            assertEquals(null, getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("AUTHTYPE"));
+            assertEquals("Properties Replaced!", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("GREETING"));
+            assertEquals(null, getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("AUTHTYPE"));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response contains the correct message", responseJsonObject.toString().contains("Worker properties successfully replaced"));
             assertEquals("Check response status code 200", 200, response.statusCode());

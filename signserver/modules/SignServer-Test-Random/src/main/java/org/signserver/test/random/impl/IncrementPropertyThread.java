@@ -69,7 +69,7 @@ public class IncrementPropertyThread extends WorkerThread {
     }
 
     private long getActualValue() {
-        return Long.parseLong(workerSession.getCurrentWorkerConfig(workerId).getProperty(property, "0"));
+        return Long.parseLong(workerSession.exportWorkerConfig(workerId).getProperty(property, "0"));
     }
     
 }

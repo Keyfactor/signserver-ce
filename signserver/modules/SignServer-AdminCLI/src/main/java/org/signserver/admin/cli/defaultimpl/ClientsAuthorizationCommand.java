@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.certificates.util.DNFieldExtractor;
 import com.keyfactor.util.CertTools;
+import java.util.Properties;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -33,7 +34,6 @@ import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
 
 /**
@@ -213,7 +213,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         try {
             // Check that worker exists. An existing worker has a name.
             final int workerId = getWorkerId(worker);
-            final WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
+            final Properties config = getWorkerSession().exportWorkerConfig(workerId);
             if (config.getProperty(PropertiesConstants.NAME) == null) {
                 throw new IllegalCommandArgumentsException("Error: No worker with the given Id could be found");
             }

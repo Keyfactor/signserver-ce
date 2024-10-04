@@ -137,9 +137,9 @@ public class AdminWebSessionBean {
     }
 
     public WorkerConfig getCurrentWorkerConfig(final X509Certificate adminCertificate, final int workerId) throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getCurrentWorkerConfig",
+        AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "getCurrentWorkerConfig",
                 String.valueOf(workerId));
-        return worker.getCurrentWorkerConfig(workerId);
+        return worker.getCurrentWorkerConfig(adminInfo, workerId);
     }
 
     public Properties getProperties(final X509Certificate adminCertificate,

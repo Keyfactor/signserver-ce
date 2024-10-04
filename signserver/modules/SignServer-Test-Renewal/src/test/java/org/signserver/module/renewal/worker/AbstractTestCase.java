@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -227,8 +228,8 @@ public abstract class AbstractTestCase extends TestCase {
 
     protected void removeWorker(final int workerId) throws Exception {
         removeGlobalProperties(workerId);
-        final WorkerConfig wc = workerSession.getCurrentWorkerConfig(workerId);
-        final Iterator<Object> iter = wc.getProperties().keySet().iterator();
+        final Properties config = workerSession.exportWorkerConfig(workerId);
+        final Iterator<Object> iter = config.keySet().iterator();
         while (iter.hasNext()) {
             final String key = (String) iter.next();
             workerSession.removeWorkerProperty(workerId, key);

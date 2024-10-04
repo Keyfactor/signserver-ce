@@ -126,7 +126,7 @@ public class RestAuthorizedTest extends ModulesTestCase {
                     rtu.createPatchWorkerEditRequestJsonBody(),
                     mt.getAuthorizedStore());
 
-            assertEquals("value1", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("PROPERTY1"));
+            assertEquals("value1", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("PROPERTY1"));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response message: " + responseJsonObject, responseJsonObject.toString().contains("Worker properties successfully updated"));
             assertEquals("Check response status code is 200.", 200, response.statusCode());
@@ -152,8 +152,8 @@ public class RestAuthorizedTest extends ModulesTestCase {
                     rtu.createPutWorkerReplaceRequestJsonBody(HELLO_WORKER_NAME),
                     mt.getAuthorizedStore());
 
-            assertEquals("Properties Replaced!", getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("GREETING"));
-            assertEquals(null, getWorkerSession().getCurrentWorkerConfig(HELLO_WORKER_ID).getProperties().getProperty("AUTHTYPE"));
+            assertEquals("Properties Replaced!", getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("GREETING"));
+            assertEquals(null, getWorkerSession().exportWorkerConfig(HELLO_WORKER_ID).getProperty("AUTHTYPE"));
             JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
             assertTrue("Response message: " + responseJsonObject, responseJsonObject.toString().contains("Worker properties successfully replaced"));
             assertEquals("Check response status code 200", 200, response.statusCode());

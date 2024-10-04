@@ -774,7 +774,7 @@ public class WorkerResource {
         final List<ListWorkersResponse.Worker> workers = new ArrayList<>();
         
         for (final int id : workerSession.getAllWorkers()) {
-            final WorkerConfig config = workerSession.getCurrentWorkerConfig(id);
+            final Properties config = workerSession.exportWorkerConfig(id);
             final String name = config.getProperty("NAME");
             final ListWorkersResponse.Worker worker =
                     new ListWorkersResponse.Worker(id, name);

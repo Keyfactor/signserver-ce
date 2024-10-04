@@ -337,7 +337,7 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
-                    public WorkerConfig getCurrentWorkerConfig(int signerId) {
+                    public WorkerConfig getCurrentWorkerConfig(AdminInfo adminInfo, int signerId) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 

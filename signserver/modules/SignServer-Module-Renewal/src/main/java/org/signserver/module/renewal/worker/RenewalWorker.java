@@ -297,8 +297,8 @@ public class RenewalWorker extends BaseSigner {
             }
             
             // Get the worker config
-            final WorkerConfig workerConfig
-                    = workerSession.getCurrentWorkerConfig(reneweeId);
+            final Properties workerConfig
+                    = workerSession.exportWorkerConfig(reneweeId);
             final String sigAlg = workerConfig.getProperty(
                     PROPERTY_SIGNATUREALGORITHM);
             final String subjectDN = workerConfig.getProperty(

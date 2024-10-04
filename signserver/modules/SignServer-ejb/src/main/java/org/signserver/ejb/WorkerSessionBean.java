@@ -587,7 +587,8 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      * @see org.signserver.ejb.WorkerSession#getCurrentSignerConfig(int)
      */
     @Override
-    public WorkerConfig getCurrentWorkerConfig(int signerId) {
+    public WorkerConfig getCurrentWorkerConfig(final AdminInfo adminInfo,
+                                               final int signerId) {
         final WorkerConfig config = new WorkerConfig();
         final Properties workerProps =
                 getWorkerConfig(signerId).getProperties();
@@ -599,7 +600,9 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     @Override
     public Properties exportWorkerConfig(final int signerId) {
-        final WorkerConfig config = getCurrentWorkerConfig(signerId);
+        final WorkerConfig config =
+                getCurrentWorkerConfig(new AdminInfo("CLI user", null, null),
+                                       signerId);
         final Properties allProps = config.getProperties();
         final Properties exportedProps = new Properties();
         

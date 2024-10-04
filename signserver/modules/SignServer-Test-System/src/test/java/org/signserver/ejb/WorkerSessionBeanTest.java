@@ -223,7 +223,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test05SetProperty() {
         workerSession.setWorkerProperty(3, "test", "Hello World");
 
-        Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
+        Properties props = workerSession.exportWorkerConfig(3);
         assertEquals("Hello World", props.getProperty("TEST"));
     }
 
@@ -234,7 +234,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test06RemoveProperty() {
         workerSession.removeWorkerProperty(3, "test");
 
-        Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
+        Properties props = workerSession.exportWorkerConfig(3);
         assertNull(props.getProperty("test"));
     }
 
@@ -323,27 +323,6 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             // Restore
             workerSession.removeWorkerProperty(getSignerIdDummy1(), "DISABLED");
             workerSession.reloadConfiguration(getSignerIdDummy1());
-        }
-    }
-
-    /**
-     * Test that getCurrentWorkerConfig doesn't include the internal authclients
-     * mapping.
-     */
-    @Test
-    public void test12noAuthClientsInGetCurrentWorkerConfig() {
-        try {
-            workerSession.addAuthorizedClient(getSignerIdDummy1(),
-               new AuthorizedClient("123456789", "CN=SomeUser"));
-
-            final WorkerConfig config =
-                    workerSession.getCurrentWorkerConfig(getSignerIdDummy1());
-
-            assertTrue("Should not contain authclients",
-                    config.getAuthorizedClients().isEmpty());
-        } finally {
-            workerSession.removeAuthorizedClient(getSignerIdDummy1(),
-               new AuthorizedClient("123456789", "CN=SomeUser"));
         }
     }
 

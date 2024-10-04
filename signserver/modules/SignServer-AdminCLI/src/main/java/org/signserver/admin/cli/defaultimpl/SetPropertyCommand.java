@@ -90,7 +90,13 @@ public class SetPropertyCommand extends AbstractAdminCommand {
     }
 
     private void setWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException {
-        this.getOutputStream().println("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerId + "\n");
+        final SetPropertiesHelper helper =
+                    new SetPropertiesHelper(getOutputStream(), getConfiguration());
+        final String value =
+                helper.shouldMaskProperty(propertykey) ? 
+                SetPropertiesHelper.WORKER_PROPERTY_MASK_PLACEHOLDER :
+                propertyvalue;
+        this.getOutputStream().println("Setting the property " + propertykey + " to " + value + " for worker " + workerId + "\n");
         this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
 
         getWorkerSession().setWorkerProperty(workerId, propertykey, propertyvalue);

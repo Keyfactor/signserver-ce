@@ -331,6 +331,33 @@ public class SignServerCLITest extends ModulesTestCase {
     }
 
     /**
+     * Test that masked worker properties are not exposed by the setproperty
+     * command.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test01SetPropertyMasked() throws Exception {
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("setproperty", Integer.toString(WORKERID1),
+                            "PIN", "foo123"));
+        assertPrinted("", cli.getOut(), "Setting the property PIN to _MASKED_ for worker " + WORKERID1);
+        assertNotPrinted("", cli.getOut(), "Setting the property PIN to foo123 for worker " + WORKERID1);
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("setproperty", Integer.toString(WORKERID1),
+                            "KEYSTOREPASSWORD", "foo123"));
+        assertPrinted("", cli.getOut(), "Setting the property KEYSTOREPASSWORD to _MASKED_ for worker " + WORKERID1);
+        assertNotPrinted("", cli.getOut(), "Setting the property KEYSTOREPASSWORD to foo123 for worker " + WORKERID1);
+
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("setproperty", Integer.toString(WORKERID1),
+                            "KEYDATA", "private-key"));
+        assertPrinted("", cli.getOut(), "Setting the property KEYDATA to _MASKED_ for worker " + WORKERID1);
+        assertNotPrinted("", cli.getOut(), "Setting the property KEYDATA to private-key for worker " + WORKERID1);
+    }
+
+    /**
      * Test that applying a properties file with a new worker with the same
      * name as an existing worker fails.
      */

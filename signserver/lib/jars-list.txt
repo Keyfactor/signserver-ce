@@ -47,7 +47,7 @@ bd307707550fe1992bc935010f9c65c83839faeabc071d19b5750ccc25244474  ./ext/cxf-core
 1d6fed7573874792c5082a738640778eeb225dacf1c3e4a0d064a6625cab006e  ./ext/cxf-rt-transports-http-4.0.5.jar;                 "Apache CXF"
 859efbaae53392c64628fad1da67427e7bf3513f0d745375e2437e7dec68736d  ./ext/cxf-rt-transports-http-jetty-4.0.5.jar;           "Apache CXF"
 f2b9eb2337bccf3dc7a866b1bc99ae393e9d747839a44137198ae1027ae51d99  ./ext/cxf-rt-wsdl-4.0.5.jar;                            "Apache CXF"
-f9def222ef5c0406216663ca45ca0950781541e22558b217aa779f36fbd24ab5  ./ext/dnsjava-3.6.1.jar;                                "DNS Java"
+4072346217dd65adb1766da6da30d1c933d16dab6f5e66a249e2dc6f9d04dd8c  ./ext/dnsjava-3.6.2.jar;                                "DNS Java"
 549f3007c6290f6a901e57d1d331b4ed0e6bf7384f78bf10316ffceeca834de6  ./ext/dom4j-2.1.3.jar;                                  "Hibernate dependencies"
 1766e020e8b14cc20a79cf989b39ea7d62fa3f02c7f93e7521ca19d1aba44982  ./ext/dss-alert-6.0.jar;                                "DSS"
 e5b66294dd4b3102a6cc622c76c31e06ec8741614ca0754ca01707e26b0817d7  ./ext/dss-cades-6.0.jar;                                "DSS"

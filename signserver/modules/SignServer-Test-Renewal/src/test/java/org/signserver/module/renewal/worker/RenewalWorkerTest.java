@@ -1026,9 +1026,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
         }
 
         @Override
-        public WorkerConfig getCurrentWorkerConfig(AdminInfo adminInfo, int signerId) {
-            // always return latest added worker's config...
-            return workerConfig;
+        public Properties exportWorkerConfig(int signerId) {
+            return workerConfig.getProperties();
         }
     }
 }

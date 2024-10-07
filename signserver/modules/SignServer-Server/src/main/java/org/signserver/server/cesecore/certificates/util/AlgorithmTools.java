@@ -158,7 +158,9 @@ public abstract class AlgorithmTools {
      */
     public static String getKeyAlgorithm(final PublicKey publickey) {
         String keyAlg = null;
-        if (publickey instanceof EdDSAPublicKey) {
+        if (publickey instanceof RSAPublicKey) {
+            keyAlg  = AlgorithmConstants.KEYALGORITHM_RSA;
+        } else if (publickey instanceof EdDSAPublicKey) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_EDDSA;
         } else if ( publickey instanceof ECPublicKey ) {
             final String algo = publickey.getAlgorithm();

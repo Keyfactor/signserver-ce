@@ -23,6 +23,7 @@ import java.io.Serializable;
 public class ComponentsBean implements Serializable {
 
     private UIComponent buttonSubmit;
+    private UIComponent buttonEdit;
     private UIComponent itemSelect;
     private UIComponent buttonNext;
     private UIComponent buttonAdd;
@@ -57,5 +58,13 @@ public class ComponentsBean implements Serializable {
 
     public void setButtonAdd(UIComponent buttonAdd) {
         this.buttonAdd = buttonAdd;
+    }
+
+    public UIComponent getButtonEdit() {
+        return buttonEdit;
+    }
+
+    public void setButtonEdit(UIComponent buttonEdit) {
+        this.buttonEdit = buttonEdit;
     }
 }

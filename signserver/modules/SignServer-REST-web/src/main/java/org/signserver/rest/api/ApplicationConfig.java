@@ -36,7 +36,7 @@ import org.eclipse.microprofile.openapi.annotations.info.Info;
 @OpenAPIDefinition(
         info = @Info(
                 title = "SignServer REST Interface",
-                version = "1.2.1"
+                version = "1.2.2"
         )
 )
 public class ApplicationConfig extends Application {

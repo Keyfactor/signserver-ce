@@ -142,8 +142,8 @@
                                     <h:inputTextarea id="propertyValue" value="#{addWorkerBean.propertyValue}"/>
                                     <h:panelGroup/>
 
-                                    <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{addWorkerBean.addPropertyAction()}" rendered="#{addWorkerBean.propertyAdding}"/>
-                                    <h:commandButton class="buttonNeutral" value="#{text['Apply']}" action="#{addWorkerBean.editPropertyAction()}" rendered="#{addWorkerBean.propertyEditing}"/>
+                                    <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{addWorkerBean.addPropertyAction()}" rendered="#{addWorkerBean.propertyAdding}" binding="#{components.buttonAdd}"/>
+                                    <h:commandButton class="buttonNeutral" value="#{text['Apply']}" action="#{addWorkerBean.editPropertyAction()}" rendered="#{addWorkerBean.propertyEditing}" binding="#{components.buttonEdit}"/>
                                     <h:commandButton class="buttonNeutral" value="#{text['Cancel']}" action="#{addWorkerBean.cancelPropertyAction()}"/>
                                 </h:panelGrid>
                             </h:panelGroup>
@@ -151,7 +151,7 @@
                         </h:panelGrid>
 
                         <h:commandButton class="buttonNeutral" value="#{text['Back']}" action="#{addWorkerBean.backToFirstAction()}"/> 
-                        <h:commandButton class="buttonFeatured" value="#{text['Next']}" action="#{addWorkerBean.nextAction()}"/>
+                        <h:commandButton class="buttonFeatured" value="#{text['Next']}" action="#{addWorkerBean.nextAction()}" binding="#{components.buttonNext}"/>
                     </h:form>
                 </h:panelGroup>
                 <h:panelGroup id="step2" rendered="#{addWorkerBean.step2}">

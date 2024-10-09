@@ -111,6 +111,7 @@ public class P11SignTest {
     private static final int WORKER_CMS = 20003;
     private static final int WORKER_XML = 20004;
     private static final int WORKER_XML2 = 20014;
+    private static final int WORKER_XADES = 20024;
     private static final int WORKER_MSA = 20007;
     private static final int WORKER_TSA_ALTKEY = 20008;
     private static final int WORKER_PLAIN = 20020;
@@ -1625,4 +1626,36 @@ public class P11SignTest {
             testCase.removeWorker(workerId);
         }
     }
+    
+    /**
+     * Exercises a signer using a separate token and where the private key is
+     * cached (in the worker).
+     */
+    @Test
+    public void testXAdESSigner_cached_separateToken() throws Exception {
+        final int workerId = WORKER_XADES;
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            setXAdESSignerPropertiesReferingToken(workerId);
+            workerSession.reloadConfiguration(workerId);
+
+            xmlSigner(workerId);
+        } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+    
+    private void setXAdESSignerPropertiesReferingToken(int workerId) {
+        // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xades.signer.XAdESSigner");
+        workerSession.setWorkerProperty(workerId, "NAME", "XAdESSignerRefering");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(true));
+        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
+    }
+
 }

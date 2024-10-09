@@ -157,5 +157,5 @@ a840968176645684bb01aed376e067ab39614885f9eee44abe35a5f20ebe7fad  ./ext/xml-apis
 47dcde8986019314ef78ae7280a94973a21d2ed95075a40a000b42da956429e1  ./ext/xml-resolver-1.2.jar;                             "Apache Xerces"
 34e08ee62116071cbb69c0ed70d15a7a5b208d62798c59f2120bb8929324cb63  ./ext/xmlpull-1.1.3.1.jar;                              "XmlPull"
 ab4ca02ae5634caf114161e40df94cb7e6bec2b33d372d46bd78189a4cb27dfa  ./ext/xmlschema-core-2.3.0.jar;                         "Apache XmlSchema Core"
-b23df0b77125345f549374a85ca93c74e09d548a6c92858923b9fd9a24d5188b  ./ext/xmlsec-3.0.3.jar;                                 "Santuario"
+0f87b5b5f9ea1adc853a11132b32e59f148a376cb3983592f2cb48cfffbde363  ./ext/xmlsec-3.0.4.jar;                                 "Santuario"
 bfc90e9e32d0eab1f397fb974b5f150a815188382ac41f372a7149d5bc178008  ./ext/xpp3_min-1.1.4c.jar;                              "Xpp3"

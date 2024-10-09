@@ -1,0 +1,15 @@
+/**
+ * Component tokens are tied and scoped to a specific component.
+ * They usually used as an interface to override or customize
+ * component specific styles via the theme editor, reference alias tokens
+ * or can be used across multiple files.
+ */
+:root {
+    --K15t-layout-header-height: 80px;
+
+    --K15t-header-foreground: #000;
+    --K15t-header-background: #FFF;
+
+    --K15t-footer-foreground: #FFF;
+    --K15t-footer-background: #385071;
+}

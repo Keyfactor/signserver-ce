@@ -1,0 +1,18 @@
+/*
+ * Print settings
+ */
+
+@media print {
+
+    .no-print, .no-print * {
+        display: none !important;
+    }
+
+
+    .exp-sidebar-navigation-toggle,
+    .exp-sidebar-toc,
+    .exp-post-navigation-prev, .exp-post-navigation-next {
+        display: none;
+    }
+
+}

@@ -1,0 +1,866 @@
+
+.scroll-code {
+    border: 0.1em solid #cccccc;
+    overflow: hidden;
+    font-style: normal;
+    font-size: var(--exp-code-inline-font-size);
+
+    margin-top: calc(var(--exp-grid-step) * 1.5);
+}
+
+.scroll-code .title {
+    font-weight: bold;
+    margin: 0;
+    padding: 0.5em 1em;
+    border-bottom: 0.1em solid #cccccc;
+}
+
+.scroll-code .content {
+    font-family: var(--K15t-font-family-code), monospace;
+    background-color: transparent;
+    overflow: hidden
+}
+
+.scroll-code:not([data-linenumbers]) .content,
+.scroll-code[data-linenumbers="false"] .content {
+    padding: 1em;
+}
+
+.scroll-code[data-linenumbers="true"] div.line {
+    position: relative;
+    padding-left: calc(5em + 10px + 10px + 0.1em) !important; /* ::before width + padding + margin + border */
+    font-size: 0.9em;
+}
+
+.scroll-code[data-linenumbers="true"] div.line::before {
+    content: counter(scroll-code-numbering);
+    counter-increment: scroll-code-numbering;
+    padding-right: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-right: 10px;
+    width: 5em;
+    text-align: right;
+    border-right: 0.1em solid #dfe1e5;
+    border-top: none;
+    border-bottom: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.scroll-code .content code {
+    font-family: var(--K15t-font-family-code);
+}
+
+.scroll-code[data-linenumbers="true"] .content div.line:first-child,
+.scroll-code[data-linenumbers="true"] .content div.line:first-child::before {
+    padding-top: 1em;
+}
+
+.scroll-code[data-linenumbers="true"] .content div.line:last-child,
+.scroll-code[data-linenumbers="true"] .content div.line:last-child::before {
+    padding-bottom: 1em;
+}
+
+.scroll-code .content div.line code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    tab-size: 4;
+}
+
+/* Default Syntax Highlighting Theme */
+.scroll-code .content {
+    background-color: #fff;
+}
+
+.scroll-code .content .plain,
+.scroll-code .content .plain a {
+    color: #000;
+}
+
+.scroll-code .content .comments,
+.scroll-code .content .comments a {
+    color: #008200;
+}
+
+.scroll-code .content .string,
+.scroll-code .content .string a {
+    color: #036;
+}
+
+.scroll-code .content .keyword {
+    color: #369;
+    font-weight: bold;
+}
+
+.scroll-code .content .preprocessor {
+    color: gray;
+}
+
+.scroll-code .content .variable {
+    color: #a70;
+}
+
+.scroll-code .content .value {
+    color: #090;
+}
+
+.scroll-code .content .functions {
+    color: #ff1493;
+}
+
+.scroll-code .content .constants {
+    color: #0066CC;
+}
+
+.scroll-code .content .script {
+    background-color: yellow;
+}
+
+.scroll-code .content .color1,
+.scroll-code .content .color1 a {
+    color: #808080;
+}
+
+.scroll-code .content .color2,
+.scroll-code .content .color2 a {
+    color: #ff1493;
+}
+
+.scroll-code .content .color3,
+.scroll-code .content .color3 a {
+    color: red;
+}
+
+/* Theme Default (from Confluence) */
+.scroll-code .defaultnew.content {
+    background-color: #fff;
+}
+
+.scroll-code .defaultnew.content .plain,
+.scroll-code .defaultnew.content .plain a {
+    color: #000;
+}
+
+.scroll-code .defaultnew.content .comments,
+.scroll-code .defaultnew.content .comments a {
+    color: #008200;
+}
+
+.scroll-code .defaultnew.content .string,
+.scroll-code .defaultnew.content .string a {
+    color: #036;
+}
+
+.scroll-code .defaultnew.content .keyword {
+    color: #369;
+    font-weight: bold;
+}
+
+.scroll-code .defaultnew.content .preprocessor {
+    color: gray;
+}
+
+.scroll-code .defaultnew.content .variable {
+    color: #a70;
+}
+
+.scroll-code .defaultnew.content .value {
+    color: #090;
+}
+
+.scroll-code .defaultnew.content .functions {
+    color: #ff1493;
+}
+
+.scroll-code .defaultnew.content .constants {
+    color: #0066CC;
+}
+
+.scroll-code .defaultnew.content .script {
+    background-color: yellow;
+}
+
+.scroll-code .defaultnew.content .color1,
+.scroll-code .defaultnew.content .color1 a {
+    color: #808080;
+}
+
+.scroll-code .defaultnew.content .color2,
+.scroll-code .defaultnew.content .color2 a {
+    color: #ff1493;
+}
+
+.scroll-code .defaultnew.content .color3,
+.scroll-code .defaultnew.content .color3 a {
+    color: red;
+}
+
+.scroll-code .defaultnew.content .line::before {
+    background-color: #f5f5f5;
+    color: #707070
+}
+
+/* Theme Default (the one from the content library) */
+.scroll-code .defaultoriginal.content {
+    background-color: white;
+}
+
+.scroll-code .defaultoriginal.content .plain,
+.scroll-code .defaultoriginal.content .plain a {
+    color: black;
+}
+
+.scroll-code .defaultoriginal.content .comments,
+.scroll-code .defaultoriginal.content .comments a {
+    color: #008200;
+}
+
+.scroll-code .defaultoriginal.content .string,
+.scroll-code .defaultoriginal.content .string a {
+    color: blue;
+}
+
+.scroll-code .defaultoriginal.content .keyword {
+    color: #006699;
+}
+
+.scroll-code .defaultoriginal.content .preprocessor {
+    color: grey;
+}
+
+.scroll-code .defaultoriginal.content .variable {
+    color: #aa7700;
+}
+
+.scroll-code .defaultoriginal.content .value {
+    color: #009900;
+}
+
+.scroll-code .defaultoriginal.content .functions {
+    color: deeppink;
+}
+
+.scroll-code .defaultoriginal.content .constants {
+    color: #0066cc;
+}
+
+.scroll-code .defaultoriginal.content .script {
+    font-weight: bold;
+    color: #006699;
+    background-color: transparent;
+}
+
+.scroll-code .defaultoriginal.content .color1,
+.scroll-code .defaultoriginal.content .color1 a {
+    color: grey;
+}
+
+.scroll-code .defaultoriginal.content .color2,
+.scroll-code .defaultoriginal.content .color2 a {
+    color: deeppink;
+}
+
+.scroll-code .defaultoriginal.content .color3,
+.scroll-code .defaultoriginal.content .color3 a {
+    color: red;
+}
+
+.scroll-code .defaultoriginal.content .keyword {
+    font-weight: bold;
+}
+
+.scroll-code .defaultoriginal.content .line::before {
+    background-color: white;
+}
+
+/* Theme DJango */
+.scroll-code .django.content {
+    background-color: #0a2b1d;
+}
+
+.scroll-code .django.content .plain,
+.scroll-code .django.content .plain a {
+    color: #f8f8f8;
+}
+
+.scroll-code .django.content .comments,
+.scroll-code .django.content .comments a {
+    color: #336442;
+}
+
+.scroll-code .django.content .string,
+.scroll-code .django.content .string a {
+    color: #9df39f;
+}
+
+.scroll-code .django.content .keyword {
+    color: #96dd3b;
+}
+
+.scroll-code .django.content .preprocessor {
+    color: #91bb9e;
+}
+
+.scroll-code .django.content .variable {
+    color: #ffaa3e;
+}
+
+.scroll-code .django.content .value {
+    color: #f7e741;
+}
+
+.scroll-code .django.content .functions {
+    color: #ffaa3e;
+}
+
+.scroll-code .django.content .constants {
+    color: #e0e8ff;
+}
+
+.scroll-code .django.content .script {
+    font-weight: bold;
+    color: #96dd3b;
+    background-color: transparent;
+}
+
+.scroll-code .django.content .color1,
+.scroll-code .django.content .color1 a {
+    color: #eb939a;
+}
+
+.scroll-code .django.content .color2,
+.scroll-code .django.content .color2 a {
+    color: #91bb9e;
+}
+
+.scroll-code .django.content .color3,
+.scroll-code .django.content .color3 a {
+    color: #edef7d;
+}
+
+.scroll-code .django.content .comments {
+    font-style: italic;
+}
+
+.scroll-code .django.content .keyword {
+    font-weight: bold;
+}
+
+.scroll-code .django.content .line::before {
+    background-color: #0a2b1d;
+    color: #497958
+}
+
+/* Theme Eclipse */
+.scroll-code .eclipse.content {
+    background-color: white;
+}
+
+.scroll-code .eclipse.content .plain,
+.scroll-code .eclipse.content .plain a {
+    color: black;
+}
+
+.scroll-code .eclipse.content .comments,
+.scroll-code .eclipse.content .comments a {
+    color: #3f5fbf;
+}
+
+.scroll-code .eclipse.content .string,
+.scroll-code .eclipse.content .string a {
+    color: #2a00ff;
+}
+
+.scroll-code .eclipse.content .keyword {
+    color: #7f0055;
+}
+
+.scroll-code .eclipse.content .preprocessor {
+    color: #646464;
+}
+
+.scroll-code .eclipse.content .variable {
+    color: #aa7700;
+}
+
+.scroll-code .eclipse.content .value {
+    color: #009900;
+}
+
+.scroll-code .eclipse.content .functions {
+    color: deeppink;
+}
+
+.scroll-code .eclipse.content .constants {
+    color: #0066cc;
+}
+
+.scroll-code .eclipse.content .script {
+    font-weight: bold;
+    color: #7f0055;
+    background-color: transparent;
+}
+
+.scroll-code .eclipse.content .color1,
+.scroll-code .eclipse.content .color1 a {
+    color: grey;
+}
+
+.scroll-code .eclipse.content .color2,
+.scroll-code .eclipse.content .color2 a {
+    color: deeppink;
+}
+
+.scroll-code .eclipse.content .color3,
+.scroll-code .eclipse.content .color3 a {
+    color: red;
+}
+
+.scroll-code .eclipse.content .keyword {
+    font-weight: bold;
+}
+
+.scroll-code .eclipse.content .xml .keyword {
+    color: #3f7f7f;
+    font-weight: normal;
+}
+
+.scroll-code .eclipse.content .xml .color1,
+.scroll-code .eclipse.content .xml .color1 a {
+    color: #7f007f;
+}
+
+.scroll-code .eclipse.content .xml .string {
+    font-style: italic;
+    color: #2a00ff;
+}
+
+.scroll-code .eclipse.content .line::before {
+    background-color: #f5f5f5;
+    color: #707070
+}
+
+/* Theme Emacs */
+.scroll-code .emacs.content {
+    background-color: black;
+}
+
+.scroll-code .emacs.content .plain,
+.scroll-code .emacs.content .plain a {
+    color: lightgrey;
+}
+
+.scroll-code .emacs.content .comments,
+.scroll-code .emacs.content .comments a {
+    color: #ff7d27;
+}
+
+.scroll-code .emacs.content .string,
+.scroll-code .emacs.content .string a {
+    color: #ff9e7b;
+}
+
+.scroll-code .emacs.content .keyword {
+    color: cyan;
+}
+
+.scroll-code .emacs.content .preprocessor {
+    color: #aec4de;
+}
+
+.scroll-code .emacs.content .variable {
+    color: #ffaa3e;
+}
+
+.scroll-code .emacs.content .value {
+    color: #009900;
+}
+
+.scroll-code .emacs.content .functions {
+    color: #81cef9;
+}
+
+.scroll-code .emacs.content .constants {
+    color: #ff9e7b;
+}
+
+.scroll-code .emacs.content .script {
+    font-weight: bold;
+    color: cyan;
+    background-color: transparent;
+}
+
+.scroll-code .emacs.content .color1,
+.scroll-code .emacs.content .color1 a {
+    color: #ebdb8d;
+}
+
+.scroll-code .emacs.content .color2,
+.scroll-code .emacs.content .color2 a {
+    color: #ff7d27;
+}
+
+.scroll-code .emacs.content .color3,
+.scroll-code .emacs.content .color3 a {
+    color: #aec4de;
+}
+
+.scroll-code .emacs.content .line::before {
+    background-color: black;
+    color: #d3d3d3
+}
+
+/* Theme FadeToGrey */
+.scroll-code .fadetogrey.content {
+    background-color: #121212;
+}
+
+.scroll-code .fadetogrey.content .plain,
+.scroll-code .fadetogrey.content .plain a {
+    color: white;
+}
+
+.scroll-code .fadetogrey.content .comments,
+.scroll-code .fadetogrey.content .comments a {
+    color: #696854;
+}
+
+.scroll-code .fadetogrey.content .string,
+.scroll-code .fadetogrey.content .string a {
+    color: #e3e658;
+}
+
+.scroll-code .fadetogrey.content .keyword {
+    color: #d01d33;
+}
+
+.scroll-code .fadetogrey.content .preprocessor {
+    color: #435a5f;
+}
+
+.scroll-code .fadetogrey.content .variable {
+    color: #898989;
+}
+
+.scroll-code .fadetogrey.content .value {
+    color: #009900;
+}
+
+.scroll-code .fadetogrey.content .functions {
+    color: #aaaaaa;
+}
+
+.scroll-code .fadetogrey.content .constants {
+    color: #96daff;
+}
+
+.scroll-code .fadetogrey.content .script {
+    font-weight: bold;
+    color: #d01d33;
+    background-color: transparent;
+}
+
+.scroll-code .fadetogrey.content .color1,
+.scroll-code .fadetogrey.content .color1 a {
+    color: #ffc074;
+}
+
+.scroll-code .fadetogrey.content .color2,
+.scroll-code .fadetogrey.content .color2 a {
+    color: #4a8cdb;
+}
+
+.scroll-code .fadetogrey.content .color3,
+.scroll-code .fadetogrey.content .color3 a {
+    color: #96daff;
+}
+
+.scroll-code .fadetogrey.content .functions {
+    font-weight: bold;
+}
+
+.scroll-code .fadetogrey.content .line::before {
+    background-color: #121212;
+    color: #afafaf
+}
+
+/* Theme MDUltra */
+.scroll-code .mdultra.content {
+    background-color: #222222;
+}
+
+.scroll-code .mdultra.content .plain,
+.scroll-code .mdultra.content .plain a {
+    color: lime;
+}
+
+.scroll-code .mdultra.content .comments,
+.scroll-code .mdultra.content .comments a {
+    color: #428bdd;
+}
+
+.scroll-code .mdultra.content .string,
+.scroll-code .mdultra.content .string a {
+    color: lime;
+}
+
+.scroll-code .mdultra.content .keyword {
+    color: #aaaaff;
+}
+
+.scroll-code .mdultra.content .preprocessor {
+    color: #8aa6c1;
+}
+
+.scroll-code .mdultra.content .variable {
+    color: cyan;
+}
+
+.scroll-code .mdultra.content .value {
+    color: #f7e741;
+}
+
+.scroll-code .mdultra.content .functions {
+    color: #ff8000;
+}
+
+.scroll-code .mdultra.content .constants {
+    color: yellow;
+}
+
+.scroll-code .mdultra.content .script {
+    font-weight: bold;
+    color: #aaaaff;
+    background-color: transparent;
+}
+
+.scroll-code .mdultra.content .color1,
+.scroll-code .mdultra.content .color1 a {
+    color: red;
+}
+
+.scroll-code .mdultra.content .color2,
+.scroll-code .mdultra.content .color2 a {
+    color: yellow;
+}
+
+.scroll-code .mdultra.content .color3,
+.scroll-code .mdultra.content .color3 a {
+    color: #ffaa3e;
+}
+
+.scroll-code .mdultra.content .line::before {
+    background-color: #222222;
+}
+
+/* Theme Midnight */
+.scroll-code .midnight.content {
+    background-color: #0f192a;
+}
+
+.scroll-code .midnight.content .plain,
+.scroll-code .midnight.content .plain a {
+    color: #d1edff;
+}
+
+.scroll-code .midnight.content .comments,
+.scroll-code .midnight.content .comments a {
+    color: #428bdd;
+}
+
+.scroll-code .midnight.content .string,
+.scroll-code .midnight.content .string a {
+    color: #1dc116;
+}
+
+.scroll-code .midnight.content .keyword {
+    color: #b43d3d;
+}
+
+.scroll-code .midnight.content .preprocessor {
+    color: #8aa6c1;
+}
+
+.scroll-code .midnight.content .variable {
+    color: #ffaa3e;
+}
+
+.scroll-code .midnight.content .value {
+    color: #f7e741;
+}
+
+.scroll-code .midnight.content .functions {
+    color: #ffaa3e;
+}
+
+.scroll-code .midnight.content .constants {
+    color: #e0e8ff;
+}
+
+.scroll-code .midnight.content .script {
+    font-weight: bold;
+    color: #b43d3d;
+    background-color: transparent;
+}
+
+.scroll-code .midnight.content .color1,
+.scroll-code .midnight.content .color1 a {
+    color: #f8bb00;
+}
+
+.scroll-code .midnight.content .color2,
+.scroll-code .midnight.content .color2 a {
+    color: white;
+}
+
+.scroll-code .midnight.content .color3,
+.scroll-code .midnight.content .color3 a {
+    color: #ffaa3e;
+}
+
+.scroll-code .midnight.content .line::before {
+    background-color: #0f192a;
+    color: #afafaf
+}
+
+/* Theme RDark */
+.scroll-code .rdark.content {
+    background-color: #1b2426;
+}
+
+.scroll-code .rdark.content .plain,
+.scroll-code .rdark.content .plain a {
+    color: #b9bdb6;
+}
+
+.scroll-code .rdark.content .comments,
+.scroll-code .rdark.content .comments a {
+    color: #878a85;
+}
+
+.scroll-code .rdark.content .string,
+.scroll-code .rdark.content .string a {
+    color: #5ce638;
+}
+
+.scroll-code .rdark.content .keyword {
+    color: #5ba1cf;
+}
+
+.scroll-code .rdark.content .preprocessor {
+    color: #435a5f;
+}
+
+.scroll-code .rdark.content .variable {
+    color: #ffaa3e;
+}
+
+.scroll-code .rdark.content .value {
+    color: #009900;
+}
+
+.scroll-code .rdark.content .functions {
+    color: #ffaa3e;
+}
+
+.scroll-code .rdark.content .constants {
+    color: #e0e8ff;
+}
+
+.scroll-code .rdark.content .script {
+    font-weight: bold;
+    color: #5ba1cf;
+    background-color: transparent;
+}
+
+.scroll-code .rdark.content .color1,
+.scroll-code .rdark.content .color1 a {
+    color: #e0e8ff;
+}
+
+.scroll-code .rdark.content .color2,
+.scroll-code .rdark.content .color2 a {
+    color: white;
+}
+
+.scroll-code .rdark.content .color3,
+.scroll-code .rdark.content .color3 a {
+    color: #ffaa3e;
+}
+
+.scroll-code .rdark.content .line::before {
+    background-color: #1b2426;
+    color: #afafaf
+}
+
+/* Theme Confluence */
+.scroll-code .confluence.content {
+    background-color: #fff;
+}
+
+.scroll-code .confluence.content .plain,
+.scroll-code .confluence.content .plain a {
+    color: #000;
+}
+
+.scroll-code .confluence.content .comments,
+.scroll-code .confluence.content .comments a {
+    color: #008200;
+}
+
+.scroll-code .confluence.content .string,
+.scroll-code .confluence.content .string a {
+    color: #036;
+}
+
+.scroll-code .confluence.content .keyword {
+    color: #369;
+    font-weight: bold;
+}
+
+.scroll-code .confluence.content .preprocessor {
+    color: gray;
+}
+
+.scroll-code .confluence.content .variable {
+    color: #a70;
+}
+
+.scroll-code .confluence.content .value {
+    color: #090;
+}
+
+.scroll-code .confluence.content .functions {
+    color: #ff1493;
+}
+
+.scroll-code .confluence.content .constants {
+    color: #0066CC;
+}
+
+.scroll-code .confluence.content .script {
+    background-color: yellow;
+}
+
+.scroll-code .confluence.content .color1,
+.scroll-code .confluence.content .color1 a {
+    color: #808080;
+}
+
+.scroll-code .confluence.content .color2,
+.scroll-code .confluence.content .color2 a {
+    color: #ff1493;
+}
+
+.scroll-code .confluence.content .color3,
+.scroll-code .confluence.content .color3 a {
+    color: red;
+}
+
+.scroll-code .confluence.content .line::before {
+    background-color: #f5f5f5;
+    color: #707070
+}

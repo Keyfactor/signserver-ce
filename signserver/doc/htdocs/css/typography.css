@@ -1,0 +1,62 @@
+html {
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.15;
+    font-family: var(--K15t-font-family-body);
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    color: var(--K15t-foreground);
+    font: var(--K15t-font-body-medium);
+}
+
+button {
+    color: var(--K15t-foreground);
+    font: var(--K15t-font-body-medium);
+}
+
+h1 {
+    margin-bottom: 1rem;
+    font: var(--K15t-font-headline-large);
+}
+
+h2 {
+    margin-bottom: 5pt;
+
+    font: var(--K15t-font-headline-medium);
+}
+
+h3,
+h4,
+h5,
+h6 {
+    font: var(--K15t-font-headline-small);
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+
+    color: var(--K15t-link);
+    line-height: inherit;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    margin-bottom: 2rem;
+    line-height: var(--K15t-line-height-large);
+}
+
+ul {
+    list-style: disc outside;
+
+    line-height: var(--K15t-line-height-large);
+}
+
+pre {
+    font-family: var(--K15t-font-family-mono);
+}

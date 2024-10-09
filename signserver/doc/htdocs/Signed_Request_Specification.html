@@ -1,35 +1,51 @@
 <!doctype html>
 
-<html class="no-js" lang="en" data-vp-page-id="371000298">
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1">
+
+        <link rel="icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+        <!-- Primary Meta Tags -->
+        <meta name="exp-export-timestamp" content="2024-10-09T09:36:28.084+0000">
+        <meta name="exp-page-id" content="371000298">
+        <meta name="exp-page-title" content="Signed Request Specification">
+        <meta name="exp-page-version" content="1">
+        <meta name="exp-page-scroll-page-id" content="2794a80a641688db66464f62ea3cc647">
+        <meta name="exp-page-created" content="2021-11-10T12:06:16.000+0000">
+        <meta name="exp-page-last-modified" content="2021-11-22T14:40:15.000+0000">
+        <meta name="exp-page-labels" content="review">
+        <meta name="exp-page-context-keys" content="">
+        <meta name="exp-space-key" content="SSDOCS">
+        <meta name="exp-space-title" content="SignServer Documentation">
+
+        <!-- Additional Meta Tags -->
+        <meta name="exp-document-id" content="371111034">
+        <meta name="exp-document-title" content="SignServer Documentation">
+        <meta name="exp-version-status" content="in-progress">
+        <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+        <meta name="exp-version-name" content="Working version">
+        <meta name="exp-version-description" content="">
+        <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+        <meta name="exp-variant-id" content="">
+        <meta name="exp-variant-name" content="">
+        <meta name="exp-variant-description" content="">
+        <meta name="exp-language-code" content="">
+        <meta name="exp-language-name" content="">
+
+        <link rel="stylesheet" href="css/app.css">
+        <link rel="stylesheet" href="css/image-dimensions.css">
 
 
-    
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
-
-    <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2024-04-17T13:23:23.783+0000">
-    <meta name="exp-page-id" content="371000298">
-    <meta name="exp-page-title" content="Signed Request Specification">
-    <meta name="exp-page-version" content="1">
-    <meta name="exp-page-scroll-page-id" content="2794a80a641688db66464f62ea3cc647">
-    <meta name="exp-page-created" content="2021-11-10T12:06:16.000+0000">
-    <meta name="exp-page-last-modified" content="2021-11-22T14:40:15.000+0000">
-    <meta name="exp-page-labels" content="review">
-    <meta name="exp-page-context-keys" content="">
-    <meta name="exp-space-key" content="SSDOCS">
-    <meta name="exp-space-title" content="SignServer Documentation">
-
-
-    <link rel="stylesheet" href="css/app.css">
-
-
-
-<script id="search-worker" type="javascript/worker">
+            
+            
+<script src="js/search.js"></script>
+            <script id="search-worker" type="javascript/worker">
     onmessage = function(event) {
         // dispatch events to handling functions
         var message = event.data;
@@ -68,113 +84,96 @@
         postMessage({ type: 'search-results', results: results, query: query });
     }
 </script>
-    <title>Signed Request Specification</title>
+        <title>Signed Request Specification</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
-    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="SignedRequestSpecification-top" pageid="371000298" class="flex flex-col" data-confluence-editor-version="v1">
-        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+    <meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
 
+    <body id="SignedRequestSpecification-top" data-pageid="371000298" data-confluence-editor-version="v1" data-confluence-deployment-type="CLOUD">
 
+        <div class="exp-grid-container">
 
+            <header class="exp-header"></header>
 
-<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
-    <div class="header__navigation--logo">
-        <a href="SignServer_Manual.html">
-            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
-        </a>
+            <div class="exp-logo">
+                <a href="SignServer_Documentation.html">
+                    <span class="exp-logo-image" style="background-image: url(_scroll_external/attachments/e415105eb31a/ssdocs)" alt="SignServer Documentation" title="SignServer Documentation"></span>
+                </a>
+            </div>
+
+            <div class="exp-document-title">
+                <h1 class="exp-document-title-heading scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h1 scroll-relative-h1" data-scroll-heading-rank="1" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="1" id="no-src_generated-id-ac5723ec98ef1bbdf0b03d589430005d0342bf99619adaddf2744e92f8ae9b37">
+                    <a href="SignServer_Documentation.html">
+                        SignServer Documentation
+                    </a>
+                </h1>
+            </div>
+
+<div class="exp-search-container">
+    <input type="search" id="search-textbox" autocomplete="off" class="exp-search-input" style="margin-right: 0;">
+    <div class="exp-search-input-icon">
+        <svg data-exp-id="magnifier-icon" data-exp-component="icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M8.99452 14.5C10.5121 14.5 11.809 13.9669 12.8854 12.9007C13.9618 11.8345 14.5 10.5361 14.5 9.00548C14.5 7.48794 13.9631 6.19097 12.8893 5.11458C11.8155 4.03819 10.519 3.5 9 3.5C7.46786 3.5 6.16816 4.0369 5.1009 5.11071C4.03363 6.18453 3.5 7.48096 3.5 9C3.5 10.5321 4.0331 11.8318 5.09929 12.8991C6.1655 13.9664 7.46391 14.5 8.99452 14.5ZM9 16C8.02913 16 7.11974 15.816 6.27185 15.4479C5.42395 15.0799 4.68056 14.5799 4.04167 13.9479C3.40278 13.316 2.90278 12.576 2.54167 11.728C2.18056 10.88 2 9.97053 2 8.99956C2 8.04152 2.18403 7.13542 2.55208 6.28125C2.92014 5.42708 3.41864 4.68387 4.04758 4.0516C4.67653 3.41935 5.41569 2.91935 6.26508 2.5516C7.11449 2.18387 8.02548 2 8.99806 2C9.95769 2 10.8646 2.18403 11.7188 2.55208C12.5729 2.92014 13.316 3.42014 13.9479 4.05208C14.5799 4.68403 15.0799 5.42612 15.4479 6.27835C15.816 7.13058 16 8.0381 16 9.00094C16 9.83365 15.8615 10.6213 15.5846 11.3638C15.3078 12.1062 14.9254 12.7836 14.4375 13.3958L18 16.9583L16.9375 18L13.375 14.4583C12.7668 14.9459 12.0939 15.3247 11.3564 15.5948C10.6188 15.8649 9.83333 16 9 16Z" fill="currentColor" />
+        </svg>
     </div>
-        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
-    
+    <div id="search-suggestion-container" class="exp-search-suggestion-panel" data-exp-component="search-suggestion"></div>
+    <template id="exp-search-suggestion-option-template">
+        <div class="exp-search-suggestion-option-container search-form-suggestion">
+            <a class="exp-search-suggestion-option search-form-suggestion" href=""></a>
+        </div>
+    </template>
+</div>
 
-    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
-        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
-            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
-                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
-                <div class="vp-search-input__icon" aria-hidden="true">
-                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+
+            <nav class="exp-sidebar-navigation">
+                <div class="exp-sidebar-navigation-sticky-wrapper">
+                    <iframe src="toc.html?pageId=371000298" border="0"></iframe>
                 </div>
-            </div>
-        </form>
-        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
-        <template id="search-suggestion-option-template">
-            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
-                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
-            </div>
-        </template>
-    </div>
 
-        </div>
-</header>
-
-        <main>
+            </nav>
 
 
+            <nav aria-label="Breadcrumb" class="exp-breadcrumbs-wrapper">
+                <ol class="breadcrumbs">
+                        <li class="breadcrumb">
+                            <a href="SignServer_Documentation.html" rel="prev" target="_self">SignServer Documentation</a>
+                        </li>
+                        <li class="breadcrumb">
+                            <a href="SignServer_Reference.html" rel="prev" target="_self">SignServer Reference</a>
+                        </li>
+                        <li class="breadcrumb">
+                            <a href="SignServer_Components.html" rel="prev" target="_self">SignServer Components</a>
+                        </li>
+                        <li class="breadcrumb">
+                            <a href="Authorizers.html" rel="prev" target="_self">Authorizers</a>
+                        </li>
+                        <li class="breadcrumb">
+                            <a href="Signed_Request_Authorizer.html" rel="prev" target="_self">Signed Request Authorizer</a>
+                        </li>
+                    <li class="breadcrumb active" aria-current="page">
+                        Signed Request Specification
+                    </li>
+                </ol>
+            </nav>
 
-<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
-    <div class="flex">
 
-        <div id="exp-navigation-wrapper" class="hidden lg:block">
-            <iframe src="toc.html?pageId=371000298" class="border-0"></iframe>
-        </div>
+            <main class="exp-content">
+                <article role="article">
 
+                    <header>
+                        <h1 class="article-heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-ecf5cbdb76c9dbb86010459dd2ad28cef9b014211ab443872cfe149ba85ed34b">
+                            Signed Request Specification
+                        </h1>
+                    </header>
 
-        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
-            <article role="article">
-                <header>
-<nav aria-label="Breadcrumb" role="navigation">
-    <div class="breadcrumbs-wrapper">
-        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
-                <li class="js-hide-until-loaded">
-                    <a href="SignServer_Manual.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Manual</a>
-                </li>
-                <li class="js-hide-until-loaded">
-                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
-                </li>
-                <li class="js-hide-until-loaded">
-                    <a href="SignServer_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Components</a>
-                </li>
-                <li class="js-hide-until-loaded">
-                    <a href="Authorizers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Authorizers</a>
-                </li>
-                <li class="js-hide-until-loaded">
-                    <a href="Signed_Request_Authorizer.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Signed Request Authorizer</a>
-                </li>
-            <li class="breadcrumbs--active js-hide-until-loaded">
-                <a href="Signed_Request_Specification.html" target="_self" aria-current="page">Signed Request Specification</a>
-            </li>
-        </ol>
-        <div class="breadcrumbs-wrapper__scroll-mask"></div>
-    </div>
-</nav>
-                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-9a7cd5cfa5f5e80f69c9ea0e877e07b8321c18b05fb5c0a9514a4dac23f6467f"><span class="js-hide-until-loaded">Signed Request Specification</span></h1>
-                </header>
-                <section class="page" id="content" role="main">
-                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
-                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>The following describes the format for signed signature requests to be used with the <a href="Signed_Request_Authorizer.html" data-linked-resource-id="371000258" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000258" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000258/Signed+Request+Authorizer" data-scroll-link-target-source-id="371000258">Signed Request Authorizer</a>. Signed signature requests can be created using the SignClient/<a href="signdocument.html" data-linked-resource-id="370999629" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="370999629" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999629/Client+CLI+signdocument+Command" data-scroll-link-target-source-id="370999629">signdocument</a> or by following the format detailed below.</p><p><style type="text/css">/*<![CDATA[*/
-div.rbtoc1713360204060 {padding: 0px;}
-div.rbtoc1713360204060 ul {list-style: disc;margin-left: 0px;}
-div.rbtoc1713360204060 li {margin-left: 0px;padding-left: 0px;}
-
-/*]]>*/</style></p><div class="toc-macro rbtoc1713360204060">
-<ul class="toc-indentation">
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-SignedSignatureRequest" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-SignedSignatureRequest" data-scroll-link-target-source-id="371000298">Signed Signature Request</a></li>
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-Format" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Format" data-scroll-link-target-source-id="371000298">Format</a></li>
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-Algorithms" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Algorithms" data-scroll-link-target-source-id="371000298">Algorithms</a></li>
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-Signing" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Signing" data-scroll-link-target-source-id="371000298">Signing</a></li>
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-Verification" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Verification" data-scroll-link-target-source-id="371000298">Verification</a></li>
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-Examples" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Examples" data-scroll-link-target-source-id="371000298">Examples</a></li>
-<li><a href="Signed_Request_Specification.html#SignedRequestSpecification-SampleCode" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-SampleCode" data-scroll-link-target-source-id="371000298">Sample Code</a></li>
-</ul>
-</div><p></p><h2 id="SignedRequestSpecification-SignedSignatureRequest" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Signed Signature Request</h2><p>The meaning of a Signed Signature Request here is a request intended for one of the workers in SignServer and which is protected by an extra <strong>request metadata field</strong> called <strong>SIGNED_REQUEST</strong> containing a signature in the format described here.</p><h2 id="SignedRequestSpecification-Format" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Format</h2><p>The value of the SIGNED_REQUEST metadata property is a JSON Web Signature (JWS) in compact serialization and with a payload format as in JSON Web Token (JWT).</p><h3 id="SignedRequestSpecification-JWSHeaderParameters" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading">JWS Header Parameters</h3><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>typ</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Type indicating that this is a Signed Signature Request according to this specification.</p><p>Fixed value: "<span class="nolink">http://signserver.org/specs/signedrequest/1.0"</span></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>x5c</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>JSON array of base64 encoded X.509 certificates starting with the certificate of the signer that signed this JWS and followed by the certificate of its issuer, and so on.</p><p>Refer to <a class="external-link scroll-external-link" href="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.6" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.6" data-scroll-link-local="false">Section 4.1.6 of RFC 7515</a>.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>alg</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Signature algorithm for the JWS Signature.</p><p>Refer to <a class="external-link scroll-external-link" href="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.1" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.1" data-scroll-link-local="false">Section 4.1.1 of RFC 7515</a></p></td></tr></tbody></table></div><h3 id="SignedRequestSpecification-JWSPayload" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading">JWS Payload</h3><p>The payload is a JSON object with keys and values.</p><p>A key is either a request field name or prefixed with "meta." followed by a request metadata key.</p><p>The value is the hash of the field or metadata value.</p><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p>Key</p></th><th colspan="1" rowspan="1" class="confluenceTh"><p>Description</p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>workerName</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the worker name in hexadecimal encoding, if provided in the request.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>workerId</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the worker ID in hexadecimal encoding, if provided in the request.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>data</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the data field or file upload, in hexadecimal encoding.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>FILENAME and/or meta.FILENAME</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the file name in hexadecimal encoding, if provided. If both FILENAME and meta.FILENAME are provided they must be the same.</p></td></tr></tbody></table></div><h3 id="SignedRequestSpecification-JWSSignature" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading">JWS Signature</h3><p>Using algorithm declared in the <a href="Signed_Request_Specification.html#SignedRequestSpecification-JWSHeaderParameters" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-JWSHeaderParameters" data-scroll-link-target-source-id="371000298">JWS Header Parameter</a> alg.</p><h2 id="SignedRequestSpecification-Algorithms" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Algorithms</h2><p>Signature algorithms should be using RSA or ECDSA and follow <a class="external-link scroll-external-link" href="https://www.rfc-editor.org/rfc/rfc7518" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.rfc-editor.org/rfc/rfc7518" data-scroll-link-local="false">RFC 7518</a>.</p><p><span style="color: rgb(0,0,0);">The digest algorithm used for hashing in the JWS Payload should be the same as the hash algorithm in the signature algorithm. For example, if ES256 (SHA256withECDSA) is used as signature algorithm then the hash algorithm SHA-256 should be used for every hash in the JWS Payload.</span></p><h2 id="SignedRequestSpecification-Signing" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Signing</span></h2><p><span style="color: rgb(0,0,0);">Follow the steps below to sign:</span></p><ol><li><span style="color: rgb(0,0,0);">Construct a key-value map that will be used as the payload in the signature.</span><br clear="none"><ol><li><span style="color: rgb(0,0,0);">To the map, add the key "data" with the value set to the hexadecimal encoded hash of the input data field or file upload.</span></li><li><span style="color: rgb(0,0,0);">To the map, add the key "workerName" or "workerId" with the hexadecimal encoded hash of the string value of the workerName or workerId.</span></li><li><span style="color: rgb(0,0,0);">If there is a filename provided with the request it must be included in the request metadata and added to the map the key "FILENAME" with the hexadecimal encoded hash of the string value of the file name.</span></li><li><span style="color: rgb(0,0,0);">For each request metadata entry, to the map add the key from the metadata entry prefixed with "meta." and the value set to the hexadecimal encoded hash of the request metadata entry value.</span></li></ol></li><li><span style="color: rgb(0,0,0);">Create and sign using JWS:</span><ol><li><span style="color: rgb(0,0,0);">Set the header parameter "typ" to "<span class="nolink"><span class="nolink">http://signserver.org/specs/signedrequest/1.0</span></span>".</span></li><li><span style="color: rgb(0,0,0);">Set the header parameter "x5c" to a list of base64 (<img class="emoticon emoticon-warning scroll-document-image" data-emoji-id="atlassian-warning" data-emoji-shortname=":warning:" data-emoji-fallback=":warning:" src="_scroll_external/icons/754c3e37f939/warning.png" width="16" height="16" data-emoticon-name="warning" alt="(varning)"> not base64url) encoded certificates making up the certificate chain with the end entity certificate first.</span></li><li><span style="color: rgb(0,0,0);">Add the payload key-values with the same structure as JWT claims.</span></li><li><span style="color: rgb(0,0,0);">Sign using the private key and use a signature algorithm allowed by the JWT specification.</span></li><li><span style="color: rgb(0,0,0);">Finally, encode using JWS Compact Serialization.</span></li></ol></li><li><span style="color: rgb(0,0,0);">Store the signature value in the request metadata as "SIGNED_REQUEST".</span></li></ol><h2 id="SignedRequestSpecification-Verification" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Verification</span></h2><p><span style="color: rgb(0,0,0);">Follow the steps below to verify:</span></p><ol><li><span style="color: rgb(0,0,0);">Extract the SIGNED_REQUEST request metadata property value or if missing fail.</span></li><li><span style="color: rgb(0,0,0);">Parse the JWS and fail if not signed.</span></li><li><span style="color: rgb(0,0,0);">Extract the certificate chain from the "x5c" header parameter.</span></li><li><span style="color: rgb(0,0,0);">Perform certificate chain validation and if required certificate revocation checks.</span></li><li><span style="color: rgb(0,0,0);">If the certificate was successfully validated and trusted, use the public key of the end entity certificate to verify the signature of the JWS, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Verify that the header parameter "typ" has the value "<span class="nolink"><span class="nolink">http://signserver.org/specs/signedrequest/1.0</span></span>", otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Extract the payload key-value pairs/claims.</span></li><li><span style="color: rgb(0,0,0);">For each key-value pair that starts with "meta." calculate the hash value for the corresponding request metadata property value and check that it is the same, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">For each request metadata property check that there is a corresponding key-value prefixed with "meta.". If it is FILENAME then compare its hash with the key-value FILENAME. If it is any other property that is missing, fail.</span></li><li><span style="color: rgb(0,0,0);">Check that if both FILENAME and meta.FILENAME are present they are the same, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Check that if FILENAME is present in the key-values, its hash matches, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">If there is a workerName in the key-values, check that its hash matches the workerName in the request, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">If there is a workerId in the key-values, check that its hash matches the workerId in the request, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Calculate the hash of the request data field or file upload and check that it equals the expected hash in the key-value pair "data", otherwise fail.</span></li></ol><h2 id="SignedRequestSpecification-Examples" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Examples</span></h2><p><span style="color: rgb(0,0,0);">The following provides two examples of signed signature requests for signing a file and providing some request metadata, one example using the <a href="Signed_Request_Specification.html#SignedRequestSpecification-Example1-UsingHTTPProtocol" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Example1-UsingHTTPProtocol" data-scroll-link-target-source-id="371000298">HTTP protocol</a> and the other example using <a href="Signed_Request_Specification.html#SignedRequestSpecification-Example2-UsingClientWSProtocol" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Example2-UsingClientWSProtocol" data-scroll-link-target-source-id="371000298">ClientWS protocol</a> (SOAP/WS).&nbsp;</span></p><h3 id="SignedRequestSpecification-Example1-UsingHTTPProtocol" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Example 1 - Using HTTP Protocol<br clear="none"></span></h3><p><span style="color: rgb(0,0,0);">Example of a signed signature request for signing a file using HTTP protocol and providing some request metadata as well with the request.</span></p><h4 id="SignedRequestSpecification-SignClientCommand" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">SignClient Command</span></h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                    <section class="page" id="content" role="main">
+                        <div id="main-content" class="wiki-content article-content js-tocBot-content">
+                            <p>The following describes the format for signed signature requests to be used with the <a href="Signed_Request_Authorizer.html" data-linked-resource-id="371000258" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000258" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000258/Signed+Request+Authorizer" data-scroll-link-target-source-id="371000258">Signed Request Authorizer</a>. Signed signature requests can be created using the SignClient/<a href="signdocument.html" data-linked-resource-id="370999629" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="370999629" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999629/Client+CLI+signdocument+Command" data-scroll-link-target-source-id="370999629">signdocument</a> or by following the format detailed below.</p><p></p><h2 id="SignedRequestSpecification-SignedSignatureRequest" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2">Signed Signature Request</h2><p>The meaning of a Signed Signature Request here is a request intended for one of the workers in SignServer and which is protected by an extra <strong>request metadata field</strong> called <strong>SIGNED_REQUEST</strong> containing a signature in the format described here.</p><h2 id="SignedRequestSpecification-Format" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2">Format</h2><p>The value of the SIGNED_REQUEST metadata property is a JSON Web Signature (JWS) in compact serialization and with a payload format as in JSON Web Token (JWT).</p><h3 id="SignedRequestSpecification-JWSHeaderParameters" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3">JWS Header Parameters</h3><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>typ</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Type indicating that this is a Signed Signature Request according to this specification.</p><p>Fixed value: "<span class="nolink">http://signserver.org/specs/signedrequest/1.0"</span></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>x5c</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>JSON array of base64 encoded X.509 certificates starting with the certificate of the signer that signed this JWS and followed by the certificate of its issuer, and so on.</p><p>Refer to <a class="external-link scroll-external-link" href="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.6" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.6" data-scroll-link-local="false">Section 4.1.6 of RFC 7515</a>.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>alg</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Signature algorithm for the JWS Signature.</p><p>Refer to <a class="external-link scroll-external-link" href="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.1" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.rfc-editor.org/rfc/rfc7515#section-4.1.1" data-scroll-link-local="false">Section 4.1.1 of RFC 7515</a></p></td></tr></tbody></table></div><h3 id="SignedRequestSpecification-JWSPayload" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3">JWS Payload</h3><p>The payload is a JSON object with keys and values.</p><p>A key is either a request field name or prefixed with "meta." followed by a request metadata key.</p><p>The value is the hash of the field or metadata value.</p><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p>Key</p></th><th colspan="1" rowspan="1" class="confluenceTh"><p>Description</p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>workerName</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the worker name in hexadecimal encoding, if provided in the request.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>workerId</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the worker ID in hexadecimal encoding, if provided in the request.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>data</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the data field or file upload, in hexadecimal encoding.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>FILENAME and/or meta.FILENAME</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Hash of the file name in hexadecimal encoding, if provided. If both FILENAME and meta.FILENAME are provided they must be the same.</p></td></tr></tbody></table></div><h3 id="SignedRequestSpecification-JWSSignature" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3">JWS Signature</h3><p>Using algorithm declared in the <a href="Signed_Request_Specification.html#SignedRequestSpecification-JWSHeaderParameters" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-JWSHeaderParameters" data-scroll-link-target-source-id="371000298">JWS Header Parameter</a> alg.</p><h2 id="SignedRequestSpecification-Algorithms" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2">Algorithms</h2><p>Signature algorithms should be using RSA or ECDSA and follow <a class="external-link scroll-external-link" href="https://www.rfc-editor.org/rfc/rfc7518" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.rfc-editor.org/rfc/rfc7518" data-scroll-link-local="false">RFC 7518</a>.</p><p><span style="color: rgb(0,0,0);">The digest algorithm used for hashing in the JWS Payload should be the same as the hash algorithm in the signature algorithm. For example, if ES256 (SHA256withECDSA) is used as signature algorithm then the hash algorithm SHA-256 should be used for every hash in the JWS Payload.</span></p><h2 id="SignedRequestSpecification-Signing" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span style="color: rgb(0,0,0);">Signing</span></h2><p><span style="color: rgb(0,0,0);">Follow the steps below to sign:</span></p><ol><li><span style="color: rgb(0,0,0);">Construct a key-value map that will be used as the payload in the signature.</span><br clear="none"><ol><li><span style="color: rgb(0,0,0);">To the map, add the key "data" with the value set to the hexadecimal encoded hash of the input data field or file upload.</span></li><li><span style="color: rgb(0,0,0);">To the map, add the key "workerName" or "workerId" with the hexadecimal encoded hash of the string value of the workerName or workerId.</span></li><li><span style="color: rgb(0,0,0);">If there is a filename provided with the request it must be included in the request metadata and added to the map the key "FILENAME" with the hexadecimal encoded hash of the string value of the file name.</span></li><li><span style="color: rgb(0,0,0);">For each request metadata entry, to the map add the key from the metadata entry prefixed with "meta." and the value set to the hexadecimal encoded hash of the request metadata entry value.</span></li></ol></li><li><span style="color: rgb(0,0,0);">Create and sign using JWS:</span><ol><li><span style="color: rgb(0,0,0);">Set the header parameter "typ" to "<span class="nolink"><span class="nolink">http://signserver.org/specs/signedrequest/1.0</span></span>".</span></li><li><span style="color: rgb(0,0,0);">Set the header parameter "x5c" to a list of base64 (<img class="emoticon emoticon-warning scroll-document-image" data-emoji-id="atlassian-warning" data-emoji-shortname=":warning:" data-emoji-fallback=":warning:" src="_scroll_external/icons/9e960ec239e9/warning.png" width="16" height="16" data-emoticon-name="warning" alt="(varning)"> not base64url) encoded certificates making up the certificate chain with the end entity certificate first.</span></li><li><span style="color: rgb(0,0,0);">Add the payload key-values with the same structure as JWT claims.</span></li><li><span style="color: rgb(0,0,0);">Sign using the private key and use a signature algorithm allowed by the JWT specification.</span></li><li><span style="color: rgb(0,0,0);">Finally, encode using JWS Compact Serialization.</span></li></ol></li><li><span style="color: rgb(0,0,0);">Store the signature value in the request metadata as "SIGNED_REQUEST".</span></li></ol><h2 id="SignedRequestSpecification-Verification" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span style="color: rgb(0,0,0);">Verification</span></h2><p><span style="color: rgb(0,0,0);">Follow the steps below to verify:</span></p><ol><li><span style="color: rgb(0,0,0);">Extract the SIGNED_REQUEST request metadata property value or if missing fail.</span></li><li><span style="color: rgb(0,0,0);">Parse the JWS and fail if not signed.</span></li><li><span style="color: rgb(0,0,0);">Extract the certificate chain from the "x5c" header parameter.</span></li><li><span style="color: rgb(0,0,0);">Perform certificate chain validation and if required certificate revocation checks.</span></li><li><span style="color: rgb(0,0,0);">If the certificate was successfully validated and trusted, use the public key of the end entity certificate to verify the signature of the JWS, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Verify that the header parameter "typ" has the value "<span class="nolink"><span class="nolink">http://signserver.org/specs/signedrequest/1.0</span></span>", otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Extract the payload key-value pairs/claims.</span></li><li><span style="color: rgb(0,0,0);">For each key-value pair that starts with "meta." calculate the hash value for the corresponding request metadata property value and check that it is the same, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">For each request metadata property check that there is a corresponding key-value prefixed with "meta.". If it is FILENAME then compare its hash with the key-value FILENAME. If it is any other property that is missing, fail.</span></li><li><span style="color: rgb(0,0,0);">Check that if both FILENAME and meta.FILENAME are present they are the same, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Check that if FILENAME is present in the key-values, its hash matches, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">If there is a workerName in the key-values, check that its hash matches the workerName in the request, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">If there is a workerId in the key-values, check that its hash matches the workerId in the request, otherwise fail.</span></li><li><span style="color: rgb(0,0,0);">Calculate the hash of the request data field or file upload and check that it equals the expected hash in the key-value pair "data", otherwise fail.</span></li></ol><h2 id="SignedRequestSpecification-Examples" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span style="color: rgb(0,0,0);">Examples</span></h2><p><span style="color: rgb(0,0,0);">The following provides two examples of signed signature requests for signing a file and providing some request metadata, one example using the <a href="Signed_Request_Specification.html#SignedRequestSpecification-Example1-UsingHTTPProtocol" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Example1-UsingHTTPProtocol" data-scroll-link-target-source-id="371000298">HTTP protocol</a> and the other example using <a href="Signed_Request_Specification.html#SignedRequestSpecification-Example2-UsingClientWSProtocol" data-scroll-target-source-id="371000298" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000298/Signed+Request+Specification#src-371000298_SignedRequestSpecification-Example2-UsingClientWSProtocol" data-scroll-link-target-source-id="371000298">ClientWS protocol</a> (SOAP/WS).&nbsp;</span></p><h3 id="SignedRequestSpecification-Example1-UsingHTTPProtocol" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3"><span style="color: rgb(0,0,0);">Example 1 - Using HTTP Protocol<br clear="none"></span></h3><p><span style="color: rgb(0,0,0);">Example of a signed signature request for signing a file using HTTP protocol and providing some request metadata as well with the request.</span></p><h4 id="SignedRequestSpecification-SignClientCommand" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-original-h4 scroll-custom-section-heading scroll-document-section-heading scroll-h4 scroll-relative-h4"><span style="color: rgb(0,0,0);">SignClient Command</span></h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">bin/signclient signdocument -workername CMSSigner \</code></div>
 <div class="line"><code class="plain">                            -infile document.txt -metadata key1=value2 -metadata key2=value2 \</code></div>
 <div class="line"><code class="plain">                            -signrequest -keystore res/test/dss10/dss10_admin1.p12 \</code></div>
 <div class="line"><code class="plain">                            -nohttps</code></div>
 </div>
-</div><p><img class="emoticon emoticon-warning scroll-document-image" data-emoji-id="atlassian-warning" data-emoji-shortname=":warning:" data-emoji-fallback=":warning:" src="_scroll_external/icons/754c3e37f939/warning.png" width="16" height="16" data-emoticon-name="warning" alt="(varning)"> <span style="color: rgb(0,0,0);">The "-nohttps" is only used here to more easily capture the request with Wireshark/tcpdump.</span></p><h4 id="SignedRequestSpecification-FullHTTPRequest" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Full HTTP Request</span></h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><p><img class="emoticon emoticon-warning scroll-document-image" data-emoji-id="atlassian-warning" data-emoji-shortname=":warning:" data-emoji-fallback=":warning:" src="_scroll_external/icons/9e960ec239e9/warning.png" width="16" height="16" data-emoticon-name="warning" alt="(varning)"> <span style="color: rgb(0,0,0);">The "-nohttps" is only used here to more easily capture the request with Wireshark/tcpdump.</span></p><h4 id="SignedRequestSpecification-FullHTTPRequest" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-original-h4 scroll-custom-section-heading scroll-document-section-heading scroll-h4 scroll-relative-h4"><span style="color: rgb(0,0,0);">Full HTTP Request</span></h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">POST /signserver/process HTTP/</code><code class="value">1.1</code></div>
 <div class="line"><code class="plain">Content-Type: multipart/form-data; boundary=------------------signserver</code></div>
 <div class="line"><code class="plain">User-Agent: Java/</code><code class="value">11.0</code><code class="plain">.</code><code class="value">13</code></div>
@@ -208,20 +207,17 @@ div.rbtoc1713360204060 li {margin-left: 0px;padding-left: 0px;}
 <div class="line">&nbsp;</div>
 <div class="line"><code class="plain">--------------------signserver--</code></div>
 </div>
-</div><h4 id="SignedRequestSpecification-MetadataProperty" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Metadata Property</span></h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h4 id="SignedRequestSpecification-MetadataProperty" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-original-h4 scroll-custom-section-heading scroll-document-section-heading scroll-h4 scroll-relative-h4"><span style="color: rgb(0,0,0);">Metadata Property</span></h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">SIGNED_REQUEST=eyJ0eXAiOiJKV1QiLCJ4NWMiOlsiTUlJRWlUQ0NBbkdnQXdJQkFnSUlCeU5RZUJYNU16TXdEUVlKS29aSWh2Y05BUUVMQlFBd1RURVhNQlVHQTFVRUF3d09SRk5USUZKdmIzUWdRMEVnTVRBeEVEQU9CZ05WQkFzTUIxUmxjM1JwYm1jeEV6QVJCZ05WQkFvTUNsTnBaMjVUWlhKMlpYSXhDekFKQmdOVkJBWVRBbE5GTUI0WERURTFNVEl4TVRBNU1qTTFOVm9YRFRJMU1USXhNVEE1TWpNMU5Wb3dPekVTTUJBR0ExVUVBd3dKUVdSdGFXNGdUMjVsTVJnd0ZnWURWUVFLREE5VGFXZHVVMlZ5ZG1WeUlFUmxiVzh4Q3pBSkJnTlZCQVlUQWxORk1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBbjZsTGRWd1pnZHVMeFVGOWtJNUJzUktjdVgwdGRaNVRZYjlUejBoQ09vaHBhQ0xUQTA5UlBqcXoxSEtEOCthTzBqUkN0Z0ZjMCtGMWg1MkhDSkR6WnI2UXdOWHlMV3RFNVhEcVVQMmJsRUx3bzByUVpaRWlHbU5rMXRvbFNVUjNYZXExSDIwZ2Q4b3NTNGVKRVdJZXErcmwvcmU2eTllbUNOUmZEK0RVMTVuU1lnSnNhdXp3TTVwTkg4MDk3T0YxaTdzdXdaWURrR0h0VVMxcmFNT1lxb3RMZTRsRTZPbGJFOEZUelZQS3k0VXNSWEJzV0FDazRINjFUZ2JmbnVWbi80MThIWnowWFBkUUd0NmpLZU14bVV4NXNZUStkRElzdDQ0bWM3NW5jQlpYOXM4S1VlS3N3Nlg0bFYydFYwT1ptdXJHRW9LTkRPcVBHU3IxeFRYQlFRSURBUUFCbzM4d2ZUQWRCZ05WSFE0RUZnUVVjdEdmUElHRmZGa0FIUFpRUzk5ZFd2dHFJZ0V3REFZRFZSMFRBUUgvQkFJd0FEQWZCZ05WSFNNRUdEQVdnQlFnZWlIZTZLMjdBcWo3Y1Zpa0NXSzUyRmdGb2pBT0JnTlZIUThCQWY4RUJBTUNCZUF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdJR0NDc0dBUVVGQndNRU1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQjdhZDYvd241Z1ltci84bHNBZThsVlduRFJPRkJ2VkZJakozZDhFNnhwM1FZUWpQUDJKbmhaRGNUV2ZNZVlSQjhZalZYWGJOZDRxcW1lY3QzVHpydmZGbEkvLzNzR25oZ1FDSng3ZHAvYzI1dkJybGxMVTJwWDRseHNma05RMUo3bE9MYW9La3YzQkw3bGc5MFdVWjRWem93NzN6Nm5pZmlRRVB0U21ZTzFVZjE0UjRDcDNsQVkxbFdWSUZhOTd3azhueTJqRk1sSEZHR1pzSnBmV3pkaWxUWkN2UTFHSGZiakRVV1JIM3dvMGJsTWo2VTdhZm1uNVB1dHJsTjdyYWdNSWFZZGZjRDlSSXJ0UUNDdGdyazRjWXhBVEtUR0QxSmpwdFVKSHRTblF1ZktaY2FkcmkwZG96SUFjdXpSMy91b1ZrLzVLYkZqdm84czM5NlNsZTA4THc4a1Bac3ZRK0FyUzZEMDBjQ1EvU05SUzVmMmJmS1p6QUw3Z05sYjdRZ2VERFRySmFzY2djc2dPYlVIYVpaejZ4V0kySnhuRGZkTDM1TDBVTXBrWGlKeWxEOHZuZzZuMXJ1WmNVenpXWnlQbzlwRHo2Z3FvMS9mSXRmL1NJb1ZYM3FTMGVHRkZFeHFvd0pJdWRjOTNGemNKaU5hY2I1V25DOVdNRE1BZzJuTFEvK1kranFqMGFGZWF6Z0hBeDNuNktWTnFaZjhXR2RBWG15OUpNZytDU25FSEdOaHBuVW9RTUp0SXB2RzVqL01FV2J5RHpZZzlGVHVDVEZka2NXa3d2amxQSWV4Qm9ndHZiaDJ3dFZaWmlvSW1vRzJLQ2NqTWxOYzNIVmU0Skg3RHptWmtyUW9SWE5DRXVnWjZ0OG1XYTZuUFBodzluRm9aVDh1Q29vTVpRPT0iLCJNSUlGZnpDQ0EyZWdBd0lCQWdJSU1rMUJPSzhDd1R3d0RRWUpLb1pJaHZjTkFRRUxCUUF3VFRFWE1CVUdBMVVFQXd3T1JGTlRJRkp2YjNRZ1EwRWdNVEF4RURBT0JnTlZCQXNNQjFSbGMzUnBibWN4RXpBUkJnTlZCQW9NQ2xOcFoyNVRaWEoyWlhJeEN6QUpCZ05WQkFZVEFsTkZNQjRYRFRFeE1EVXlOekE0TVRReU4xb1hEVE0yTURVeU56QTRNVFF5TjFvd1RURVhNQlVHQTFVRUF3d09SRk5USUZKdmIzUWdRMEVnTVRBeEVEQU9CZ05WQkFzTUIxUmxjM1JwYm1jeEV6QVJCZ05WQkFvTUNsTnBaMjVUWlhKMlpYSXhDekFKQmdOVkJBWVRBbE5GTUlJQ0lqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FnOEFNSUlDQ2dLQ0FnRUFnYmxnalRUa01wMVFBaGdXRHByaHZxRTl6WDFVeC9BL1JUT3U0RzRmNkNUa2Q2SkVFa2JkS1p2K0NLdjRjUm9WQ3RmTzN3bk9va0ZSdy8xSk1tSEhpUTFaLy91RG9Eam84ams4bmVrMEFyRkU5UjVOVDAyd01KQ1FhL21QMXdVOVpTbDF0eDNqUVJVRkIrclROZUNjUFRmdCsxRkw3VWpZTWRrUnpsMjYxSU9sbVh6RE1BK0VZSUdKMmMyd1loT3YyRHFmUXlnTno1R09mMEVGcWxRWkl0L3B6b3BTUyswSzhtTmI1M1JPaGc5R0p1and6dWdTSDVaK3IwZnNWSGJDVjBRVWtaQmZrUm85S01jZGFERVBhOHhwWVRqc0ZQcVU2UmNuR2tWQUJobjhPUzhTSVd3MnJlMWYraHRqNnA5RUdiazFtMEk5cFdHQkE5a3RXbnJxbHFEWFYrdEVoaGgxTzRmK0xIaWVveGlzY3JGN1JYeGxZcXlhbTZvYWJmWHNYM1ZBQzBNMVVrd0ljaUU4d0ExU2ovK2Rnb1NNcXZFRE5EZndwRVl0Nmw4WjhjekRUV0RpN01NMnU1VlkwblAzK0ErUGVwS3JPdHJkYUdTUDM5NmY0YTdBM3VuMW82blFXSHN5V1E3a2M4R0luOHpONW55a1FhZ2hHeVlsSEhZZTFYVVNQdEhteGpiZHN5enRya0lpczNjZmpGbmUwWGdQQWlRdVl4M1QvQitwbzlCaEdJVXdDVjBRaS9nV1ZONk5reWRzYnpNZVJYRUxRWXlLK2xIZ0lHaUVhQnpRUlJ0WGJuQit3UVhpMklhY0pOZEtxSUN3RHNsL1B2dmNaSTlaVjZwQi9LSXpCKzhJSm0wQ0xZMjRLME9YSnMzQnFpajhnbXB2YkkrbzB3VUNBd0VBQWFOak1HRXdIUVlEVlIwT0JCWUVGQ0I2SWQ3b3Jic0NxUHR4V0tRSllybllXQVdpTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SHdZRFZSMGpCQmd3Rm9BVUlIb2gzdWl0dXdLbyszRllwQWxpdWRoWUJhSXdEZ1lEVlIwUEFRSC9CQVFEQWdHR01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQXhGdnBPWkY2S29sNDhjUWVLV1E0OFZBZStoNWRteUtNZkRMRFpYNTFJUnpmS0tzSExwRlB4ekdOdzR0OVV2NFlPUjBDRDl6ODFkUitjOTN0MWx3d0lwS2J4OVFtcThqVmlIRUhLWUQ5RlhUaE0rY1Zwc1QyNXBnMzVtM09OZVVYL2IrK2wyZCsyUU5OVFdNdmRzQ3RhUWR5YlpxYllGSWswSWpQd0xMcWRzQThJbzYwa3VFUzRKblFhaFBkTGtmbTcwcmdBZG1SRG96T2ZTRGFhV0hZMjBEb3ZrZnZLVVlqUFI2TUdBUEQ1dzlkRWI0d3AvWmpBVGJseVpuSCtMVGZsd2ZmdFVBb25tQXc0NkUwWmdnMTQzc082UmZPT25id2pYRWMrS1hkL0tRNmtUUTU2MG1seVJkNnE3RUlEWVJmRDRuNGFnS1YyUjVndlZQaE1EMCtJSzdrYWdxS05mV2E5ejhVZTJOM01lZHlXbmI5d3Y0d0M2OXFGbmRHYUlmWUFEa1V5a29PeUxzVlZ0ZUo3MFBWSlBYTzdzNjZMdWNmRDJSMHdvMk1wdU9ZQ3NUT203SEhTK3VaOVZqSGwycVEwWlFHODlYbitBWG56UGJrMUlOZTJ6MGxxM2h6Q1c1RFRZQktzSkVleEVyek1wTHdpRXFVWUpVZlI5RWVDTThVUE10TFNxejF1dGRQb0lZaFVMR3p0NWxTSkVwTUhNYnF1WWZXSnhRaUtDYnZmeFFzUDVkTFVNRUlxVGdqTmRvOThPbE03Wjd6allIOUtpbXozd2dBS1NBSW9RWnI3T3kxZE1ITzVHSzRqQnRaOHdnc3l5UTZEelFRN1I2OFhGVkthcklXOFNBVGV5dWJBUCtXamRNd2svWlh6c0RqTVpFdEVOYUJYekFlZllBPT0iXSwiYWxnIjoiUlMyNTYifQ.eyJtZXRhLmtleTIiOiIwNTM3ZDQ4MWY3M2E3NTczMzQzMjgwNTJkYTNhZjk2MjZjZWQ5NzAyOGUyMGI4NDlmNjExNWMyMmNkNzY1MTk3Iiwid29ya2VySWQiOiI1ZmVjZWI2NmZmYzg2ZjM4ZDk1Mjc4NmM2ZDY5NmM3OWMyZGJjMjM5ZGQ0ZTkxYjQ2NzI5ZDczYTI3ZmI1N2U5IiwiZGF0YSI6ImMxOGNlOWFjYWFhOTUzNWExMTlmNDhlNjg3MTNjMzQwYTk5MTEzMDU2ZmExNTkyYTU5MGIyMmU5OWI3YzUwZDMiLCJtZXRhLmtleTEiOiIzYzk2ODMwMTdmOWU0YmYzM2QwZmJlZGQyNmJmMTQzZmQ3MmRlOWI5ZGQxNDU0NDFiNzVmMDYwNDA0N2VhMjhlIiwid29ya2VyTmFtZSI6IjQ4Y2ZjN2Q4MDU3MmMxNDVmMzRmNzlmNzY5NWQ2N2ZmMTVhZmNhYjUxMmZiZjY4YmMwNGYyMmU5NTdiNmY0YmMiLCJGSUxFTkFNRSI6ImQ1NzQ1MTIyNWQ2ODI0OTI0ZjU5M2M5YTBmNDllN2Q1ODBkNjAzYTExZjFmMTRmMjdjNTlkYTVjMWI5MGM4NmIifQ.NfTY76qDO3vOue-9AbL6ywf8q5hSNnJJerbBhuWnw6GFza4YY9CufZBJc-Xmuze0ZJRQBJNwFaPnZFPRwGx0IYknLemPBMprKuqs9M8M97mF27Du15a96MXG8Zg2E4ldMrVcXYRIAtHfW5S0JHxK8cpGn3PLCgE6WrkcPJS2vV0mvr4ih-Lmiiiyln-BRXVta-gtAeEK18Yezx4HWpxi-1iCVuJLA9tQbH3qAr3UQMlfpKN8DiNBH1hpnBi6gSKy1Zal7UDcasnSwursED3crFMY77JoNzmC3Pz3T4KbERrKvrA67xWgZlq5m1lkECh_BlbeHTWpi1LfjuM7YAV__g</code></div>
 </div>
-</div><h4 id="SignedRequestSpecification-Decoded" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Decoded</span></h4><p><span style="color: rgb(0,0,0);">Header:</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
-<div class="line"><code class="plain">{   </code></div>
-<div class="line"><code class="plain">  </code><code class="string">"typ"</code><code class="plain">: </code><code class="string">"http://signserver.org/specs/signedrequest/1.0"</code><code class="plain">,</code></div>
-<div class="line"><code class="plain">  </code><code class="string">"x5c"</code><code class="plain">: [</code></div>
-<div class="line"><code class="plain">    </code><code class="string">"MIIEiTCCAnGgAwIBAgIIByNQeBX5MzMwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE1MTIxMTA5MjM1NVoXDTI1MTIxMTA5MjM1NVowOzESMBAGA1UEAwwJQWRtaW4gT25lMRgwFgYDVQQKDA9TaWduU2VydmVyIERlbW8xCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn6lLdVwZgduLxUF9kI5BsRKcuX0tdZ5TYb9Tz0hCOohpaCLTA09RPjqz1HKD8+aO0jRCtgFc0+F1h52HCJDzZr6QwNXyLWtE5XDqUP2blELwo0rQZZEiGmNk1tolSUR3Xeq1H20gd8osS4eJEWIeq+rl/re6y9emCNRfD+DU15nSYgJsauzwM5pNH8097OF1i7suwZYDkGHtUS1raMOYqotLe4lE6OlbE8FTzVPKy4UsRXBsWACk4H61TgbfnuVn/418HZz0XPdQGt6jKeMxmUx5sYQ+dDIst44mc75ncBZX9s8KUeKsw6X4lV2tV0OZmurGEoKNDOqPGSr1xTXBQQIDAQABo38wfTAdBgNVHQ4EFgQUctGfPIGFfFkAHPZQS99dWvtqIgEwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB7ad6/wn5gYmr/8lsAe8lVWnDROFBvVFIjJ3d8E6xp3QYQjPP2JnhZDcTWfMeYRB8YjVXXbNd4qqmect3TzrvfFlI//3sGnhgQCJx7dp/c25vBrllLU2pX4lxsfkNQ1J7lOLaoKkv3BL7lg90WUZ4Vzow73z6nifiQEPtSmYO1Uf14R4Cp3lAY1lWVIFa97wk8ny2jFMlHFGGZsJpfWzdilTZCvQ1GHfbjDUWRH3wo0blMj6U7afmn5PutrlN7ragMIaYdfcD9RIrtQCCtgrk4cYxATKTGD1JjptUJHtSnQufKZcadri0dozIAcuzR3/uoVk/5KbFjvo8s396Sle08Lw8kPZsvQ+ArS6D00cCQ/SNRS5f2bfKZzAL7gNlb7QgeDDTrJascgcsgObUHaZZz6xWI2JxnDfdL35L0UMpkXiJylD8vng6n1ruZcUzzWZyPo9pDz6gqo1/fItf/SIoVX3qS0eGFFExqowJIudc93FzcJiNacb5WnC9WMDMAg2nLQ/+Y+jqj0aFeazgHAx3n6KVNqZf8WGdAXmy9JMg+CSnEHGNhpnUoQMJtIpvG5j/MEWbyDzYg9FTuCTFdkcWkwvjlPIexBogtvbh2wtVZZioImoG2KCcjMlNc3HVe4JH7DzmZkrQoRXNCEugZ6t8mWa6nPPhw9nFoZT8uCooMZQ=="</code><code class="plain">,</code></div>
-<div class="line"><code class="plain">    </code><code class="string">"MIIFfzCCA2egAwIBAgIIMk1BOK8CwTwwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA4MTQyN1oXDTM2MDUyNzA4MTQyN1owTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAgblgjTTkMp1QAhgWDprhvqE9zX1Ux/A/RTOu4G4f6CTkd6JEEkbdKZv+CKv4cRoVCtfO3wnOokFRw/1JMmHHiQ1Z//uDoDjo8jk8nek0ArFE9R5NT02wMJCQa/mP1wU9ZSl1tx3jQRUFB+rTNeCcPTft+1FL7UjYMdkRzl261IOlmXzDMA+EYIGJ2c2wYhOv2DqfQygNz5GOf0EFqlQZIt/pzopSS+0K8mNb53ROhg9GJujwzugSH5Z+r0fsVHbCV0QUkZBfkRo9KMcdaDEPa8xpYTjsFPqU6RcnGkVABhn8OS8SIWw2re1f+htj6p9EGbk1m0I9pWGBA9ktWnrqlqDXV+tEhhh1O4f+LHieoxiscrF7RXxlYqyam6oabfXsX3VAC0M1UkwIciE8wA1Sj/+dgoSMqvEDNDfwpEYt6l8Z8czDTWDi7MM2u5VY0nP3+A+PepKrOtrdaGSP396f4a7A3un1o6nQWHsyWQ7kc8GIn8zN5nykQaghGyYlHHYe1XUSPtHmxjbdsyztrkIis3cfjFne0XgPAiQuYx3T/B+po9BhGIUwCV0Qi/gWVN6NkydsbzMeRXELQYyK+lHgIGiEaBzQRRtXbnB+wQXi2IacJNdKqICwDsl/PvvcZI9ZV6pB/KIzB+8IJm0CLY24K0OXJs3Bqij8gmpvbI+o0wUCAwEAAaNjMGEwHQYDVR0OBBYEFCB6Id7orbsCqPtxWKQJYrnYWAWiMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUIHoh3uituwKo+3FYpAliudhYBaIwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQAxFvpOZF6Kol48cQeKWQ48VAe+h5dmyKMfDLDZX51IRzfKKsHLpFPxzGNw4t9Uv4YOR0CD9z81dR+c93t1lwwIpKbx9Qmq8jViHEHKYD9FXThM+cVpsT25pg35m3ONeUX/b++l2d+2QNNTWMvdsCtaQdybZqbYFIk0IjPwLLqdsA8Io60kuES4JnQahPdLkfm70rgAdmRDozOfSDaaWHY20DovkfvKUYjPR6MGAPD5w9dEb4wp/ZjATblyZnH+LTflwfftUAonmAw46E0Zgg143sO6RfOOnbwjXEc+KXd/KQ6kTQ560mlyRd6q7EIDYRfD4n4agKV2R5gvVPhMD0+IK7kagqKNfWa9z8Ue2N3MedyWnb9wv4wC69qFndGaIfYADkUykoOyLsVVteJ70PVJPXO7s66LucfD2R0wo2MpuOYCsTOm7HHS+uZ9VjHl2qQ0ZQG89Xn+AXnzPbk1INe2z0lq3hzCW5DTYBKsJEexErzMpLwiEqUYJUfR9EeCM8UPMtLSqz1utdPoIYhULGzt5lSJEpMHMbquYfWJxQiKCbvfxQsP5dLUMEIqTgjNdo98OlM7Z7zjYH9Kimz3wgAKSAIoQZr7Oy1dMHO5GK4jBtZ8wgsyyQ6DzQQ7R68XFVKarIW8SATeyubAP+WjdMwk/ZXzsDjMZEtENaBXzAefYA=="</code></div>
-<div class="line"><code class="plain">  ],</code></div>
-<div class="line"><code class="plain">  </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"RS256"</code></div>
-<div class="line"><code class="plain">}</code></div>
-</div>
-</div><p><span style="color: rgb(0,0,0);">Payload:</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h4 id="SignedRequestSpecification-Decoded" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-original-h4 scroll-custom-section-heading scroll-document-section-heading scroll-h4 scroll-relative-h4"><span style="color: rgb(0,0,0);">Decoded</span></h4><p><span style="color: rgb(0,0,0);">Header:</span></p><pre class="scroll-code" data-title-type="code">{   
+  "typ": "http://signserver.org/specs/signedrequest/1.0",
+  "x5c": [
+    "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"
+  ],
+  "alg": "RS256"
+}</pre><p><span style="color: rgb(0,0,0);">Payload:</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">{</code></div>
 <div class="line"><code class="plain">  </code><code class="string">"meta.key2"</code><code class="plain">: </code><code class="string">"0537d481f73a757334328052da3af9626ced97028e20b849f6115c22cd765197"</code><code class="plain">,</code></div>
 <div class="line"><code class="plain">  </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"</code><code class="plain">,</code></div>
@@ -231,7 +227,7 @@ div.rbtoc1713360204060 li {margin-left: 0px;padding-left: 0px;}
 <div class="line"><code class="plain">  </code><code class="string">"FILENAME"</code><code class="plain">: </code><code class="string">"d57451225d6824924f593c9a0f49e7d580d603a11f1f14f27c59da5c1b90c86b"</code></div>
 <div class="line"><code class="plain">}</code></div>
 </div>
-</div><h3 id="SignedRequestSpecification-Example2-UsingClientWSProtocol" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Example 2 - Using ClientWS Protocol</span></h3><p><span style="color: rgb(0,0,0);">Example of a signed signature request for signing a file using ClientWS protocol (SOAP/WS) and providing some request metadata as well with the request.</span></p><h4 class="auto-cursor-target scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading" id="SignedRequestSpecification-SOAPRequest" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4">SOAP Request</h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h3 id="SignedRequestSpecification-Example2-UsingClientWSProtocol" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3"><span style="color: rgb(0,0,0);">Example 2 - Using ClientWS Protocol</span></h3><p><span style="color: rgb(0,0,0);">Example of a signed signature request for signing a file using ClientWS protocol (SOAP/WS) and providing some request metadata as well with the request.</span></p><h4 class="auto-cursor-target scroll-original-h4 scroll-custom-section-heading scroll-document-section-heading scroll-h4 scroll-relative-h4" id="SignedRequestSpecification-SOAPRequest" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4">SOAP Request</h4><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">&lt;soap:Envelope xmlns:soap=</code><code class="string">"http://schemas.xmlsoap.org/soap/envelope/"</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">    &lt;soap:Body&gt;</code></div>
 <div class="line"><code class="plain">        &lt;ns2:processData xmlns:ns2=</code><code class="string">"http://clientws.signserver.org/"</code><code class="plain">&gt;</code></div>
@@ -247,17 +243,14 @@ div.rbtoc1713360204060 li {margin-left: 0px;padding-left: 0px;}
 <div class="line"><code class="plain">    &lt;/soap:Body&gt;</code></div>
 <div class="line"><code class="plain">&lt;/soap:Envelope&gt;</code></div>
 </div>
-</div><p><img class="emoticon emoticon-warning scroll-document-image" data-emoji-id="atlassian-warning" data-emoji-shortname=":warning:" data-emoji-fallback=":warning:" src="_scroll_external/icons/754c3e37f939/warning.png" width="16" height="16" data-emoticon-name="warning" alt="(varning)"> Data is a reference to a separate part of the HTTP request.</p><h4 id="SignedRequestSpecification-Decoded.1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading">Decoded</h4><p>Header:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
-<div class="line"><code class="plain">{</code></div>
-<div class="line"><code class="plain">  </code><code class="string">"typ"</code><code class="plain">: </code><code class="string">"http://signserver.org/specs/signedrequest/1.0"</code><code class="plain">,</code></div>
-<div class="line"><code class="plain">  </code><code class="string">"x5c"</code><code class="plain">: [</code></div>
-<div class="line"><code class="plain">    </code><code class="string">"MIIEiTCCAnGgAwIBAgIIByNQeBX5MzMwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE1MTIxMTA5MjM1NVoXDTI1MTIxMTA5MjM1NVowOzESMBAGA1UEAwwJQWRtaW4gT25lMRgwFgYDVQQKDA9TaWduU2VydmVyIERlbW8xCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn6lLdVwZgduLxUF9kI5BsRKcuX0tdZ5TYb9Tz0hCOohpaCLTA09RPjqz1HKD8+aO0jRCtgFc0+F1h52HCJDzZr6QwNXyLWtE5XDqUP2blELwo0rQZZEiGmNk1tolSUR3Xeq1H20gd8osS4eJEWIeq+rl/re6y9emCNRfD+DU15nSYgJsauzwM5pNH8097OF1i7suwZYDkGHtUS1raMOYqotLe4lE6OlbE8FTzVPKy4UsRXBsWACk4H61TgbfnuVn/418HZz0XPdQGt6jKeMxmUx5sYQ+dDIst44mc75ncBZX9s8KUeKsw6X4lV2tV0OZmurGEoKNDOqPGSr1xTXBQQIDAQABo38wfTAdBgNVHQ4EFgQUctGfPIGFfFkAHPZQS99dWvtqIgEwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB7ad6/wn5gYmr/8lsAe8lVWnDROFBvVFIjJ3d8E6xp3QYQjPP2JnhZDcTWfMeYRB8YjVXXbNd4qqmect3TzrvfFlI//3sGnhgQCJx7dp/c25vBrllLU2pX4lxsfkNQ1J7lOLaoKkv3BL7lg90WUZ4Vzow73z6nifiQEPtSmYO1Uf14R4Cp3lAY1lWVIFa97wk8ny2jFMlHFGGZsJpfWzdilTZCvQ1GHfbjDUWRH3wo0blMj6U7afmn5PutrlN7ragMIaYdfcD9RIrtQCCtgrk4cYxATKTGD1JjptUJHtSnQufKZcadri0dozIAcuzR3/uoVk/5KbFjvo8s396Sle08Lw8kPZsvQ+ArS6D00cCQ/SNRS5f2bfKZzAL7gNlb7QgeDDTrJascgcsgObUHaZZz6xWI2JxnDfdL35L0UMpkXiJylD8vng6n1ruZcUzzWZyPo9pDz6gqo1/fItf/SIoVX3qS0eGFFExqowJIudc93FzcJiNacb5WnC9WMDMAg2nLQ/+Y+jqj0aFeazgHAx3n6KVNqZf8WGdAXmy9JMg+CSnEHGNhpnUoQMJtIpvG5j/MEWbyDzYg9FTuCTFdkcWkwvjlPIexBogtvbh2wtVZZioImoG2KCcjMlNc3HVe4JH7DzmZkrQoRXNCEugZ6t8mWa6nPPhw9nFoZT8uCooMZQ=="</code><code class="plain">,</code></div>
-<div class="line"><code class="plain">    </code><code class="string">"MIIFfzCCA2egAwIBAgIIMk1BOK8CwTwwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA4MTQyN1oXDTM2MDUyNzA4MTQyN1owTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAgblgjTTkMp1QAhgWDprhvqE9zX1Ux/A/RTOu4G4f6CTkd6JEEkbdKZv+CKv4cRoVCtfO3wnOokFRw/1JMmHHiQ1Z//uDoDjo8jk8nek0ArFE9R5NT02wMJCQa/mP1wU9ZSl1tx3jQRUFB+rTNeCcPTft+1FL7UjYMdkRzl261IOlmXzDMA+EYIGJ2c2wYhOv2DqfQygNz5GOf0EFqlQZIt/pzopSS+0K8mNb53ROhg9GJujwzugSH5Z+r0fsVHbCV0QUkZBfkRo9KMcdaDEPa8xpYTjsFPqU6RcnGkVABhn8OS8SIWw2re1f+htj6p9EGbk1m0I9pWGBA9ktWnrqlqDXV+tEhhh1O4f+LHieoxiscrF7RXxlYqyam6oabfXsX3VAC0M1UkwIciE8wA1Sj/+dgoSMqvEDNDfwpEYt6l8Z8czDTWDi7MM2u5VY0nP3+A+PepKrOtrdaGSP396f4a7A3un1o6nQWHsyWQ7kc8GIn8zN5nykQaghGyYlHHYe1XUSPtHmxjbdsyztrkIis3cfjFne0XgPAiQuYx3T/B+po9BhGIUwCV0Qi/gWVN6NkydsbzMeRXELQYyK+lHgIGiEaBzQRRtXbnB+wQXi2IacJNdKqICwDsl/PvvcZI9ZV6pB/KIzB+8IJm0CLY24K0OXJs3Bqij8gmpvbI+o0wUCAwEAAaNjMGEwHQYDVR0OBBYEFCB6Id7orbsCqPtxWKQJYrnYWAWiMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUIHoh3uituwKo+3FYpAliudhYBaIwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQAxFvpOZF6Kol48cQeKWQ48VAe+h5dmyKMfDLDZX51IRzfKKsHLpFPxzGNw4t9Uv4YOR0CD9z81dR+c93t1lwwIpKbx9Qmq8jViHEHKYD9FXThM+cVpsT25pg35m3ONeUX/b++l2d+2QNNTWMvdsCtaQdybZqbYFIk0IjPwLLqdsA8Io60kuES4JnQahPdLkfm70rgAdmRDozOfSDaaWHY20DovkfvKUYjPR6MGAPD5w9dEb4wp/ZjATblyZnH+LTflwfftUAonmAw46E0Zgg143sO6RfOOnbwjXEc+KXd/KQ6kTQ560mlyRd6q7EIDYRfD4n4agKV2R5gvVPhMD0+IK7kagqKNfWa9z8Ue2N3MedyWnb9wv4wC69qFndGaIfYADkUykoOyLsVVteJ70PVJPXO7s66LucfD2R0wo2MpuOYCsTOm7HHS+uZ9VjHl2qQ0ZQG89Xn+AXnzPbk1INe2z0lq3hzCW5DTYBKsJEexErzMpLwiEqUYJUfR9EeCM8UPMtLSqz1utdPoIYhULGzt5lSJEpMHMbquYfWJxQiKCbvfxQsP5dLUMEIqTgjNdo98OlM7Z7zjYH9Kimz3wgAKSAIoQZr7Oy1dMHO5GK4jBtZ8wgsyyQ6DzQQ7R68XFVKarIW8SATeyubAP+WjdMwk/ZXzsDjMZEtENaBXzAefYA=="</code></div>
-<div class="line"><code class="plain">  ],</code></div>
-<div class="line"><code class="plain">  </code><code class="string">"alg"</code><code class="plain">: </code><code class="string">"RS256"</code></div>
-<div class="line"><code class="plain">}</code></div>
-</div>
-</div><p>Payload:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><p><img class="emoticon emoticon-warning scroll-document-image" data-emoji-id="atlassian-warning" data-emoji-shortname=":warning:" data-emoji-fallback=":warning:" src="_scroll_external/icons/9e960ec239e9/warning.png" width="16" height="16" data-emoticon-name="warning" alt="(varning)"> Data is a reference to a separate part of the HTTP request.</p><h4 id="SignedRequestSpecification-Decoded.1" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-original-h4 scroll-custom-section-heading scroll-document-section-heading scroll-h4 scroll-relative-h4">Decoded</h4><p>Header:</p><pre class="scroll-code" data-title-type="code">{
+  "typ": "http://signserver.org/specs/signedrequest/1.0",
+  "x5c": [
+    "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"
+  ],
+  "alg": "RS256"
+}</pre><p>Payload:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">{</code></div>
 <div class="line"><code class="plain">  </code><code class="string">"meta.Key2"</code><code class="plain">: </code><code class="string">"e262fbe0e0ca1e25c0c35ba6dd012432825fdf85a653dab6f8a9c34ec907be41"</code><code class="plain">,</code></div>
 <div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"ceed7d92c5bc50c784fbdeff300eca53e7cd78c116993bd6b1e606b1686e5661"</code><code class="plain">,</code></div>
@@ -267,55 +260,87 @@ div.rbtoc1713360204060 li {margin-left: 0px;padding-left: 0px;}
 <div class="line"><code class="plain">  </code><code class="string">"FILENAME"</code><code class="plain">: </code><code class="string">"3076b227a65ea4d8f02b035d96b8a16cc21d7eb6a42323861cbfa3f53b729338"</code></div>
 <div class="line"><code class="plain">}</code></div>
 </div>
-</div><h2 id="SignedRequestSpecification-SampleCode" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Sample Code</h2><p>Java sample code for sending a signed signature request using ClientWS is available in the SignServer Enterprise sources under <code>modules/mod-enterprise/SignServer--Sample-Clients</code> module and called ClientWSWithSignedRequestSampleApp.java.</p>
-<nav id="ht-post-nav">
-        <a href="Signed_Request_Authorizer.html" class="ht-post-nav-prev">
-            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
-                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
-                </g>
-            </svg>
-            <span>Signed Request Authorizer</span>
-        </a>
+</div><h2 id="SignedRequestSpecification-SampleCode" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2">Sample Code</h2><p>Java sample code for sending a signed signature request using ClientWS is available in the SignServer Enterprise sources under <code>modules/mod-enterprise/SignServer--Sample-Clients</code> module and called ClientWSWithSignedRequestSampleApp.java.</p>
+                        </div>
+                    </section>
 
-        <a href="Logging.html" class="ht-post-nav-next">
-            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
-                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
-                </g>
-            </svg>
-            <span>Logging</span>
-        </a>
-</nav>
-                    </div>
-                </section>
-            </article>
-        </div>
+                </article>
+            </main>
 
-        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
-            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
-                <div class="js-tocBot">
-                                    </div>
+
+                <nav class="exp-post-navigation-prev">
+                    <a href="Signed_Request_Authorizer.html" class="post-navigation-link">
+                        <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <g id="ht-icon-prev">
+                                <path fill="currentColor" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) " />
+                            </g>
+                        </svg>
+                        <span>Signed Request Authorizer</span>
+                    </a>
+                </nav>
+
+                <nav class="exp-post-navigation-next">
+
+                    <a href="Logging.html" class="post-navigation-link">
+                        <span>Logging</span>
+                        <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <g id="ht-icon-next">
+                                <path fill="currentColor" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) " />
+                            </g>
+                        </svg>
+                    </a>
+
+                </nav>
+
+
+            <nav class="exp-sidebar-toc js-tocBot">
+                <!-- content generated by toc.js  -->
+            </nav>
+
+            <div class="exp-sidebar-navigation-toggle">
+                <div class="exp-sidebar-navigation-toggle-icon-line"></div>
+                <div class="exp-sidebar-navigation-toggle-icon-line"></div>
+                <div class="exp-sidebar-navigation-toggle-icon-line"></div>
             </div>
+
+            <div class="exp-scroll-to-top-container">
+                <a href="#SignedRequestSpecification-top" class="exp-scroll-to-top-link">↑ Back to top</a>
+            </div>
+
         </div>
 
+
+
+<dialog class="exp-lightbox-container" aria-modal="true">
+    <div class="lightbox-toolbar">
+        <button type="button" class="exp-lightbox-close">
+            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 -960 960 960" aria-hidden="true">
+                <path fill="currentColor" d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+            </svg>
+        </button>
     </div>
-</div>
-        </main>
+    <div class="lightbox-content content">
+    </div>
+</dialog>
 
-
-        <div id="vp-js-mobile__navigation">
-            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
-                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
-                    <div class="vp-mobile-navigation__button__icon relative">
-                        <div class="absolute w-full"></div>
-                        <div class="absolute w-full"></div>
-                        <div class="absolute w-full"></div>
-                    </div>
-                </button>
-            </div>
+<template id="exp-lightbox-wrapper-template">
+    <div class="exp-lightbox-wrapper">
+        <div class="exp-lightbox-toggle">
+            <button type="button" class="exp-lightbox-close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 -960 960 960" aria-hidden="true">
+                    <path fill="currentColor" d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z" />
+                </svg>
+            </button>
         </div>
+    </div>
+</template>
 
+        <script src="js/tocbot.min.js"></script>
+        <script src="js/article-toc.js"></script>
         <script src="js/app.js"></script>
+        <script src="js/mobile.js"></script>
+        <script src="js/iframe-resizer.parent.js"></script>
+
     </body>
+
 </html>

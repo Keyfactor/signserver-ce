@@ -1,0 +1,109 @@
+/**
+ * Alias tokens
+ *
+ * Representing the choices the design system team made in regards to when to use which core token.
+ * Their name describes the intended use of the token
+ */
+:root {
+    --K15t-surface: var(--K15t-color-neutral-0);
+    --K15t-surface-raised: var(--K15t-color-neutral-0);
+    --K15t-surface-overlay: var(--K15t-color-neutral-0);
+    --K15t-surface-overlay-hovered: var(--K15t-color-neutral-25);
+
+    --K15t-background-neutral: var(--K15t-color-neutral-50);
+    --K15t-background-neutral-hovered: var(--K15t-color-neutral-75);
+    --K15t-background-neutral-pressed: var(--K15t-color-neutral-100);
+    --K15t-background-neutral-selected: var(--K15t-color-neutral-50);
+
+    --K15t-background-neutral-subtle: transparent;
+    --K15t-background-neutral-subtle-hovered: var(--K15t-color-neutral-25);
+    --K15t-background-neutral-subtle-pressed: var(--K15t-color-neutral-50);
+    --K15t-background-neutral-subtle-selected: var(--K15t-color-neutral-50);
+
+    --K15t-background-neutral-strong: var(--K15t-color-neutral-700);
+    --K15t-background-neutral-strong-hovered: var(--K15t-color-neutral-800);
+    --K15t-background-neutral-strong-pressed: var(--K15t-color-neutral-900);
+    --K15t-background-neutral-strong-selected: var(--K15t-color-neutral-700);
+
+    --K15t-background-brand: var(--K15t-color-brand-50);
+    --K15t-background-brand-hovered: var(--K15t-color-brand-100);
+    --K15t-background-brand-pressed: var(--K15t-color-brand-200);
+    --K15t-background-brand-selected: var(--K15t-color-brand-50);
+    --K15t-background-brand-strong: var(--K15t-color-brand-500);
+    --K15t-background-brand-strong-hovered: var(--K15t-color-brand-600);
+    --K15t-background-brand-strong-pressed: var(--K15t-color-brand-700);
+    --K15t-background-brand-strong-selected: var(--K15t-color-brand-500);
+
+    --K15t-background-input: var(--K15t-color-neutral-0);
+
+    --K15t-background-information: var(--K15t-color-blue-100);
+    --K15t-background-information-strong: var(--K15t-color-blue-400);
+    --K15t-background-tip: var(--K15t-color-purple-100);
+    --K15t-background-tip-strong: var(--K15t-color-purple-400);
+    --K15t-background-success: var(--K15t-color-green-100);
+    --K15t-background-success-strong: var(--K15t-color-green-400);
+    --K15t-background-warning: var(--K15t-color-yellow-100);
+    --K15t-background-warning-strong: var(--K15t-color-yellow-400);
+    --K15t-background-danger: var(--K15t-color-red-100);
+    --K15t-background-danger-strong: var(--K15t-color-red-400);
+
+    --K15t-border-neutral: var(--K15t-color-neutral-50);
+    --K15t-border-neutral-strong: var(--K15t-color-neutral-75);
+    --K15t-border-neutral-strong-selected: var(--K15t-color-neutral-900);
+    --K15t-border-input: var(--K15t-border-neutral-strong);
+    --K15t-border-input-selected: var(--K15t-border-brand-strong);
+    --K15t-border-brand: var(--K15t-color-brand-100);
+    --K15t-border-brand-hovered: var(--K15t-color-brand-500);
+    --K15t-border-brand-pressed: var(--K15t-color-brand-600);
+    --K15t-border-brand-selected: var(--K15t-color-brand-500);
+    --K15t-border-brand-strong: var(--K15t-color-brand-700);
+
+    --K15t-foreground: var(--K15t-color-neutral-1000);
+    --K15t-foreground-subtle: var(--K15t-color-neutral-700);
+    --K15t-foreground-on-strong: var(--K15t-color-neutral-0);
+    --K15t-foreground-on-information: var(--K15t-color-blue-600);
+    --K15t-foreground-on-information-strong: var(--K15t-color-neutral-0);
+    --K15t-foreground-on-tip: var(--K15t-color-purple-700);
+    --K15t-foreground-on-tip-strong: var(--K15t-color-neutral-0);
+    --K15t-foreground-on-success: var(--K15t-color-green-900);
+    --K15t-foreground-on-success-strong: var(--K15t-color-neutral-0);
+    --K15t-foreground-on-warning: var(--K15t-color-neutral-900);
+    --K15t-foreground-on-warning-strong: var(--K15t-color-neutral-900);
+    --K15t-foreground-on-danger: var(--K15t-color-red-700);
+    --K15t-foreground-on-danger-strong: var(--K15t-color-neutral-0);
+    --K15t-foreground-brand: var(--K15t-color-brand-500);
+    --K15t-foreground-on-brand: var(--K15t-color-brand-700);
+    --K15t-foreground-on-brand-strong: var(--K15t-color-neutral-0);
+
+    --K15t-link: var(--K15t-color-blue-600);
+    --K15t-link-visited: var(--K15t-color-purple-700);
+
+    --K15t-blanket: hsl(0 0% 0% / 85%);
+    --K15t-blanket-loading: hsl(0 0% 100% / 80%);
+
+    --K15t-font-size-headline-x-large: var(--K15t-font-size-2x-large);
+    --K15t-font-size-headline-large: var(--K15t-font-size-x-large);
+    --K15t-font-size-headline-medium: var(--K15t-font-size-large);
+    --K15t-font-size-headline-small: var(--K15t-font-size-medium-large);
+    --K15t-font-size-headline-x-small: var(--K15t-font-size-medium);
+    --K15t-font-size-body-medium: var(--K15t-font-size-medium);
+    --K15t-font-size-body-small: var(--K15t-font-size-small);
+
+    --K15t-font-headline-x-large: var(--K15t-font-weight-regular) var(--K15t-font-size-headline-x-large) / var(--K15t-line-height-medium) var(--K15t-font-family-headline);
+    --K15t-font-headline-large: var(--K15t-font-weight-medium) var(--K15t-font-size-headline-large) / var(--K15t-line-height-medium) var(--K15t-font-family-headline);
+    --K15t-font-headline-medium: var(--K15t-font-weight-medium) var(--K15t-font-size-headline-medium) / var(--K15t-line-height-medium) var(--K15t-font-family-headline);
+    --K15t-font-headline-small: var(--K15t-font-weight-medium) var(--K15t-font-size-headline-small) / var(--K15t-line-height-medium) var(--K15t-font-family-body);
+    --K15t-font-body-medium: var(--K15t-font-weight-regular) var(--K15t-font-size-body-medium) / var(--K15t-line-height-large) var(--K15t-font-family-body);
+    --K15t-font-body-medium-strong: var(--K15t-font-weight-medium) var(--K15t-font-size-body-medium) / var(--K15t-line-height-large) var(--K15t-font-family-body);
+    --K15t-font-body-small: var(--K15t-font-weight-regular) var(--K15t-font-size-body-small) / var(--K15t-line-height-medium) var(--K15t-font-family-body);
+    --K15t-font-body-small-strong: var(--K15t-font-weight-medium) var(--K15t-font-size-body-small) / var(--K15t-line-height-medium) var(--K15t-font-family-body);
+    --K15t-font-code-medium: var(--K15t-font-weight-regular) var(--K15t-font-size-body-medium) / var(--K15t-line-height-medium) var(--K15t-font-family-code);
+}
+
+@screen lg {
+    :root {
+        --K15t-font-size-headline-x-large: var(--K15t-font-size-3x-large);
+        --K15t-font-size-headline-large: var(--K15t-font-size-2x-large);
+        --K15t-font-size-headline-medium: var(--K15t-font-size-x-large);
+    }
+}

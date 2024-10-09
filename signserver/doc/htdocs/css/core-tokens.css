@@ -1,0 +1,89 @@
+/*
+ * Core tokens
+ *
+ * Storing raw values and build the basis of the design system.
+ * They are intended to only be used internally.
+ */
+:root {
+    --K15t-color-neutral-0: #FFFFFF;
+    --K15t-color-neutral-25: #F7F7F9;
+    --K15t-color-neutral-50: #EFF0F4;
+    --K15t-color-neutral-75: #E2E5EB;
+    --K15t-color-neutral-100: #b7bdcf;
+    --K15t-color-neutral-200: #8993AF;
+    --K15t-color-neutral-300: #5d6b8f;
+    --K15t-color-neutral-400: #3d4e7b;
+    --K15t-color-neutral-500: #193468;
+    --K15t-color-neutral-600: #132e60;
+    --K15t-color-neutral-700: #0a2656;
+    --K15t-color-neutral-800: #021d4a;
+    --K15t-color-neutral-850: #000E3D;
+    --K15t-color-neutral-900: #000c34;
+    --K15t-color-neutral-950: #000B2E;
+    --K15t-color-neutral-1000: #000000;
+
+    --K15t-color-brand-25: var(--K15t-color-neutral-25);
+    --K15t-color-brand-50: var(--K15t-color-neutral-50);
+    --K15t-color-brand-100: var(--K15t-color-neutral-100);
+    --K15t-color-brand-200: var(--K15t-color-neutral-200);
+    --K15t-color-brand-300: var(--K15t-color-neutral-300);
+    --K15t-color-brand-400: var(--K15t-color-neutral-400);
+    --K15t-color-brand-500: var(--K15t-color-neutral-500);
+    --K15t-color-brand-600: var(--K15t-color-neutral-600);
+    --K15t-color-brand-700: var(--K15t-color-neutral-700);
+    --K15t-color-brand-800: var(--K15t-color-neutral-800);
+    --K15t-color-brand-900: var(--K15t-color-neutral-900);
+
+
+    --K15t-color-blue-100: #E7EFFF;
+    --K15t-color-blue-400: #1062FB;
+    --K15t-color-blue-500: #0D0DFC;
+    --K15t-color-blue-600: #0404A3;
+
+    --K15t-color-yellow-100: #FFF6DE;
+    --K15t-color-yellow-400: #FFC420;
+
+    --K15t-color-green-100: #D4FFEE;
+    --K15t-color-green-400: #008756;
+    --K15t-color-green-900: #004938;
+
+    --K15t-color-red-100: #FEEDEC;
+    --K15t-color-red-400: #D12A3A;
+    --K15t-color-red-700: #931536;
+
+    --K15t-color-teal-100: #CCF6FD;
+    --K15t-color-teal-400: #00D4F5;
+
+    --K15t-color-purple-100: #EAE3FF;
+    --K15t-color-purple-400: #5D07A0;
+    --K15t-color-purple-700: #45057C;
+
+    --K15t-font-weight-regular: 400;
+    --K15t-font-weight-medium: 500;
+    --K15t-font-weight-bold: 700;
+
+    --K15t-font-size-2x-small: 0.625rem; /* => 10px */
+    --K15t-font-size-x-small: 0.75rem; /* => 12px */
+    --K15t-font-size-small: 0.8125rem; /* => 14px */
+    --K15t-font-size-medium: 1rem; /* => 16px */
+    --K15t-font-size-medium-large: 1.125rem; /* => 18px */
+    --K15t-font-size-large: 1.25rem; /* => 20px */
+    --K15t-font-size-x-large: 1.5rem; /* => 24px */
+    --K15t-font-size-2x-large: 2rem; /* => 32px */
+    --K15t-font-size-3x-large: 3rem; /* => 48px */
+
+    --K15t-line-height-x-small: 1.1;
+    --K15t-line-height-small: 1.3;
+    --K15t-line-height-medium: 1.5;
+    --K15t-line-height-large: 1.7;
+
+    --K15t-radius-factor: 1;
+
+    --K15t-radius-2x-small: calc(1px * var(--K15t-radius-factor));
+    --K15t-radius-x-small: calc(2px * var(--K15t-radius-factor));
+    --K15t-radius-small: calc(3px * var(--K15t-radius-factor));
+    --K15t-radius-medium: calc(5px * var(--K15t-radius-factor));
+    --K15t-radius-large: calc(8px * var(--K15t-radius-factor));
+    --K15t-radius-circle: 50%;
+    --K15t-radius-pill: calc(1000px * (var(--K15t-radius-factor) * 0.0375));
+}

@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: SignServer REST Interface
-  version: 1.2.1
+  version: 1.2.2
 servers:
 - url: /signserver/rest/v1
 paths:
@@ -82,23 +82,11 @@ paths:
               $ref: '#/components/schemas/ReloadRequest'
       responses:
         "200":
-          description: All workers successfully reloaded
+          description: Workers successfully reloaded
           content:
             application/json: {}
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
         "403":
           description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
           content:
             application/json:
               schema:
@@ -106,6 +94,18 @@ paths:
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: No such worker
           content:
             application/json:
               schema:
@@ -417,9 +417,10 @@ components:
           description: The input data to be processed (i.e. signed).
           type: string
         encoding:
+          description: Additional encoding of the input data.
+          type: string
           allOf:
           - $ref: '#/components/schemas/DataEncoding'
-          - description: Additional encoding of the input data.
         metaData:
           description: Additional request metadata for the worker.
           type: object

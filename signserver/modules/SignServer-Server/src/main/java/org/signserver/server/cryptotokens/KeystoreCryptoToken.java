@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
@@ -366,8 +367,10 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
-            } else if ("SPHINCS+".equalsIgnoreCase(keyAlgorithm)) {
-                sigAlgName = "SPHINCS+";
+            } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
+                AlgorithmParameterSpec algorithmParameterSpec = SLHDSAParameterSpec.fromName(keySpec);
+                sigAlgName = keySpec;
+                kpg.initialize(algorithmParameterSpec, new SecureRandom());
             } else if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
                 AlgorithmParameterSpec algorithmParameterSpec;
                 switch (keySpec.toUpperCase(Locale.ENGLISH)) {
@@ -387,8 +390,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                         throw new IllegalArgumentException("Unsupported key specification for ML-DSA: " + keySpec);
                 }
                     kpg.initialize(algorithmParameterSpec, new SecureRandom());
-
-                // For now we just use the defaults, later we should use SPHINCSPlusParameterSpec
             } else {
                 if ("RSA".equals(keyAlgorithm) && keySpec.contains("exp")) {
                     final AlgorithmParameterSpec spec =

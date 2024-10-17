@@ -12,14 +12,11 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.security.spec.AlgorithmParameterSpec;
 import java.text.Collator;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
+import java.util.*;
+
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.util.StringTools;
 
@@ -36,7 +33,13 @@ public class KeyUtils {
     private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
     private static final String[] MLDSA_SPECS = {"ML-DSA-44", "ML-DSA-65", "ML-DSA-87"};
     private static final String[] LMS_SPECS = {"LMS_SHA256_N32_H5"};
-    private static final String[] SPHINCS_PLUS_SPECS = {"SPHINCS+"};
+    private static final String[] SLHDSA_SPECS = {
+            "slh-dsa-sha2-128f", "slh-dsa-sha2-128s",
+            "slh-dsa-sha2-192f", "slh-dsa-sha2-192s",
+            "slh-dsa-sha2-256f", "slh-dsa-sha2-256s",
+            "slh-dsa-shake-128f", "slh-dsa-shake-128s",
+            "slh-dsa-shake-192f", "slh-dsa-shake-192s",
+            "slh-dsa-shake-256f", "slh-dsa-shake-256s"};
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};
@@ -65,7 +68,7 @@ public class KeyUtils {
             }
         }
     }
-    
+
     /**
      * Gets a map of algorithm labels and values (suitable for a bean
      * binding to a f:selectItems in an h:selectOneMenu).
@@ -81,7 +84,7 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("AES", "AES"));
         algMenuValues.add(new SelectItem("ML-DSA", "ML-DSA"));
         algMenuValues.add(new SelectItem("LMS", "LMS"));
-        algMenuValues.add(new SelectItem("SPHINCS+", "SPHINCS+"));
+        algMenuValues.add(new SelectItem("SLH-DSA", "SLH-DSA"));
 
         return algMenuValues;
     }
@@ -134,8 +137,8 @@ public class KeyUtils {
                 }
                 break;
 
-            case "SPHINCS+":
-                for (final String key : SPHINCS_PLUS_SPECS) {
+            case "SLH-DSA":
+                for (final String key : SLHDSA_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;

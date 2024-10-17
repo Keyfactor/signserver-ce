@@ -417,7 +417,7 @@ public class CSRBulkBean extends BulkBean {
                 AlgorithmTools.SIG_ALGS_LMS.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
-                AlgorithmTools.SIG_ALGS_SPHINCSPLUS.forEach((alg) -> {
+                AlgorithmTools.SIG_ALGS_SLHDSA.forEach((alg) -> {
                     signatureAlgorithmMenuValues.add(new SelectItem(alg, alg));
                 });
             }

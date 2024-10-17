@@ -14,6 +14,8 @@ package org.signserver.test.utils.builders;
 
 import java.math.BigInteger;
 import java.security.*;
+
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.math.ec.ECCurve;
@@ -81,8 +83,9 @@ public class CryptoUtils {
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateSphincsPlus() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("SPHINCS+", "BC");
+    public static KeyPair generateSLHDSA(String algName) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("SLH-DSA", "BC");
+        g.initialize(SLHDSAParameterSpec.fromName(algName));
         return g.generateKeyPair();
     }
 

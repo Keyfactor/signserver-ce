@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import com.keyfactor.util.crypto.algorithm.AlgorithmConfigurationCache;
 import com.keyfactor.util.crypto.provider.CryptoProviderConfigurationCache;
 import com.keyfactor.util.string.StringConfigurationCache;
 import java.util.Enumeration;
@@ -157,17 +156,6 @@ public class StartupSingletonBean {
 
         //Register encryption key
         StringConfigurationCache.INSTANCE.setEncryptionKey(ConfigurationHolder.getString("password.encryption.key").toCharArray());
-
-        //Read if GOST3410 or DSTU4145 are defined in cesecore.properties
-        AlgorithmConfigurationCache.INSTANCE.setGost3410Enabled(ConfigurationHolder.getString("extraalgs.gost3410.oidtree") != null);
-        AlgorithmConfigurationCache.INSTANCE.setDstu4145Enabled(ConfigurationHolder.getString("extraalgs.dstu4145.oidtree") != null);
-        //Read and cache all configuration defined algorithms 
-        final List<String> configurationDefinedAlgorithms = ConfigurationHolder.getPrefixedPropertyNames("extraalgs");
-        AlgorithmConfigurationCache.INSTANCE.setConfigurationDefinedAlgorithms(configurationDefinedAlgorithms);
-        for (String algorithm : configurationDefinedAlgorithms) {
-            AlgorithmConfigurationCache.INSTANCE.addConfigurationDefinedAlgorithmTitle(algorithm,
-                    ConfigurationHolder.getString("extraalgs." + algorithm.toLowerCase() + ".title"));
-        }
 
         // pkcs11.disableHashingSignMechanisms should be true by default in SignServer
         final String disableHashingSignMechanisms = ConfigurationHolder.getString("pkcs11.disableHashingSignMechanisms");

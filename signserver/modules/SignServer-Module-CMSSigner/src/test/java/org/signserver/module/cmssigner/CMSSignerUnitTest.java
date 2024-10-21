@@ -82,9 +82,9 @@ public class CMSSignerUnitTest {
 
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenPQ;
-    private static MockedCryptoToken tokenPQCDilithium2;
-    private static MockedCryptoToken tokenPQCDilithium3;
-    private static MockedCryptoToken tokenPQCDilithium5;
+    private static MockedCryptoToken tokenMLDSA44;
+    private static MockedCryptoToken tokenMLDSA65;
+    private static MockedCryptoToken tokenMLDSA87;
 
 
     @BeforeClass
@@ -116,38 +116,38 @@ public class CMSSignerUnitTest {
         final Certificate signerCertificate = certChain[0];
         tokenPQ = new MockedCryptoToken(signerKeyPair2.getPrivate(), signerKeyPair2.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
 
-        final KeyPair signerKeyPairDilithium2 = CryptoUtils.generateDilithium2();
-        final String signatureAlgorithmDilithium2 = "DILITHIUM";
-        final Certificate[] certChainDilithium2 =
+        final KeyPair signerKeyPairMLDSA44 = CryptoUtils.generateMLDSA44();
+        final String signatureAlgorithmMLDSA44 = "ML-DSA";
+        final Certificate[] certChainMLDSA44 =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPairDilithium2).
+                        setSelfSignKeyPair(signerKeyPairMLDSA44).
                         setNotBefore(new Date()).
-                        setSignatureAlgorithm(signatureAlgorithmDilithium2)
+                        setSignatureAlgorithm(signatureAlgorithmMLDSA44)
                         .build())};
-        final Certificate signerCertificateDilithium2 = certChainDilithium2[0];
-        tokenPQCDilithium2 = new MockedCryptoToken(signerKeyPairDilithium2.getPrivate(), signerKeyPairDilithium2.getPublic(), signerCertificateDilithium2, Arrays.asList(certChainDilithium2), "BCPQC");
+        final Certificate signerCertificateMLDSA44 = certChainMLDSA44[0];
+        tokenMLDSA44 = new MockedCryptoToken(signerKeyPairMLDSA44.getPrivate(), signerKeyPairMLDSA44.getPublic(), signerCertificateMLDSA44, Arrays.asList(certChainMLDSA44), "BC");
 
-        final KeyPair signerKeyPairDilithium3 = CryptoUtils.generateDilithium3();
-        final String signatureAlgorithmDilithium3 = "DILITHIUM";
-        final Certificate[] certChainDilithium3 =
+        final KeyPair signerKeyPairMLDSA65 = CryptoUtils.generateMLDSA65();
+        final String signatureAlgorithmMLDSA65 = "ML-DSA";
+        final Certificate[] certChainMLDSA65 =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPairDilithium3).
+                        setSelfSignKeyPair(signerKeyPairMLDSA65).
                         setNotBefore(new Date()).
-                        setSignatureAlgorithm(signatureAlgorithmDilithium3)
+                        setSignatureAlgorithm(signatureAlgorithmMLDSA65)
                         .build())};
-        final Certificate signerCertificateDilithium3 = certChainDilithium3[0];
-        tokenPQCDilithium3 = new MockedCryptoToken(signerKeyPairDilithium3.getPrivate(), signerKeyPairDilithium3.getPublic(), signerCertificateDilithium3, Arrays.asList(certChainDilithium3), "BCPQC");
+        final Certificate signerCertificateMLDSA65 = certChainMLDSA65[0];
+        tokenMLDSA65 = new MockedCryptoToken(signerKeyPairMLDSA65.getPrivate(), signerKeyPairMLDSA65.getPublic(), signerCertificateMLDSA65, Arrays.asList(certChainMLDSA65), "BC");
 
-        final KeyPair signerKeyPairDilithium5 = CryptoUtils.generateDilithium5();
-        final String signatureAlgorithmDilithium5 = "DILITHIUM";
-        final Certificate[] certChainDilithium5 =
+        final KeyPair signerKeyPairMLDSA87 = CryptoUtils.generateMLDSA87();
+        final String signatureAlgorithmMLDSA87 = "ML-DSA";
+        final Certificate[] certChainMLDSA87 =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPairDilithium5).
+                        setSelfSignKeyPair(signerKeyPairMLDSA87).
                         setNotBefore(new Date()).
-                        setSignatureAlgorithm(signatureAlgorithmDilithium5)
+                        setSignatureAlgorithm(signatureAlgorithmMLDSA87)
                         .build())};
-        final Certificate signerCertificateDilithium5 = certChainDilithium5[0];
-        tokenPQCDilithium5 = new MockedCryptoToken(signerKeyPairDilithium5.getPrivate(), signerKeyPairDilithium5.getPublic(), signerCertificateDilithium5, Arrays.asList(certChainDilithium5), "BCPQC");
+        final Certificate signerCertificateMLDSA87 = certChainMLDSA87[0];
+        tokenMLDSA87 = new MockedCryptoToken(signerKeyPairMLDSA87.getPrivate(), signerKeyPairMLDSA87.getPublic(), signerCertificateMLDSA87, Arrays.asList(certChainMLDSA87), "BC");
     }
 
     /**
@@ -630,20 +630,20 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify by Post-Quantum DILITHIUM2 algorithm.
+     * Tests sign and verify by Post-Quantum MLDSA44 algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignature_DILITHIUM2() throws Exception {
-        LOG.info("testDetachedSignature_DILITHIUM2");
+    public void testDetachedSignature_MLDSA44() throws Exception {
+        LOG.info("testDetachedSignature_MLDSA44");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
-        CMSSigner instance = createMockSigner(tokenPQCDilithium2);
+        config.setProperty("SIGNATUREALGORITHM", "ML-DSA");
+        CMSSigner instance = createMockSigner(tokenMLDSA44);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQCDilithium2, config, null, false, "DILITHIUM2");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenMLDSA44, config, null, false, "ML-DSA-44");
 
         byte[] cms = response.getProcessedData();
 
@@ -654,25 +654,25 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify detached signature by Post-Quantum DILITHIUM2 algorithm.
+     * Tests sign and verify detached signature by Post-Quantum MLDSA44 algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignatureTrueRequestTrue_DILITHIUM2() throws Exception {
-        LOG.info("testDetachedSignatureTrueRequestTrue_DILITHIUM2");
+    public void testDetachedSignatureTrueRequestTrue_MLDSA44() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_MLDSA44");
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
-        CMSSigner instance = createMockSigner(tokenPQCDilithium2);
+        config.setProperty("SIGNATUREALGORITHM", "ML-DSA");
+        CMSSigner instance = createMockSigner(tokenMLDSA44);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenPQCDilithium2, config, requestContext, true, "DILITHIUM2");
+        SimplifiedResponse response = signAndVerify(data, tokenMLDSA44, config, requestContext, true, "ML-DSA-44");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -681,20 +681,20 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify by Post-Quantum DILITHIUM3 algorithm.
+     * Tests sign and verify by Post-Quantum MLDSA65 algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignature_DILITHIUM3() throws Exception {
-        LOG.info("testDetachedSignature_DILITHIUM3");
+    public void testDetachedSignature_MLDSA65() throws Exception {
+        LOG.info("testDetachedSignature_MLDSA65");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
-        CMSSigner instance = createMockSigner(tokenPQCDilithium3);
+        config.setProperty("SIGNATUREALGORITHM", "ML-DSA");
+        CMSSigner instance = createMockSigner(tokenMLDSA65);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQCDilithium3, config, null, false, "DILITHIUM3");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenMLDSA65, config, null, false, "ML-DSA-65");
 
         byte[] cms = response.getProcessedData();
 
@@ -705,25 +705,25 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify detached signature by Post-Quantum DILITHIUM3 algorithm.
+     * Tests sign and verify detached signature by Post-Quantum MLDSA65 algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignatureTrueRequestTrue_DILITHIUM3() throws Exception {
-        LOG.info("testDetachedSignatureTrueRequestTrue_DILITHIUM3");
+    public void testDetachedSignatureTrueRequestTrue_MLDSA65() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_MLDSA65");
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
-        CMSSigner instance = createMockSigner(tokenPQCDilithium3);
+        config.setProperty("SIGNATUREALGORITHM", "ML-DSA");
+        CMSSigner instance = createMockSigner(tokenMLDSA65);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenPQCDilithium3, config, requestContext, true, "DILITHIUM3");
+        SimplifiedResponse response = signAndVerify(data, tokenMLDSA65, config, requestContext, true, "ML-DSA-65");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -732,20 +732,20 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify by Post-Quantum DILITHIUM5 algorithm.
+     * Tests sign and verify by Post-Quantum MLDSA87 algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignature_DILITHIUM5() throws Exception {
-        LOG.info("testDetachedSignature_DILITHIUM5");
+    public void testDetachedSignature_MLDSA87() throws Exception {
+        LOG.info("testDetachedSignature_MLDSA87");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
-        CMSSigner instance = createMockSigner(tokenPQCDilithium5);
+        config.setProperty("SIGNATUREALGORITHM", "ML-DSA");
+        CMSSigner instance = createMockSigner(tokenMLDSA87);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQCDilithium5, config, null, false, "DILITHIUM5");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenMLDSA87, config, null, false, "ML-DSA-87");
 
         byte[] cms = response.getProcessedData();
 
@@ -756,25 +756,25 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify detached signature by Post-Quantum DILITHIUM5 algorithm.
+     * Tests sign and verify detached signature by Post-Quantum MLDSA87 algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignatureTrueRequestTrue_DILITHIUM5() throws Exception {
-        LOG.info("testDetachedSignatureTrueRequestTrue_DILITHIUM5");
+    public void testDetachedSignatureTrueRequestTrue_MLDSA87() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_MLDSA87");
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "DILITHIUM");
-        CMSSigner instance = createMockSigner(tokenPQCDilithium5);
+        config.setProperty("SIGNATUREALGORITHM", "ML-DSA");
+        CMSSigner instance = createMockSigner(tokenMLDSA87);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenPQCDilithium5, config, requestContext, true, "DILITHIUM5");
+        SimplifiedResponse response = signAndVerify(data, tokenMLDSA87, config, requestContext, true, "ML-DSA-87");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);

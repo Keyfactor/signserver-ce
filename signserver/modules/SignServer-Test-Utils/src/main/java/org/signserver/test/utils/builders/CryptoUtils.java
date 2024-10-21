@@ -86,18 +86,18 @@ public class CryptoUtils {
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateDilithium2() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DILITHIUM2", "BCPQC");
+    public static KeyPair generateMLDSA44() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA-44", "BC");
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateDilithium3() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DILITHIUM3", "BCPQC");
+    public static KeyPair generateMLDSA65() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA-65", "BC");
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateDilithium5() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DILITHIUM5", "BCPQC");
+    public static KeyPair generateMLDSA87() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA-87", "BC");
         return g.generateKeyPair();
     }
 

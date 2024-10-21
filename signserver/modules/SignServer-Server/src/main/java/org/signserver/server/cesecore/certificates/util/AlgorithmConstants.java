@@ -45,10 +45,10 @@ public final class AlgorithmConstants {
     public static final String SIGALG_GOST3411_WITH_DSTU4145   = "GOST3411withDSTU4145";
     public static final String SIGALG_ED25519                  = "Ed25519";
     public static final String SIGALG_ED448                    = "Ed448";
-    public static final String SIGALG_DILITHIUM                = "Dilithium";
-    public static final String SIGALG_DILITHIUM2               = "Dilithium2";
-    public static final String SIGALG_DILITHIUM3               = "Dilithium3";
-    public static final String SIGALG_DILITHIUM5               = "Dilithium5";
+    public static final String SIGALG_MLDSA                    = "ML-DSA";
+    public static final String SIGALG_MLDSA44                  = "ML-DSA-44";
+    public static final String SIGALG_MLDSA65                  = "ML-DSA-65";
+    public static final String SIGALG_MLDSA87                  = "ML-DSA-87";
     public static final String SIGALG_LMS                      = "LMS";
     public static final String SIGALG_SPHINCSPLUS              = "SPHINCS+";
 
@@ -79,10 +79,10 @@ public final class AlgorithmConstants {
             SIGALG_GOST3411_WITH_DSTU4145,
             SIGALG_ED25519,
             SIGALG_ED448,
-            SIGALG_DILITHIUM,
-            SIGALG_DILITHIUM2,
-            SIGALG_DILITHIUM3,
-            SIGALG_DILITHIUM5,
+            SIGALG_MLDSA,
+            SIGALG_MLDSA44,
+            SIGALG_MLDSA65,
+            SIGALG_MLDSA87,
             SIGALG_LMS,
             SIGALG_SPHINCSPLUS
     };
@@ -93,7 +93,7 @@ public final class AlgorithmConstants {
     public static final String KEYALGORITHM_ECGOST3410 = "ECGOST3410";
     public static final String KEYALGORITHM_DSTU4145    = "DSTU4145";
     public static final String KEYALGORITHM_EDDSA       = "EdDSA";
-    public static final String KEYALGORITHM_DILITHIUM   = "Dilithium";
+    public static final String KEYALGORITHM_MLDSA       = "ML-DSA";
     public static final String KEYALGORITHM_LMS         = "LMS";
     public static final String KEYALGORITHM_SPHINCSPLUS = "SPHINCS+";
 

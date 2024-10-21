@@ -163,7 +163,7 @@ public class CryptoTokenBean implements Serializable {
         for (TokenEntry te : tes) {
             final String keyAlgValue = te.getInfo().get("Key algorithm");
             if (keyAlgValue != null) {
-                if ("Dilithium".equals(keyAlgValue) || "LMS".equals(keyAlgValue)) {
+                if ("ML-DSA".equals(keyAlgValue) || "LMS".equals(keyAlgValue)) {
                     te.getInfo().replace("Key algorithm", "");
                 }
             }

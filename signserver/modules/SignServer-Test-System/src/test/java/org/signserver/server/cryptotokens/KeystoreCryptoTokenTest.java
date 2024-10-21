@@ -365,20 +365,20 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
-     * Tests generating CSR using Dilithium key.
+     * Tests generating CSR using MLDSA key.
      * @throws Exception
      */
     @Test
-    public void testGenerateCSRContainingDilithiumKey() throws Exception {
+    public void testGenerateCSRContainingMLDSAKey() throws Exception {
         try {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
 
-            generateKey("Dilithium", "Dilithium3", "Dil3Key");
+            generateKey("ML-DSA", "ML-DSA-65", "MLDSA65Key");
 
-            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("Dilithium3",
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("ML-DSA-65",
                     "CN=test01GenerateKey,C=SE", null);
-            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "Dil3Key");
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "MLDSA65Key");
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);

@@ -34,7 +34,7 @@ public class KeyUtils {
     private static final int[] AES_KEY_SIZES = {128, 192, 256};
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
     private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
-    private static final String[] DILITHIUM_SPECS = {"Dilithium2", "Dilithium3", "Dilithium5"};
+    private static final String[] MLDSA_SPECS = {"ML-DSA-44", "ML-DSA-65", "ML-DSA-87"};
     private static final String[] LMS_SPECS = {"LMS_SHA256_N32_H5"};
     private static final String[] SPHINCS_PLUS_SPECS = {"SPHINCS+"};
     // list of curves to prioritize to the top of the selectable list for convenience
@@ -79,7 +79,7 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
         algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
-        algMenuValues.add(new SelectItem("Dilithium", "Dilithium"));
+        algMenuValues.add(new SelectItem("ML-DSA", "ML-DSA"));
         algMenuValues.add(new SelectItem("LMS", "LMS"));
         algMenuValues.add(new SelectItem("SPHINCS+", "SPHINCS+"));
 
@@ -122,8 +122,8 @@ public class KeyUtils {
                 }
                 break;
 
-            case "Dilithium":
-                for (final String key : DILITHIUM_SPECS) {
+            case "ML-DSA":
+                for (final String key : MLDSA_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;

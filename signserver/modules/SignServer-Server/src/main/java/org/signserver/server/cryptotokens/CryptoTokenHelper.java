@@ -533,14 +533,14 @@ public class CryptoTokenHelper {
                 case "EdDSA":
                     alg = "Ed25519";
                     break;
-                case "DILITHIUM2":
-                    alg = "Dilithium2";
+                case "ML-DSA-44":
+                    alg = "ML-DSA-44";
                     break;
-                case "DILITHIUM3":
-                    alg = "Dilithium3";
+                case "ML-DSA-65":
+                    alg = "ML-DSA-65";
                     break;
-                case "DILITHIUM5":
-                    alg = "Dilithium5";
+                case "ML-DSA-87":
+                    alg = "ML-DSA-87";
                     break;
                 case "LMS":
                     alg = "LMS";

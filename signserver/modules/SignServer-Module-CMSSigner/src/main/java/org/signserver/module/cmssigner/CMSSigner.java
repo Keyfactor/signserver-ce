@@ -335,10 +335,6 @@ public class CMSSigner extends BaseSigner {
         JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
         signerInfoGeneratorBuilder.setDirectSignature(directSignature);
-        if ("SPHINCS+".equalsIgnoreCase(sigAlg)) {
-            // XXX: Note: the .setContentDigest call above is needed as of BC 1.71 there is no entry for SPHINCS+ in the DefaultDigestAlgorithmIdentifierFinder
-            signerInfoGeneratorBuilder.setContentDigest(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
-        }
         generator.addSignerInfoGenerator(signerInfoGeneratorBuilder.build(contentSigner, cert));
         generator.addCertificates(new JcaCertStore(certs));
         

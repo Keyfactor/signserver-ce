@@ -72,6 +72,8 @@ public class PlainSignerTest {
 
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenECDSA;
+    private static MockedCryptoToken tokenSLHDSA_SHA2_128F;
+    private static MockedCryptoToken tokenSLHDSA_SHAKE_128S;
 
     public PlainSignerTest() {
     }
@@ -135,7 +137,50 @@ public class PlainSignerTest {
                     caCertificate
                 };
         tokenECDSA = new MockedCryptoToken(signerKeyPairECDSA.getPrivate(), signerKeyPairECDSA.getPublic(), certChainECDSA[0], Arrays.asList(certChainECDSA), "BC");
+
+        // Create signer key-pair (SLH-DSA-SHA2-128F) and issue certificate
+        final KeyPair signerKeyPairSLHDSA_SHA2_128F = CryptoUtils.generateSLHDSA("slh-dsa-sha2-128f");
+        final Certificate[] certChainSLHDSA_SHA2_128F =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPair.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairSLHDSA_SHA2_128F.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm(signatureAlgorithm)
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer SLH-DSA 1")
+                                .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairSLHDSA_SHA2_128F.getPublic())))
+                                .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
+                                .build()),
+
+                        // CA
+                        caCertificate
+                };
+        tokenSLHDSA_SHA2_128F = new MockedCryptoToken(signerKeyPairSLHDSA_SHA2_128F.getPrivate(), signerKeyPairSLHDSA_SHA2_128F.getPublic(), certChainSLHDSA_SHA2_128F[0], Arrays.asList(certChainSLHDSA_SHA2_128F), "BC");
+
+        // Create signer key-pair (SLH-DSA-SHAKE-128S) and issue certificate
+        final KeyPair signerKeyPairSLHDSA_SHAKE_128S = CryptoUtils.generateSLHDSA("slh-dsa-shake-128s");
+        final Certificate[] certChainSLHDSA_SHAKE_128S =
+                new Certificate[] {
+                        // Code Signer
+                        new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                                .setIssuerPrivateKey(caKeyPair.getPrivate())
+                                .setSubjectPublicKey(signerKeyPairSLHDSA_SHAKE_128S.getPublic())
+                                .setNotBefore(new Date(currentTime - 60000))
+                                .setSignatureAlgorithm(signatureAlgorithm)
+                                .setIssuer(caDN)
+                                .setSubject("CN=Code Signer SLH-DSA 1")
+                                .addExtension(new CertExt(Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairSLHDSA_SHAKE_128S.getPublic())))
+                                .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
+                                .build()),
+                        // CA
+                        caCertificate
+                };
+        tokenSLHDSA_SHAKE_128S = new MockedCryptoToken(signerKeyPairSLHDSA_SHAKE_128S.getPrivate(), signerKeyPairSLHDSA_SHAKE_128S.getPublic(), certChainSLHDSA_SHAKE_128S[0], Arrays.asList(certChainSLHDSA_SHAKE_128S), "BC");
     }
+
+
     
     @AfterClass
     public static void tearDownClass() {
@@ -183,6 +228,30 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenECDSA, createConfig(null));
         assertSignedAndVerifiable(plainText, "SHA256withECDSA", tokenECDSA, resp);
+    }
+
+    /**
+     * Test signing using an SLH-DSA-SHA2-128F key-pair.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigning_SLHDSA_SHA2_128F() throws Exception {
+        LOG.info("testNormalSigning_SLHDSA_SHA2_128F");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenSLHDSA_SHA2_128F, createConfig("slh-dsa-sha2-128f"));
+        assertSignedAndVerifiable(plainText, "slh-dsa-sha2-128f", tokenSLHDSA_SHA2_128F, resp);
+    }
+
+    /**
+     * Test signing using an SLH-DSA-SHA2-128F key-pair.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigning_SLHDSA_SHAKE_128S() throws Exception {
+        LOG.info("testNormalSigning_SLHDSA_SHAKE_128S");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenSLHDSA_SHAKE_128S, createConfig("slh-dsa-shake-128s"));
+        assertSignedAndVerifiable(plainText, "slh-dsa-shake-128s", tokenSLHDSA_SHAKE_128S, resp);
     }
     
     /**

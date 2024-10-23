@@ -386,20 +386,41 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
-     * Tests generating CSR using SPHINCS+ key.
+     * Tests generating CSR using SLH-DSA-SHA2-128F key.
      * @throws Exception
      */
     @Test
-    public void testGenerateCSRContainingSPHINCSPLUSKey() throws Exception {
+    public void testGenerateCSRContainingSLHDSASha2Key() throws Exception {
         try {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
 
-            generateKey("SPHINCS+", "SPHINCS+", "SphincsPlusKey");
+            generateKey("SLH-DSA", "slh-dsa-sha2-128f", "slh-dsa-key");
 
-            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SPHINCS+",
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("slh-dsa-sha2-128f",
                     "CN=test01GenerateKey,C=SE", null);
-            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SphincsPlusKey");
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "slh-dsa-key");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHAKE-128S key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSAShakeKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "slh-dsa-shake-128s", "slh-dsa-shake-key");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("slh-dsa-shake-128s",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "slh-dsa-shake-key");
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);

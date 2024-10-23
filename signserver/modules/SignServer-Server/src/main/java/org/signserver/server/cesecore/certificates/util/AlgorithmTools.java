@@ -50,6 +50,7 @@ import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cms.CMSSignedGenerator;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.bouncycastle.jcajce.util.MessageDigestUtils;
 import org.bouncycastle.jce.ECGOST3410NamedCurveTable;
 import org.bouncycastle.jce.ECNamedCurveTable;
@@ -143,9 +144,20 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_LMS
     ));
 
-    /** Signature algorithms supported by SPHINCS+ keys */
-    public static final List<String> SIG_ALGS_SPHINCSPLUS = Collections.unmodifiableList(Arrays.asList(
-            AlgorithmConstants.SIGALG_SPHINCSPLUS
+    /** Signature algorithms supported by SLH-DSA keys */
+    public static final List<String> SIG_ALGS_SLHDSA = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_128F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_128S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_192F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_192S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_256F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_256S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_128F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_128S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_192F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_192S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_256F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_256S
     ));
 
     /**

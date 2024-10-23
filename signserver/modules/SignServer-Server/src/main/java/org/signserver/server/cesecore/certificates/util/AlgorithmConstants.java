@@ -50,7 +50,19 @@ public final class AlgorithmConstants {
     public static final String SIGALG_MLDSA65                  = "ML-DSA-65";
     public static final String SIGALG_MLDSA87                  = "ML-DSA-87";
     public static final String SIGALG_LMS                      = "LMS";
-    public static final String SIGALG_SPHINCSPLUS              = "SPHINCS+";
+    public static final String SIGALG_SLHDSA_SHA2_128F         = "slh-dsa-sha2-128f";
+    public static final String SIGALG_SLHDSA_SHA2_128S         = "slh-dsa-sha2-128s";
+    public static final String SIGALG_SLHDSA_SHA2_192F         = "slh-dsa-sha2-192f";
+    public static final String SIGALG_SLHDSA_SHA2_192S         = "slh-dsa-sha2-192s";
+    public static final String SIGALG_SLHDSA_SHA2_256F         = "slh-dsa-sha2-256f";
+    public static final String SIGALG_SLHDSA_SHA2_256S         = "slh-dsa-sha2-256s";
+    public static final String SIGALG_SLHDSA_SHAKE_128F        = "slh-dsa-shake-128f";
+    public static final String SIGALG_SLHDSA_SHAKE_128S        = "slh-dsa-shake-128s";
+    public static final String SIGALG_SLHDSA_SHAKE_192F        = "slh-dsa-shake-192f";
+    public static final String SIGALG_SLHDSA_SHAKE_192S        = "slh-dsa-shake-192s";
+    public static final String SIGALG_SLHDSA_SHAKE_256F        = "slh-dsa-shake-256f";
+    public static final String SIGALG_SLHDSA_SHAKE_256S        = "slh-dsa-shake-256s";
+
 
     /**
      * Signature algorithms available to choose from.
@@ -84,18 +96,29 @@ public final class AlgorithmConstants {
             SIGALG_MLDSA65,
             SIGALG_MLDSA87,
             SIGALG_LMS,
-            SIGALG_SPHINCSPLUS
+            SIGALG_SLHDSA_SHA2_128F,
+            SIGALG_SLHDSA_SHA2_128S,
+            SIGALG_SLHDSA_SHA2_192F,
+            SIGALG_SLHDSA_SHA2_192S,
+            SIGALG_SLHDSA_SHA2_256F,
+            SIGALG_SLHDSA_SHA2_256S,
+            SIGALG_SLHDSA_SHAKE_128F,
+            SIGALG_SLHDSA_SHAKE_128S,
+            SIGALG_SLHDSA_SHAKE_192F,
+            SIGALG_SLHDSA_SHAKE_192S,
+            SIGALG_SLHDSA_SHAKE_256F,
+            SIGALG_SLHDSA_SHAKE_256S
     };
 
     public static final String KEYALGORITHM_RSA         = "RSA";
     public static final String KEYALGORITHM_EC          = "EC";
     public static final String KEYALGORITHM_ECDSA       = "ECDSA"; //The same as "EC", just named differently sometimes. "EC" and "ECDSA" should be handled in the same way
-    public static final String KEYALGORITHM_ECGOST3410 = "ECGOST3410";
+    public static final String KEYALGORITHM_ECGOST3410  = "ECGOST3410";
     public static final String KEYALGORITHM_DSTU4145    = "DSTU4145";
     public static final String KEYALGORITHM_EDDSA       = "EdDSA";
     public static final String KEYALGORITHM_MLDSA       = "ML-DSA";
     public static final String KEYALGORITHM_LMS         = "LMS";
-    public static final String KEYALGORITHM_SPHINCSPLUS = "SPHINCS+";
+    public static final String KEYALGORITHM_SLHDSA      = "SLH-DSA";
 
     public static final String KEYSPECPREFIX_ECGOST3410 = "GostR3410-";
 

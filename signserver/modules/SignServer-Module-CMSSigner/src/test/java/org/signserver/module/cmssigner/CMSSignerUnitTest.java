@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
@@ -81,6 +82,10 @@ public class CMSSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(CMSSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
+    private static MockedCryptoToken tokenSLH_DSA_SHA2_128F;
+    private static MockedCryptoToken tokenSLH_DSA_SHA2_128S;
+    private static MockedCryptoToken tokenSLH_DSA_SHAKE_128F;
+    private static MockedCryptoToken tokenSLH_DSA_SHAKE_128S;
     private static MockedCryptoToken tokenPQ;
     private static MockedCryptoToken tokenMLDSA44;
     private static MockedCryptoToken tokenMLDSA65;
@@ -105,16 +110,50 @@ public class CMSSignerUnitTest {
             final Certificate signerCertificate = certChain[0];
             tokenRSA = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
         }
-        final KeyPair signerKeyPair2 = CryptoUtils.generateSphincsPlus();
-        final String signatureAlgorithm = "SPHINCS+";
-        final Certificate[] certChain =
+        final KeyPair signerKeyPairSLH_DSA_SHA2_128F = CryptoUtils.generateSLHDSA("slh-dsa-sha2-128f");
+        final String signatureAlgorithmSLH_DSA_SHA2_128F = "slh-dsa-sha2-128f";
+        final Certificate[] certChainSLHDSA_DSA_SHA2_128F =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
-                        setSelfSignKeyPair(signerKeyPair2).
+                        setSelfSignKeyPair(signerKeyPairSLH_DSA_SHA2_128F).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithmSLH_DSA_SHA2_128F)
+                        .build())};
+        final Certificate signerCertificateSLH_DSA_SHA2_128F = certChainSLHDSA_DSA_SHA2_128F[0];
+        tokenSLH_DSA_SHA2_128F = new MockedCryptoToken(signerKeyPairSLH_DSA_SHA2_128F.getPrivate(), signerKeyPairSLH_DSA_SHA2_128F.getPublic(), signerCertificateSLH_DSA_SHA2_128F, Arrays.asList(certChainSLHDSA_DSA_SHA2_128F), "BC");
+
+        final KeyPair signerKeyPairSLH_DSA_SHA2_128S = CryptoUtils.generateSLHDSA("slh-dsa-sha2-128s");
+        final String signatureAlgorithm = "slh-dsa-sha2-128s";
+        final Certificate[] certChainSLHDSA_DSA_SHA2_128S =
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPairSLH_DSA_SHA2_128S).
                         setNotBefore(new Date()).
                         setSignatureAlgorithm(signatureAlgorithm)
                         .build())};
-        final Certificate signerCertificate = certChain[0];
-        tokenPQ = new MockedCryptoToken(signerKeyPair2.getPrivate(), signerKeyPair2.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+        final Certificate signerCertificateSLH_DSA_SHA2_128S = certChainSLHDSA_DSA_SHA2_128S[0];
+        tokenSLH_DSA_SHA2_128S = new MockedCryptoToken(signerKeyPairSLH_DSA_SHA2_128S.getPrivate(), signerKeyPairSLH_DSA_SHA2_128S.getPublic(), signerCertificateSLH_DSA_SHA2_128S, Arrays.asList(certChainSLHDSA_DSA_SHA2_128S), "BC");
+
+
+	final KeyPair signerKeyPairSLH_DSA_SHAKE_128F = CryptoUtils.generateSLHDSA("slh-dsa-shake-128f");
+        final String signatureAlgorithmSLH_DSA_SHAKE_128F = "slh-dsa-shake-128f";
+        final Certificate[] certChainSLHDSA_DSA_SHAKE_128F =
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPairSLH_DSA_SHAKE_128F).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithmSLH_DSA_SHAKE_128F)
+                        .build())};
+        final Certificate signerCertificateSLH_DSA_SHAKE_128F = certChainSLHDSA_DSA_SHAKE_128F[0];
+        tokenSLH_DSA_SHAKE_128F = new MockedCryptoToken(signerKeyPairSLH_DSA_SHAKE_128F.getPrivate(), signerKeyPairSLH_DSA_SHAKE_128F.getPublic(), signerCertificateSLH_DSA_SHAKE_128F, Arrays.asList(certChainSLHDSA_DSA_SHAKE_128F), "BC");
+
+        final KeyPair signerKeyPairSLH_DSA_SHAKE_128S = CryptoUtils.generateSLHDSA("slh-dsa-shake-128s");
+        final String signatureAlgorithmSLH_DSA_SHAKE_128S = "slh-dsa-shake-128s";
+        final Certificate[] certChainSLHDSA_DSA_SHAKE_128S =
+                new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPairSLH_DSA_SHAKE_128S).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithmSLH_DSA_SHAKE_128S)
+                        .build())};
+        final Certificate signerCertificateSLH_DSA_SHAKE_128S = certChainSLHDSA_DSA_SHAKE_128S[0];
+        tokenSLH_DSA_SHAKE_128S = new MockedCryptoToken(signerKeyPairSLH_DSA_SHAKE_128S.getPrivate(), signerKeyPairSLH_DSA_SHAKE_128S.getPublic(), signerCertificateSLH_DSA_SHAKE_128S, Arrays.asList(certChainSLHDSA_DSA_SHAKE_128S), "BC");
 
         final KeyPair signerKeyPairMLDSA44 = CryptoUtils.generateMLDSA44();
         final String signatureAlgorithmMLDSA44 = "ML-DSA";
@@ -166,11 +205,11 @@ public class CMSSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
     }
-    
+
     /**
      * Test that providing an incorrect value for CLIENTSIDEHASHING gives
      * a fatal error.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testInit_incorrectClientSideHashingValue() throws Exception {
@@ -200,7 +239,7 @@ public class CMSSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("ALLOW_DETACHEDSIGNATURE_OVERRIDE"));
     }
-    
+
     /**
      * Test that providing an incorrect value for ALLOW_CLIENTSIDESHASHING_OVERRIDE
      * gives a fatal error.
@@ -221,8 +260,8 @@ public class CMSSignerUnitTest {
     /**
      * Test that specifying CLIENTSIDEHASHING without setting
      * ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_incorrectClientSideHashingNoAcceptedDigestAlgorithms() throws Exception {
@@ -231,15 +270,15 @@ public class CMSSignerUnitTest {
         config.setProperty("CLIENTSIDEHASHING", "true");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
     }
-    
+
     /**
      * Test that specifying an illegal accepted hash digest algorithm results
      * in a configuration error.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -250,15 +289,15 @@ public class CMSSignerUnitTest {
         config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "_incorrect_");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Illegal algorithm specified for ACCEPTED_HASH_DIGEST_ALGORITHMS: _incorrect_"));
     }
-    
+
     /**
      * Test that specifying an illegal accepted hash digest algorithm results
      * in a configuration error when also a valid alorithm is listed.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -269,16 +308,16 @@ public class CMSSignerUnitTest {
         config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256, _incorrect_");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Illegal algorithm specified for ACCEPTED_HASH_DIGEST_ALGORITHMS: _incorrect_"));
     }
-    
+
     /**
      * Test that specifying ALLOW_CLIENTSIDEHASHING_OVERRIDE without setting
      * ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_incorrectAllowClientSideHashingOverrodeNoAcceptedDigestAlgorithms() throws Exception {
@@ -287,18 +326,16 @@ public class CMSSignerUnitTest {
         config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "true");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
     }
-    
-    
-    
+
     /**
      * Test that specifying CLIENTSIDEHASHING and ALLOW_CLIENTSIDEHASHING_OVERRIDE
      * without setting ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_incorrectClientSideHashingAllowClientSideHashingOverrideNoAcceptedDigestAlgorithms() throws Exception {
@@ -308,14 +345,14 @@ public class CMSSignerUnitTest {
         config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "true");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
     }
-    
+
     /**
      * Test that setting an incorrect OID for content OID is not allowed.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testInit_incorrectContentOID() throws Exception {
@@ -324,15 +361,15 @@ public class CMSSignerUnitTest {
         config.setProperty("CONTENTOID", "incorrect_oid");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Illegal content OID specified: incorrect_oid"));
     }
-    
+
     /**
      * Test that setting an incorrect value for ALLOW_CONTENTOID_OVERRIDE is not
      * allowed (so that it is not implicitly treated as false).
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testInit_incorrectAllowContentOIDOverride() throws Exception {
@@ -341,15 +378,15 @@ public class CMSSignerUnitTest {
         config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "incorrect");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Incorrect value for property ALLOW_CONTENTOID_OVERRIDE"));
     }
-    
+
     /**
      * Test that setting an empty value for DO_LOGREQUEST_DIGEST works.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_doLogrequestDigestEmpty() throws Exception {
@@ -362,11 +399,11 @@ public class CMSSignerUnitTest {
 
         assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
     }
-    
+
     /**
      * Test that setting "true" for DO_LOGREQUEST_DIGEST works.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_doLogrequestDigestTrue() throws Exception {
@@ -376,14 +413,14 @@ public class CMSSignerUnitTest {
         config.setProperty("DO_LOGREQUEST_DIGEST", "true");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
     }
-    
+
     /**
      * Test that setting "false" for DO_LOGREQUEST_DIGEST works.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_doLogrequestDigestFalse() throws Exception {
@@ -393,14 +430,14 @@ public class CMSSignerUnitTest {
         config.setProperty("DO_LOGREQUEST_DIGEST", "false");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
     }
-    
+
     /**
      * Test that setting "TRUE" (upper case) for DO_LOGREQUEST_DIGEST works.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testInit_doLogrequestDigestTrueUpper() throws Exception {
@@ -410,14 +447,14 @@ public class CMSSignerUnitTest {
         config.setProperty("DO_LOGREQUEST_DIGEST", "TRUE");
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
     }
-    
+
     /**
      * Tests that there is no request and response logging by default.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDefaultsToNoRequestOrResponseLogging() throws Exception {
@@ -433,11 +470,11 @@ public class CMSSignerUnitTest {
         assertNull("no request digest", logMap.get("REQUEST_DIGEST_ALGORITHM"));
         assertNull("no response digest", logMap.get("RESPONSE_DIGEST_ALGORITHM"));
     }
-    
+
     /**
      * Tests that the request digest is correct when enabled.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testRequestDigestMatches() throws Exception {
@@ -452,12 +489,12 @@ public class CMSSignerUnitTest {
         CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         assertRequestDigestMatches(data, "SHA256", requestContext);
     }
-    
+
     /**
      * Tests that the request digest is correct when enabled.
      * Specifying SHA512.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testRequestDigestMatches_SHA512() throws Exception {
@@ -473,11 +510,11 @@ public class CMSSignerUnitTest {
         CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
         assertRequestDigestMatches(data, "SHA512", requestContext);
     }
-    
+
     /**
      * Tests that the response digest is correct when enabled.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testResponseDigestMatches() throws Exception {
@@ -497,7 +534,7 @@ public class CMSSignerUnitTest {
      * Tests that the response digest is correct when enabled.
      * Specifying SHA512.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testResponseDigestMatches_SHA512() throws Exception {
@@ -518,14 +555,14 @@ public class CMSSignerUnitTest {
         final LogMap logMap = LogMap.getInstance(context);
         final Object digestAlgLoggable = logMap.get("REQUEST_DIGEST_ALGORITHM");
         assertEquals("digestAlg", digestAlgorithm, String.valueOf(digestAlgLoggable));
-        
+
         final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         final String expected = Hex.toHexString(md.digest(data));
         final Object digestLoggable = logMap.get("REQUEST_DIGEST");
         final String actual = String.valueOf(digestLoggable);
         assertEquals("digest", expected, actual);
     }
-    
+
     private void assertResponseDigestMatches(byte[] data, String digestAlgorithm, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException, IOException {
         final LogMap logMap = LogMap.getInstance(context);
         final Object digestAlgLoggable = logMap.get("RESPONSE_DIGEST_ALGORITHM");
@@ -537,8 +574,8 @@ public class CMSSignerUnitTest {
         final String actual = String.valueOf(digestLoggable);
         assertEquals("digest", expected, actual);
     }
-    
-    
+
+
     /**
      * Tests that no signing is performed when the worker is misconfigured.
      * @throws java.lang.Exception
@@ -580,20 +617,20 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify by Post-Quantum SPHINCS+ algorithm.
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-128F algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignature_SPHINCSPlus() throws Exception {
-        LOG.info("testDetachedSignature_SPHINCSPlus");
+    public void testDetachedSignature_SLH_DSA_SHA2_128F() throws Exception {
+        LOG.info("testDetachedSignature_SLH_DSA_SHA2_128F");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "SPHINCS+");
-        CMSSigner instance = createMockSigner(tokenPQ);
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128f");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128F);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenPQ, config, null, false, "SPHINCS+-SHA2-256S");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, null, false, "slh-dsa-sha2-128f");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -603,25 +640,176 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify detached signature by Post-Quantum SPHINCS+ algorithm.
+     * Tests sign and verify detached signature by Post-Quantum SLH-DSA-SHA2-128F algorithm.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void testDetachedSignatureTrueRequestTrue_SPHINCSPlus() throws Exception {
-        LOG.info("testDetachedSignatureTrueRequestTrue_SPHINCSPlus");
+    public void testDetachedSignatureTrueRequestTrue_SLH_DSA_SHA2_128F() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_SLH_DSA_SHA2_128F");
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "SPHINCS+");
-        CMSSigner instance = createMockSigner(tokenPQ);
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128f");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128F);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenPQ, config, requestContext, true, "SPHINCS+-SHA2-256S");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, requestContext, true, "slh-dsa-sha2-128f");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-128S algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignature_SLH_DSA_SHA2_128S() throws Exception {
+        LOG.info("testDetachedSignature_SLH_DSA_SHA2_128S");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128s");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128S);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, null, false, "slh-dsa-sha2-128s");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
+     * Tests sign and verify detached signature by Post-Quantum SLH-DSA-SHA2-128S algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_SLH_DSA_SHA2_128S() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_SLH_DSA_SHA2_128S");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128s");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128S);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, requestContext, true, "slh-dsa-sha2-128s");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHAKE-128F algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignature_SLH_DSA_SHAKE_128F() throws Exception {
+        LOG.info("testDetachedSignature_SLH_DSA_SHAKE_128F");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128f");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128F);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, null, false, "slh-dsa-shake-128f");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
+     * Tests sign and verify detached signature by Post-Quantum SLH-DSA-SHAKE-128F algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_SLH_DSA_SHAKE_128F() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_SLH_DSA_SHAKE_128F");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128f");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128F);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, requestContext, true, "slh-dsa-shake-128f");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHAKE-128S algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+
+    @Test
+    public void testDetachedSignature_SLH_DSA_SHAKE_128S() throws Exception {
+        LOG.info("testDetachedSignature_SLH_DSA_SHAKE_128S");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128S");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128S);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128S, config, null, false, "slh-dsa-shake-128s");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
+     * Tests sign and verify detached signature by Post-Quantum SLH-DSA-SHAKE-128S algorithm.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestTrue_SLH_DSA_SHAKE_128S() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestTrue_SLH_DSA_SHAKE_128S");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128s");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128S);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "TRUE");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHAKE_128S, config, requestContext, true, "slh-dsa-shake-128s");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -652,7 +840,6 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
-
     /**
      * Tests sign and verify detached signature by Post-Quantum MLDSA44 algorithm.
      *
@@ -808,7 +995,7 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
-    
+
     /**
      * Test that when length of client supplied hash digest does not match with the length of specified digest algorithm,it fails.
      *
@@ -858,7 +1045,7 @@ public class CMSSignerUnitTest {
         signAndVerify(data, tokenRSA, config, requestContext, false);
         fail("Should have thrown exception as detached signature option can not be overridden");
     }
-    
+
     /**
      * Test that providing an incorrect value for DER_RE_ENCODE
      * gives a fatal error.
@@ -878,7 +1065,7 @@ public class CMSSignerUnitTest {
 
     /**
      * Tests that not providing a DER_RE_ENCODE property defaults to not DER.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDERReEncodeDefaultValue() throws Exception {
@@ -893,7 +1080,7 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertNotNull(signedData);
-        
+
         // Not in DER format by default
         final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
         assertNotEquals("do not expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
@@ -901,7 +1088,7 @@ public class CMSSignerUnitTest {
 
     /**
      * Tests that setting DER_RE_ENCODE=false does not give DER encoding.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDERReEncodeFalse() throws Exception {
@@ -917,7 +1104,7 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertNotNull(signedData);
-        
+
         // Not in DER format by default
         final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
         assertNotEquals("do not expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
@@ -925,7 +1112,7 @@ public class CMSSignerUnitTest {
 
     /**
      * Tests that setting DER_RE_ENCODE=true gives DER encoding.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDERReEncodeTrue() throws Exception {
@@ -941,7 +1128,7 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertNotNull(signedData);
-        
+
         // expect DER format
         final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
         assertEquals("expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
@@ -951,7 +1138,7 @@ public class CMSSignerUnitTest {
      * Tests that setting DER_RE_ENCODE=true gives DER encoding for
      * clientside.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDERReEncodeTrueClientside() throws Exception {
@@ -966,7 +1153,7 @@ public class CMSSignerUnitTest {
         final byte[] data = "my-data".getBytes("ASCII");
 
         RequestContext requestContext = new RequestContext();
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
@@ -975,7 +1162,7 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertNotNull(signedData);
-        
+
         // expect DER format
         final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
         assertEquals("expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
@@ -1001,7 +1188,7 @@ public class CMSSignerUnitTest {
         signAndVerify(data, tokenRSA, config, requestContext, true);
         fail("Should have thrown exception as client-side hashing can not be overridden");
     }
-    
+
     /**
      * Tests that detached signature is used if specified in config and that
      * overriding it can not be done if not allowed.
@@ -1024,7 +1211,7 @@ public class CMSSignerUnitTest {
         signAndVerify(data, tokenRSA, config, requestContext, true);
         fail("Should have thrown exception as detached signature option can not be overridden");
     }
-    
+
     /**
      * Tests that client-side hashing is used if specified in config and that
      * overriding it can not be done if not allowed.
@@ -1050,7 +1237,7 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests that requesting no detached is okey if no detached is configured 
+     * Tests that requesting no detached is okey if no detached is configured
      * even if allow override is false.
      * @throws java.lang.Exception
      */
@@ -1075,9 +1262,9 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
-    
+
     /**
-     * Tests that requesting no client-side hashing is okey if no client-side hashing is configured 
+     * Tests that requesting no client-side hashing is okey if no client-side hashing is configured
      * even if allow override is false.
      * @throws java.lang.Exception
      */
@@ -1104,7 +1291,7 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests that requesting detached is okey if detached is configured 
+     * Tests that requesting detached is okey if detached is configured
      * even if allow override is false.
      * @throws java.lang.Exception
      */
@@ -1143,7 +1330,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
 
         final byte[] data = "my-data".getBytes("ASCII");
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
 
@@ -1153,7 +1340,7 @@ public class CMSSignerUnitTest {
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
     }
-    
+
     /**
      * Tests that requesting client-side hashing is okey if allow override is set to true.
      * @throws java.lang.Exception
@@ -1167,14 +1354,14 @@ public class CMSSignerUnitTest {
         config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
 
         RequestContext requestContext = new RequestContext();
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
 
         signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext, "RSA");
     }
-    
+
     /**
      * Tests that when CLIENTSIDEHASHING is set to true, the hash is actually
      * taken from the request as expected.
@@ -1188,19 +1375,19 @@ public class CMSSignerUnitTest {
         config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
 
         RequestContext requestContext = new RequestContext();
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
-        
+
         signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA256", tokenRSA, config, requestContext,"RSA");
     }
-    
+
     /**
      * Tests that when CLIENTSIDEHASHING is set to true, the hash is actually
      * taken from the request as expected, using SHA512.
      * Also test multiple accepted algorithms.
-     * 
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -1214,18 +1401,18 @@ public class CMSSignerUnitTest {
 
         final MessageDigest digest = MessageDigest.getInstance("SHA512");
         final byte[] data = digest.digest("foo".getBytes("ASCII"));
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-512");
-        
+
         signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA512", tokenRSA, config, requestContext, "RSA");
     }
-    
+
     /**
      * Tests that when CLIENTSIDEHASHING is set to true, requesting a non-accepted
      * hash digest algorithm is not allowed.
-     * 
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -1236,7 +1423,7 @@ public class CMSSignerUnitTest {
         config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256,SHA-512");
 
         RequestContext requestContext = new RequestContext();
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
         metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-1");
@@ -1250,7 +1437,7 @@ public class CMSSignerUnitTest {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
-    
+
     /**
      * Tests that requesting client-side hashing is rejected when client doesn't specify hash algo.
      * @throws java.lang.Exception
@@ -1266,13 +1453,13 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
 
         final byte[] data = "my-data".getBytes("ASCII");
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
-        
+
         SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, true);
     }
-    
+
     /**
      * Tests that client-side hashing is rejected when set as default, but client doesn't specify hash algo.
      * @throws java.lang.Exception
@@ -1287,9 +1474,9 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
 
         final byte[] data = "my-data".getBytes("ASCII");
-        
+
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
-        
+
         signAndVerify(data, tokenRSA, config, requestContext, true);
     }
 
@@ -1310,7 +1497,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
-        
+
         SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
@@ -1319,7 +1506,7 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
-    
+
     /**
      * Tests that requesting no client-side hashing is okey if allow override is true.
      * @throws java.lang.Exception
@@ -1338,7 +1525,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("USING_CLIENTSUPPLIED_HASH", "false");
-        
+
         SimplifiedResponse response = signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
 
         byte[] cms = response.getProcessedData();
@@ -1372,7 +1559,7 @@ public class CMSSignerUnitTest {
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
     }
-    
+
     /**
      * Tests that requesting client-side hashing with empty string is the same as not requesting.
      * @throws java.lang.Exception
@@ -1392,7 +1579,7 @@ public class CMSSignerUnitTest {
         metadata.put("USING_CLIENSUPPLIED_HASH", "");
         signAndVerify(data, tokenRSA, config, requestContext, false, "RSA");
     }
-    
+
     /**
      * Test that by default, the PKCS#7 signed data OID is used.
      * @throws java.lang.Exception
@@ -1410,9 +1597,9 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertEquals("content OID", "1.2.840.113549.1.7.1",
-                     signedData.getSignedContentTypeOID());
+                signedData.getSignedContentTypeOID());
     }
-    
+
     /**
      * Test overriding content OID using worker property.
      * @throws java.lang.Exception
@@ -1431,9 +1618,9 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertEquals("content OID", "1.2.3.4",
-                     signedData.getSignedContentTypeOID());
+                signedData.getSignedContentTypeOID());
     }
-    
+
     /**
      * Test overriding content OID in request.
      * @throws java.lang.Exception
@@ -1455,9 +1642,9 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertEquals("content OID", "1.2.3.4",
-                     signedData.getSignedContentTypeOID());
+                signedData.getSignedContentTypeOID());
     }
-    
+
     /**
      * Test overriding content OID in request has higher priority than specified
      * in configuration.
@@ -1481,9 +1668,9 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertEquals("content OID", "1.2.3.5",
-                     signedData.getSignedContentTypeOID());
+                signedData.getSignedContentTypeOID());
     }
-    
+
     /**
      * Test overriding content OID is not allowed by default.
      * @throws java.lang.Exception
@@ -1499,7 +1686,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.5");
-        
+
         try {
             signAndVerify(data, tokenRSA, config, requestContext, false);
             fail("Should throw IllegalRequestException");
@@ -1509,7 +1696,7 @@ public class CMSSignerUnitTest {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
-    
+
     /**
      * Test overriding content OID is not allowed by default with a content OID
      * specified in the configuration.
@@ -1527,7 +1714,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.5");
-        
+
         try {
             signAndVerify(data, tokenRSA, config, requestContext, false);
             fail("Should throw IllegalRequestException");
@@ -1537,7 +1724,7 @@ public class CMSSignerUnitTest {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
-    
+
     /**
      * Test overriding content OID in request with the default OID value is
      * accepted even when not accepting override.
@@ -1559,9 +1746,9 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertEquals("content OID", "1.2.840.113549.1.7.1",
-                     signedData.getSignedContentTypeOID());
+                signedData.getSignedContentTypeOID());
     }
-    
+
     /**
      * Test overriding content OID in request with the specified value from the
      * configuration is accepted even when not accepting override.
@@ -1584,9 +1771,9 @@ public class CMSSignerUnitTest {
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         assertEquals("content OID", "1.2.3.4",
-                     signedData.getSignedContentTypeOID());
+                signedData.getSignedContentTypeOID());
     }
-    
+
     /**
      * Test overriding content OID is not allowed when explicitly configuring.
      * not allowing override.
@@ -1604,7 +1791,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.5");
-        
+
         try {
             signAndVerify(data, tokenRSA, config, requestContext, false);
             fail("Should throw IllegalRequestException");
@@ -1614,7 +1801,7 @@ public class CMSSignerUnitTest {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
-    
+
     /**
      * Test overriding content OID with invalid OID should not be allowed.
      * not allowing override.
@@ -1632,7 +1819,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "incorrect_oid");
-        
+
         try {
             signAndVerify(data, tokenRSA, config, requestContext, false);
             fail("Should throw IllegalRequestException");
@@ -1642,7 +1829,7 @@ public class CMSSignerUnitTest {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
-    
+
     /**
      * Test overriding content OID is not allowed with a content OID
      * specified in the configuration also when explicitly configuring not
@@ -1662,7 +1849,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("CONTENTOID", "1.2.3.5");
-        
+
         try {
             signAndVerify(data, tokenRSA, config, requestContext, false);
             fail("Should throw IllegalRequestException");
@@ -1696,7 +1883,7 @@ public class CMSSignerUnitTest {
 
     /**
      * Tests that with DIRECTSIGNATURE=false, there are some signed attributes included.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDirectSignatureFalse() throws Exception {
@@ -1714,11 +1901,11 @@ public class CMSSignerUnitTest {
         AttributeTable signedAttributes = signedData.getSignerInfos().getSigners().iterator().next().getSignedAttributes();
         assertTrue("signed attributes expected", signedAttributes.size() > 0);
     }
-    
+
     /**
      * Tests that with an empty (or with blank space actually) value for DIRECTSIGNATURE the default is false
      * and thus signed attributes are included.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testDirectSignatureEmptySlashDefault() throws Exception {
@@ -1736,7 +1923,7 @@ public class CMSSignerUnitTest {
         AttributeTable signedAttributes = signedData.getSignerInfos().getSigners().iterator().next().getSignedAttributes();
         assertTrue("signed attributes expected", signedAttributes.size() > 0);
     }
-    
+
     /**
      * Test that providing an incorrect value for DIRECTSIGNATURE
      * gives a fatal error.
@@ -1772,7 +1959,7 @@ public class CMSSignerUnitTest {
         assertTrue("conf errs not containing DIRECTSIGNATURE: " + errors, errors.contains("DIRECTSIGNATURE"));
         assertTrue("conf errs not containing CLIENTIDEHASHING: " + errors, errors.contains("CLIENTSIDEHASHING"));
     }
-    
+
     /**
      * Test that enabling both DIRECTSIGNATURE and ALLOW_CLIENTSIDEHASHING_OVERRIDE
      * gives a fatal error.
@@ -1796,14 +1983,14 @@ public class CMSSignerUnitTest {
      * Helper method requesting signing using a pre-computed hash.
      * Will also check that the message digest in the response matches the
      * pre-computed one.
-     * 
+     *
      * @param data Data to be hashed for the signer
      * @param digestAlgo Hash digest algorithm to use
      * @param token
      * @param config
      * @param requestContext
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     private SimplifiedResponse signAndVerifyWithHash(final byte[] data,
                                                      final String digestAlgo,
@@ -1815,34 +2002,35 @@ public class CMSSignerUnitTest {
         final MessageDigest digest = MessageDigest.getInstance(digestAlgo);
         final byte[] hash = digest.digest(data);
         final SimplifiedResponse response = signAndVerify(hash, data, token, config, requestContext, true, signatureAlg);
-        
+
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
-        
+
         final SignerInformation signer =
                 (SignerInformation) signedData.getSignerInfos().iterator().next();
         final AlgorithmNameFinder algFinder = new DefaultAlgorithmNameFinder();
-        
+
         final Attribute messageDigest =
                 signer.getSignedAttributes().get(CMSAttributes.messageDigest);
         assertEquals("digest algorithm", digestAlgo,
                 algFinder.getAlgorithmName(signer.getDigestAlgorithmID()));
         assertNotNull("message digest present", messageDigest);
-        
+
         final ASN1OctetString messageDigestObject =
                 ASN1OctetString.getInstance(messageDigest.getAttrValues().getObjectAt(0).toASN1Primitive());
         final byte[] encoded = messageDigestObject.getOctets();
-        
+
         assertTrue("digest matches", Arrays.equals(hash, encoded));
-        
+
         return response;
     }
 
     private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, String signatureAlg) throws Exception {
         return signAndVerify(data, data, token, config, requestContext, detached, signatureAlg);
     }
+
     private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached) throws Exception {
         return signAndVerify(data, data, token, config, requestContext, detached, "");
     }
@@ -1852,15 +2040,15 @@ public class CMSSignerUnitTest {
      * or if the signer or request implies client-side hashing, the pre-computed
      * hash) and the original data. When detached mode is assumed, the originalData
      * is used to verify the signature.
-     * 
-     * @param data Data (data to be signed, or pre-computed hash)
-     * @param originalData Original data (either the actual data or the data that was pre-hashed)
+     *
+     * @param data           Data (data to be signed, or pre-computed hash)
+     * @param originalData   Original data (either the actual data or the data that was pre-hashed)
      * @param token
      * @param config
      * @param requestContext
-     * @param detached If true, assume detached
+     * @param detached       If true, assume detached
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, String signatureAlg) throws Exception {
         final CMSSigner instance = createMockSigner(token);
@@ -1874,7 +2062,7 @@ public class CMSSignerUnitTest {
         try (
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
-            ) {
+        ) {
             SignatureRequest request = new SignatureRequest(100, requestData, responseData);
             SignatureResponse response = (SignatureResponse) instance.processData(request, requestContext);
 
@@ -1888,18 +2076,18 @@ public class CMSSignerUnitTest {
                 signedData = new CMSSignedData(signedBytes);
             }
             int verified = 0;
-            
-            Store                   certStore = signedData.getCertificates();
-            SignerInformationStore  signers = signedData.getSignerInfos();
-            Collection              c = signers.getSigners();
-            Iterator                it = c.iterator();
+
+            Store certStore = signedData.getCertificates();
+            SignerInformationStore signers = signedData.getSignerInfos();
+            Collection c = signers.getSigners();
+            Iterator it = c.iterator();
 
             while (it.hasNext()) {
-                SignerInformation   signer = (SignerInformation)it.next();
-                Collection          certCollection = certStore.getMatches(signer.getSID());
+                SignerInformation signer = (SignerInformation) it.next();
+                Collection certCollection = certStore.getMatches(signer.getSID());
 
-                Iterator              certIt = certCollection.iterator();
-                X509CertificateHolder cert = (X509CertificateHolder)certIt.next();
+                Iterator certIt = certCollection.iterator();
+                X509CertificateHolder cert = (X509CertificateHolder) certIt.next();
 
                 if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
                     verified++;
@@ -1909,19 +2097,19 @@ public class CMSSignerUnitTest {
                 }
             }
 
-            assertEquals("Matching signature algorithm", signerCertificate.getPublicKey().getAlgorithm(), signatureAlg);
+            assertEquals("Matching signature algorithm", signerCertificate.getPublicKey().getAlgorithm(), signatureAlg.toUpperCase(Locale.ENGLISH));
 
             assertTrue("verified", verified > 0);
-            
+
             return new SimplifiedResponse(signedBytes, signerCertificate);
         }
     }
-    
+
     /**
      * Create a mock signer instance for the tests.
      * This method can be overridden in test classes for extending signers that
      * want to inherit the tests from this class.
-     * 
+     *
      * @param token Mock crypto token to use
      * @return Mock implementation
      */

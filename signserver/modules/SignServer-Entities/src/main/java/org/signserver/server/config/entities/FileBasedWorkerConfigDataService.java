@@ -17,6 +17,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -282,7 +283,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Read from file: " + file.getName());
             }
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             result = null;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No such file: " + file.getName());

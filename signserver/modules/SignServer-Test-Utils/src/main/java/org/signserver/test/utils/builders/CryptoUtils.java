@@ -84,8 +84,7 @@ public class CryptoUtils {
     }
 
     public static KeyPair generateSLHDSA(String algName) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("SLH-DSA", "BC");
-        g.initialize(SLHDSAParameterSpec.fromName(algName));
+        KeyPairGenerator g = KeyPairGenerator.getInstance(algName, "BC");
         return g.generateKeyPair();
     }
 

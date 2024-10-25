@@ -59,7 +59,7 @@ public final class AlgorithmConstants {
     public static final String SIGALG_SLHDSA_SHAKE_128F        = "SLH-DSA-SHAKE-128F";
     public static final String SIGALG_SLHDSA_SHAKE_128S        = "SLH-DSA-SHAKE-128S";
     public static final String SIGALG_SLHDSA_SHAKE_192F        = "SLH-DSA-SHAKE-192F";
-    public static final String SIGALG_SLHDSA_SHAKE_192S        = "SLH-DSA-SHAKE-128S";
+    public static final String SIGALG_SLHDSA_SHAKE_192S        = "SLH-DSA-SHAKE-192S";
     public static final String SIGALG_SLHDSA_SHAKE_256F        = "SLH-DSA-SHAKE-256F";
     public static final String SIGALG_SLHDSA_SHAKE_256S        = "SLH-DSA-SHAKE-256S";
 

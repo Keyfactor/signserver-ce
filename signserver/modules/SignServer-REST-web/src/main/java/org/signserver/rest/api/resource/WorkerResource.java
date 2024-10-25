@@ -1071,20 +1071,4 @@ public class WorkerResource {
         return workerSession.getAllWorkerNames().contains(workerName);
     }
 
-    private X509Certificate getCertificate(HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException {
-        final X509Certificate certificates = getClientCertificate(httpServletRequest);
-        if (certificates == null) {
-            throw new AdminNotAuthorizedException(
-                    "Admin not authorized to resource. "
-                    + "Client certificate authentication required.");
-        }
-        return certificates;
-    }
-
-    private void checkCustomHeader(HttpServletRequest httpServletRequest) throws ForbiddenException {
-        if (httpServletRequest.getHeader("X-Keyfactor-Requested-With") == null) {
-            LOG.error("Missing required hedear X-Keyfactor-Requested-With");
-            throw new ForbiddenException();
-        }
-    }
 }

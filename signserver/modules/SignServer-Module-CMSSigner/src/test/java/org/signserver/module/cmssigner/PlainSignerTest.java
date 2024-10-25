@@ -139,7 +139,7 @@ public class PlainSignerTest {
         tokenECDSA = new MockedCryptoToken(signerKeyPairECDSA.getPrivate(), signerKeyPairECDSA.getPublic(), certChainECDSA[0], Arrays.asList(certChainECDSA), "BC");
 
         // Create signer key-pair (SLH-DSA-SHA2-128F) and issue certificate
-        final KeyPair signerKeyPairSLHDSA_SHA2_128F = CryptoUtils.generateSLHDSA("slh-dsa-sha2-128f");
+        final KeyPair signerKeyPairSLHDSA_SHA2_128F = CryptoUtils.generateSLHDSA("SLH-DSA-SHA2-128F");
         final Certificate[] certChainSLHDSA_SHA2_128F =
                 new Certificate[] {
                         // Code Signer
@@ -160,7 +160,7 @@ public class PlainSignerTest {
         tokenSLHDSA_SHA2_128F = new MockedCryptoToken(signerKeyPairSLHDSA_SHA2_128F.getPrivate(), signerKeyPairSLHDSA_SHA2_128F.getPublic(), certChainSLHDSA_SHA2_128F[0], Arrays.asList(certChainSLHDSA_SHA2_128F), "BC");
 
         // Create signer key-pair (SLH-DSA-SHAKE-128S) and issue certificate
-        final KeyPair signerKeyPairSLHDSA_SHAKE_128S = CryptoUtils.generateSLHDSA("slh-dsa-shake-128s");
+        final KeyPair signerKeyPairSLHDSA_SHAKE_128S = CryptoUtils.generateSLHDSA("SLH-DSA-SHAKE-128S");
         final Certificate[] certChainSLHDSA_SHAKE_128S =
                 new Certificate[] {
                         // Code Signer
@@ -238,8 +238,8 @@ public class PlainSignerTest {
     public void testNormalSigning_SLHDSA_SHA2_128F() throws Exception {
         LOG.info("testNormalSigning_SLHDSA_SHA2_128F");
         byte[] plainText = "some-data".getBytes("ASCII");
-        SimplifiedResponse resp = sign(plainText, tokenSLHDSA_SHA2_128F, createConfig("slh-dsa-sha2-128f"));
-        assertSignedAndVerifiable(plainText, "slh-dsa-sha2-128f", tokenSLHDSA_SHA2_128F, resp);
+        SimplifiedResponse resp = sign(plainText, tokenSLHDSA_SHA2_128F, createConfig("SLH-DSA-SHA2-128F"));
+        assertSignedAndVerifiable(plainText, "SLH-DSA-SHA2-128F", tokenSLHDSA_SHA2_128F, resp);
     }
 
     /**
@@ -250,8 +250,8 @@ public class PlainSignerTest {
     public void testNormalSigning_SLHDSA_SHAKE_128S() throws Exception {
         LOG.info("testNormalSigning_SLHDSA_SHAKE_128S");
         byte[] plainText = "some-data".getBytes("ASCII");
-        SimplifiedResponse resp = sign(plainText, tokenSLHDSA_SHAKE_128S, createConfig("slh-dsa-shake-128s"));
-        assertSignedAndVerifiable(plainText, "slh-dsa-shake-128s", tokenSLHDSA_SHAKE_128S, resp);
+        SimplifiedResponse resp = sign(plainText, tokenSLHDSA_SHAKE_128S, createConfig("SLH-DSA-SHAKE-128S"));
+        assertSignedAndVerifiable(plainText, "SLH-DSA-SHAKE-128S", tokenSLHDSA_SHAKE_128S, resp);
     }
     
     /**

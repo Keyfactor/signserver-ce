@@ -50,18 +50,18 @@ public final class AlgorithmConstants {
     public static final String SIGALG_MLDSA65                  = "ML-DSA-65";
     public static final String SIGALG_MLDSA87                  = "ML-DSA-87";
     public static final String SIGALG_LMS                      = "LMS";
-    public static final String SIGALG_SLHDSA_SHA2_128F         = "slh-dsa-sha2-128f";
-    public static final String SIGALG_SLHDSA_SHA2_128S         = "slh-dsa-sha2-128s";
-    public static final String SIGALG_SLHDSA_SHA2_192F         = "slh-dsa-sha2-192f";
-    public static final String SIGALG_SLHDSA_SHA2_192S         = "slh-dsa-sha2-192s";
-    public static final String SIGALG_SLHDSA_SHA2_256F         = "slh-dsa-sha2-256f";
-    public static final String SIGALG_SLHDSA_SHA2_256S         = "slh-dsa-sha2-256s";
-    public static final String SIGALG_SLHDSA_SHAKE_128F        = "slh-dsa-shake-128f";
-    public static final String SIGALG_SLHDSA_SHAKE_128S        = "slh-dsa-shake-128s";
-    public static final String SIGALG_SLHDSA_SHAKE_192F        = "slh-dsa-shake-192f";
-    public static final String SIGALG_SLHDSA_SHAKE_192S        = "slh-dsa-shake-192s";
-    public static final String SIGALG_SLHDSA_SHAKE_256F        = "slh-dsa-shake-256f";
-    public static final String SIGALG_SLHDSA_SHAKE_256S        = "slh-dsa-shake-256s";
+    public static final String SIGALG_SLHDSA_SHA2_128F         = "SLH-DSA-SHA2-128F";
+    public static final String SIGALG_SLHDSA_SHA2_128S         = "SLH-DSA-SHA2-128S";
+    public static final String SIGALG_SLHDSA_SHA2_192F         = "SLH-DSA-SHA2-192F";
+    public static final String SIGALG_SLHDSA_SHA2_192S         = "SLH-DSA-SHA2-192S";
+    public static final String SIGALG_SLHDSA_SHA2_256F         = "SLH-DSA-SHA2-256F";
+    public static final String SIGALG_SLHDSA_SHA2_256S         = "SLH-DSA-SHA2-256S";
+    public static final String SIGALG_SLHDSA_SHAKE_128F        = "SLH-DSA-SHAKE-128F";
+    public static final String SIGALG_SLHDSA_SHAKE_128S        = "SLH-DSA-SHAKE-128S";
+    public static final String SIGALG_SLHDSA_SHAKE_192F        = "SLH-DSA-SHAKE-192F";
+    public static final String SIGALG_SLHDSA_SHAKE_192S        = "SLH-DSA-SHAKE-128S";
+    public static final String SIGALG_SLHDSA_SHAKE_256F        = "SLH-DSA-SHAKE-256F";
+    public static final String SIGALG_SLHDSA_SHAKE_256S        = "SLH-DSA-SHAKE-256S";
 
 
     /**

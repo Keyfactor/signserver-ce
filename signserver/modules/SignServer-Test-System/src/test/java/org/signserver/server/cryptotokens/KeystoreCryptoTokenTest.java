@@ -395,11 +395,11 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
 
-            generateKey("SLH-DSA", "slh-dsa-sha2-128f", "slh-dsa-key");
+            generateKey("SLH-DSA", "SLH-DSA-SHA2-128F", "SLH-DSA-KEY");
 
-            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("slh-dsa-sha2-128f",
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHA2-128F",
                     "CN=test01GenerateKey,C=SE", null);
-            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "slh-dsa-key");
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-KEY");
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);
@@ -416,11 +416,11 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
 
-            generateKey("SLH-DSA", "slh-dsa-shake-128s", "slh-dsa-shake-key");
+            generateKey("SLH-DSA", "SLH-DSA-SHAKE-128S", "SLH-DSA-SHAKE-KEY");
 
-            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("slh-dsa-shake-128s",
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-128S",
                     "CN=test01GenerateKey,C=SE", null);
-            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "slh-dsa-shake-key");
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);

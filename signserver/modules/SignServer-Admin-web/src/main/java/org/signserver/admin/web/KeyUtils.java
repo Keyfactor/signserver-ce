@@ -34,12 +34,12 @@ public class KeyUtils {
     private static final String[] MLDSA_SPECS = {"ML-DSA-44", "ML-DSA-65", "ML-DSA-87"};
     private static final String[] LMS_SPECS = {"LMS_SHA256_N32_H5"};
     private static final String[] SLHDSA_SPECS = {
-            "slh-dsa-sha2-128f", "slh-dsa-sha2-128s",
-            "slh-dsa-sha2-192f", "slh-dsa-sha2-192s",
-            "slh-dsa-sha2-256f", "slh-dsa-sha2-256s",
-            "slh-dsa-shake-128f", "slh-dsa-shake-128s",
-            "slh-dsa-shake-192f", "slh-dsa-shake-192s",
-            "slh-dsa-shake-256f", "slh-dsa-shake-256s"};
+            "SLH-DSA-SHA2-128F", "SLH-DSA-SHA2-128S",
+            "SLH-DSA-SHA2-192F", "SLH-DSA-SHA2-192S",
+            "SLH-DSA-SHA2-256F", "SLH-DSA-SHA2-256S",
+            "SLH-DSA-SHAKE-128F", "SLH-DSA-SHAKE-128S",
+            "SLH-DSA-SHAKE-192F", "SLH-DSA-SHAKE-192S",
+            "SLH-DSA-SHAKE-256F", "SLH-DSA-SHAKE-256S"};
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};

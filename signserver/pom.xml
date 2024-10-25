@@ -705,6 +705,38 @@
                 <artifactId>xml-path</artifactId>
                 <version>${rest-assured.version}</version>
             </dependency>
+            <!-- Forked dependencies original coordinates -->
+            <dependency>
+                <groupId>com.googlecode.xades4j</groupId>
+                <artifactId>xades4j</artifactId>
+                <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.5</version>
+            </dependency>
+            <!-- CeSeCore duplicates listed with public versions -->
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-common</artifactId>
+                <version>7.0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-entity</artifactId>
+                <version>7.0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-interfaces</artifactId>
+                <version>7.0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-ejb</artifactId>
+                <version>7.0.0.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

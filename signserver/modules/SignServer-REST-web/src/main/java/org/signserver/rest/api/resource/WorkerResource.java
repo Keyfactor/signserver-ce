@@ -350,6 +350,7 @@ public class WorkerResource {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "updateAndDeleteWorkerProperties",
                 String.valueOf(id));
+
         Map<String, String> properties = request.getProperties();
         if (properties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -447,6 +448,7 @@ public class WorkerResource {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "replaceAllWorkerProperties",
                 String.valueOf(id));
+
         final Map<String, String> properties = request.getProperties();
         if (properties == null) {
             LOG.error("Properties in the request is not valid!");
@@ -520,6 +522,7 @@ public class WorkerResource {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "removeWorker",
                 String.valueOf(id));
+
         workerSession.removeWorker(adminInfo, id);
         return Response.ok(new WorkerResponse("Worker removed successfully"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -646,6 +649,7 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest) throws AdminNotAuthorizedException, IllegalRequestException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "reloadAll");
+
         List<Integer> allWorkerIDs = workerSession.getAllWorkers();
         for (int workerID : allWorkerIDs) {
             workerSession.reloadConfiguration(adminInfo, workerID);

@@ -113,6 +113,28 @@ public class RestUnauthorizedTest extends ModulesTestCase {
     }
 
     /**
+     * Test unauthorized REST POST call to add worker by ID on Public HTTPS.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testUnauthorizedRestPostAddWorkerWithIDOnPublicHTTPS() throws Exception {
+        LOG.debug("testUnauthorizedRestPostAddWorkerWithIDOnPublicHTTPS");
+        try {
+            final Response response = mt.callRestOnPublicHTTPS(
+                    Method.POST,
+                    401,
+                    "",
+                    "/workers/" + HELLO_WORKER_ID,
+                    rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME),
+                    mt.getUnauthorizedStore());
+            assertEquals("Check response status code is 401.", 401, response.statusCode());
+        } finally {
+            removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
      * Test unauthorized REST PATCH worker to update the properties.
      */
     @Test

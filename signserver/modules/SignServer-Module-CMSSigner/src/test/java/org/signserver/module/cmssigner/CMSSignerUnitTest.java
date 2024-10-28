@@ -110,8 +110,8 @@ public class CMSSignerUnitTest {
             final Certificate signerCertificate = certChain[0];
             tokenRSA = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
         }
-        final KeyPair signerKeyPairSLH_DSA_SHA2_128F = CryptoUtils.generateSLHDSA("slh-dsa-sha2-128f");
-        final String signatureAlgorithmSLH_DSA_SHA2_128F = "slh-dsa-sha2-128f";
+        final KeyPair signerKeyPairSLH_DSA_SHA2_128F = CryptoUtils.generateSLHDSA("SLH-DSA-SHA2-128F");
+        final String signatureAlgorithmSLH_DSA_SHA2_128F = "SLH-DSA-SHA2-128F";
         final Certificate[] certChainSLHDSA_DSA_SHA2_128F =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSelfSignKeyPair(signerKeyPairSLH_DSA_SHA2_128F).
@@ -121,8 +121,8 @@ public class CMSSignerUnitTest {
         final Certificate signerCertificateSLH_DSA_SHA2_128F = certChainSLHDSA_DSA_SHA2_128F[0];
         tokenSLH_DSA_SHA2_128F = new MockedCryptoToken(signerKeyPairSLH_DSA_SHA2_128F.getPrivate(), signerKeyPairSLH_DSA_SHA2_128F.getPublic(), signerCertificateSLH_DSA_SHA2_128F, Arrays.asList(certChainSLHDSA_DSA_SHA2_128F), "BC");
 
-        final KeyPair signerKeyPairSLH_DSA_SHA2_128S = CryptoUtils.generateSLHDSA("slh-dsa-sha2-128s");
-        final String signatureAlgorithm = "slh-dsa-sha2-128s";
+        final KeyPair signerKeyPairSLH_DSA_SHA2_128S = CryptoUtils.generateSLHDSA("SLH-DSA-SHA2-128S");
+        final String signatureAlgorithm = "SLH-DSA-SHA2-128S";
         final Certificate[] certChainSLHDSA_DSA_SHA2_128S =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSelfSignKeyPair(signerKeyPairSLH_DSA_SHA2_128S).
@@ -133,8 +133,8 @@ public class CMSSignerUnitTest {
         tokenSLH_DSA_SHA2_128S = new MockedCryptoToken(signerKeyPairSLH_DSA_SHA2_128S.getPrivate(), signerKeyPairSLH_DSA_SHA2_128S.getPublic(), signerCertificateSLH_DSA_SHA2_128S, Arrays.asList(certChainSLHDSA_DSA_SHA2_128S), "BC");
 
 
-	final KeyPair signerKeyPairSLH_DSA_SHAKE_128F = CryptoUtils.generateSLHDSA("slh-dsa-shake-128f");
-        final String signatureAlgorithmSLH_DSA_SHAKE_128F = "slh-dsa-shake-128f";
+	final KeyPair signerKeyPairSLH_DSA_SHAKE_128F = CryptoUtils.generateSLHDSA("SLH-DSA-SHAKE-128F");
+        final String signatureAlgorithmSLH_DSA_SHAKE_128F = "SLH-DSA-SHAKE-128F";
         final Certificate[] certChainSLHDSA_DSA_SHAKE_128F =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSelfSignKeyPair(signerKeyPairSLH_DSA_SHAKE_128F).
@@ -144,8 +144,8 @@ public class CMSSignerUnitTest {
         final Certificate signerCertificateSLH_DSA_SHAKE_128F = certChainSLHDSA_DSA_SHAKE_128F[0];
         tokenSLH_DSA_SHAKE_128F = new MockedCryptoToken(signerKeyPairSLH_DSA_SHAKE_128F.getPrivate(), signerKeyPairSLH_DSA_SHAKE_128F.getPublic(), signerCertificateSLH_DSA_SHAKE_128F, Arrays.asList(certChainSLHDSA_DSA_SHAKE_128F), "BC");
 
-        final KeyPair signerKeyPairSLH_DSA_SHAKE_128S = CryptoUtils.generateSLHDSA("slh-dsa-shake-128s");
-        final String signatureAlgorithmSLH_DSA_SHAKE_128S = "slh-dsa-shake-128s";
+        final KeyPair signerKeyPairSLH_DSA_SHAKE_128S = CryptoUtils.generateSLHDSA("SLH-DSA-SHAKE-128S");
+        final String signatureAlgorithmSLH_DSA_SHAKE_128S = "SLH-DSA-SHAKE-128S";
         final Certificate[] certChainSLHDSA_DSA_SHAKE_128S =
                 new Certificate[]{new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSelfSignKeyPair(signerKeyPairSLH_DSA_SHAKE_128S).
@@ -625,12 +625,12 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_SLH_DSA_SHA2_128F() throws Exception {
         LOG.info("testDetachedSignature_SLH_DSA_SHA2_128F");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128f");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHA2-128F");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128F);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, null, false, "slh-dsa-sha2-128f");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, null, false, "SLH-DSA-SHA2-128F");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -650,7 +650,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128f");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHA2-128F");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128F);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -658,7 +658,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, requestContext, true, "slh-dsa-sha2-128f");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, requestContext, true, "SLH-DSA-SHA2-128F");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -675,12 +675,12 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_SLH_DSA_SHA2_128S() throws Exception {
         LOG.info("testDetachedSignature_SLH_DSA_SHA2_128S");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128s");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHA2-128S");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128S);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, null, false, "slh-dsa-sha2-128s");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, null, false, "SLH-DSA-SHA2-128S");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -700,7 +700,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-sha2-128s");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHA2-128S");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128S);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -708,7 +708,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, requestContext, true, "slh-dsa-sha2-128s");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, requestContext, true, "SLH-DSA-SHA2-128S");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -725,12 +725,12 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_SLH_DSA_SHAKE_128F() throws Exception {
         LOG.info("testDetachedSignature_SLH_DSA_SHAKE_128F");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128f");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHAKE-128F");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128F);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, null, false, "slh-dsa-shake-128f");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, null, false, "SLH-DSA-SHAKE-128F");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -750,7 +750,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128f");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHAKE-128F");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128F);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -758,7 +758,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, requestContext, true, "slh-dsa-shake-128f");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, requestContext, true, "SLH-DSA-SHAKE-128F");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -776,12 +776,12 @@ public class CMSSignerUnitTest {
     public void testDetachedSignature_SLH_DSA_SHAKE_128S() throws Exception {
         LOG.info("testDetachedSignature_SLH_DSA_SHAKE_128S");
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128S");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHAKE-128S");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128S);
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128S, config, null, false, "slh-dsa-shake-128s");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128S, config, null, false, "SLH-DSA-SHAKE-128S");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -801,7 +801,7 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
-        config.setProperty("SIGNATUREALGORITHM", "slh-dsa-shake-128s");
+        config.setProperty("SIGNATUREALGORITHM", "SLH-DSA-SHAKE-128S");
         CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128S);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -809,7 +809,7 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHAKE_128S, config, requestContext, true, "slh-dsa-shake-128s");
+        SimplifiedResponse response = signAndVerify(data, tokenSLH_DSA_SHAKE_128S, config, requestContext, true, "SLH-DSA-SHAKE-128S");
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);

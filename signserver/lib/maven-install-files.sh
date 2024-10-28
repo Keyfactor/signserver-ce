@@ -42,7 +42,7 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/Deplo
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEPLOYTOOLS_VERSION}.pom" -DgroupId=org.signserver.deploytools -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=pom
 
 # BC 1.79 Beta
-BC_VERSION=1.79-SNAPSHOT
+BC_VERSION=1.79
 
 # BCPG
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/bcpg-jdk18on-${BC_VERSION}.jar" -DgroupId=org.bouncycastle -DartifactId=bcpg-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar

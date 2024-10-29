@@ -32,6 +32,9 @@ hs_err_pid*
 # NetBeans IDE
 */nbproject/project.properties
 
+# VSCode IDE
+.vscode/
+
 # Mac
 .DS_Store
 # Windows

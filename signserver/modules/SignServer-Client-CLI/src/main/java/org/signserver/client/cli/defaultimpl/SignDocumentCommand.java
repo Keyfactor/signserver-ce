@@ -805,7 +805,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 final long startTime = System.nanoTime();
                 
                 // Perform pre-request if used by the handler
-                final InputSource preInputSource = handler.producePreRequestInput();
+                final InputSource preInputSource = handler.producePreRequestInput(digestAlgorithm);
                 if (preInputSource != null) {
                     final OutputStream os = new ByteArrayOutputStream();
                     sign(preInputSource, os, signerFactory, handler, requestContext);

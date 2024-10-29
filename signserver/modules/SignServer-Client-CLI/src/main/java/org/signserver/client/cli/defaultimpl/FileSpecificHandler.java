@@ -38,12 +38,12 @@ public interface FileSpecificHandler extends AutoCloseable {
      * by the caller, i.e. instead implementing a custom JCA crypto provider
      * to perform the cryptographic operations.
      * 
-     *
+     * @param algorithm Digest algorithm if needed for pre-request
      * @return the Pre-Request signature input or null to bypass general signing
      * @throws IOException typically in case of issues reading the input file or writing to the output file
      * @throws IllegalRequestException for example: failure during parsing input file
      */
-    InputSource producePreRequestInput() throws IOException, IllegalRequestException;
+    InputSource producePreRequestInput(String algorithm) throws IOException, IllegalRequestException;
     
     /**
      * Finalizes the Pre-Response by embedding the Pre-Request signature response.

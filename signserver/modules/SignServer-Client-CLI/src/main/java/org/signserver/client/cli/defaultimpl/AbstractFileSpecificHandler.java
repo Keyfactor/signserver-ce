@@ -82,7 +82,7 @@ public abstract class AbstractFileSpecificHandler implements FileSpecificHandler
     }
 
     @Override
-    public InputSource producePreRequestInput() throws IOException, IllegalRequestException {
+    public InputSource producePreRequestInput(String algorithm) throws IOException, IllegalRequestException {
         // return null for default implementation
         return null;
     }

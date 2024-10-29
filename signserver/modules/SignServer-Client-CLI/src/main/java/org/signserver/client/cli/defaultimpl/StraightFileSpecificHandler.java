@@ -89,7 +89,7 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
     }
     
     @Override
-    public InputSource producePreRequestInput() {
+    public InputSource producePreRequestInput(String algorithm) {
         // return null for default implementation
            return null;
     }

@@ -365,11 +365,32 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
-     * Tests generating CSR using MLDSA key.
+     * Tests generating CSR using ML-DSA-44 key.
      * @throws Exception
      */
     @Test
-    public void testGenerateCSRContainingMLDSAKey() throws Exception {
+    public void testGenerateCSRContainingMLDSA44Key() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("ML-DSA", "ML-DSA-44", "MLDSA44Key");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("ML-DSA-44",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "MLDSA44Key");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using ML-DSA-65 key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingMLDSA65Key() throws Exception {
         try {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
@@ -386,11 +407,32 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
+     * Tests generating CSR using ML-DSA-87 key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingMLDSA87Key() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("ML-DSA", "ML-DSA-87", "MLDSA87Key");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("ML-DSA-87",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "MLDSA87Key");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
      * Tests generating CSR using SLH-DSA-SHA2-128F key.
      * @throws Exception
      */
     @Test
-    public void testGenerateCSRContainingSLHDSASha2Key() throws Exception {
+    public void testGenerateCSRContainingSLHDSA_Sha2_128FKey() throws Exception {
         try {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
@@ -407,11 +449,136 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
+     * Tests generating CSR using SLH-DSA-SHA2-128S key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Sha2_128SKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHA2-128S", "SLH-DSA-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHA2-128S",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+    /**
+     * Tests generating CSR using SLH-DSA-SHA2-128F key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Sha2_192FKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHA2-192F", "SLH-DSA-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHA2-192F",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHA2-192S key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Sha2_192SKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHA2-192S", "SLH-DSA-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHA2-192S",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHA2-256F key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Sha2_256FKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHA2-256F", "SLH-DSA-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHA2-256F",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHA2-256S key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Sha2_256SKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHA2-256S", "SLH-DSA-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHA2-256S",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHAKE-128F key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Shake_128FKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHAKE-128F", "SLH-DSA-SHAKE-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-128F",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
      * Tests generating CSR using SLH-DSA-SHAKE-128S key.
      * @throws Exception
      */
     @Test
-    public void testGenerateCSRContainingSLHDSAShakeKey() throws Exception {
+    public void testGenerateCSRContainingSLHDSA_Shake_128SKey() throws Exception {
         try {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
@@ -419,6 +586,92 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             generateKey("SLH-DSA", "SLH-DSA-SHAKE-128S", "SLH-DSA-SHAKE-KEY");
 
             final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-128S",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHAKE-192F key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Shake_192FKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHAKE-192F", "SLH-DSA-SHAKE-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-192F",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHAKE-128S key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Shake_192SKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHAKE-192S", "SLH-DSA-SHAKE-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-192S",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHAKE-256F key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Shake_256FKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHAKE-256F", "SLH-DSA-SHAKE-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-256F",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating CSR using SLH-DSA-SHAKE-256S key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingSLHDSA_Shake_256SKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "SLH-DSA-SHAKE-256S", "SLH-DSA-SHAKE-KEY");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SLH-DSA-SHAKE-256S",
                     "CN=test01GenerateKey,C=SE", null);
             workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "SLH-DSA-SHAKE-KEY");
         } finally {

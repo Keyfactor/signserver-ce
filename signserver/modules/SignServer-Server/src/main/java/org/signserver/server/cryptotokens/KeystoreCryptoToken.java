@@ -368,9 +368,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
             } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
-                AlgorithmParameterSpec algorithmParameterSpec = SLHDSAParameterSpec.fromName(keySpec);
-                sigAlgName = keySpec;
-                kpg.initialize(algorithmParameterSpec, new SecureRandom());
+                try {
+                    AlgorithmParameterSpec algorithmParameterSpec = SLHDSAParameterSpec.fromName(keySpec);
+                    sigAlgName = keySpec;
+                    kpg.initialize(algorithmParameterSpec, new SecureRandom());
+                } catch (IllegalArgumentException ex) {
+                    throw new InvalidAlgorithmParameterException("Unsupported key specification for SLH-DSA: " + keySpec);
+                }
             } else if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
                 AlgorithmParameterSpec algorithmParameterSpec;
                 switch (keySpec.toUpperCase(Locale.ENGLISH)) {
@@ -387,7 +391,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                         sigAlgName = "ML-DSA-87";
                         break;
                     default:
-                        throw new IllegalArgumentException("Unsupported key specification for ML-DSA: " + keySpec);
+                        throw new InvalidAlgorithmParameterException("Unsupported key specification for ML-DSA: " + keySpec);
                 }
                     kpg.initialize(algorithmParameterSpec, new SecureRandom());
             } else {

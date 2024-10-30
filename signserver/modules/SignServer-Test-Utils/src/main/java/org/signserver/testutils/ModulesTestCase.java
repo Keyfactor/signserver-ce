@@ -1053,6 +1053,40 @@ public class ModulesTestCase {
         return callRest(method, 200, "application/json", call, body);
     }
 
+    /**
+     * Optional callRest method to call the REST api with the truststore and keystore of your choosing on Public HTTPS
+     * @param method Request method i.e. POST, PATCH, PUT etc
+     * @param statusCode What status code you expect for the repsonse
+     * @param responseContentType Content type for response
+     * @param call Endpoint to call i.e /workers/
+     * @param body Body for the request
+     * @param storeInfo HashMap containing truststore and keystore.
+     * The HashMap must contain keys that's named as follows: keyStorePath, keyStorePassword, trustStorePath, trustStorePassword
+     * @return REST Assured Response object
+     */
+    public Response callRestOnPublicHTTPS(final Method method, final int statusCode,
+                             final String responseContentType,
+                             final String call, final JSONObject body, Map<String, String> storeInfo) {
+        final String baseURL = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/rest/v1";
+
+        final Response response = given()
+                .header("X-Keyfactor-Requested-With", "1")
+                .config(new RestAssuredConfig().sslConfig(new SSLConfig()
+                        .keyStore(storeInfo.get("keyStorePath"), storeInfo.get("keyStorePassword"))
+                        .trustStore(storeInfo.get("trustStorePath"), storeInfo.get("trustStorePassword"))))
+                .contentType(JSON)
+                .accept(JSON)
+                .body(body)
+                .when()
+                .request(method, baseURL + call)
+                .then()
+                .statusCode(statusCode)
+                .contentType(responseContentType)
+                .extract().response();
+
+        return response;
+    }
+
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */
     public String getClientIP() {
         return config.getProperty("httpclient.ipaddress", "127.0.0.1");

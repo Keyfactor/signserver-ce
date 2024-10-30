@@ -813,7 +813,7 @@ public class CMSSignerUnitTest {
     }
 
     /**
-     * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-256S algorithm.
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-256F algorithm.
      *
      * @throws java.lang.Exception
      */

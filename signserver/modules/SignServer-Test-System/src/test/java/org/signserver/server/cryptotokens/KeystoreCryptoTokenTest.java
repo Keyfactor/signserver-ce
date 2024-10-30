@@ -503,7 +503,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
     }
     /**
-     * Tests generating CSR using SLH-DSA-SHA2-128F key.
+     * Tests generating CSR using SLH-DSA-SHA2-192F key.
      * @throws Exception
      */
     @Test
@@ -651,7 +651,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
-     * Tests generating CSR using SLH-DSA-SHAKE-128S key.
+     * Tests generating CSR using SLH-DSA-SHAKE-192S key.
      * @throws Exception
      */
     @Test

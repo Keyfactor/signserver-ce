@@ -563,7 +563,7 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an SLH-DSA-SHA2-192F key-pair.
+     * Test signing using an SLH-DSA-SHA2-192S key-pair.
      * @throws Exception
      */
     @Test
@@ -575,7 +575,7 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an SLH-DSA-SHA2-256F key-pair.
+     * Test signing using an SLH-DSA-SHA2-256S key-pair.
      * @throws Exception
      */
     @Test
@@ -587,7 +587,7 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an SLH-DSA-SHAKE-128S key-pair.
+     * Test signing using an SLH-DSA-SHAKE-128F key-pair.
      * @throws Exception
      */
     @Test
@@ -611,7 +611,7 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an SLH-DSA-SHAKE-256S key-pair.
+     * Test signing using an SLH-DSA-SHAKE-256F key-pair.
      * @throws Exception
      */
     @Test
@@ -683,7 +683,7 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an ML-DSA-44 key-pair.
+     * Test signing using an ML-DSA-87 key-pair.
      * @throws Exception
      */
     @Test

@@ -41,25 +41,6 @@ mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEP
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/DeployTools-Common-${DEPLOYTOOLS_VERSION}-sources.jar" -DgroupId=org.signserver.deploytools -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=jar -Dclassifier=sources
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-Common-${DEPLOYTOOLS_VERSION}.pom" -DgroupId=org.signserver.deploytools -DartifactId=DeployTools-Common -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=pom
 
-# BC 1.79 Beta
-BC_VERSION=1.79
-
-# BCPG
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/bcpg-jdk18on-${BC_VERSION}.jar" -DgroupId=org.bouncycastle -DartifactId=bcpg-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/bcpg-jdk18on-${BC_VERSION}-sources.jar" -DgroupId=org.bouncycastle -DartifactId=bcpg-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar -Dclassifier=sources
-
-# BCPKIX
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/bcpkix-jdk18on-${BC_VERSION}.jar" -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/bcpkix-jdk18on-${BC_VERSION}-sources.jar" -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar -Dclassifier=sources
-
-# BCPROV
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/bcprov-jdk18on-${BC_VERSION}.jar" -DgroupId=org.bouncycastle -DartifactId=bcprov-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/bcprov-jdk18on-${BC_VERSION}-sources.jar" -DgroupId=org.bouncycastle -DartifactId=bcprov-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar -Dclassifier=sources
-
-# BCUTIL
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/bcutil-jdk18on-${BC_VERSION}.jar" -DgroupId=org.bouncycastle -DartifactId=bcutil-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar
-mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/bcutil-jdk18on-${BC_VERSION}-sources.jar" -DgroupId=org.bouncycastle -DartifactId=bcutil-jdk18on -Dversion=${BC_VERSION} -Dpackaging=jar -Dclassifier=sources
-
 # Add next group of dependencies here
 XADES4J_VERSION=2.2.1-signserver7.0.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/xades4j-${XADES4J_VERSION}.jar" -DgroupId=org.signserver.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar

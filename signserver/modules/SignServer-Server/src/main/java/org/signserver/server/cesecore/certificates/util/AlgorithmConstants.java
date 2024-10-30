@@ -45,12 +45,24 @@ public final class AlgorithmConstants {
     public static final String SIGALG_GOST3411_WITH_DSTU4145   = "GOST3411withDSTU4145";
     public static final String SIGALG_ED25519                  = "Ed25519";
     public static final String SIGALG_ED448                    = "Ed448";
-    public static final String SIGALG_DILITHIUM                = "Dilithium";
-    public static final String SIGALG_DILITHIUM2               = "Dilithium2";
-    public static final String SIGALG_DILITHIUM3               = "Dilithium3";
-    public static final String SIGALG_DILITHIUM5               = "Dilithium5";
+    public static final String SIGALG_MLDSA                    = "ML-DSA";
+    public static final String SIGALG_MLDSA44                  = "ML-DSA-44";
+    public static final String SIGALG_MLDSA65                  = "ML-DSA-65";
+    public static final String SIGALG_MLDSA87                  = "ML-DSA-87";
     public static final String SIGALG_LMS                      = "LMS";
-    public static final String SIGALG_SPHINCSPLUS              = "SPHINCS+";
+    public static final String SIGALG_SLHDSA_SHA2_128F         = "SLH-DSA-SHA2-128F";
+    public static final String SIGALG_SLHDSA_SHA2_128S         = "SLH-DSA-SHA2-128S";
+    public static final String SIGALG_SLHDSA_SHA2_192F         = "SLH-DSA-SHA2-192F";
+    public static final String SIGALG_SLHDSA_SHA2_192S         = "SLH-DSA-SHA2-192S";
+    public static final String SIGALG_SLHDSA_SHA2_256F         = "SLH-DSA-SHA2-256F";
+    public static final String SIGALG_SLHDSA_SHA2_256S         = "SLH-DSA-SHA2-256S";
+    public static final String SIGALG_SLHDSA_SHAKE_128F        = "SLH-DSA-SHAKE-128F";
+    public static final String SIGALG_SLHDSA_SHAKE_128S        = "SLH-DSA-SHAKE-128S";
+    public static final String SIGALG_SLHDSA_SHAKE_192F        = "SLH-DSA-SHAKE-192F";
+    public static final String SIGALG_SLHDSA_SHAKE_192S        = "SLH-DSA-SHAKE-192S";
+    public static final String SIGALG_SLHDSA_SHAKE_256F        = "SLH-DSA-SHAKE-256F";
+    public static final String SIGALG_SLHDSA_SHAKE_256S        = "SLH-DSA-SHAKE-256S";
+
 
     /**
      * Signature algorithms available to choose from.
@@ -79,23 +91,34 @@ public final class AlgorithmConstants {
             SIGALG_GOST3411_WITH_DSTU4145,
             SIGALG_ED25519,
             SIGALG_ED448,
-            SIGALG_DILITHIUM,
-            SIGALG_DILITHIUM2,
-            SIGALG_DILITHIUM3,
-            SIGALG_DILITHIUM5,
+            SIGALG_MLDSA,
+            SIGALG_MLDSA44,
+            SIGALG_MLDSA65,
+            SIGALG_MLDSA87,
             SIGALG_LMS,
-            SIGALG_SPHINCSPLUS
+            SIGALG_SLHDSA_SHA2_128F,
+            SIGALG_SLHDSA_SHA2_128S,
+            SIGALG_SLHDSA_SHA2_192F,
+            SIGALG_SLHDSA_SHA2_192S,
+            SIGALG_SLHDSA_SHA2_256F,
+            SIGALG_SLHDSA_SHA2_256S,
+            SIGALG_SLHDSA_SHAKE_128F,
+            SIGALG_SLHDSA_SHAKE_128S,
+            SIGALG_SLHDSA_SHAKE_192F,
+            SIGALG_SLHDSA_SHAKE_192S,
+            SIGALG_SLHDSA_SHAKE_256F,
+            SIGALG_SLHDSA_SHAKE_256S
     };
 
     public static final String KEYALGORITHM_RSA         = "RSA";
     public static final String KEYALGORITHM_EC          = "EC";
     public static final String KEYALGORITHM_ECDSA       = "ECDSA"; //The same as "EC", just named differently sometimes. "EC" and "ECDSA" should be handled in the same way
-    public static final String KEYALGORITHM_ECGOST3410 = "ECGOST3410";
+    public static final String KEYALGORITHM_ECGOST3410  = "ECGOST3410";
     public static final String KEYALGORITHM_DSTU4145    = "DSTU4145";
     public static final String KEYALGORITHM_EDDSA       = "EdDSA";
-    public static final String KEYALGORITHM_DILITHIUM   = "Dilithium";
+    public static final String KEYALGORITHM_MLDSA       = "ML-DSA";
     public static final String KEYALGORITHM_LMS         = "LMS";
-    public static final String KEYALGORITHM_SPHINCSPLUS = "SPHINCS+";
+    public static final String KEYALGORITHM_SLHDSA      = "SLH-DSA";
 
     public static final String KEYSPECPREFIX_ECGOST3410 = "GostR3410-";
 

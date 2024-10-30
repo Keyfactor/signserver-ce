@@ -14,6 +14,8 @@ package org.signserver.test.utils.builders;
 
 import java.math.BigInteger;
 import java.security.*;
+
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.math.ec.ECCurve;
@@ -81,23 +83,23 @@ public class CryptoUtils {
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateSphincsPlus() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("SPHINCS+", "BC");
+    public static KeyPair generateSLHDSA(String algName) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance(algName, "BC");
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateDilithium2() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DILITHIUM2", "BCPQC");
+    public static KeyPair generateMLDSA44() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA-44", "BC");
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateDilithium3() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DILITHIUM3", "BCPQC");
+    public static KeyPair generateMLDSA65() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA-65", "BC");
         return g.generateKeyPair();
     }
 
-    public static KeyPair generateDilithium5() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("DILITHIUM5", "BCPQC");
+    public static KeyPair generateMLDSA87() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA-87", "BC");
         return g.generateKeyPair();
     }
 

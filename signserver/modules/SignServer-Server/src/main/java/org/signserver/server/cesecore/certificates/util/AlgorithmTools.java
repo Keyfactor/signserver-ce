@@ -50,13 +50,14 @@ import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cms.CMSSignedGenerator;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.bouncycastle.jcajce.util.MessageDigestUtils;
 import org.bouncycastle.jce.ECGOST3410NamedCurveTable;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.math.ec.ECCurve;
-import org.bouncycastle.pqc.jcajce.interfaces.DilithiumPublicKey;
+import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.lms.BCLMSPublicKey;
 import org.cesecore.config.CesecoreConfiguration;
 import org.cesecore.keys.util.KeyTools;
@@ -130,12 +131,12 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_GOST3411_WITH_DSTU4145
     ));
 
-    /** Signature algorithms supported by DILITHIUM keys */
-    public static final List<String> SIG_ALGS_DILITHIUM = Collections.unmodifiableList(Arrays.asList(
-            AlgorithmConstants.SIGALG_DILITHIUM,
-            AlgorithmConstants.SIGALG_DILITHIUM2,
-            AlgorithmConstants.SIGALG_DILITHIUM3,
-            AlgorithmConstants.SIGALG_DILITHIUM5
+    /** Signature algorithms supported by ML-DSA keys */
+    public static final List<String> SIG_ALGS_MLDSA = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_MLDSA,
+            AlgorithmConstants.SIGALG_MLDSA44,
+            AlgorithmConstants.SIGALG_MLDSA65,
+            AlgorithmConstants.SIGALG_MLDSA87
     ));
 
     /** Signature algorithms supported by LMS keys */
@@ -143,9 +144,20 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_LMS
     ));
 
-    /** Signature algorithms supported by SPHINCS+ keys */
-    public static final List<String> SIG_ALGS_SPHINCSPLUS = Collections.unmodifiableList(Arrays.asList(
-            AlgorithmConstants.SIGALG_SPHINCSPLUS
+    /** Signature algorithms supported by SLH-DSA keys */
+    public static final List<String> SIG_ALGS_SLHDSA = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_128F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_128S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_192F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_192S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_256F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHA2_256S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_128F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_128S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_192F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_192S,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_256F,
+            AlgorithmConstants.SIGALG_SLHDSA_SHAKE_256S
     ));
 
     /**
@@ -171,8 +183,8 @@ public abstract class AlgorithmTools {
             } else {
                 keyAlg = AlgorithmConstants.KEYALGORITHM_ECDSA;
             }
-        } else if (publickey instanceof DilithiumPublicKey) {
-            keyAlg = AlgorithmConstants.KEYALGORITHM_DILITHIUM;
+        } else if (publickey instanceof MLDSAPublicKey) {
+            keyAlg = AlgorithmConstants.KEYALGORITHM_MLDSA;
         } else if (publickey instanceof BCLMSPublicKey) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_LMS;
         }
@@ -367,10 +379,10 @@ public abstract class AlgorithmTools {
         } else if (publicKey instanceof EdDSAPublicKey) {
             final EdDSAPublicKey edPublickKey = (EdDSAPublicKey) publicKey;
             keyspec = edPublickKey.getAlgorithm();
-        } else if (publicKey instanceof DilithiumPublicKey) {
-            final DilithiumPublicKey dilithiumPublicKey = (DilithiumPublicKey) publicKey;
-            if (dilithiumPublicKey.getParameterSpec() != null) {
-                keyspec = dilithiumPublicKey.getParameterSpec().getName();
+        } else if (publicKey instanceof MLDSAPublicKey) {
+            final MLDSAPublicKey MLDSAPublicKey = (MLDSAPublicKey) publicKey;
+            if (MLDSAPublicKey.getParameterSpec() != null) {
+                keyspec = MLDSAPublicKey.getParameterSpec().getName();
             }
         } else if (publicKey instanceof BCLMSPublicKey) {
             // Hardcoded for now since .getParameterSpec() does not exist in BCLMSPublicKey yet...

@@ -12,14 +12,11 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
+import java.security.spec.AlgorithmParameterSpec;
 import java.text.Collator;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
+import java.util.*;
+
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.util.StringTools;
 
@@ -34,9 +31,15 @@ public class KeyUtils {
     private static final int[] AES_KEY_SIZES = {128, 192, 256};
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
     private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
-    private static final String[] DILITHIUM_SPECS = {"Dilithium2", "Dilithium3", "Dilithium5"};
+    private static final String[] MLDSA_SPECS = {"ML-DSA-44", "ML-DSA-65", "ML-DSA-87"};
     private static final String[] LMS_SPECS = {"LMS_SHA256_N32_H5"};
-    private static final String[] SPHINCS_PLUS_SPECS = {"SPHINCS+"};
+    private static final String[] SLHDSA_SPECS = {
+            "SLH-DSA-SHA2-128F", "SLH-DSA-SHA2-128S",
+            "SLH-DSA-SHA2-192F", "SLH-DSA-SHA2-192S",
+            "SLH-DSA-SHA2-256F", "SLH-DSA-SHA2-256S",
+            "SLH-DSA-SHAKE-128F", "SLH-DSA-SHAKE-128S",
+            "SLH-DSA-SHAKE-192F", "SLH-DSA-SHAKE-192S",
+            "SLH-DSA-SHAKE-256F", "SLH-DSA-SHAKE-256S"};
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};
@@ -65,7 +68,7 @@ public class KeyUtils {
             }
         }
     }
-    
+
     /**
      * Gets a map of algorithm labels and values (suitable for a bean
      * binding to a f:selectItems in an h:selectOneMenu).
@@ -79,9 +82,9 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("ECDSA", "ECDSA"));
         algMenuValues.add(new SelectItem("EdDSA", "EdDSA"));
         algMenuValues.add(new SelectItem("AES", "AES"));
-        algMenuValues.add(new SelectItem("Dilithium", "Dilithium"));
+        algMenuValues.add(new SelectItem("ML-DSA", "ML-DSA"));
         algMenuValues.add(new SelectItem("LMS", "LMS"));
-        algMenuValues.add(new SelectItem("SPHINCS+", "SPHINCS+"));
+        algMenuValues.add(new SelectItem("SLH-DSA", "SLH-DSA"));
 
         return algMenuValues;
     }
@@ -122,8 +125,8 @@ public class KeyUtils {
                 }
                 break;
 
-            case "Dilithium":
-                for (final String key : DILITHIUM_SPECS) {
+            case "ML-DSA":
+                for (final String key : MLDSA_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;
@@ -134,8 +137,8 @@ public class KeyUtils {
                 }
                 break;
 
-            case "SPHINCS+":
-                for (final String key : SPHINCS_PLUS_SPECS) {
+            case "SLH-DSA":
+                for (final String key : SLHDSA_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;

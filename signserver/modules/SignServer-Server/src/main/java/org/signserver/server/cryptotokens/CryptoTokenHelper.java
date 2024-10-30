@@ -32,6 +32,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.operator.BufferingContentSigner;
 import org.bouncycastle.operator.ContentSigner;
@@ -533,14 +535,14 @@ public class CryptoTokenHelper {
                 case "EdDSA":
                     alg = "Ed25519";
                     break;
-                case "DILITHIUM2":
-                    alg = "Dilithium2";
+                case "ML-DSA-44":
+                    alg = "ML-DSA-44";
                     break;
-                case "DILITHIUM3":
-                    alg = "Dilithium3";
+                case "ML-DSA-65":
+                    alg = "ML-DSA-65";
                     break;
-                case "DILITHIUM5":
-                    alg = "Dilithium5";
+                case "ML-DSA-87":
+                    alg = "ML-DSA-87";
                     break;
                 case "LMS":
                     alg = "LMS";

@@ -365,6 +365,23 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
+     * Tests generating ML-DSA key with invalid key specification.
+     * @throws Exception
+     */
+    @Test(expected = CryptoTokenOfflineException.class)
+    public void testGenerateMLDSAKeyWithNonExistingKeySpec() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("ML-DSA", "NonExisting", "MLDSA65Key");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
      * Tests generating CSR using ML-DSA-44 key.
      * @throws Exception
      */
@@ -400,6 +417,23 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("ML-DSA-65",
                     "CN=test01GenerateKey,C=SE", null);
             workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "MLDSA65Key");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests generating SLH-DSA key with invalid key specification.
+     * @throws Exception
+     */
+    @Test(expected = CryptoTokenOfflineException.class)
+    public void testGenerateSLHDSAKeyWithNonExistingKeySpec() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("SLH-DSA", "NonExisting", "SLH-DSA-KEY");
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);

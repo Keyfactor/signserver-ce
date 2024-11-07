@@ -515,6 +515,18 @@ public class PlainSignerTest {
     }
 
     /**
+     * Test signing using an SLH-DSA-SHA2-128F key-pair without explicitly setting SIGNATUREALGORITHM property.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigningNoSigAlgProperty_SLHDSA_SHA2_128F() throws Exception {
+        LOG.info("testNormalSigningNoSigAlgProperty_SLHDSA_SHA2_128F");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenSLH_DSA_SHA2_128F, createConfig(null));
+        assertSignedAndVerifiable(plainText, "SLH-DSA-SHA2-128F", tokenSLH_DSA_SHA2_128F, resp);
+    }
+
+    /**
      * Test signing using an SLH-DSA-SHA2-128F key-pair.
      * @throws Exception
      */
@@ -551,7 +563,19 @@ public class PlainSignerTest {
     }
 
     /**
-     * Test signing using an SLH-DSA-SHA2-128F key-pair.
+     * Test signing using an SLH-DSA-SHA2-128S key-pair without explicitly setting SIGNATUREALGORITHM property.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigningNoSigAlgProperty_SLHDSA_SHA2_128S() throws Exception {
+        LOG.info("testNormalSigningNoSigAlgProperty_SLHDSA_SHA2_128S");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenSLH_DSA_SHA2_128S, createConfig(null));
+        assertSignedAndVerifiable(plainText, "SLH-DSA", tokenSLH_DSA_SHA2_128S, resp);
+    }
+
+    /**
+     * Test signing using an SLH-DSA-SHA2-128S key-pair.
      * @throws Exception
      */
     @Test
@@ -584,6 +608,18 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenSLH_DSA_SHA2_256S, createConfig("SLH-DSA-SHA2-256S"));
         assertSignedAndVerifiable(plainText, "SLH-DSA-SHA2-256S", tokenSLH_DSA_SHA2_256S, resp);
+    }
+
+    /**
+     * Test signing using an SLH-DSA-SHAKE-128F key-pair without explicitly setting SIGNATUREALGORITHM property.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigningNoSigAlgProperty_SLHDSA_SHAKE_128F() throws Exception {
+        LOG.info("testNormalSigningNoSigAlgProperty_SLHDSA_SHAKE_128F");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenSLH_DSA_SHAKE_128F, createConfig(null));
+        assertSignedAndVerifiable(plainText, "SLH-DSA", tokenSLH_DSA_SHAKE_128F, resp);
     }
 
     /**
@@ -623,6 +659,18 @@ public class PlainSignerTest {
     }
 
     /**
+     * Test signing using an SLH-DSA-SHAKE-128S key-pair without explicitly setting SIGNATUREALGORITHM property.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigningNoSigAlgProperty_SLHDSA_SHAKE_128S() throws Exception {
+        LOG.info("testNormalSigningNoSigAlgProperty_SLHDSA_SHAKE_128S");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenSLH_DSA_SHAKE_128S, createConfig(null));
+        assertSignedAndVerifiable(plainText, "SLH-DSA", tokenSLH_DSA_SHAKE_128S, resp);
+    }
+
+    /**
      * Test signing using an SLH-DSA-SHAKE-128S key-pair.
      * @throws Exception
      */
@@ -656,6 +704,30 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenSLH_DSA_SHAKE_256S, createConfig("SLH-DSA-SHAKE-256S"));
         assertSignedAndVerifiable(plainText, "SLH-DSA-SHAKE-256S", tokenSLH_DSA_SHAKE_256S, resp);
+    }
+
+    /**
+     * Test signing using an ML-DSA-44 key-pair without explicitly setting SIGNATUREALGORITHM property.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigningNoSigAlgProperty_MLDSA() throws Exception {
+        LOG.info("testNormalSigningNoSigAlgProperty_MLDSA");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenML_DSA_44, createConfig(null));
+        assertSignedAndVerifiable(plainText, "ML-DSA", tokenML_DSA_44, resp);
+    }
+
+    /**
+     * Test signing using an ML-DSA-65 key-pair without explicitly setting SIGNATUREALGORITHM property.
+     * @throws Exception
+     */
+    @Test
+    public void testNormalSigningNoSigAlgProperty_MLDSA_65() throws Exception {
+        LOG.info("testNormalSigningNoSigAlgProperty_MLDSA_65");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenML_DSA_65, createConfig(null));
+        assertSignedAndVerifiable(plainText, "ML-DSA", tokenML_DSA_65, resp);
     }
 
     /**

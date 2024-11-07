@@ -24,10 +24,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import jakarta.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -59,6 +57,7 @@ import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.data.impl.UploadUtil;
@@ -511,7 +510,7 @@ public class CMSSigner extends BaseSigner {
                 throw new IllegalRequestException("Illegal OID specified in request");
             }
             
-            final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(crypto.getPublicKey()) : signatureAlgorithm;
+            final String sigAlg = signatureAlgorithm == null ? AlgorithmTools.getDefaultSignatureAlgorithm(crypto.getPublicKey()) : signatureAlgorithm;
 
             // Log anything interesting from the request to the worker logger
             final LogMap logMap = LogMap.getInstance(requestContext);
@@ -593,28 +592,6 @@ public class CMSSigner extends BaseSigner {
         } finally {
             releaseCryptoInstance(crypto, requestContext);
         }
-    }
-    
-    private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
-        String result;
-
-        switch (publicKey.getAlgorithm()) {
-            case "EC":
-            case "ECDSA":
-                result = "SHA256withECDSA";
-                break;
-            case "Ed25519":
-                result = "Ed25519";
-                break;
-            case "Ed448":
-                result = "Ed448";
-                break;
-            case "RSA":
-            default:
-                result = "SHA256withRSA";    
-        }
-
-        return result;
     }
 
     @Override

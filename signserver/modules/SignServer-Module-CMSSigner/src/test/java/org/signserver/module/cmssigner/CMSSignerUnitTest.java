@@ -713,6 +713,29 @@ public class CMSSignerUnitTest {
     }
 
     /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-128F algorithm without explicitly setting SIGNATUREALGORITHM.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureNoSigAlg_SLH_DSA_SHA2_128F() throws Exception {
+        LOG.info("testDetachedSignatureNoSigAlg_SLH_DSA_SHA2_128F");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128F);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128F, config, null, false, "SLH-DSA-SHA2-128F");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
      * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-128F algorithm.
      *
      * @throws java.lang.Exception
@@ -863,6 +886,29 @@ public class CMSSignerUnitTest {
     }
 
     /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-128S algorithm without explicitly setting SIGNATUREALGORITHM.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureNoSigAlg_SLH_DSA_SHA2_128S() throws Exception {
+        LOG.info("testDetachedSignatureNoSigAlg_SLH_DSA_SHA2_128S");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHA2_128S);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHA2_128S, config, null, false, "SLH-DSA-SHA2-128S");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
+    /**
      * Tests sign and verify by Post-Quantum SLH-DSA-SHA2-128S algorithm.
      *
      * @throws java.lang.Exception
@@ -1010,6 +1056,29 @@ public class CMSSignerUnitTest {
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
+    }
+
+    /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHAKE-128F algorithm without explicitly setting SIGNATUREALGORITHM.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureNoSigAlg_SLH_DSA_SHAKE_128F() throws Exception {
+        LOG.info("testDetachedSignatureNoSigAlg_SLH_DSA_SHAKE_128F");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_128F);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_128F, config, null, false, "SLH-DSA-SHAKE-128F");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
 
     /**
@@ -1186,6 +1255,30 @@ public class CMSSignerUnitTest {
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
 
+
+    /**
+     * Tests sign and verify by Post-Quantum SLH-DSA-SHAKE-192S algorithm without explicitly setting SIGNATUREALGORITHM.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureNoSigAlg_SLH_DSA_SHAKE_192S() throws Exception {
+        LOG.info("testDetachedSignatureNoSigAlg_SLH_DSA_SHAKE_192S");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "");
+        CMSSigner instance = createMockSigner(tokenSLH_DSA_SHAKE_192S);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenSLH_DSA_SHAKE_192S, config, null, false, "SLH-DSA-SHAKE-192S");
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+
     /**
      * Tests sign and verify detached signature by Post-Quantum SLH-DSA-SHAKE-128S algorithm.
      *
@@ -1314,6 +1407,29 @@ public class CMSSignerUnitTest {
         assertNull("detached", signedContent);
     }
 
+    /**
+     * Tests sign and verify by Post-Quantum MLDSA44 algorithm without explicitly setting SIGNATUREALGORITHM.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureNoSigAlg_MLDSA44() throws Exception {
+        LOG.info("testDetachedSignatureNoSigAlg_MLDSA44");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "");
+        CMSSigner instance = createMockSigner(tokenMLDSA44);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenMLDSA44, config, null, false, "ML-DSA-44");
+
+        byte[] cms = response.getProcessedData();
+
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
 
     /**
      * Tests sign and verify by Post-Quantum MLDSA44 algorithm.
@@ -1338,6 +1454,7 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
+
     /**
      * Tests sign and verify detached signature by Post-Quantum MLDSA44 algorithm.
      *

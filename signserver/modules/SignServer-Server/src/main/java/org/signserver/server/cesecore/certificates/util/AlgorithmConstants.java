@@ -50,6 +50,7 @@ public final class AlgorithmConstants {
     public static final String SIGALG_MLDSA65                  = "ML-DSA-65";
     public static final String SIGALG_MLDSA87                  = "ML-DSA-87";
     public static final String SIGALG_LMS                      = "LMS";
+    public static final String SIGALG_SLHDSA                   = "SLH-DSA";
     public static final String SIGALG_SLHDSA_SHA2_128F         = "SLH-DSA-SHA2-128F";
     public static final String SIGALG_SLHDSA_SHA2_128S         = "SLH-DSA-SHA2-128S";
     public static final String SIGALG_SLHDSA_SHA2_192F         = "SLH-DSA-SHA2-192F";
@@ -96,6 +97,7 @@ public final class AlgorithmConstants {
             SIGALG_MLDSA65,
             SIGALG_MLDSA87,
             SIGALG_LMS,
+            SIGALG_SLHDSA,
             SIGALG_SLHDSA_SHA2_128F,
             SIGALG_SLHDSA_SHA2_128S,
             SIGALG_SLHDSA_SHA2_192F,

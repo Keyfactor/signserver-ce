@@ -1,51 +1,48 @@
 <!doctype html>
 
-<html lang="en">
-
-    <head>
-
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-        <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1">
-
-        <link rel="icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
-
-        <!-- Primary Meta Tags -->
-        <meta name="exp-export-timestamp" content="2024-10-09T09:35:54.170+0000">
-        <meta name="exp-page-id" content="370999522">
-        <meta name="exp-page-title" content="Setting up Key Wrapping">
-        <meta name="exp-page-version" content="2">
-        <meta name="exp-page-scroll-page-id" content="1f7a7614ea9f1d856f840d270168f1ca">
-        <meta name="exp-page-created" content="2023-04-25T11:49:57.000+0000">
-        <meta name="exp-page-last-modified" content="2024-04-02T16:26:51.759+0000">
-        <meta name="exp-page-labels" content="dss-1567,key_wrapping,signserveree">
-        <meta name="exp-page-context-keys" content="">
-        <meta name="exp-space-key" content="SSDOCS">
-        <meta name="exp-space-title" content="SignServer Documentation">
-
-        <!-- Additional Meta Tags -->
-        <meta name="exp-document-id" content="371111034">
-        <meta name="exp-document-title" content="SignServer Documentation">
-        <meta name="exp-version-status" content="in-progress">
-        <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
-        <meta name="exp-version-name" content="Working version">
-        <meta name="exp-version-description" content="">
-        <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
-        <meta name="exp-variant-id" content="">
-        <meta name="exp-variant-name" content="">
-        <meta name="exp-variant-description" content="">
-        <meta name="exp-language-code" content="">
-        <meta name="exp-language-name" content="">
-
-        <link rel="stylesheet" href="css/app.css">
-        <link rel="stylesheet" href="css/image-dimensions.css">
+<html class="no-js" lang="en" data-vp-page-id="370999522">
 
 
-            
-            
-<script src="js/search.js"></script>
-            <script id="search-worker" type="javascript/worker">
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2024-11-07T13:04:47.343+0000">
+    <meta name="exp-page-id" content="370999522">
+    <meta name="exp-page-title" content="Setting up Key Wrapping">
+    <meta name="exp-page-version" content="2">
+    <meta name="exp-page-scroll-page-id" content="1f7a7614ea9f1d856f840d270168f1ca">
+    <meta name="exp-page-created" content="2023-04-25T11:49:57.000+0000">
+    <meta name="exp-page-last-modified" content="2024-04-02T16:26:51.759+0000">
+    <meta name="exp-page-labels" content="dss-1567,key_wrapping,signserveree">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
     onmessage = function(event) {
         // dispatch events to handling functions
         var message = event.data;
@@ -84,81 +81,83 @@
         postMessage({ type: 'search-results', results: results, query: query });
     }
 </script>
-        <title>Setting up Key Wrapping</title>
+    <title>Setting up Key Wrapping</title>
 
-    <meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SettingupKeyWrapping-top" pageid="370999522" class="flex flex-col" data-confluence-editor-version="v1">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
-    <body id="SettingupKeyWrapping-top" data-pageid="370999522" data-confluence-editor-version="v1" data-confluence-deployment-type="CLOUD">
 
-        <div class="exp-grid-container">
 
-            <header class="exp-header"></header>
 
-            <div class="exp-logo">
-                <a href="SignServer_Documentation.html">
-                    <span class="exp-logo-image" style="background-image: url(_scroll_external/attachments/e415105eb31a/ssdocs)" alt="SignServer Documentation" title="SignServer Documentation"></span>
-                </a>
-            </div>
-
-            <div class="exp-document-title">
-                <h1 class="exp-document-title-heading scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h1 scroll-relative-h1" data-scroll-heading-rank="1" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="1" id="no-src_generated-id-fe387395207565a2016432c0070fc965aeaf6fe0dd35f38c8a1072474fb3c0ac">
-                    <a href="SignServer_Documentation.html">
-                        SignServer Documentation
-                    </a>
-                </h1>
-            </div>
-
-<div class="exp-search-container">
-    <input type="search" id="search-textbox" autocomplete="off" class="exp-search-input" style="margin-right: 0;">
-    <div class="exp-search-input-icon">
-        <svg data-exp-id="magnifier-icon" data-exp-component="icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M8.99452 14.5C10.5121 14.5 11.809 13.9669 12.8854 12.9007C13.9618 11.8345 14.5 10.5361 14.5 9.00548C14.5 7.48794 13.9631 6.19097 12.8893 5.11458C11.8155 4.03819 10.519 3.5 9 3.5C7.46786 3.5 6.16816 4.0369 5.1009 5.11071C4.03363 6.18453 3.5 7.48096 3.5 9C3.5 10.5321 4.0331 11.8318 5.09929 12.8991C6.1655 13.9664 7.46391 14.5 8.99452 14.5ZM9 16C8.02913 16 7.11974 15.816 6.27185 15.4479C5.42395 15.0799 4.68056 14.5799 4.04167 13.9479C3.40278 13.316 2.90278 12.576 2.54167 11.728C2.18056 10.88 2 9.97053 2 8.99956C2 8.04152 2.18403 7.13542 2.55208 6.28125C2.92014 5.42708 3.41864 4.68387 4.04758 4.0516C4.67653 3.41935 5.41569 2.91935 6.26508 2.5516C7.11449 2.18387 8.02548 2 8.99806 2C9.95769 2 10.8646 2.18403 11.7188 2.55208C12.5729 2.92014 13.316 3.42014 13.9479 4.05208C14.5799 4.68403 15.0799 5.42612 15.4479 6.27835C15.816 7.13058 16 8.0381 16 9.00094C16 9.83365 15.8615 10.6213 15.5846 11.3638C15.3078 12.1062 14.9254 12.7836 14.4375 13.3958L18 16.9583L16.9375 18L13.375 14.4583C12.7668 14.9459 12.0939 15.3247 11.3564 15.5948C10.6188 15.8649 9.83333 16 9 16Z" fill="currentColor" />
-        </svg>
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
     </div>
-    <div id="search-suggestion-container" class="exp-search-suggestion-panel" data-exp-component="search-suggestion"></div>
-    <template id="exp-search-suggestion-option-template">
-        <div class="exp-search-suggestion-option-container search-form-suggestion">
-            <a class="exp-search-suggestion-option search-form-suggestion" href=""></a>
-        </div>
-    </template>
-</div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
 
-
-            <nav class="exp-sidebar-navigation">
-                <div class="exp-sidebar-navigation-sticky-wrapper">
-                    <iframe src="toc.html?pageId=370999522" border="0"></iframe>
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
                 </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
 
-            </nav>
+        </div>
+</header>
 
-
-            <nav aria-label="Breadcrumb" class="exp-breadcrumbs-wrapper">
-                <ol class="breadcrumbs">
-                        <li class="breadcrumb">
-                            <a href="SignServer_Documentation.html" rel="prev" target="_self">SignServer Documentation</a>
-                        </li>
-                        <li class="breadcrumb">
-                            <a href="SignServer_Operations.html" rel="prev" target="_self">SignServer Operations</a>
-                        </li>
-                    <li class="breadcrumb active" aria-current="page">
-                        Setting up Key Wrapping
-                    </li>
-                </ol>
-            </nav>
+        <main>
 
 
-            <main class="exp-content">
-                <article role="article">
 
-                    <header>
-                        <h1 class="article-heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-37431c2bd471ad78b94311d689fb6190b47e67c588a00440ec76ffeab1a154f5">
-                            Setting up Key Wrapping
-                        </h1>
-                    </header>
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
 
-                    <section class="page" id="content" role="main">
-                        <div id="main-content" class="wiki-content article-content js-tocBot-content">
-                            <p><span style="color: rgb(0,0,0);"><span class="status-macro aui-lozenge aui-lozenge-complete">enterprise</span></span></p><p>Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.</p><p class="confluence-link" title="Key Wrapping"><span style="color: rgb(0,0,0);">Follow the steps below to set up key wrapping. For more information and background on key wrapping, see the reference section&nbsp;</span><a href="Key_Wrapping.html" data-linked-resource-id="371000794" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000794" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000794/Key+Wrapping" data-scroll-link-target-source-id="371000794">Key Wrapping</a>.</p><ul><li><span data-linked-resource-id="448201270" data-linked-resource-version="1" data-linked-resource-type="page">Step 1: Set Up Crypto Worker with Source Crypto Token</span></li><li><span data-linked-resource-id="448201270" data-linked-resource-version="1" data-linked-resource-type="page">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker</span></li><li><span data-linked-resource-id="448201270" data-linked-resource-version="1" data-linked-resource-type="page"><span class="confluence-link">Step 3: Set Up Signer with Wrapped Key</span> </span></li></ul><h2 id="SettingupKeyWrapping-Step1:SetUpCryptoWorkerwithSourceCryptoTokenStep1SetUpCryptoWorkerwithSourceCryptoToken" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span style="color: rgb(0,0,0);">Step 1: Set Up Crypto Worker with Source Crypto Token <span class="confluence-anchor-link" id="SettingupKeyWrapping-Step1SetUpCryptoWorkerwithSourceCryptoToken"></span><span class="confluence-anchor-link" id="Step 1 Set Up Crypto Worker with Source Crypto Token"></span></span></h2><p><span style="color: rgb(0,0,0);">To set up crypto worker with source crypto token, do the following:</span></p><ol><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">Create source crypto worker <strong>CryptoTokenP11NG1</strong> using the sample configuration <strong>p11ng-crypto.properties</strong>. For details, see</span> <a href="P11NGCryptoToken.html" data-linked-resource-id="371000135" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000135" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000135/P11NGCryptoToken" data-scroll-link-target-source-id="371000135">P11NGCryptoToken</a>.</p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample source crypto worker configuration" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample source crypto worker configuration</div><div class="defaultnew content" data-title="Sample source crypto worker configuration">
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999522" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Operations.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Operations</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Setting_up_Key_Wrapping.html" target="_self" aria-current="page">Setting up Key Wrapping</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-ac69293aa20c273da57e0595dd16a7e3bc33bb6509d0577002f2ab7abd9bde3e"><span class="js-hide-until-loaded">Setting up Key Wrapping</span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p><span style="color: rgb(0,0,0);"><span class="status-macro aui-lozenge aui-lozenge-complete">enterprise</span></span></p><p>Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.</p><p class="confluence-link" title="Key Wrapping"><span style="color: rgb(0,0,0);">Follow the steps below to set up key wrapping. For more information and background on key wrapping, see the reference section&nbsp;</span><a href="Key_Wrapping.html" data-linked-resource-id="371000794" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000794" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000794/Key+Wrapping" data-scroll-link-target-source-id="371000794">Key Wrapping</a>.</p><ul><li><span data-linked-resource-id="448201270" data-linked-resource-version="1" data-linked-resource-type="page">Step 1: Set Up Crypto Worker with Source Crypto Token</span></li><li><span data-linked-resource-id="448201270" data-linked-resource-version="1" data-linked-resource-type="page">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker</span></li><li><span data-linked-resource-id="448201270" data-linked-resource-version="1" data-linked-resource-type="page"><span class="confluence-link">Step 3: Set Up Signer with Wrapped Key</span> </span></li></ul><h2 id="SettingupKeyWrapping-Step1:SetUpCryptoWorkerwithSourceCryptoTokenStep1SetUpCryptoWorkerwithSourceCryptoToken" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Step 1: Set Up Crypto Worker with Source Crypto Token <span class="confluence-anchor-link" id="SettingupKeyWrapping-Step1SetUpCryptoWorkerwithSourceCryptoToken"></span><span class="confluence-anchor-link" id="Step 1 Set Up Crypto Worker with Source Crypto Token"></span></span></h2><p><span style="color: rgb(0,0,0);">To set up crypto worker with source crypto token, do the following:</span></p><ol><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">Create source crypto worker <strong>CryptoTokenP11NG1</strong> using the sample configuration <strong>p11ng-crypto.properties</strong>. For details, see</span> <a href="P11NGCryptoToken.html" data-linked-resource-id="371000135" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000135" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000135/P11NGCryptoToken" data-scroll-link-target-source-id="371000135">P11NGCryptoToken</a>.</p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample source crypto worker configuration" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample source crypto worker configuration</div><div class="defaultnew content" data-title="Sample source crypto worker configuration">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.server.signers.CryptoWorker</code></div>
 <div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN_IMPLEMENTATION_CLASS=org.signserver.p11ng.common.cryptotoken.P11NGCryptoToken</code></div>
@@ -177,7 +176,7 @@
 <div class="line"><code class="plain">#One key to test activation with is required. If </code><code class="keyword">this</code><code class="plain"> key does not already exist generate it after the worker has been created.</code></div>
 <div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=testkey0</code></div>
 </div>
-</div></li><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">When the worker <strong>CryptoTokenP11NG1</strong> is ACTIVE, generate a secret key <strong>wrapkey001</strong> using algorithm <strong>AES</strong> and Key specification <strong>128</strong> to use as wrap key.</span></p></li></ol><h2 id="SettingupKeyWrapping-Step2:SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorkerStep2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span style="color: rgb(0,0,0);">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker <span class="confluence-anchor-link" id="SettingupKeyWrapping-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker"></span><span class="confluence-anchor-link" id="Step 2 Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker"></span></span></h2><p><span style="color: rgb(0,0,0);">To set up key wrapping crypto worker referencing the source crypto worker, do the following:</span></p><ol><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">Create key wrapping crypto worker <strong>CryptoTokenP11NG1KeyWrapping</strong> using the sample configuration <strong>p11ng-keywrapping-crypto.properties</strong>. For details, see</span> <a href="P11NGKeyWrappingCryptoToken.html" data-linked-resource-id="371000143" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000143" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000143/P11NGKeyWrappingCryptoToken" data-scroll-link-target-source-id="371000143">P11NGKeyWrappingCryptoToken</a> and <a href="P11NGKeyWrappingCryptoWorker.html" data-linked-resource-id="371000098" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000098" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000098/P11NGKeyWrappingCryptoWorker" data-scroll-link-target-source-id="371000098">P11NGKeyWrappingCryptoWorker</a>.</p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample key wrapping crypto worker configuration" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample key wrapping crypto worker configuration</div><div class="defaultnew content" data-title="Sample key wrapping crypto worker configuration">
+</div></li><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">When the worker <strong>CryptoTokenP11NG1</strong> is ACTIVE, generate a secret key <strong>wrapkey001</strong> using algorithm <strong>AES</strong> and Key specification <strong>128</strong> to use as wrap key.</span></p></li></ol><h2 id="SettingupKeyWrapping-Step2:SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorkerStep2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker <span class="confluence-anchor-link" id="SettingupKeyWrapping-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker"></span><span class="confluence-anchor-link" id="Step 2 Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker"></span></span></h2><p><span style="color: rgb(0,0,0);">To set up key wrapping crypto worker referencing the source crypto worker, do the following:</span></p><ol><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">Create key wrapping crypto worker <strong>CryptoTokenP11NG1KeyWrapping</strong> using the sample configuration <strong>p11ng-keywrapping-crypto.properties</strong>. For details, see</span> <a href="P11NGKeyWrappingCryptoToken.html" data-linked-resource-id="371000143" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000143" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000143/P11NGKeyWrappingCryptoToken" data-scroll-link-target-source-id="371000143">P11NGKeyWrappingCryptoToken</a> and <a href="P11NGKeyWrappingCryptoWorker.html" data-linked-resource-id="371000098" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000098" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000098/P11NGKeyWrappingCryptoWorker" data-scroll-link-target-source-id="371000098">P11NGKeyWrappingCryptoWorker</a>.</p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample key wrapping crypto worker configuration" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample key wrapping crypto worker configuration</div><div class="defaultnew content" data-title="Sample key wrapping crypto worker configuration">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line">&nbsp;</div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.p11ng.common.cryptotoken.P11NGKeyWrappingCryptoWorker</code></div>
@@ -194,7 +193,7 @@
 <div class="line"><code class="plain"># Encryption algorithm</code></div>
 <div class="line"><code class="plain">WORKERGENID1.WRAPPING_CIPHER_ALGORITHM=CKM_AES_CBC_PAD</code></div>
 </div>
-</div></li><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">Create wrapped key(s).</span></p><span style="color: rgb(0,0,0);">The wrapped key can be a common key (for example, wrappedkey001, wrappedkey002) or an individual user key (for example, <strong>userkey_foobar</strong>) depending on the requirement.</span><br clear="none"><span style="color: rgb(0,0,0);">For an individual user key, the key alias is a combination of user prefix and the user name. For example, for the key alias <strong>userkey_foobar</strong>, the <strong>userkey_</strong> is the user prefix and <strong>foobar</strong> is the user name.</span></li><li><span style="color: rgb(0,0,0);">Generate&nbsp;Certificate Signing Request (CSR) for the wrapped key(s) created in the step 2 above, get certificate for the CSR, and install certificate for the key in token.</span></li></ol><h2 id="SettingupKeyWrapping-Step3:SetUpSignerwithWrappedKeyStep3SetUpSignerwithWrappedKey" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-original-h2 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span style="color: rgb(0,0,0);">Step 3: Set Up Signer with Wrapped Key <span class="confluence-anchor-link" id="SettingupKeyWrapping-Step3SetUpSignerwithWrappedKey"></span><span class="confluence-anchor-link" id="Step 3 Set Up Signer with Wrapped Key"></span></span></h2><p><span style="color: rgb(0,0,0);">The wrapped key can be a common/fixed key <em>or</em> an individual user key depending on the requirement.</span></p><h3 id="SettingupKeyWrapping-FixedKey" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3"><span style="color: rgb(0,0,0);">Fixed Key</span></h3><p><span style="color: rgb(0,0,0);">Create PlainSigner using the sample configuration <strong>plainsigner.properties. </strong></span></p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample Plain Signer configuration with fixed wrapped key" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample Plain Signer configuration with fixed wrapped key</div><div class="defaultnew content" data-title="Sample Plain Signer configuration with fixed wrapped key">
+</div></li><li><p class="auto-cursor-target"><span style="color: rgb(0,0,0);">Create wrapped key(s).</span></p><span style="color: rgb(0,0,0);">The wrapped key can be a common key (for example, wrappedkey001, wrappedkey002) or an individual user key (for example, <strong>userkey_foobar</strong>) depending on the requirement.</span><br clear="none"><span style="color: rgb(0,0,0);">For an individual user key, the key alias is a combination of user prefix and the user name. For example, for the key alias <strong>userkey_foobar</strong>, the <strong>userkey_</strong> is the user prefix and <strong>foobar</strong> is the user name.</span></li><li><span style="color: rgb(0,0,0);">Generate&nbsp;Certificate Signing Request (CSR) for the wrapped key(s) created in the step 2 above, get certificate for the CSR, and install certificate for the key in token.</span></li></ol><h2 id="SettingupKeyWrapping-Step3:SetUpSignerwithWrappedKeyStep3SetUpSignerwithWrappedKey" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Step 3: Set Up Signer with Wrapped Key <span class="confluence-anchor-link" id="SettingupKeyWrapping-Step3SetUpSignerwithWrappedKey"></span><span class="confluence-anchor-link" id="Step 3 Set Up Signer with Wrapped Key"></span></span></h2><p><span style="color: rgb(0,0,0);">The wrapped key can be a common/fixed key <em>or</em> an individual user key depending on the requirement.</span></p><h3 id="SettingupKeyWrapping-FixedKey" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Fixed Key</span></h3><p><span style="color: rgb(0,0,0);">Create PlainSigner using the sample configuration <strong>plainsigner.properties. </strong></span></p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample Plain Signer configuration with fixed wrapped key" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample Plain Signer configuration with fixed wrapped key</div><div class="defaultnew content" data-title="Sample Plain Signer configuration with fixed wrapped key">
 <div class="line"><code class="plain"># General properties</code></div>
 <div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>
@@ -209,7 +208,7 @@
 <div class="line">&nbsp;</div>
 <div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
 </div>
-</div><p><span style="color: rgb(0,0,0);">The sample config <strong>keywrapping-fixed_key.properties</strong> can also be used to create a <strong>XAdESSigner</strong> using a fixed wrapped key.</span></p><h3 id="SettingupKeyWrapping-IndividualKey" data-scroll-heading-rank-offset="1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h3 scroll-relative-h3"><span style="color: rgb(0,0,0);">Individual Key</span></h3><p><span style="color: rgb(0,0,0);">Create PlainSigner using the sample configuration <strong>plainsigner.properties</strong> and the following properties related to the Individual user key.</span></p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample Plain Signer configuration with individual user wrapped key" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample Plain Signer configuration with individual user wrapped key</div><div class="defaultnew content" data-title="Sample Plain Signer configuration with individual user wrapped key">
+</div><p><span style="color: rgb(0,0,0);">The sample config <strong>keywrapping-fixed_key.properties</strong> can also be used to create a <strong>XAdESSigner</strong> using a fixed wrapped key.</span></p><h3 id="SettingupKeyWrapping-IndividualKey" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span style="color: rgb(0,0,0);">Individual Key</span></h3><p><span style="color: rgb(0,0,0);">Create PlainSigner using the sample configuration <strong>plainsigner.properties</strong> and the following properties related to the Individual user key.</span></p><div class="scroll-code scroll-highlighted-code-block" data-title="Sample Plain Signer configuration with individual user wrapped key" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Sample Plain Signer configuration with individual user wrapped key</div><div class="defaultnew content" data-title="Sample Plain Signer configuration with individual user wrapped key">
 <div class="line"><code class="plain"># General properties</code></div>
 <div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>
@@ -233,86 +232,54 @@
 <div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
 </div>
 </div><p><span style="color: rgb(0,0,0);">The sample configuration <strong>keywrapping-multiple_keys.properties</strong> can also be used to create a <strong>XAdESSigner</strong> using an individual wrapped key.</span></p>
-                        </div>
-                    </section>
-
-                </article>
-            </main>
-
-
-                <nav class="exp-post-navigation-prev">
-                    <a href="Setting_up_Android_Signing.html" class="post-navigation-link">
-                        <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <g id="ht-icon-prev">
-                                <path fill="currentColor" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) " />
-                            </g>
-                        </svg>
-                        <span>Setting up Android Signing</span>
-                    </a>
-                </nav>
-
-                <nav class="exp-post-navigation-next">
-
-                    <a href="Setting_up_One-time_Keys.html" class="post-navigation-link">
-                        <span>Setting up One-time Keys</span>
-                        <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <g id="ht-icon-next">
-                                <path fill="currentColor" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) " />
-                            </g>
-                        </svg>
-                    </a>
-
-                </nav>
-
-
-            <nav class="exp-sidebar-toc js-tocBot">
-                <!-- content generated by toc.js  -->
-            </nav>
-
-            <div class="exp-sidebar-navigation-toggle">
-                <div class="exp-sidebar-navigation-toggle-icon-line"></div>
-                <div class="exp-sidebar-navigation-toggle-icon-line"></div>
-                <div class="exp-sidebar-navigation-toggle-icon-line"></div>
-            </div>
-
-            <div class="exp-scroll-to-top-container">
-                <a href="#SettingupKeyWrapping-top" class="exp-scroll-to-top-link">↑ Back to top</a>
-            </div>
-
-        </div>
-
-
-
-<dialog class="exp-lightbox-container" aria-modal="true">
-    <div class="lightbox-toolbar">
-        <button type="button" class="exp-lightbox-close">
-            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 -960 960 960" aria-hidden="true">
-                <path fill="currentColor" d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+<nav id="ht-post-nav">
+        <a href="Setting_up_Android_Signing.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
             </svg>
-        </button>
-    </div>
-    <div class="lightbox-content content">
-    </div>
-</dialog>
+            <span>Setting up Android Signing</span>
+        </a>
 
-<template id="exp-lightbox-wrapper-template">
-    <div class="exp-lightbox-wrapper">
-        <div class="exp-lightbox-toggle">
-            <button type="button" class="exp-lightbox-close">
-                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 -960 960 960" aria-hidden="true">
-                    <path fill="currentColor" d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z" />
-                </svg>
-            </button>
+        <a href="Setting_up_One-time_Keys.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Setting up One-time Keys</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
         </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
     </div>
-</template>
+</div>
+        </main>
 
-        <script src="js/tocbot.min.js"></script>
-        <script src="js/article-toc.js"></script>
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
         <script src="js/app.js"></script>
-        <script src="js/mobile.js"></script>
-        <script src="js/iframe-resizer.parent.js"></script>
-
     </body>
-
 </html>

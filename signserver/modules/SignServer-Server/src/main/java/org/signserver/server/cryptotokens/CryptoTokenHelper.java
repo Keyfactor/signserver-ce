@@ -34,16 +34,7 @@ import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -81,6 +72,7 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
+import org.signserver.server.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
 import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_ALIAS;
@@ -137,7 +129,6 @@ public class CryptoTokenHelper {
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
-    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA"; // Legacy default
 
     public static final String PROPERTY_USE_CACHE = "USE_CACHE";
     public static final String DEFAULT_PROPERTY_USE_CACHE = "TRUE";
@@ -535,18 +526,15 @@ public class CryptoTokenHelper {
                 case "EdDSA":
                     alg = "Ed25519";
                     break;
-                case "ML-DSA-44":
-                    alg = "ML-DSA-44";
-                    break;
-                case "ML-DSA-65":
-                    alg = "ML-DSA-65";
-                    break;
-                case "ML-DSA-87":
-                    alg = "ML-DSA-87";
-                    break;
                 case "LMS":
                     alg = "LMS";
                     break;
+                default:
+                    if (key.getAlgorithm().toUpperCase(Locale.ENGLISH).startsWith("SLH-DSA")){
+                        alg = "SLH-DSA";
+                    } else if (key.getAlgorithm().toUpperCase(Locale.ENGLISH).startsWith("ML-DSA")){
+                        alg = "ML-DSA";
+                }
             }
             if (alg == null) {
                 if (key instanceof ECKey) {
@@ -925,7 +913,7 @@ public class CryptoTokenHelper {
 
         // Our default signature algorithm
         if (signatureAlgorithm == null) {
-            signatureAlgorithm = DEFAULT_SIGNATUREALGORITHM;
+            signatureAlgorithm = AlgorithmTools.getDefaultSignatureAlgorithm(keyPair.getPublic());
         }
 
         return getSelfCertificate(dn, DEFAULT_BACKDATE, validity, signatureAlgorithm, keyPair, provider);

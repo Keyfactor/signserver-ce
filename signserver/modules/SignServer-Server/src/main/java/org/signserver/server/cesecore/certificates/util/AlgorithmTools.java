@@ -30,15 +30,8 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -146,6 +139,7 @@ public abstract class AlgorithmTools {
 
     /** Signature algorithms supported by SLH-DSA keys */
     public static final List<String> SIG_ALGS_SLHDSA = Collections.unmodifiableList(Arrays.asList(
+            AlgorithmConstants.SIGALG_SLHDSA,
             AlgorithmConstants.SIGALG_SLHDSA_SHA2_128F,
             AlgorithmConstants.SIGALG_SLHDSA_SHA2_128S,
             AlgorithmConstants.SIGALG_SLHDSA_SHA2_192F,
@@ -185,6 +179,8 @@ public abstract class AlgorithmTools {
             }
         } else if (publickey instanceof MLDSAPublicKey) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_MLDSA;
+        } else if (publickey instanceof SLHDSAPublicKey) {
+            keyAlg = AlgorithmConstants.KEYALGORITHM_SLHDSA;
         } else if (publickey instanceof BCLMSPublicKey) {
             keyAlg = AlgorithmConstants.KEYALGORITHM_LMS;
         }
@@ -338,6 +334,41 @@ public abstract class AlgorithmTools {
             return SIG_ALGS_ECDSA;
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Gets the signature algorithm matching a specific key algorithm.
+     * @param publicKey to get matching signature algorithm for
+     * @return The signature algorithm matching the public key algorithm or
+     * the default if no matching was found.
+     */
+    public static String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
+        final String result;
+        if (publicKey == null) {
+            throw new IllegalArgumentException("Null public key. Unable to retrieve default signature algorithm.");
+        }
+        final String keyAlg = publicKey.getAlgorithm().toUpperCase(Locale.ENGLISH);
+        switch (keyAlg) {
+            case "EC":
+            case "ECDSA":
+                result = "SHA256withECDSA";
+                break;
+            case "ED25519":
+                result = "Ed25519";
+                break;
+            case "ED448":
+                result = "Ed448";
+                break;
+            default:
+                if (keyAlg.startsWith("SLH-DSA")) {
+                    result = "SLH-DSA";
+                } else if (keyAlg.startsWith("ML-DSA")) {
+                    result = "ML-DSA";
+                } else {
+                    result = "SHA256withRSA";
+                }
+            }
+        return result;
     }
 
     /**

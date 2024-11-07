@@ -208,7 +208,7 @@ public class CryptoTokenHelperTest extends TestCase {
 
         final KeyPair keyPair = kpg.generateKeyPair();
         Certificate[] chain = new Certificate[1];
-        chain[0] = CryptoTokenHelper.createDummyCertificate(KEYALIAS, "SHA1withRSA", keyPair, "BC");
+        chain[0] = CryptoTokenHelper.createDummyCertificate(KEYALIAS, "SHA256withRSA", keyPair, "BC");
 
         ks.setKeyEntry(KEYALIAS, keyPair.getPrivate(), null, chain);
         return ks;

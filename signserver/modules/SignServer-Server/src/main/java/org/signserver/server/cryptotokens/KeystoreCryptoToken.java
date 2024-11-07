@@ -420,6 +420,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             if (params != null) {
                 if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
                     CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BC");
+                } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
+                    CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BC");
                 } else {
                     CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, keystore.getProvider().getName());
                 }

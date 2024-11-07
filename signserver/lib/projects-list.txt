@@ -14,11 +14,10 @@
 "CESeCore";                   "LGPLv2.1+";                                     "https://www.cesecore.eu";                              "Core dependency used for audit logging, key management and similar operations.";  "Yes. Upgraded bouncycastle withing cesecore-common to 1.75 to comply with the deprecated .getObject() method";
 "Codehaus Woodstox";          "Apache 2.0, BSD, LGPLv2.1";                     "https://github.com/codehaus/woodstox";                 "Needed for client CLI webservices on Java 10+" ;  "No." ;
 "DNS Java";                   "BSD-2-Clause";                                  "https://github.com/dnsjava/dnsjava";                   "Implementation of DNS in Java" ;      "Yes, added support for HSM. Submitted to upstreams. See https://jira.primekey.se/browse/DSS-2046" ;
-"DNSSEC Java";                "Eclipse Public License";                        "https://github.com/ibauersachs/dnssecjava";            "A DNSSEC validating stub resolver for Java" ;  "No." ;
 "DSS";                        "LGPLv2.1+";                                     "https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/DSS";  "Dependency of the AdES signer";       "No." ;
 "EJBCA";                      "LGPLv2.1+";                                     "http://ejbca.org";                                     "Core dependency with utility classes used for tasks related to certificate handling etc.";  "Yes. Some unneeded functionality removed. Upstream not interested in the changes.";
+"Eclipse Foundation";         "Eclipse Distribution License";                  "https://projects.eclipse.org/projects/ee4j.angus";     "Dependency of CXF" "No." ;           ;
 "Eclipse Jetty";              "Eclipse Public License";                        "https://www.eclipse.org/jetty/";                       "Dependency of CXF";                   "No." ;
-"Eclipse Foundation"          "Eclipse Distribution License"                   "https://projects.eclipse.org/projects/ee4j.angus"      "Dependency of CXF"                    "No." ;
 "Geckodriver";                "MPL 2.0";                                       "https://hg.mozilla.org/mozilla-central/file/tip/testing/geckodriver";  "Dependency of Selenium.";             "No.";
 "Groovy";                     "Apache 2.0";                                    "https://groovy-lang.org/";                             "Dependency of the REST API";          "No";
 "Guava";                      "Apache 2.0;                                     "https://github.com/google/guava";                      "Dependency of XAdES4j.";              "No.;
@@ -29,12 +28,11 @@
 "JAXB";                       "CDDL + GPLv2 with classpath exception";         "https://github.com/javaee/jaxb-v2";                    "Needed for client CLI webservices on Java 10+";  "No." ;
 "JNA";                        "Apache 2.0";                                    "https://github.com/java-native-access/jna";            "Dependency of JackNJI11" ;            "No." ;
 "JUnit";                      "Eclipse Public License";                        "http://junit.org";                                     "Core dependency used for automated testing.";  "No.";
-"JackNJI11";                  "MIT";                                           "https://github.com/joelhockey/jacknji11/";             "Alternative PKCS#11 provider/wrapper implementation." ;  "All changes has been contributed to upstreams but last change has not been merged yet. Internal repo: GitLab:/signserver/vendor/joelhockey/jacknji11/-/tree/v1.2-pk3" ;
 "Jackson";                    "Apache 2.0";                                    "https://github.com/FasterXML/";                        "Dependency of Java JWT";              "No.";
 "Jakarta EE";                 "Eclipse Public License";                        "https://jakarta.ee";                                   "Core dependency";                     "No";
 "Java JWT";                   "Apache 2.0";                                    "https://java.jsonwebtoken.io";                         "Used by the JwtAuthorizer";           "No.";
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "No.";
-"Keyfactor Commons";          "Proprietary";	                               "None";                                                 "Internal";
+"Keyfactor Commons";          "Proprietary";                                   "None";                                                 "Internal";                            ;
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";
 "OpenLDAP";                   "OpenLDAP Public License";                       "http://www.openldap.org";                              "Dependency of CESeCore.";             "No.";
 "OpenPDF";                    "MPL or LGPLv2+";                                "https://github.com/LibrePDF/OpenPDF";                  "Used by PDFSigner. Dependency of DSS";  "No.";

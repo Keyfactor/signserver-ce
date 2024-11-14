@@ -56,7 +56,7 @@ public class AzureSignature extends SignatureSpi {
     /** the signature algorithm as named by the Azure Key Vault REST API, to be used for signing the hashed toBeSigned data */
     protected String azureSignAlg;
     /** data to be signed */
-    private ByteArrayOutputStream tbs;
+    private MessageDigest md;
 
     @Override
     protected void engineInitVerify(PublicKey publicKey) throws InvalidKeyException {
@@ -74,10 +74,16 @@ public class AzureSignature extends SignatureSpi {
 
     @Override
     protected void engineUpdate(byte[] b, int off, int len) throws SignatureException {
-        if (this.tbs == null) {
-            this.tbs = new ByteArrayOutputStream();
+        if (this.md == null) {
+            try {
+                md = MessageDigest.getInstance(hashAlg, BouncyCastleProvider.PROVIDER_NAME);
+            } catch (NoSuchAlgorithmException e) {
+                throw new SignatureException("Hash algorithm " + hashAlg + " can not be found in the BC provider: ", e);
+            } catch (NoSuchProviderException e) {
+                throw new SignatureException("BC provider not installed, fatal error: ", e);
+            }
         }
-        this.tbs.write(b, off, len);
+        this.md.update(b, off, len);
     }
 
     @Override
@@ -90,15 +96,7 @@ public class AzureSignature extends SignatureSpi {
             final HttpPost request = new HttpPost(privateKey.getKeyURI() + "/sign?api-version=2016-10-01");
             request.setHeader("Content-Type", "application/json");
             // Create hash value of the data to be signed
-            final byte[] signInput;
-            try {
-                final MessageDigest digest = MessageDigest.getInstance(hashAlg, BouncyCastleProvider.PROVIDER_NAME);
-                signInput = digest.digest(tbs.toByteArray());
-            } catch (NoSuchAlgorithmException e) {
-                throw new SignatureException("Hash algorithm " + hashAlg + " can not be found in the BC provider: ", e);
-            } catch (NoSuchProviderException e) {
-                throw new SignatureException("BC provider not installed, fatal error: ", e);
-            }
+            final byte[] signInput = md.digest();
             final HashMap<String, String> map = new HashMap<>();
             // Signature algorithms, https://docs.microsoft.com/en-us/rest/api/keyvault/keys/sign/sign#jsonwebkeysignaturealgorithm
             // Supported/tested

@@ -171,10 +171,10 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
             delegate.init(props, null, workerId);
             keystoreDelegator = new AzureKeyVaultKeyStoreDelegator(delegate);
 
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
-        } catch (NoSuchSlotException ex) {
+        } catch (com.keyfactor.util.keys.token.pkcs11.NoSuchSlotException ex) {
             LOG.error("Slot not found", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         }
@@ -203,7 +203,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                         }
                     }
                 }
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
+            } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
                 LOG.error("Error testing activation", ex);
             }
         }
@@ -216,10 +216,10 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         try {
             delegate.activate(authenticationcode.toCharArray());
             keystoreDelegator = new AzureKeyVaultKeyStoreDelegator(delegate);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Activate failed", ex);
             throw new CryptoTokenOfflineException(ex);
-        } catch (CryptoTokenAuthenticationFailedException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException ex) {
             
             final StringBuilder sb = new StringBuilder();
             sb.append("Activate failed");
@@ -242,7 +242,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     private PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
         try {
             return delegate.getPrivateKey(alias);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
@@ -261,7 +261,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         }
         try {
             return CryptoTokenHelper.genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoTokenV4.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException e) {
             LOG.error("Certificate request error: " + e.getMessage(), e);
             throw new CryptoTokenOfflineException(e);
         } catch (IllegalArgumentException ex) {
@@ -290,7 +290,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             delegate.generateKeyPair(keySpec, alias);
-        } catch (InvalidAlgorithmParameterException | org.cesecore.keys.token.CryptoTokenOfflineException  ex) {
+        } catch (InvalidAlgorithmParameterException | com.keyfactor.util.keys.token.CryptoTokenOfflineException  ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -321,7 +321,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 if (current >= keygenerationLimit) {
                     throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
                 }
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
                 LOG.error("Checking key generation limit failed", ex);
                 throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
             }
@@ -437,7 +437,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         try {
             final PrivateKey privateKey = getPrivateKey(alias);
             return new DefaultCryptoInstance(alias, context, Security.getProvider(delegate.getSignProviderName()), privateKey, delegate.getPublicKey(alias));
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }

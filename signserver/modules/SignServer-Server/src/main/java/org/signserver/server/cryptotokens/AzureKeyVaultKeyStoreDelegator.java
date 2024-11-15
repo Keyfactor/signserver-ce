@@ -63,7 +63,7 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
         try {
             delegate.deleteEntry(alias);
         } catch (NoSuchAlgorithmException | CertificateException | IOException |
-                 org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+                 com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new KeyStoreException("Failed to delete entry", ex);
         }
     }
@@ -72,7 +72,7 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
     public PublicKey getPublicKey(String keyAlias) throws KeyStoreException {
         try {
             return delegate.getPublicKey(keyAlias);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new KeyStoreException(ex);
         }
     }
@@ -81,7 +81,7 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
     public PrivateKey aquirePrivateKey(String alias, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CryptoTokenOfflineException {
         try {
             return delegate.getPrivateKey(alias);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
@@ -99,7 +99,7 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
                 tokenEntries.add(entry);
             }
             return tokenEntries;
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
@@ -134,7 +134,7 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
                                             services)));
 
 
-                } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+                } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException ex) {
                     info.put("Error", ex.getMessage());
                     LOG.error("Crypto token offline");
                 }

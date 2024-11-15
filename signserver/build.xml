@@ -198,7 +198,7 @@ Installation Guide for details.
         </jar>
 
         <!-- x509-common-util.jar -->
-        <property name="kfc-x509-common-util.jar" value="x509-common-util-4.1.4.jar"/>
+        <property name="kfc-x509-common-util.jar" value="x509-common-util-4.1.5.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${kfc-x509-common-util.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${kfc-x509-common-util.jar}">
             <zipfileset src="${tmp}/${kfc-x509-common-util.jar}" excludes="${kfc.x509.common.util.excludes}"/>

@@ -34,6 +34,7 @@
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "No.";
 "Keyfactor Commons";          "Proprietary";                                   "None";                                                 "Internal";                            ;
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";
+"Nimbus Jose";                "Apache 2.0";                                    "https://connect2id.com/products/nimbus-jose-jwt" ;     "Used by AzureKeyVaultCryptoToken" ;   "No." ;
 "OpenLDAP";                   "OpenLDAP Public License";                       "http://www.openldap.org";                              "Dependency of CESeCore.";             "No.";
 "OpenPDF";                    "MPL or LGPLv2+";                                "https://github.com/LibrePDF/OpenPDF";                  "Used by PDFSigner. Dependency of DSS";  "No.";
 "Quartz Scheduler";           "Apache 2.0";                                    "http://www.opensymphony.com";                          "Core dependency used for scheduling services executions." ;  "No.";

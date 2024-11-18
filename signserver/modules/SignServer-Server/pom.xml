@@ -23,11 +23,6 @@
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
         </exclusion>
-        <!-- DSS-2643: Workaround for PKCS11CryptoToken available in x509-common-util conflicing with the one from cesecore-common -->
-        <exclusion>
-          <groupId>com.keyfactor</groupId>
-          <artifactId>x509-common-util</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -98,6 +93,22 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.keyfactor</groupId>
+      <artifactId>x509-common-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.keyfactor</groupId>
+      <artifactId>cryptotokens-api</artifactId>
     </dependency>
   </dependencies>
 </project>

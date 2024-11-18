@@ -19,14 +19,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
+import java.security.Signature;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.TestCase.assertEquals;
@@ -92,6 +96,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
     private static final int WORKER_PDF = 20000;
     private static final int WORKER_TSA = 20001;
     private static final int WORKER_CMS = 20003;
+    private static final int WORKER_PLAIN = 20004;
     private static final int WORKER_MSA = 20007;
 
     private static final String MSAUTHCODE_REQUEST_DATA =
@@ -344,6 +349,20 @@ public class AzureKeyVaultCryptoTokenSignTest {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
+        workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, AzureKeyVaultCryptoToken.class.getName());
+        workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerAzure");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "KEY_VAULT_NAME", keyVaultName);
+        workerSession.setWorkerProperty(workerId, "KEY_VAULT_CLIENT_ID", keyVaultClientId);
+        workerSession.setWorkerProperty(workerId, "KEY_VAULT_TYPE", keyVaultType);
+        workerSession.setWorkerProperty(workerId, "PIN", pin);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+    }
+
+    private void setPlainSignerProperties(final int workerId) {
+        // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.PlainSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, AzureKeyVaultCryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerAzure");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
@@ -744,4 +763,86 @@ public class AzureKeyVaultCryptoTokenSignTest {
         LOG.info("testSign_SHA512withRSA_AzureKeyVaultCryptoToken");
         testSigningWithProvidedSigAlgo("SHA512withRSA");
     }
+
+    /**
+     * Tests setting up a PlainSigner, giving it a certificate and sign a file.
+     */
+    @Test
+    public void testPlainSigner() throws Exception {
+        LOG.info("testPlainSigner");
+        final int workerId = WORKER_PLAIN;
+        try {
+            setPlainSignerProperties(workerId);
+            workerSession.reloadConfiguration(workerId);
+            plainSignerPrepare();
+            plainSignerAssertSignAndVerify("Sample data".getBytes(StandardCharsets.UTF_8));
+        } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+
+    /**
+     * Tests PlainSigner with different lengths around 4096 and well above.
+     */
+    @Test
+    public void testPlainSigner_variousLengths() throws Exception {
+        LOG.info("testPlainSigner_variousLengths");
+        final int workerId = WORKER_PLAIN;
+        try {
+            setPlainSignerProperties(workerId);
+            workerSession.reloadConfiguration(workerId);
+            plainSignerPrepare();
+
+            final Random rand = new Random(123);
+
+            byte[] data = new byte[4095];
+            rand.nextBytes(data);
+            plainSignerAssertSignAndVerify(data);
+
+            data = new byte[4096];
+            rand.nextBytes(data);
+            plainSignerAssertSignAndVerify(data);
+
+            data = new byte[4097];
+            rand.nextBytes(data);
+            plainSignerAssertSignAndVerify(data);
+
+            data = new byte[50001];
+            rand.nextBytes(data);
+            plainSignerAssertSignAndVerify(data);
+        } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+
+    private void plainSignerPrepare() throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA256WithRSA", "CN=Worker" + WORKER_PLAIN, null);
+        AbstractCertReqData reqData = (AbstractCertReqData) testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_PLAIN), certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestAzure Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(WORKER_PLAIN, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(WORKER_PLAIN, Collections.singletonList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(WORKER_PLAIN);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(new WorkerIdentifier(WORKER_PLAIN)).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+    }
+
+    private void plainSignerAssertSignAndVerify(byte[] document) throws Exception {
+        // Test signing
+        var response = testCase.signGenericDocument(WORKER_PLAIN, document);
+        byte[] signatureBytes = response.getProcessedData();
+        Signature signature = Signature.getInstance("SHA256WithRSA", "BC");
+        signature.initVerify(response.getSignerCertificate());
+        signature.update(document);
+        assertTrue("valid signature for signature of " + document.length + " bytes", signature.verify(signatureBytes));
+    }
+
 }

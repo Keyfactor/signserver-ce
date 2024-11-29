@@ -23,6 +23,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import jakarta.persistence.EntityManager;
+import java.security.Provider;
+import java.security.Security;
+import java.util.stream.Collectors;
 import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +41,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.signers.BaseSigner;
 import org.apache.log4j.Logger;
+import org.apache.xml.security.algorithms.JCEMapper;
 import org.apache.xml.security.algorithms.MessageDigestAlgorithm;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -321,7 +325,10 @@ public class XAdESSigner extends BaseSigner {
         if (claimedRoleFromUsername && claimedRoleDefault == null && username == null) {
             throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
         }
-        
+
+        // Reset global provider name that is set by SD-DSS in XAdESSignature.java
+        JCEMapper.setProviderId(null);
+
         final WritableData responseData = sReq.getResponseData();
         final ReadableData requestData = sReq.getRequestData();
         Certificate cert = null;

@@ -38,6 +38,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.signers.BaseSigner;
 import org.apache.log4j.Logger;
+import org.apache.xml.security.algorithms.JCEMapper;
 import org.apache.xml.security.algorithms.MessageDigestAlgorithm;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -321,7 +322,17 @@ public class XAdESSigner extends BaseSigner {
         if (claimedRoleFromUsername && claimedRoleDefault == null && username == null) {
             throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
         }
-        
+
+        // DSS-2874: Reset global provider name that is set by SD-DSS in the XAdESSignature class 
+        // as this otherwise causes xmlsec to always use this provider even for other provider's 
+        // private keys as it passes this provider as argument to Signature.getInstance(alg, provider) etc.
+        // This together with that XAdES4j does not support passing the provider we want to use as an argument
+        // makes us do this.
+        // XXX: This is setting a static field without synchronization which is not by the book but we are
+        // only interested in preventing the current thread from using an other provider name so unless this
+        // somehow breaks for instance for a concurrent use of the AdESSigner it could be okey.
+        JCEMapper.setProviderId(null);
+
         final WritableData responseData = sReq.getResponseData();
         final ReadableData requestData = sReq.getRequestData();
         Certificate cert = null;

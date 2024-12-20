@@ -65,6 +65,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
@@ -286,13 +287,17 @@ public class AzureCryptoToken extends BaseCryptoToken {
     @Override
     public void init(final Properties properties, final byte[] data, final int id) throws NoSuchSlotException, CryptoTokenOfflineException {
         // Create HttpClients to connect to Azure Key Vault, and Azure OAuth service (for authorization token)
-        final HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         final RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(10000) // 10 seconds between packets makes the HSM unusable
                 .setConnectTimeout(10000) // we should not wait more than 10 seconds for a single operation, since we hash locally even signing a CRL should be fast from the HSM side
                 .setConnectionRequestTimeout(10000) // getting a connection should not take more than 10 seconds
                 .build();
-        clientBuilder.setDefaultRequestConfig(requestConfig);
+        final HttpClientBuilder clientBuilder = HttpClients.custom()
+                .setConnectionTimeToLive(30, java.util.concurrent.TimeUnit.SECONDS)
+                .setDefaultRequestConfig(requestConfig)
+                // We are heavy users of multi threading, this sets 50 parallel connection per IP
+                .setMaxConnPerRoute(50)
+                .setMaxConnTotal(100);
         httpClient = clientBuilder.build();
         authHttpClient = clientBuilder.build();
 

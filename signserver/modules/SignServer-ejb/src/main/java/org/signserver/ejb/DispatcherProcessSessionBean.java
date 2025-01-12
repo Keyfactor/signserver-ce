@@ -139,7 +139,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
+        if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
             // use separate transaction bean to avoid deadlock
             return dispatcherProcessTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {

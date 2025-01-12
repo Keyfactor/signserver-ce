@@ -279,4 +279,11 @@ public interface ICryptoTokenV4 {
      * @return True or false
      */
     boolean isNoCertificatesRequired();
+
+    /**
+     * If worker requires a database transaction for signing operation.
+     *
+     * @return True or false
+     */
+    boolean requiresTransactionForSigning();
 }

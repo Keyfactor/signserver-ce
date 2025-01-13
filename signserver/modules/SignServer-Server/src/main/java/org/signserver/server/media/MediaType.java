@@ -30,4 +30,9 @@ public class MediaType {
      */
     public static final String APPLICATION_XML = "application/xml";
 
+    /**
+     * Constant media type for application/pkcs7-signature.
+     */
+    public static final String APPLICATION_PKCS7_SIGNATURE = "application/pkcs7-signature";
+
 }

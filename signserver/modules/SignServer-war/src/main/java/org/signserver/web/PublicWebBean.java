@@ -145,7 +145,7 @@ public class PublicWebBean {
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2024 Keyfactor";
+        return "Copyright © 2006–2025 Keyfactor";
     }
 
     public String getNode() {

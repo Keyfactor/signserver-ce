@@ -228,6 +228,7 @@ public class PlainSigner extends BaseSigner {
         }
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
+        Throwable firstNoSuchAlgorithmException = null;
         ICryptoInstance crypto = null;
         try (OutputStream out = responseData.getAsInMemoryOutputStream()) {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
@@ -252,9 +253,20 @@ public class PlainSigner extends BaseSigner {
 
             if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
                 String clientSideHashAlgorithm = clientSideHelper.getClientSideHashAlgorithmName(requestContext);
-
-                // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
-                final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
+                Signature signature;
+                try {
+                    // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
+                    signature = Signature.getInstance(sigAlg, crypto.getProvider());
+                } catch (NoSuchAlgorithmException ex) {
+                    firstNoSuchAlgorithmException = ex;
+                    // Fortanix HSM requires digest algorithm in the signing request even if it is client side hash (NONEwith)
+                    try {
+                        signature = Signature.getInstance(sigAlg + "/" + clientSideHashAlgorithm, crypto.getProvider());
+                    } catch (NoSuchAlgorithmException secondNoSuchAlgorithmException) {
+                        secondNoSuchAlgorithmException.addSuppressed(firstNoSuchAlgorithmException);
+                        throw new NoSuchAlgorithmException(secondNoSuchAlgorithmException);
+                    }
+                }
 
                 final byte[] data = requestData.getAsByteArray();
                 final byte[] dataToSign;

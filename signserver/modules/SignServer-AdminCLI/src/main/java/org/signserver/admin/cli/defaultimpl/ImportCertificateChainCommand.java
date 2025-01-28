@@ -15,7 +15,10 @@ package org.signserver.admin.cli.defaultimpl;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -34,6 +37,9 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
     
     private static final String DONE = "Imported the following signer certificates  : \n";
     private static final String FAIL = "Invalid PEM file, couldn't find any certificate";
+    private static final String DUPLICATE = "Duplicate certificates was found in the certificate chain. Only the first instance of a discovered duplicate will be imported.";
+    public static final String INDENT1 = "          ";
+    public static final String INDENT2 = "   ";
 
     @Override
     public String getDescription() {
@@ -69,6 +75,8 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
                 throw new IllegalCommandArgumentsException(FAIL);
             }
 
+            Set<Certificate> certChainSet = new HashSet<>();
+
             final ArrayList<byte[]> bcerts = new ArrayList<>();
             for (final Certificate cert : certs) {
                 bcerts.add(cert.getEncoded());
@@ -76,14 +84,20 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
 
             getWorkerSession().importCertificateChain(wi, bcerts, alias,
                     authCode != null ? authCode.toCharArray() : null);
-            
+
             this.getOutputStream().println(DONE);
-            
-            // print out certificate chain
-            for (final Certificate cert : certs) {
+
+             for (final Certificate cert : certs) {
+                 if (!certChainSet.add(cert)) {
+                     this.getOutputStream().println(INDENT1 + INDENT2 + "The certificate below is a DUPLICATE and was not imported.");
+                 }
                 WorkerStatus.printCert((X509Certificate) cert, getOutputStream());
-                this.getOutputStream().println("\n");
-            }   
+                this.getOutputStream().print("\n");
+            }
+
+            if (certChainSet.size() < certs.size()) {
+                this.getOutputStream().println(DUPLICATE);
+            }
             
             return 0;
         } catch (OperationUnsupportedException e) {

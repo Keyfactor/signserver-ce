@@ -789,7 +789,8 @@ public class CryptoTokenHelper {
     public static void ensureNewPublicKeyMatchesOld(KeyStoreDelegator keyStore, String alias, Certificate newCertificate) throws KeyStoreException, CryptoTokenOfflineException {
         PublicKey oldPublicKey = keyStore.getPublicKey(alias);
         if (!oldPublicKey.equals(newCertificate.getPublicKey())) {
-            throw new CryptoTokenOfflineException("New certificate public key does not match current one");
+            X509Certificate newCert = (X509Certificate) newCertificate;
+            throw new CryptoTokenOfflineException("New certificate public key does not match current one. Please remove " + newCert.getSubjectX500Principal() + " from the imported certificates.");
         }
     }
     

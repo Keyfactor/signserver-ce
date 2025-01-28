@@ -21,10 +21,12 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJB;
@@ -220,12 +222,20 @@ public class ImportCertificatesBean extends BulkBean {
             return result;
         }
 
+        public void checkDuplicateCertificatesInChain() {
+            Set<Certificate> certChainSet = new HashSet<>(certificates);
+            if (certChainSet.size() < certificates.size()) {
+                errorMessage = "A duplicated certificate has been found in the added certificate chain. Only the first instance of a discovered duplicate will be imported.";
+            }
+        }
+
         public void uploadAction() {
             try {
                 List<Certificate> certsFromPEM = CertTools.getCertsFromPEM(new ByteArrayInputStream(certificateChain.getBytes(StandardCharsets.US_ASCII)));
                 certificates.addAll(certsFromPEM);
                 certificateChain = ""; // Clear text area
                 errorMessage = "";
+                checkDuplicateCertificatesInChain();
             } catch (CertificateParsingException ex) {
                 errorMessage = ex.getMessage();
             }
@@ -234,8 +244,9 @@ public class ImportCertificatesBean extends BulkBean {
         public void removeCertificateAction(CertificateItem item) {
             certificates.remove(item.getCertificate());
             errorMessage = "";
+            checkDuplicateCertificatesInChain();
         }
-        
+
         public static class CertificateItem {
             private final String name;
             private final X509Certificate certificate;

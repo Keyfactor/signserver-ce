@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2024-11-07T13:05:29.738+0000">
+    <meta name="exp-export-timestamp" content="2025-02-07T07:00:42.539+0000">
     <meta name="exp-page-id" content="371000314">
     <meta name="exp-page-title" content="CESeCore Security Events Logger">
-    <meta name="exp-page-version" content="2">
+    <meta name="exp-page-version" content="3">
     <meta name="exp-page-scroll-page-id" content="9de176a293f3060074051543cdd52f40">
     <meta name="exp-page-created" content="2023-02-28T12:26:18.000+0000">
-    <meta name="exp-page-last-modified" content="2024-04-04T09:06:18.542+0000">
+    <meta name="exp-page-last-modified" content="2024-12-11T10:46:19.052+0000">
     <meta name="exp-page-labels" content="code,signserveree">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -155,7 +155,7 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-5d381eb524e3e990a35400bd73c597ca16f2a0ee4adcba7f08473b71956f4c42"><span class="js-hide-until-loaded">CESeCore Security Events Logger</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-74258d2778d158fb5c7ef28e897c6c742db09baf5a497a521e70ae7e971b3dbd"><span class="js-hide-until-loaded">CESeCore Security Events Logger</span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
@@ -177,13 +177,35 @@
 </div><br clear="none"><div class="source"><h3 class="prettyprint scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading" id="CESeCoreSecurityEventsLogger-PKCS#11ExampleusingP11NGProvider" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3">PKCS#11 Example using P11NG Provider</h3><p>It is recommended to use the same type of PKCS#11 provider for database protection as the other signers are also using. If the signers are using the <a href="P11NGCryptoToken.html" data-linked-resource-id="371000135" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000135" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000135/P11NGCryptoToken" data-scroll-link-target-source-id="371000135">P11NGCryptoToken</a> the below crypto token called <span style="color: rgb(0,0,0);">org.signserver.p11ng.common.cryptotoken.P11NGDatabaseProtectionCryptoToken</span> should be used:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">databaseprotection.keyid = 400</code></div>
 <div class="line"><code class="plain">databaseprotection.keyid.0 = 400</code></div>
-<div class="line"><code class="plain">databaseprotection.keylabel.0 = testkey0</code></div>
+<div class="line"><code class="plain">databaseprotection.keylabel.0 = dbProtKey</code></div>
 <div class="line"><code class="plain">databaseprotection.classname.0 = org.signserver.p11ng.common.cryptotoken.P11NGDatabaseProtectionCryptoToken</code></div>
 <div class="line"><code class="plain">databaseprotection.properties.0 = SHAREDLIBRARYNAME=Utimaco, SLOTLABELTYPE=SLOT_NUMBER, SLOTLABELVALUE=1, pin=userpin1</code></div>
 <div class="line"><code class="plain">databaseprotection.data.0 =</code></div>
 <div class="line"><code class="plain">databaseprotection.tokenpin.0 = userpin1</code></div>
 <div class="line"><code class="plain">databaseprotection.version.0 = 2</code></div>
 <div class="line"><code class="plain">databaseprotection.sigalg.2 = SHA256WithRSA</code></div>
+</div>
+</div><h3 class="prettyprint scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading" id="CESeCoreSecurityEventsLogger-RESTHSMExampleusingFortanixCryptoToken" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3">REST HSM Example using Fortanix Crypto Token</h3><p>To enable database protection using Fortanix REST API, the api token must be provided in the databaseprotection.properties file. </p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">databaseprotection.keyid = 400</code></div>
+<div class="line"><code class="plain">databaseprotection.keyid.0 = 400</code></div>
+<div class="line"><code class="plain">databaseprotection.keylabel.0 = dbProtKey</code></div>
+<div class="line"><code class="plain">databaseprotection.classname.0 = org.signserver.server.enterprise.cryptotokens.CryptoTokenAdapter</code></div>
+<div class="line"><code class="plain">databaseprotection.properties.0 = implementationClass=org.ejbca.keys.token.FortanixCryptoToken, fortanixBaseAddress=</code><code class="comments">https://apps.smartkey.io</code></div>
+<div class="line"><code class="plain">databaseprotection.tokenpin.0 = api-token</code></div>
+<div class="line"><code class="plain">databaseprotection.data.0 =</code></div>
+<div class="line"><code class="plain">databaseprotection.version.0 = 2</code></div>
+<div class="line"><code class="plain">databaseprotection.sigalg.0 = SHA256WithRSA</code></div>
+</div>
+</div><h3 class="prettyprint scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading" id="CESeCoreSecurityEventsLogger-RESTHSMExampleusingAzureKeyVault" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3">REST HSM Example using Azure Key Vault</h3><p>To enable database protection using Azure Key Vault REST API, the name of the key vault, a client id, vault type (standard or premium), and secret must be provided in the databaseprotection.properties file.</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">databaseprotection.keyid = </code><code class="value">400</code></div>
+<div class="line"><code class="plain">databaseprotection.keyid.</code><code class="value">0</code><code class="plain"> = </code><code class="value">400</code></div>
+<div class="line"><code class="plain">databaseprotection.keylabel.</code><code class="value">0</code><code class="plain"> = dbProtKey</code></div>
+<div class="line"><code class="plain">databaseprotection.classname.</code><code class="value">0</code><code class="plain"> = org.signserver.server.enterprise.cryptotokens.CryptoTokenAdapter</code></div>
+<div class="line"><code class="plain">databaseprotection.properties.</code><code class="value">0</code><code class="plain"> = implementationClass=org.cesecore.keys.token.AzureCryptoToken, keyVaultName=vault-name, keyVaultClientID=client-id, keyVaultType=standard/premium</code></div>
+<div class="line"><code class="plain">databaseprotection.tokenpin.</code><code class="value">0</code><code class="plain"> = secret</code></div>
+<div class="line"><code class="plain">databaseprotection.data.</code><code class="value">0</code><code class="plain"> =</code></div>
+<div class="line"><code class="plain">databaseprotection.version.</code><code class="value">0</code><code class="plain"> = </code><code class="value">2</code></div>
+<div class="line"><code class="plain">databaseprotection.sigalg.</code><code class="value">0</code><code class="plain"> = SHA256WithRSA</code></div>
 </div>
 </div></div><h2 id="CESeCoreSecurityEventsLogger-AuditRecordDatatableAuditRecordData_table" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">AuditRecordData table<span class="confluence-anchor-link" id="CESeCoreSecurityEventsLogger-AuditRecordData_table"></span><span class="confluence-anchor-link" id="AuditRecordData_table"></span></h2></div><div class="section"><p>The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.</p><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"><col span="1"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><div class="tablesorter-header-inner">Friendly Name</div></th><th colspan="1" rowspan="1" class="confluenceTh"><div class="tablesorter-header-inner">Table Name</div></th><th colspan="1" rowspan="1" class="confluenceTh"><div class="tablesorter-header-inner">Description</div></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>Time</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>timeStamp</p></td><td colspan="1" rowspan="1" class="confluenceTd"><div class="content-wrapper"><p>Time stamp (number of milliseconds since January 1, 1970, 00:00:00 GMT).</p><p>Example:</p><div><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">1359550503607</code></div>

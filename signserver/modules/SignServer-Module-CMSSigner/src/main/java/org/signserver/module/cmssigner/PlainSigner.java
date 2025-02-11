@@ -167,6 +167,23 @@ public class PlainSigner extends BaseSigner {
         clientSideHelper.init(config, configErrors);
     }
 
+    /**
+     * Get signature algorithm to use for signing.
+     *
+     * @param requestContext
+     * @param signerCert
+     * @return signature algorithm to use when signing
+     */
+    protected String getSignatureAlgorithm(final RequestContext requestContext,
+                                           final Certificate signerCert) {
+        final String sigAlg =
+                signatureAlgorithm == null ?
+                AlgorithmTools.getDefaultSignatureAlgorithm(signerCert.getPublicKey()) :
+                signatureAlgorithm;
+
+        return sigAlg;
+    }
+    
     @Override
     public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
@@ -246,7 +263,7 @@ public class PlainSigner extends BaseSigner {
             // Private key
             final PrivateKey privKey = crypto.getPrivateKey();
 
-            final String sigAlg = signatureAlgorithm == null ? AlgorithmTools.getDefaultSignatureAlgorithm(cert.getPublicKey()) : signatureAlgorithm;
+            final String sigAlg = getSignatureAlgorithm(requestContext, cert);
             final String sigAlgUpperCase = sigAlg.toUpperCase(Locale.ENGLISH);
             final byte[] signedbytes;
 

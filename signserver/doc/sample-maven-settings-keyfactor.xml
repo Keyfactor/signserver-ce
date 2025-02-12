@@ -1,29 +1,32 @@
 <!-- 
     Sample of a local Maven settings file overriding the default URLs of Maven
-    central to use the PrimeKey internal repository.
+    Central to use the Keyfactor's internal repository.
     
-    Community/non-PrimeKey: Instead use sample-maven-settings-community.xml
+    Community/non-Keyfactor: Instead use sample-maven-settings-community.xml
     
     Copy to ~/.m2/settings.xml or edit your existing file if you have one.
     
     The current settings can be seen by running:
     $ mvn help:effective-settings
-
-    Version:
-    $Id$
 -->
 
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                           http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <server>
+            <username>firstname.lastname@keyfactor.com</username>
+            <password>your access token</password>
+            <id>keyfactor</id>
+        </server>
+    </servers>
     <mirrors>
-	<!-- PrimeKey Developers: Use PrimeKey Internal Repository for everything -->
         <mirror>
-            <id>art-proxy-signserver</id>
-            <name>Art proxy for SignServer</name>
+            <id>keyfactor</id>
+            <name>Keyfactor</name>
             <mirrorOf>*</mirrorOf>
-            <url>https://art.primekey.com/artifactory/proxy-maven-virtual-signserver/</url>
+            <url>https://keyfactor.jfrog.io/artifactory/dev-maven</url>
         </mirror>
     </mirrors>
 </settings>

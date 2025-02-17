@@ -206,6 +206,8 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                                 ut.begin();
                                 timedService.work(new ServiceContext(servicesImpl));
                                 ut.commit();
+                            } else {
+                                timedService.work(new ServiceContext(servicesImpl));
                             }
 
                             serviceConfig.setLastRunTimestamp(new Date());

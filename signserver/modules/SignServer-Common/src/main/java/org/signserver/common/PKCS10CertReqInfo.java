@@ -13,6 +13,7 @@
 package org.signserver.common;
 
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.x500.X500Name;
 
 /**
  * Class containing information needed to for a signer to create
@@ -28,6 +29,7 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
     private String signatureAlgorithm;
     private String subjectDN;
     private ASN1Set attributes;
+    private X500Name subjectDNObject;
 
     /** No-arg constructor used by JAXB. **/
     public PKCS10CertReqInfo() {
@@ -42,6 +44,18 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
         super();
         this.signatureAlgorithm = signatureAlgorithm;
         this.subjectDN = subjectDN;
+        this.attributes = attributes;
+    }
+
+    /**
+     * @param signatureAlgorithm used to sign the PKCS10
+     * @param subjectDNObject used in the request
+     * @param attributes might be null
+     */
+    public PKCS10CertReqInfo(String signatureAlgorithm, X500Name subjectDNObject, ASN1Set attributes) {
+        super();
+        this.signatureAlgorithm = signatureAlgorithm;
+        this.subjectDNObject = subjectDNObject;
         this.attributes = attributes;
     }
 
@@ -78,5 +92,13 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
 
     public void setSubjectDN(String subjectDN) {
         this.subjectDN = subjectDN;
+    }
+
+    public X500Name getSubjectDNObject() {
+        return subjectDNObject;
+    }
+
+    public void setSubjectDNObject(X500Name subjectDNObject) {
+        this.subjectDNObject = subjectDNObject;
     }
 }

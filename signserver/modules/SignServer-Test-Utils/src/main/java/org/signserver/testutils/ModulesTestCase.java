@@ -951,7 +951,7 @@ public class ModulesTestCase {
         LOG.info("Got current config after: " + config);
     }
 
-    public File getSignServerHome() throws FileNotFoundException {
+    public static File getSignServerHome() throws FileNotFoundException {
         if (signServerHome == null) {
             signServerHome = PathUtil.getAppHome();
         }

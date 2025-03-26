@@ -181,7 +181,7 @@ public class AdminAuthHelper {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Checking authorization for: SN: " +
                     cert.getSerialNumber().toString(16) +
-                    " issuer: " + cert.getIssuerDN() + " agains admin set: " +
+                    " issuer: " + cert.getIssuerDN() + " against admin set: " +
                     authSet);
         }
 

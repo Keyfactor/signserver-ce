@@ -15,7 +15,7 @@ XCU_VERSION=5.2.3
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-${XCU_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-${XCU_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar -Dclassifier=sources
 
-CRYPTOTOKENS_VERSION=2.4.2
+CRYPTOTOKENS_VERSION=2.4.4
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/cryptotokens-api-${CRYPTOTOKENS_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=cryptotokens-api -Dversion=${CRYPTOTOKENS_VERSION} -Dpackaging=jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/cryptotokens-api-${CRYPTOTOKENS_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=cryptotokens-api -Dversion=${CRYPTOTOKENS_VERSION} -Dpackaging=jar -Dclassifier=sources
 

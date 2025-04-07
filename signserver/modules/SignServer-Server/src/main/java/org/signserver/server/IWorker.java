@@ -70,9 +70,13 @@ public interface IWorker {
     WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services);
 
     /**
-     * If worker requires a database transaction when using this crypto token.
+     * If the worker implementation requires a database transaction it can signal that by
+     * overriding and returning true from this method.
      *
-     * @return True or false
+     * @param services services for the implementations to use
+     * @return true if the worker implementation requires a transaction
      */
-    boolean requiresTransaction(final IServices services);
+    default boolean requiresTransaction(final IServices services) {
+        return false;
+    }
 }

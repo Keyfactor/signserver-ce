@@ -14,7 +14,6 @@ package org.signserver.server.timedservices;
 
 import java.util.Set;
 import org.signserver.common.ServiceContext;
-import org.signserver.server.IServices;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 
@@ -63,12 +62,7 @@ public interface ITimedService extends IWorker {
      * the time, of false if it should be run on all nodes simultaneously.
      */
     boolean isSingleton();
-
-    /**
-     * @return true if the service requires a transaction to be executed successfully
-     */
-    boolean requiresTransaction(final IServices services);
-
+    
     /**
      * Get log types for logging work invocations.
      * 

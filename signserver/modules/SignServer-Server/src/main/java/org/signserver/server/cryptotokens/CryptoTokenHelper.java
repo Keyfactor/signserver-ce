@@ -533,8 +533,10 @@ public class CryptoTokenHelper {
                     if (key.getAlgorithm().toUpperCase(Locale.ENGLISH).startsWith("SLH-DSA")){
                         alg = "SLH-DSA";
                     } else if (key.getAlgorithm().toUpperCase(Locale.ENGLISH).startsWith("ML-DSA")){
-                        alg = "ML-DSA";
-                }
+                        alg = key.getAlgorithm().toUpperCase(Locale.ENGLISH); //"ML-DSA-44";
+                    } else if (key.getAlgorithm().toUpperCase(Locale.ENGLISH).startsWith("MLDSA")) {
+                        alg = "ML-DSA-44";
+                    }
             }
             if (alg == null) {
                 if (key instanceof ECKey) {

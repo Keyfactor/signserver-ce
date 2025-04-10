@@ -68,4 +68,15 @@ public interface IWorker {
      * @return a WorkerStatus object.
      */
     WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services);
+
+    /**
+     * If the worker implementation requires a database transaction it can signal that by
+     * overriding and returning true from this method.
+     *
+     * @param services services for the implementations to use
+     * @return true if the worker implementation requires a transaction
+     */
+    default boolean requiresTransaction(final IServices services) {
+        return false;
+    }
 }

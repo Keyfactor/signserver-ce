@@ -279,4 +279,14 @@ public interface ICryptoTokenV4 {
      * @return True or false
      */
     boolean isNoCertificatesRequired();
+
+    /**
+     * If the crypto token implementation requires a database transaction it can signal
+     * that by overriding and returning true from this method.
+     *
+     * @return true if the implementation requires a transaction
+     */
+    default boolean requiresTransactionForSigning() {
+        return false;
+    }
 }

@@ -27,4 +27,9 @@ public abstract class BaseCryptoToken implements ICryptoTokenV4 {
         return false;
     }
 
+    @Override
+    public boolean requiresTransactionForSigning() {
+        return false;
+    }
+
 }

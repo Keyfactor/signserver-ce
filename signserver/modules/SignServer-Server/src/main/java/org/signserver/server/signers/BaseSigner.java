@@ -234,6 +234,19 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                                     completeEntries, config);
     }
 
+    public boolean requiresTransaction(final IServices services) {
+        try {
+            ICryptoTokenV4 cryptoToken = super.getCryptoToken(services);
+            if (cryptoToken == null) {
+                return false;
+            }
+            return cryptoToken.requiresTransactionForSigning();
+        } catch (Exception e) {
+            LOG.warn("Unable to determine whether a worker requires a transaction. Defaulting to False.", e);
+            return false;
+        }
+    }
+
     @Override
     protected List<String> getFatalErrors(IServices services) {
         final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));

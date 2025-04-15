@@ -32,6 +32,9 @@
 #dbcli.database.password=
 #dbcli.database.password=foo123
 
+# Use PKCS11CryptoToken backed by P11NG
+dbcli.databaseprotection.usep11ngasp11=false
+
 # Masked worker properties, whose value will not be
 # echoed by the signserver setproperties command
 #admincli.maskedworkerproperties=PIN,KEYSTOREPASSWORD,KEYDATA

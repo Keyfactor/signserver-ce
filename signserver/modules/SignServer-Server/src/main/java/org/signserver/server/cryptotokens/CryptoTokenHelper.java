@@ -196,20 +196,20 @@ public class CryptoTokenHelper {
         }
         prop = props.getProperty(PROPERTY_SLOTLABELVALUE);
         if (prop != null) {
-            props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
+            props.setProperty(org.cesecore.keys.token.LegacyPKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
         }
         prop = props.getProperty(PROPERTY_SLOT);
         if (prop != null) {
             props.setProperty("slot", prop);
             props.setProperty(PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_NUMBER.getKey());
-            props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
+            props.setProperty(org.cesecore.keys.token.LegacyPKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
             props.setProperty(PROPERTY_SLOTLABELVALUE, prop);
         }
         prop = props.getProperty(PROPERTY_SLOTLISTINDEX);
         if (prop != null) {
             props.setProperty("slotListIndex", prop);
             props.setProperty(PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_INDEX.getKey());
-            props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
+            props.setProperty(org.cesecore.keys.token.LegacyPKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
             props.setProperty(PROPERTY_SLOTLABELVALUE, prop);
         }
         prop = props.getProperty(PROPERTY_ATTRIBUTESFILE);
@@ -222,7 +222,7 @@ public class CryptoTokenHelper {
         }
         prop = props.getProperty(PROPERTY_SLOTLABELTYPE);
         if (prop != null) {
-            props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_TYPE, prop);
+            props.setProperty(org.cesecore.keys.token.LegacyPKCS11CryptoToken.SLOT_LABEL_TYPE, prop);
         }
         return props;
     }

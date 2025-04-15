@@ -413,6 +413,8 @@ public class BaseProcessableTest extends TestCase {
      * SHAREDLIBRARY property, a configuration error mentioning missing
      * SHAREDLIBRARYNAME is given (as that is the preferred one to use now).
      * 
+     * This tests LegacyPKCS11CryptoToken.
+     *
      * @throws Exception 
      */
     @Test
@@ -423,7 +425,7 @@ public class BaseProcessableTest extends TestCase {
 
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
         workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, 
-                "org.signserver.server.cryptotokens.PKCS11CryptoToken");
+                "org.signserver.server.cryptotokens.LegacyPKCS11CryptoToken");
         workerConfig.setProperty("NAME", "TestSigner100");
         
         TestSigner instance = new TestSigner(globalConfig);
@@ -441,7 +443,7 @@ public class BaseProcessableTest extends TestCase {
             }
         }
 
-        assertTrue("Should contain error", foundError);
+        assertTrue("Should contain error: " + fatalErrors, foundError);
     }
     
     /**

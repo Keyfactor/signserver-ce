@@ -463,7 +463,14 @@ public class CryptoTokenHelper {
                 }
 
                 // Generate request
-                final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(CertTools.stringToBcX500Name(reqInfo.getSubjectDN()), publicKey);
+                final JcaPKCS10CertificationRequestBuilder builder;
+
+                // We should always prioritize PKCS10CertReqInfo objects using X500Name
+                if (reqInfo.getSubjectDNObject() != null) {
+                    builder = new JcaPKCS10CertificationRequestBuilder(reqInfo.getSubjectDNObject(), publicKey);
+                } else {
+                    builder = new JcaPKCS10CertificationRequestBuilder(CertTools.stringToBcX500Name(reqInfo.getSubjectDN()), publicKey);
+                }
                 final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
                 pkcs10 = builder.build(contentSigner);
                 retval = new Pkcs10CertReqData(pkcs10);

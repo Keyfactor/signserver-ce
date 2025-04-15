@@ -176,6 +176,13 @@ public class RequestContext implements Serializable {
             "DISPATCHER_AUTHORIZED_CLIENT";
 
     /**
+     * A request context property that states if a REST call is made from the
+     * Managed REST API or not. This is primarily used for the ManagedAuthoprizer.
+     */
+    public static final String CALLED_FROM_MANAGED_REST =
+            "calledFromManagedRest";
+
+    /**
      * SignServerJPA EntityManager injected by WorkerSessionBean.
      *
      * The purpose is to always inject an EntityManager instance in the right

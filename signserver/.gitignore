@@ -106,6 +106,7 @@ dist-*/
 /doc/sample-configs/qos_*.properties
 /doc/sample-configs/ades.properties
 /doc/sample-configs/fortanix-*
+/doc/sample-configs/managed-*.properties
 
 /res/test/test-zone-file-server-side-signer.properties
 

@@ -69,6 +69,8 @@ public class CompileTimeSettings {
     
     public static final String FILEBASED_DB_FOLDER = "database.nodb.location";
     public static final String DATABASE_NAME = "database.name";
+
+    public static final String USEP11NGASP11 = "cryptotoken.p11.usep11ngasp11";
     
     public static final String STATUSREPOSITORY_LOG = "statusrepository.log";
 

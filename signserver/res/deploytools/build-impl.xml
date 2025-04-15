@@ -484,6 +484,7 @@ app.edition.lc=${app.edition.lc}
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.12.jar"/>
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
             </classpath>
+            <jvmarg line="--add-exports=jdk.crypto.cryptoki/sun.security.pkcs11.wrapper=ALL-UNNAMED"/>
         </junit>
     </target>
 

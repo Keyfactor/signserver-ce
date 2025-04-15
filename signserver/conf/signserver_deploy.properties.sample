@@ -287,6 +287,17 @@
 # removing the # sign in front of a definition and set the file parameter to
 # an empty string.
 
+# Optionally: Control if P11NG will be used as the implementation even for PKCS11CryptoToken.
+# Setting to "true" means that P11NG (if available, i.e. in Enterprise Edition) will be used also by PKCS11CryptoToken instead of SunPKS11.
+# Note: The default value of this setting initially is/was 'false' (i.e. PKCS11CryptoToken uses SunPKCS11 as it has done in the past) but may change with some release.
+# Please see the release notes / documentation for the current default value.
+# Setting this property to 'true' or 'false' will override the default value and is only needed in this cases:
+# a) You want to try P11NG now (even though it might not be the default yet): set it to 'true'.
+# b) You do not want to use P11NG (even when it has become the default): set it to 'false'.
+#cryptotoken.p11.usep11ngasp11=
+#cryptotoken.p11.usep11ngasp11=true
+#cryptotoken.p11.usep11ngasp11=false
+
 #cryptotoken.p11.lib.10.name=SafeNet ProtectServer Gold Emulator
 #cryptotoken.p11.lib.10.file=/opt/ETcpsdk/lib/linux-x86_64/libctsw.so
 #cryptotoken.p11.lib.11.name=SafeNet ProtectServer Gold

@@ -289,7 +289,11 @@ public class JArchiveSigner extends BaseSigner {
         // Get the data from request
         final ReadableData data = sReq.getRequestData();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Request size: " + data.getLength());
+            try {
+                LOG.debug("Request size: " + data.getLength());
+            } catch (IOException ex) {
+                LOG.debug("Calling data.getLength for debug message failed: ", ex);
+            }
         }
         final WritableData responseData = sReq.getResponseData();
 

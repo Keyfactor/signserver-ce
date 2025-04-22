@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import org.signserver.common.util.PathUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -93,4 +94,13 @@ public class RestTestUtils {
         return postRequestJsonBody;
     }
 
+    /**
+     * Generate a multipart/form-data object for file upload testing.
+     */
+    public File createPostRequestFormDataBody(String filePath) throws FileNotFoundException {
+        File home;
+        home = PathUtil.getAppHome();
+        File samplePdf = new File(home, filePath);
+        return samplePdf;
+    }
 }

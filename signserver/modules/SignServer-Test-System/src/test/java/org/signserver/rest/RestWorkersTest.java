@@ -1,13 +1,21 @@
 package org.signserver.rest;
 
+import com.lowagie.text.pdf.PdfPKCS7;
+import com.lowagie.text.pdf.PdfReader;
 import io.restassured.RestAssured;
+import static io.restassured.RestAssured.given;
+import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.config.SSLConfig;
+
+import static io.restassured.http.ContentType.ANY;
+import static io.restassured.http.ContentType.JSON;
 import io.restassured.response.Response;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.cmssigner.CMSSigner;
 import org.signserver.module.cmssigner.PlainSigner;
@@ -15,12 +23,14 @@ import org.signserver.module.pdfsigner.PDFSigner;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.RestTestUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
+import static io.restassured.http.ContentType.MULTIPART;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -123,6 +133,75 @@ public class RestWorkersTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Test REST POST workers process by worker name that uploads and signs a txt file with PlainSigner.
+     * This test checks that all expected response fields are present in the response.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPlainSignerProcessMultiPart() throws Exception {
+        LOG.debug("testRestPostWorkersPlainSignerProcessMultiPart");
+        try {
+            addSigner(PlainSigner.class.getName(), PLAINSIGNER_WORKER_ID, PLAINSIGNER_WORKER_NAME, true);
+            // Check statusCode is 200 and response content type is json
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("txt", rtu.createPostRequestFormDataBody("res/test/HelloDeb.txt"))
+                    .when()
+                    .post(baseURL + "/workers/" + PLAINSIGNER_WORKER_NAME + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code is 200.", 200, response.statusCode());
+            assertTrue("Check response contains data.", responseJsonObject.containsKey("data"));
+            assertTrue("Check response contains archiveId.", responseJsonObject.containsKey("archiveId"));
+            assertTrue("Check response contains metaData.", responseJsonObject.containsKey("metaData"));
+            assertTrue("Check response contains requestId.", responseJsonObject.containsKey("requestId"));
+            assertTrue("Check response contains signerCertificate.", responseJsonObject.containsKey("signerCertificate"));
+        } finally {
+            removeWorker(PLAINSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker name that uploads and signs a txt file with PlainSigner and a file
+     * is returned.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPlainSignerProcessMultiPartOctetStream() throws Exception {
+        LOG.debug("testRestPostWorkersPlainSignerProcessMultiPartOctetStream");
+        try {
+            addSigner(PlainSigner.class.getName(), PLAINSIGNER_WORKER_ID, PLAINSIGNER_WORKER_NAME, true);
+            // Check statusCode is 200 and response content type is json
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept("application/octet-stream")
+                    .multiPart("txt", rtu.createPostRequestFormDataBody("res/test/HelloDeb.txt"))
+                    .when()
+                    .post(baseURL + "/workers/" + PLAINSIGNER_WORKER_NAME + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/octet-stream")
+                    .extract().response();
+
+            assertTrue(response.contentType().equals("application/octet-stream"));
+
+            assertEquals("Check response status code is 200.", 200, response.statusCode());
+        } finally {
+            removeWorker(PLAINSIGNER_WORKER_ID);
+        }
+    }
+
 
     /**
      * Test REST POST workers process by worker ID, signing a pdf file sending to PDFSigner in base64 encoded form.
@@ -143,7 +222,7 @@ public class RestWorkersTest extends ModulesTestCase {
                     .when()
                     .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
                     .then()
-                    //.statusCode(200)
+                    .statusCode(200)
                     .contentType("application/json")
                     .extract().response();
 
@@ -157,6 +236,443 @@ public class RestWorkersTest extends ModulesTestCase {
 
             assertTrue("Check response PDF file contains signature and SignServer.",
                     responsePDFString.contains("Signature") && responsePDFString.contains("SignServer"));
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by uploading a file that exceeds the HTTP_MAX_UPLOAD_SIZE global configuration.
+     *
+     * This test sets Content-Type in the multipart.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersFileSizeMatchingMaxUploadSizeWithContentLength() throws Exception {
+        LOG.debug("testRestPostWorkersFileSizeMatchingMaxUploadSizeWithContentLength");
+        addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+        File pdf = rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf");
+        // Set maximum file upload size to exact size of file
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", "14677"); //String.valueOf(pdf.length()));
+        getGlobalSession().reload();
+        Thread.sleep(2100); // WorkerResource.UPLOAD_CONFIG_CACHE_TIME=2000
+        try {
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart(new MultiPartSpecBuilder(pdf).controlName("pdf").header("Content-Length", String.valueOf(14677/*pdf.length()*/)).build())
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
+            getGlobalSession().reload();
+        }
+    }
+
+    /**
+     * Test REST POST workers process by uploading a file that exceeds the HTTP_MAX_UPLOAD_SIZE global configuration.
+     *
+     * This test sets Content-Type in the multipart.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersFileSizeExceedingMaxUploadSizeWithContentLength() throws Exception {
+        LOG.debug("testRestPostWorkersFileSizeExceedingMaxUploadSizeWithContentLength");
+        addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+        final File pdf = rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf");
+        // Set maximum file upload size to 700 bytes
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", String.valueOf(pdf.length() - 1)); // One less than the file
+        getGlobalSession().reload();
+        Thread.sleep(2100); // WorkerResource.UPLOAD_CONFIG_CACHE_TIME=2000
+        try {
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart(new MultiPartSpecBuilder(pdf).controlName("pdf").header("Content-Length", String.valueOf(pdf.length())).build())
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(413)
+                    .contentType("application/json")
+                    .extract().response();
+
+            assertEquals("Check response status code.", 413, response.statusCode());
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
+            getGlobalSession().reload();
+        }
+    }
+
+    /**
+     * Test REST POST workers process by uploading a file that exceeds the HTTP_MAX_UPLOAD_SIZE global configuration.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersFileSizeMatchingMaxUploadSize() throws Exception {
+        LOG.debug("testRestPostWorkersFileSizeExceedingMaxUploadSize");
+        addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+        File pdf = rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf");
+        // Set maximum file upload size to exact size of file
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", String.valueOf(pdf.length()));
+        getGlobalSession().reload();
+        Thread.sleep(2100); // WorkerResource.UPLOAD_CONFIG_CACHE_TIME=2000
+
+        try {
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("pdf", pdf)
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
+            getGlobalSession().reload();
+        }
+    }
+
+    /**
+     * Test REST POST workers process by uploading a file that exceeds the HTTP_MAX_UPLOAD_SIZE global configuration.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersFileSizeExceedingByOneByteMaxUploadSize() throws Exception {
+        LOG.debug("testRestPostWorkersFileSizeExceedingByOneByteMaxUploadSize");
+        addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+        File pdf = rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf");
+        // Set maximum file upload size so that the file is one byte too big for the HTTP_MAX_UPLOAD_SIZE
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", String.valueOf(pdf.length() - 1));
+        getGlobalSession().reload();
+        Thread.sleep(2100); // WorkerResource.UPLOAD_CONFIG_CACHE_TIME=2000
+        try {
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("pdf", pdf)
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(413)
+                    .contentType("application/json")
+                    .extract().response();
+
+            assertEquals("Check response status code.", 413, response.statusCode());
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
+            getGlobalSession().reload();
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a pdf file and signing it with a PDFSigner.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPart() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPart");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf"))
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+            assertTrue("Check response contains archiveId.", responseJsonObject.containsKey("archiveId"));
+
+            byte[] responsePDFBytes = Base64.decode(responseJsonObject.get("data").toString());
+            String responsePDFString = new String(responsePDFBytes);
+
+            assertTrue("Check response PDF file contains signature and SignServer.",
+                    responsePDFString.contains("Signature") && responsePDFString.contains("SignServer"));
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process accepting any Content-Type.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersProcessMultiPartAcceptAnyContentType() throws Exception {
+        LOG.debug("testRestPostWorkersProcessMultiPartAcceptAnyContentType");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(ANY)
+                    .multiPart("pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf"))
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(406)
+                    .extract().response();
+
+            assertEquals("Check response status code.", 406, response.statusCode());
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a pdf file and signing it with a PDFSigner and a file
+     * is returned.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPartOctetStream() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPartOctetStream");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept("application/octet-stream")
+                    .multiPart("pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample.pdf"))
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/pdf")
+                    .extract().response();
+
+            assertTrue(response.contentType().equals("application/pdf"));
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a password-protected pdf file and signing it with a PDFSigner.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPartWithPassword() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPartWithPassword");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("password-pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample-owner123.pdf"))
+                    .multiPart("REQUEST_METADATA.pdfPassword", "owner123")
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+            assertTrue("Check response contains archiveId.", responseJsonObject.containsKey("archiveId"));
+            byte[] responsePDFBytes = Base64.decode(responseJsonObject.get("data").toString());
+            PdfReader reader = new PdfReader(responsePDFBytes);
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding reason", "Signed by SignServer", p7.getReason());
+
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a password-protected pdf file and signing it with a PDFSigner.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPartWithPasswordMetadataWithSpecialCharactersUtf8() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPartWithPasswordMetadataWithSpecialCharactersUtf8");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("password-pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample-useraao.pdf"))
+                    .multiPart(new MultiPartSpecBuilder("useråäö").controlName("REQUEST_METADATA.pdfPassword").emptyFileName().charset(StandardCharsets.UTF_8).build())
+                    /*.log().all(true)*/
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+            assertTrue("Check response contains archiveId.", responseJsonObject.containsKey("archiveId"));
+            byte[] responsePDFBytes = Base64.decode(responseJsonObject.get("data").toString());
+            PdfReader reader = new PdfReader(responsePDFBytes, "useråäö".getBytes(StandardCharsets.ISO_8859_1));
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding reason", "Signed by SignServer", p7.getReason());
+
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a password-protected pdf file and signing it with a PDFSigner.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPartWithPasswordMetadataWithSpecialCharactersLatin1() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPartWithPasswordMetadataWithSpecialCharactersLatin1");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("password-pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample-useraao.pdf"))
+                    .multiPart(new MultiPartSpecBuilder("useråäö").controlName("REQUEST_METADATA.pdfPassword").emptyFileName().charset(StandardCharsets.ISO_8859_1).build())
+                    /*.log().all(true)*/
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+            assertTrue("Check response contains archiveId.", responseJsonObject.containsKey("archiveId"));
+            byte[] responsePDFBytes = Base64.decode(responseJsonObject.get("data").toString());
+            PdfReader reader = new PdfReader(responsePDFBytes, "useråäö".getBytes(StandardCharsets.ISO_8859_1));
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding reason", "Signed by SignServer", p7.getReason());
+
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a password-protected pdf file and signing it with a PDFSigner.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPartWithPasswordFieldWithSpecialCharacters() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPartWithPasswordFieldWithSpecialCharacters");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("password-pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample-useraao.pdf"))
+                    .multiPart(new MultiPartSpecBuilder("useråäö").controlName("pdfPassword").emptyFileName().charset(StandardCharsets.UTF_8).build())
+                    /*.log().all(true)*/
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code.", 200, response.statusCode());
+            assertTrue("Check response contains archiveId.", responseJsonObject.containsKey("archiveId"));
+            byte[] responsePDFBytes = Base64.decode(responseJsonObject.get("data").toString());
+            PdfReader reader = new PdfReader(responsePDFBytes, "useråäö".getBytes(StandardCharsets.ISO_8859_1));
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding reason", "Signed by SignServer", p7.getReason());
+
+        } finally {
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test REST POST workers process by worker ID, uploading a password-protected pdf file and
+     * attempting to signing it with a PDFSigner using a wrong password.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRestPostWorkersPDFSignerProcessMultiPartWithWrongPassword() throws Exception {
+        LOG.debug("testRestPostWorkersPDFSignerProcessMultiPartWithWrongPassword");
+        try {
+            addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+
+            Response response = given()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(MULTIPART)
+                    .accept(JSON)
+                    .multiPart("password-pdf", rtu.createPostRequestFormDataBody("res/test/pdf/sample-open123.pdf"))
+                    .multiPart("REQUEST_METADATA.pdfPassword", "veryWrongPassword")
+                    .when()
+                    .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
+                    .then()
+                    .statusCode(400)
+                    .contentType("application/json")
+                    .extract().response();
+
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+
+            assertEquals("Check response status code.", 400, response.statusCode());
+            assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
         } finally {
             removeWorker(PDFSIGNER_WORKER_ID);
         }
@@ -922,11 +1438,11 @@ public class RestWorkersTest extends ModulesTestCase {
                     rtu.createPostWorkerAddRequestJsonBody(HELLO_WORKER_NAME);
             final JSONObject configProperties =
                     (JSONObject) body.get("properties");
-            
+
             configProperties.put("PIN", "foo123");
 
             final int expectedNumberProperties = configProperties.size();
-            
+
             Response response = given()
                     .relaxedHTTPSValidation()
                     .header("X-Keyfactor-Requested-With", "1")
@@ -1009,9 +1525,9 @@ public class RestWorkersTest extends ModulesTestCase {
             JSONObject responseJsonObject =
                     new JSONObject(response.jsonPath().getJsonObject("$"));
             List<Map<String, Object>> workers = (List<Map<String, Object>>) responseJsonObject.get("workers");
-            
+
             assertNotNull("Workers object found", workers);
-            
+
             int count = 0;
             for (final Map<String, Object> w : workers) {
                 final Integer id = (Integer) w.get("id");
@@ -1055,9 +1571,9 @@ public class RestWorkersTest extends ModulesTestCase {
                     new JSONObject(response.jsonPath().getJsonObject("$"));
 
             workers = (List<Map<String, Object>>) responseJsonObject.get("workers");
-            
+
             assertNotNull("Workers object found", workers);
-            
+
             int newCount = 0;
             boolean foundNew = false;
 
@@ -1099,7 +1615,7 @@ public class RestWorkersTest extends ModulesTestCase {
                 .extract().response();
 
         assertEquals("Response code", 403, response.getStatusCode());
-        
+
         JSONObject responseJsonObject =
                 new JSONObject(response.jsonPath().getJsonObject("$"));
         List<Map<String, Object>> workers = (List<Map<String, Object>>) responseJsonObject.get("workers");

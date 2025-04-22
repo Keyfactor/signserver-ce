@@ -9,6 +9,7 @@ import org.signserver.server.log.AdminInfo;
 
 import java.security.cert.X509Certificate;
 import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
  * REST version of the AdminAuthHelper.
@@ -20,6 +21,8 @@ import java.util.Set;
  * @version $Id$
  */
 public class WorkerAuthHelper {
+    
+    private static final Logger LOG = Logger.getLogger(WorkerAuthHelper.class);
 
     private final AdminAuthHelper delegate;
 
@@ -70,9 +73,14 @@ public class WorkerAuthHelper {
         return delegate.hasAuthorization(cert, authSet);
     }
 
-    private void checkCustomHeader(HttpServletRequest httpServletRequest) throws ForbiddenException {
+    /**
+     * Require the X-Keyfactor-Requested-With header.
+     * @param httpServletRequest to check headers
+     * @throws ForbiddenException will be thrown if header is missing
+     */
+    public void checkCustomHeader(HttpServletRequest httpServletRequest) throws ForbiddenException {
         if (httpServletRequest.getHeader("X-Keyfactor-Requested-With") == null) {
-            //LOG.error("Missing required hedear X-Keyfactor-Requested-With");
+            LOG.warn("Client did not send required header: X-Keyfactor-Requested-With");
             throw new ForbiddenException();
         }
     }

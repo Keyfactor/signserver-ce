@@ -14,6 +14,7 @@ package org.signserver.rest.api.resource;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.EntityPart;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.DecoderException;
@@ -49,7 +50,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import jakarta.ws.rs.core.Response.Status;
 import java.io.IOException;
+import java.io.StringReader;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -57,6 +61,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import jakarta.xml.ws.WebServiceContext;
+import java.net.URLEncoder;
+import org.apache.commons.fileupload.FileUploadBase;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -66,6 +72,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponseSchema;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.common.data.ReadableData;
 import org.signserver.rest.api.entities.ErrorMessage;
 import org.signserver.rest.api.entities.DataEncoding;
 import org.signserver.rest.api.helper.WorkerAuthHelper;
@@ -106,6 +113,27 @@ public class WorkerResource {
     private DataFactory dataFactory;
 
     private WorkerAuthHelper auth;
+
+    private static final String ENCODING_PROPERTY_NAME = "encoding";
+    private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
+
+    private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
+    private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
+
+    private static final String REQUEST_METADATA_PROPERTY_NAME = "REQUEST_METADATA";
+
+    // UploadConfig cache
+    private static final long UPLOAD_CONFIG_CACHE_TIME = 2000;
+    private final Object uploadConfigSync = new Object();
+    private UploadConfig cachedUploadConfig;
+    private long uploadConfigNextUpdate;
+
+
+    private enum ProcessType {
+        signDocument,
+        validateDocument,
+        validateCertificate
+    };
 
     @PostConstruct
     protected void init() {
@@ -847,7 +875,7 @@ public class WorkerResource {
                     + "Submit data/document/file for processing such as for "                    
                     + "instance signing and get back the result (i.e. signature)."
     )
-    public Response process(
+    public Response processByJsonReturningJson(
             @Parameter(
                     description = "Worker Id or name of the worker",
                     example = "ExampleSigner1",
@@ -881,7 +909,7 @@ public class WorkerResource {
                 }
             }
         }
-        return process(idOrName, httpServletRequest, requestMetadata, dataBytes);
+        return processReturningJson(idOrName, httpServletRequest, requestMetadata, dataBytes);
     }
 
     /**
@@ -895,24 +923,30 @@ public class WorkerResource {
      * @throws RequestFailedException  In case the request could not be processed typically because some error in the request data.
      * @throws InternalServerException In case the request could not be processed by some error at the server side.
      */
-    public Response process(String idOrName, HttpServletRequest httpServletRequest, List<Metadata> requestMetadata,
+    private Response processReturningJson(String idOrName, HttpServletRequest httpServletRequest, List<Metadata> requestMetadata,
                             byte[] data) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException {
         final UploadConfig uploadConfig = UploadConfig.create(globalSession);
 
-        final int requestId = ThreadLocalRandom.current().nextInt();
-
         CloseableReadableData requestData;
-        CloseableWritableData responseData;
 
         try {
             requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
-            responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
-
         } catch (FileUploadException e) {
             throw new RuntimeException(e);
         }
 
-        final RequestContext requestContext = handleRequestContext(requestMetadata, httpServletRequest);
+        return processInternal(idOrName, httpServletRequest, requestMetadata, null, requestData, uploadConfig, null, true);
+    }
+
+    private Response processInternal(String idOrName, HttpServletRequest httpServletRequest, List<Metadata> requestMetadata, String pdfPassword,
+                            CloseableReadableData requestData, UploadConfig uploadConfig, String fileName, boolean returnJson) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException {
+
+        final int requestId = ThreadLocalRandom.current().nextInt();
+        
+        CloseableWritableData responseData;
+        responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
+        
+        final RequestContext requestContext = handleRequestContext(requestMetadata, httpServletRequest, fileName, pdfPassword);
         WorkerIdentifier workerIdentifier = WorkerIdentifier.createFromIdOrName(idOrName);
 
         final Request req = new SignatureRequest(requestId, requestData, responseData);
@@ -950,12 +984,38 @@ public class WorkerResource {
                     LOG.error("Response ID " + signatureResponse.getRequestID() + " not matching request ID " + requestId);
                     throw new InternalServerException("Error in process operation, response id didn't match request id");
                 }
-                return Response.ok(new ProcessResponse(signatureResponse.getArchiveId(),
+                if (returnJson) {
+                    return Response.ok(new ProcessResponse(signatureResponse.getArchiveId(),
                                 Base64.toBase64String(signatureResponse.getResponseData().toReadableData().getAsByteArray()),
                                 String.valueOf(signatureResponse.getRequestID()),
                                 signatureResponse.getSignerCertificate() == null ? null : Base64.toBase64String(signatureResponse.getSignerCertificate().getEncoded()),
                                 getResponseMetadata(requestContext)))
                         .header("Content-Type", MediaType.APPLICATION_JSON).build();
+                } else {
+                    ReadableData data = signatureResponse.getResponseData().toReadableData();
+                    Response.ResponseBuilder response;
+
+                    String contentType = signatureResponse.getContentType();
+                    if (contentType == null) {
+                        contentType = MediaType.APPLICATION_OCTET_STREAM;
+                    }
+                    
+                    if (data.isFile()) {
+                        response = Response.ok(data.getAsFile(), contentType);
+                    } else {
+                        response = Response.ok(data.getAsInputStream(), contentType);
+                    }
+
+                    Object responseFileName = requestContext.get(RequestContext.RESPONSE_FILENAME);
+                    if (responseFileName instanceof String) {
+                        // Use percentage encoding for filename* according to RFC 5987
+                        response = response.header("Content-Disposition", "attachment; filename=\""
+                                + responseFileName + "\"; filename*=UTF-8''"
+                                + URLEncoder.encode((String) responseFileName, "UTF-8").replaceAll("\\+", "%20"));
+                    }
+                    
+                    return response.build();
+                }
             } else {
                 LOG.error("Unexpected return type: " + resp.getClass().getName());
                 throw new InternalServerException("Unexpected return type");
@@ -980,6 +1040,291 @@ public class WorkerResource {
         }
     }
 
+    @POST
+    @Path("{idOrName}/process")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces({MediaType.APPLICATION_JSON})
+    @APIResponseSchema(
+            value = ProcessResponse.class,
+            responseCode = "200",
+            responseDescription = "The response data"
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "503",
+            description = "Crypto Token not available",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @Operation(
+            summary = "Submit data for processing",
+            description = "Required role: set by AUTHTYPE in worker \n\n"
+                    + "Submit data/document/file for processing such as for "                    
+                    + "instance signing and get back the result (i.e. signature)."
+    )
+    public Response processByFormDataReturnJson(
+            @PathParam("idOrName") final String idOrName,
+            List<EntityPart> entityParts,
+            @Context final HttpServletRequest httpServletRequest) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+
+        // The following check must be the first line in REST public methods (note: admin operations has a different one)
+        auth.checkCustomHeader(httpServletRequest);
+
+        // User needs to put "application/json" in Accept header to get to this method.
+        // Using wildcard to get here is not allowed. This is so we can support other media types in the future without breaking clients.
+        final String acceptHeader = httpServletRequest.getHeader("Accept");
+        if (acceptHeader == null || !acceptHeader.contains(MediaType.APPLICATION_JSON)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE.getStatusCode(), "Specify application/json in Accept header").build();
+        }
+        
+        return processByFormData(idOrName, entityParts, httpServletRequest, true);
+    }
+    
+    @POST
+    @Path("{idOrName}/process")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM})
+    @APIResponse(
+            responseCode = "200",
+            description = "The response data",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM
+            )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request from the client",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Access is forbidden!",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No such worker",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "The server were unable to process the request. See server-side logs for more details.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "503",
+            description = "Crypto Token not available",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )
+    )
+    @Operation(
+            summary = "Submit data for processing",
+            description = "Required role: set by AUTHTYPE in worker \n\n"
+                    + "Submit data/document/file for processing such as for "                    
+                    + "instance signing and get back the result (i.e. signature)."
+    )
+    public Response processByFormDataReturnFile(
+            @PathParam("idOrName") final String idOrName,
+            List<EntityPart> entityParts,
+            @Context final HttpServletRequest httpServletRequest) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+
+        // The following check must be the first line in REST public methods (note: admin operations has a different one)
+        auth.checkCustomHeader(httpServletRequest);
+
+        return processByFormData(idOrName, entityParts, httpServletRequest, false);
+    }
+    
+    private Response processByFormData(final String idOrName, List<EntityPart> entityParts, final HttpServletRequest httpServletRequest, boolean returnJson) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+
+        final WorkerIdentifier wi = new WorkerIdentifier(idOrName);
+        CloseableReadableData data = null;
+        String fileName = null;
+        String pdfPassword = null;
+
+        ProcessType processType = ProcessType.signDocument;
+        final MetaDataHolder metadataHolder = new MetaDataHolder();
+        final UploadConfig uploadConfig = getUploadConfig();
+
+        try {
+            String encoding = null;
+            for(EntityPart item : entityParts) {
+
+                if (!item.getFileName().isPresent()) {
+                    final String itemFieldName = item.getName();
+
+                    if (PDFPASSWORD_PROPERTY_NAME.equals(itemFieldName)) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Found a pdfPassword in the request.");
+                        }
+                        pdfPassword = item.getContent(String.class);
+                    } else if (PROCESS_TYPE_PROPERTY_NAME.equals(itemFieldName)) {
+                        final String processTypeAttribute = item.getContent(String.class);
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Found process type in the request: " + processTypeAttribute);
+                        }
+
+                        if (processTypeAttribute != null) {
+                            try {
+                                processType = ProcessType.valueOf(processTypeAttribute);
+                            } catch (IllegalArgumentException e) { // NOPMD
+                                return Response.status(400, "Illegal process type.").build();
+                            }
+                        } else {
+                            processType = ProcessType.signDocument;
+                        }
+                    } else if (ENCODING_PROPERTY_NAME.equals(itemFieldName)) {
+                        encoding = item.getContent(String.class);
+                    } else if (isFieldMatchingMetaData(itemFieldName)) {
+                        try {
+                            metadataHolder.handleMetaDataProperty(itemFieldName,
+                                    item.getContent(String.class));
+                        } catch (IOException e) {
+                            return Response.status(400, "Malformed properties given using REQUEST_METADATA.").build();
+                        }
+                    }
+                } else {
+                    // We only care for one upload at a time right now
+                    if (data == null) {
+                        LOG.error(item.getClass());
+                        data = dataFactory.createReadableData(item, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                        fileName = item.getFileName().get();
+                    } else {
+                        LOG.error("Only one upload at a time supported!");
+                        // Make sure any temporary files are removed
+                        try {
+                            // XXX Do we need to do something like this???
+                            //item.delete();
+                        } catch (Throwable ignored) {} // NOPMD
+                    }
+                }
+            }
+
+            if (data == null) {
+                return Response.status(400, "Missing file content in upload").build();
+            }
+
+            // Special handling of base64 encoded data. Note: no large file support for this
+            if (encoding != null && !encoding.isEmpty()) {
+                // Read in all data and base64 decode it
+                byte[] bytes = data.getAsByteArray();
+                if (bytes.length > 0) {
+                    try {
+                        bytes = Base64.decode(bytes);
+                    } catch (DecoderException ex) {
+                        return Response.status(400, "Incorrect base64 data").build();
+                    } finally {
+                        data.close();
+                    }
+                }
+
+                // Now put the decoded data
+                data = dataFactory.createReadableData(bytes, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());   
+            }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Request of type: " + processType.name());
+            }
+
+            // Limit the maximum size of input
+            if (data.getLength() > uploadConfig.getMaxUploadSize()) {
+                LOG.error("Content length exceeds " + uploadConfig.getMaxUploadSize() + ", not processed: " + data.getLength());
+                return Response.status(Status.REQUEST_ENTITY_TOO_LARGE.getStatusCode(), "Maximum content length is " + uploadConfig.getMaxUploadSize() + " bytes").build();
+            } else {
+                return processInternal(idOrName, httpServletRequest, convertRequestMetaData(metadataHolder), pdfPassword, data, UploadConfig.create(globalSession), fileName, returnJson);
+                //return process(wi, data, uploadConfig, fileName, pdfPassword, processType, metadataHolder);
+            }   
+        } catch (FileUploadBase.FileUploadIOException ex) {
+            if (ex.getCause() instanceof FileUploadBase.SizeLimitExceededException) {
+                LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
+                return Response.status(Status.REQUEST_ENTITY_TOO_LARGE.getStatusCode(), "Maximum content length is " + uploadConfig.getMaxUploadSize() + " bytes").entity(new ErrorMessage(ex.getMessage())).build();
+            } else {
+                LOG.error("Upload failed", ex);
+                return Response.status(500, "Upload failed").build();
+            }
+        } catch (FileUploadException ex) { // TODO: Unrap to see actual size error
+            LOG.error("Upload failed", ex);
+            return Response.status(500, "Upload failed").build();
+        } finally {
+            // Remove the temporary file (if any)
+            if (data != null) {
+                try {
+                    data.close();
+                } catch (IOException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Unable to remove temporary upload file", ex);
+                    }
+                    LOG.error("Unable to remove temporary upload file: " + ex.getLocalizedMessage());
+                }
+            }
+        }
+
+    }
+    
+    protected List<Metadata> convertRequestMetaData(final MetaDataHolder holder) {
+        final List<Metadata> result = new ArrayList<>();
+        final Properties mergedMetadata = holder.mergeMetadataProperties();
+        
+        for (final String key : mergedMetadata.stringPropertyNames()) {
+            final String propertyKey = key;
+            final String propertyValue = mergedMetadata.getProperty(key);
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding additional metadata: " + propertyKey + ": " + propertyValue);
+            }
+            
+            result.add(new Metadata(key, propertyValue));
+        }
+        return result;
+    }
+
     private X509Certificate getClientCertificate(HttpServletRequest httpServletRequest) {
         X509Certificate[] certificates = (X509Certificate[]) httpServletRequest.getAttribute("jakarta.servlet.request.X509Certificate");
 
@@ -989,7 +1334,7 @@ public class WorkerResource {
         return null;
     }
 
-    private RequestContext handleRequestContext(final List<Metadata> requestMetadata, HttpServletRequest httpServletRequest) {
+    private RequestContext handleRequestContext(final List<Metadata> requestMetadata, HttpServletRequest httpServletRequest, String fileName, String pdfPassword) {
         String requestIP = httpServletRequest.getRemoteAddr();
         X509Certificate clientCertificate = getClientCertificate(httpServletRequest);
         final RequestContext requestContext = new RequestContext(clientCertificate, requestIP);
@@ -1015,6 +1360,7 @@ public class WorkerResource {
                 return httpServletRequest.getHeader("Content-Length");
             }
         });
+        logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
             @Override
             public String toString() {
@@ -1042,18 +1388,32 @@ public class WorkerResource {
             }
 
             // Special handling of FILENAME
-            final String fileName = metadata.get(RequestContext.FILENAME);
-            if (fileName != null) {
-                requestContext.put(RequestContext.FILENAME, fileName);
+            final String fileNameFromMetadata = metadata.get(RequestContext.FILENAME);
+            if (fileNameFromMetadata != null) {
+                fileName = fileNameFromMetadata;
+                requestContext.put(RequestContext.FILENAME, fileNameFromMetadata);
                 logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
                     @Override
                     public String toString() {
-                        return fileName;
+                        return fileNameFromMetadata;
                     }
                 });
             }
         }
 
+        // PDF Password
+        if (pdfPassword != null) {
+            RequestMetadata.getInstance(requestContext).put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+        }
+
+        // Store filename for use by archiver etc
+        String strippedFileName = fileName;
+        if (fileName != null) {
+            strippedFileName = stripPath(fileName);
+        }
+        requestContext.put(RequestContext.FILENAME, strippedFileName);
+        requestContext.put(RequestContext.RESPONSE_FILENAME, strippedFileName);
+        
         final Integer qosPriority = (Integer) httpServletRequest.getAttribute(RequestContext.QOS_PRIORITY);
         if (qosPriority != null) {
             requestContext.put(RequestContext.QOS_PRIORITY, qosPriority);
@@ -1073,6 +1433,112 @@ public class WorkerResource {
 
     protected boolean checkWorkerNameAlreadyExists(String workerName) {
         return workerSession.getAllWorkerNames().contains(workerName);
+    }
+
+    protected boolean isFieldMatchingMetaData(final String itemFieldName) {
+        return REQUEST_METADATA_PROPERTY_NAME.equals(itemFieldName) ||
+                (itemFieldName != null &&
+                        itemFieldName.length() > REQUEST_METADATA_PROPERTY_NAME.length() + 1 &&
+                        itemFieldName.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."));
+    }
+
+    /**
+     * @return The cached UploadConfig or a new one if the cache expired
+     */
+    private UploadConfig getUploadConfig() {
+        synchronized (uploadConfigSync) {
+            final long now = System.currentTimeMillis();
+            if (cachedUploadConfig == null || now > uploadConfigNextUpdate) {
+                cachedUploadConfig = UploadConfig.create(globalSession);
+                uploadConfigNextUpdate = now + UPLOAD_CONFIG_CACHE_TIME;
+            }
+            return cachedUploadConfig;
+        }
+    }
+
+    /**
+     * Helper class holding request meta data.
+     *
+     * This class will manage globally set (via a properties file-syntax property)
+     * and overriding meta data (via REQUEST_METADATA.x properties).
+     *
+     */
+    protected static class MetaDataHolder {
+        private final Properties requestMetadata;
+        private final Properties overrideRequestMetadata;
+
+        public MetaDataHolder() {
+            requestMetadata = new Properties();
+            overrideRequestMetadata = new Properties();
+        }
+
+
+        /**
+         * Update this holder instance according to the given property.
+         *
+         * @param propertyFieldName Request parameter name
+         * @param propertyValue Request parameter value
+         * @throws IOException
+         */
+        public void handleMetaDataProperty(final String propertyFieldName,
+                                           final String propertyValue)
+                throws IOException {
+            if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
+                requestMetadata.load(new StringReader(propertyValue));
+            } else {
+                final String propertyName = propertyFieldName.substring(REQUEST_METADATA_PROPERTY_NAME.length() + 1);
+
+                overrideRequestMetadata.setProperty(propertyName, propertyValue);
+            }
+        }
+
+
+        /**
+         * Method gathering metadata from internal mapping giving precedence
+         * to parameters set via individually set parameters.
+         *
+         * @return Final property object with merged properties
+         */
+        public Properties mergeMetadataProperties() {
+            requestMetadata.putAll(overrideRequestMetadata);
+            return requestMetadata;
+        }
+    }
+    
+    /**
+     * Add collected meta data to a RequestMetadata instance.
+     * 
+     * @param holder Meta data holder
+     * @param metadata Metadata to add
+     */
+    protected void addRequestMetaData(final MetaDataHolder holder,
+            final RequestMetadata metadata) {
+        final Properties mergedMetadata = holder.mergeMetadataProperties();
+        
+        for (final String key : mergedMetadata.stringPropertyNames()) {
+            final String propertyKey = key;
+            final String propertyValue = mergedMetadata.getProperty(key);
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding additional metadata: " + propertyKey + ": " + propertyValue);
+            }
+            
+            metadata.put(propertyKey, propertyValue);
+        }
+    }
+
+    /**
+     * @param fileName The original filename.
+     * @return The filename with file path removed.
+     */
+    static String stripPath(String fileName) {
+        if (fileName.contains("\\")) {
+            fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        }
+        if (fileName.contains("/")) {
+            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+        }
+        return fileName;
     }
 
 }

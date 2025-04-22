@@ -49,8 +49,9 @@ public interface ReadableData {
     
     /**
      * @return the size of the data in memory or on disk
+     * @throws java.io.IOException in case of error reading/writing the data
      */
-    long getLength();
+    long getLength() throws IOException;
 
     /**
      * @return true if the backing data was in a file

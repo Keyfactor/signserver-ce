@@ -2,7 +2,7 @@
   "openapi" : "3.0.3",
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.2.2"
+    "version" : "1.3.0"
   },
   "servers" : [ {
     "url" : "/signserver/rest/v1"
@@ -179,6 +179,7 @@
           "description" : "Worker Id or name of the worker",
           "required" : true,
           "schema" : {
+            "type" : "string",
             "anyOf" : [ {
               "type" : "string"
             }, {
@@ -194,6 +195,12 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/ProcessRequest"
+              }
+            },
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "array",
+                "items" : { }
               }
             }
           },
@@ -257,7 +264,8 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/ProcessResponse"
                 }
-              }
+              },
+              "application/octet-stream" : { }
             }
           }
         }

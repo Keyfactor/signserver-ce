@@ -19,12 +19,20 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 import static jakarta.ws.rs.core.Response.status;
+import org.apache.log4j.Logger;
 
 @Provider
 public class RequestFailedExceptionMapper implements ExceptionMapper<RequestFailedException> {
 
+    private static final Logger LOG = Logger.getLogger(RequestFailedExceptionMapper.class);
+
     @Override
     public Response toResponse(RequestFailedException e) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Request Failed exception", e);
+        }
+
         return status(Response.Status.UNAUTHORIZED)
                 .header("Content-Type", "application/json")
                 .entity(new ErrorMessage(e.getMessage()))

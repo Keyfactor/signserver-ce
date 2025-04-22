@@ -13,10 +13,15 @@
 package org.signserver.server.data.impl;
 
 import java.io.File;
+
+import jakarta.ws.rs.core.EntityPart;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.data.ReadableData;
 
@@ -52,6 +57,13 @@ public class DefaultDataFactory implements DataFactory {
     public CloseableReadableData createReadableData(FileItem item, File repository) {
         DiskFileItem dfi = (DiskFileItem) item;
         return new ByteArrayReadableData(dfi.get(), repository);
+    }
+
+    @Override
+    public CloseableReadableData createReadableData(EntityPart item, long maxSize, File repository) throws FileUploadBase.FileUploadIOException, IOException {
+        try (InputStream in = new UploadLimitedInputStream(item.getContent(), maxSize)) {
+            return new ByteArrayReadableData(IOUtils.toByteArray(in), repository);
+        }
     }
 
     @Override

@@ -572,7 +572,7 @@ class WorkerProcessImpl {
             throw exception;
         } catch (IllegalRequestException ex) {
             final IllegalRequestException exception =
-                    new IllegalRequestException(ex.getMessage());
+                    new IllegalRequestException(ex.getMessage(), ex);
                             if (LOG.isInfoEnabled()) {
                                     LOG.info("Illegal request calling signer with ID " + workerId
                     + " : " + ex.getMessage());

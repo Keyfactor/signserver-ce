@@ -35,6 +35,11 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(Exception e) {
         LOG.error("Unhandled REST exception: " + e.getMessage());
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unhandled REST exception", e);
+        }
+
         return status(Response.Status.INTERNAL_SERVER_ERROR)
                 .header("Content-Type", "application/json")
                 .entity(new ErrorMessage("The server were unable to process the request. See server-side logs for more details."))

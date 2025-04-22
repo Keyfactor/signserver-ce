@@ -13,7 +13,11 @@
 package org.signserver.server.data.impl;
 
 import java.io.File;
+
+import jakarta.ws.rs.core.EntityPart;
+import java.io.IOException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.signserver.common.data.ReadableData;
 
@@ -36,12 +40,22 @@ public interface DataFactory {
     CloseableReadableData createReadableData(byte[] data, long maxSize, File repository) throws FileUploadException;
     
     /**
-     * Create a readable data implementation from the provided FileItem.
+     * Create a readable data implementation from the provided FileItem (Commons File-upload).
      * @param item data to use
      * @param repository to store the data as file in (if requested)
      * @return a new readable data instance
      */
     CloseableReadableData createReadableData(FileItem item, File repository);
+
+    /**
+     * Create a readable data implementation from the provided EntityPart (Jakarta WS-RS).
+     * @param item data to use
+     * @param maxSize to allow for data
+     * @param repository to store the data as file in (if requested)
+     * @return a new readable data instance
+     * @throws org.apache.commons.fileupload.FileUploadBase.FileUploadIOException in case data.length > maxSize
+     */
+    CloseableReadableData createReadableData(EntityPart item, long maxSize, File repository) throws FileUploadBase.FileUploadIOException, IOException;
 
     /**
      * Create a writable data implementation with settings from the provided

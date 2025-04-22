@@ -19,12 +19,20 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 import static jakarta.ws.rs.core.Response.status;
+import org.apache.log4j.Logger;
 
 @Provider
 public class InternalServerExceptionMapper implements ExceptionMapper<InternalServerException> {
 
+    private static final Logger LOG = Logger.getLogger(InternalServerExceptionMapper.class);
+
     @Override
     public Response toResponse(InternalServerException e) {
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Internal Server exception", e);
+        }
+
         return status(Response.Status.INTERNAL_SERVER_ERROR)
                 .header("Content-Type", "application/json")
                 .entity(new ErrorMessage(e.getMessage()))

@@ -1233,7 +1233,6 @@ public class WorkerResource {
                 } else {
                     // We only care for one upload at a time right now
                     if (data == null) {
-                        LOG.error(item.getClass());
                         data = dataFactory.createReadableData(item, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
                         fileName = item.getFileName().get();
                     } else {

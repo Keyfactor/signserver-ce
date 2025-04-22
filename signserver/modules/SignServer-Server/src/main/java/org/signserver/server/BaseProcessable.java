@@ -49,6 +49,7 @@ import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import static org.signserver.server.cryptotokens.ICryptoTokenV4.PARAM_INCLUDE_DUMMYCERTIFICATE;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
@@ -57,6 +58,7 @@ import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
+
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable {
 
@@ -551,8 +553,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 RequestContext context = new RequestContext(true);
                 context.setServices(services);
                 ICryptoInstance crypto = null;
+                final Map<String, Object> newParams = new HashMap<>();
+                newParams.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
                 try {
-                    crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), alias, context);
+                    crypto = acquireDefaultCryptoInstance(newParams, alias, context);
                     result = crypto.getCertificateChain();
                 } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
                     throw new CryptoTokenOfflineException("Unable to get certificate chain from token: " + ex.getLocalizedMessage(), ex);

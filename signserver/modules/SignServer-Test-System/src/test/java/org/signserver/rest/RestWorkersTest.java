@@ -276,6 +276,7 @@ public class RestWorkersTest extends ModulesTestCase {
             removeWorker(PDFSIGNER_WORKER_ID);
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
             getGlobalSession().reload();
+            Thread.sleep(2100);
         }
     }
 
@@ -314,6 +315,7 @@ public class RestWorkersTest extends ModulesTestCase {
             removeWorker(PDFSIGNER_WORKER_ID);
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
             getGlobalSession().reload();
+            Thread.sleep(2100);
         }
     }
 
@@ -351,6 +353,7 @@ public class RestWorkersTest extends ModulesTestCase {
             removeWorker(PDFSIGNER_WORKER_ID);
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
             getGlobalSession().reload();
+            Thread.sleep(2100);
         }
     }
 
@@ -387,6 +390,7 @@ public class RestWorkersTest extends ModulesTestCase {
             removeWorker(PDFSIGNER_WORKER_ID);
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
             getGlobalSession().reload();
+            Thread.sleep(2100);
         }
     }
 

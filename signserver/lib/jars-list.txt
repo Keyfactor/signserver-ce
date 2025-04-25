@@ -52,7 +52,7 @@ c430c7f3785d1efbdad7298d3d7be73246e946d52c2042d1846b138115edacc6  ./ext/cxf-rt-d
 1766e020e8b14cc20a79cf989b39ea7d62fa3f02c7f93e7521ca19d1aba44982  ./ext/dss-alert-6.0.jar;                                "DSS"
 e5b66294dd4b3102a6cc622c76c31e06ec8741614ca0754ca01707e26b0817d7  ./ext/dss-cades-6.0.jar;                                "DSS"
 963018d17680e4f1993e4d8479d169702ac90c3a17e3dbf92b700c3856f91217  ./ext/dss-crl-parser-6.0.jar;                           "DSS"
-2a71e376b67005dfa40070f6abce45048cb5946cf547fe74ca8377dc02106f79  ./ext/dss-crl-parser-509crl-6.0.jar;                    "DSS"
+2a71e376b67005dfa40070f6abce45048cb5946cf547fe74ca8377dc02106f79  ./ext/dss-crl-parser-x509crl-6.0.jar;                   "DSS"
 55ea5535cebcdc4bab984d10c43422203b9f11d36f5fdc489a6cd92bb9c6bd4f  ./ext/dss-detailed-report-jaxb-6.0.jar;                 "DSS"
 f5984fbd6e706b3e9b4d5e0ffa161eccaefbba52951efef69398aca923ef5510  ./ext/dss-diagnostic-jaxb-6.0.jar;                      "DSS"
 659c27cefed146954ca04c1149c703bd68955e8d8631244025d5a5844ae226c0  ./ext/dss-document-6.0.jar;                             "DSS"

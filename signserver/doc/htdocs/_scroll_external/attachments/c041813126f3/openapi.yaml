@@ -1,397 +1,13 @@
 ---
-openapi: 3.0.3
-info:
-  title: SignServer REST Interface
-  version: 1.2.2
-servers:
-- url: /signserver/rest/v1
-paths:
-  /workers:
-    get:
-      description: "Required role: admin role \n\n"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListWorkersResponse'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    post:
-      summary: Submit data for adding a new worker from multiple properties
-      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
-        \ worker properties to add a new worker."
-      requestBody:
-        description: The request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WorkerRequest'
-        required: true
-      responses:
-        "201":
-          description: ""
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "409":
-          description: Worker already exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-  /workers/reload:
-    post:
-      summary: Reload workers
-      description: "Required role: admin role \n\nSubmit a list of worker IDs to reload\
-        \ configurations from the database. The request without body reloads all the\
-        \ workers."
-      requestBody:
-        description: The request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReloadRequest'
-      responses:
-        "200":
-          description: Workers successfully reloaded
-          content:
-            application/json: {}
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-  /workers/{idOrName}/process:
-    post:
-      summary: Submit data for processing
-      description: "Required role: set by AUTHTYPE in worker \n\nSubmit data/document/file\
-        \ for processing such as for instance signing and get back the result (i.e.\
-        \ signature)."
-      parameters:
-      - name: idOrName
-        in: path
-        description: Worker Id or name of the worker
-        required: true
-        schema:
-          anyOf:
-          - type: string
-          - format: int32
-            type: integer
-        example: ExampleSigner1
-      requestBody:
-        description: The request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProcessRequest'
-        required: true
-      responses:
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "503":
-          description: Crypto Token not available
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "200":
-          description: The response data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessResponse'
-  /workers/{id}:
-    get:
-      description: "Required role: admin role \n\n"
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          format: int32
-          type: integer
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkerConfigResponse'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    put:
-      summary: Submit data for replace worker properties with the new properties
-      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
-        \ worker properties to replace with current worker properties."
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          format: int32
-          type: integer
-      requestBody:
-        description: The request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WorkerRequest'
-        required: true
-      responses:
-        "200":
-          description: Worker properties successfully replaced
-          content:
-            application/json: {}
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    post:
-      summary: Submit data for adding a new worker from multiple properties
-      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
-        \ worker properties to add a new worker."
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          format: int32
-          type: integer
-      requestBody:
-        description: The request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WorkerRequest'
-        required: true
-      responses:
-        "201":
-          description: ""
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "409":
-          description: Worker already exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    delete:
-      summary: Removing worker
-      description: "Required role: admin role \n\nRemoving worker by ID."
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          format: int32
-          type: integer
-      responses:
-        "200":
-          description: Worker removed successfully
-          content:
-            application/json: {}
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "404":
-          description: No such worker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    patch:
-      summary: Submit data for update and delete worker properties
-      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
-        \ worker properties to update or delete."
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          format: int32
-          type: integer
-      requestBody:
-        description: The request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WorkerRequest'
-        required: true
-      responses:
-        "200":
-          description: Worker properties successfully updated
-          content:
-            application/json: {}
-        "400":
-          description: Bad request from the client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "403":
-          description: Access is forbidden!
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: The server were unable to process the request. See server-side
-            logs for more details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+openapi: 3.1.0
 components:
   schemas:
     DataEncoding:
       description: Choice of additional encoding of the data.
+      type: string
       enum:
       - NONE
       - BASE64
-      type: string
     ErrorMessage:
       type: object
       properties:
@@ -402,37 +18,36 @@ components:
       type: object
       properties:
         workers:
-          description: Workers list. Array with worker ID/name pairs. Empty when no
-            workers available
           type: array
           items:
-            $ref: '#/components/schemas/Worker'
+            $ref: "#/components/schemas/Worker"
+          description: Workers list. Array with worker ID/name pairs. Empty when no
+            workers available
     ProcessRequest:
       description: POJO that represents a process request.
+      type: object
       required:
       - data
-      type: object
       properties:
         data:
-          description: The input data to be processed (i.e. signed).
           type: string
+          description: The input data to be processed (i.e. signed).
         encoding:
           description: Additional encoding of the input data.
           type: string
-          allOf:
-          - $ref: '#/components/schemas/DataEncoding'
+          $ref: "#/components/schemas/DataEncoding"
         metaData:
-          description: Additional request metadata for the worker.
           type: object
           additionalProperties:
             type: string
+          description: Additional request metadata for the worker.
     ProcessResponse:
       description: POJO that represents a process response.
       type: object
       properties:
         data:
-          description: The resulting data (i.e the signature) in Base64 encoding
           type: string
+          description: The resulting data (i.e the signature) in Base64 encoding
         requestId:
           type: string
         archiveId:
@@ -445,22 +60,22 @@ components:
             type: string
     ReloadRequest:
       description: Represents a reload request.
+      type: object
       required:
       - workerIDs
-      type: object
       properties:
         workerIDs:
-          description: List of worker IDs to reload.
           type: array
           items:
-            format: int32
             type: integer
+            format: int32
+          description: List of worker IDs to reload.
     Worker:
       type: object
       properties:
         id:
-          format: int32
           type: integer
+          format: int32
         name:
           type: string
     WorkerConfigResponse:
@@ -468,22 +83,413 @@ components:
       type: object
       properties:
         properties:
-          description: Worker properties list
           type: object
           additionalProperties:
             type: string
+          description: Worker properties list
     WorkerRequest:
       description: Represents a worker request.
       type: object
       properties:
         properties:
-          description: Worker properties list
           type: object
           additionalProperties:
             type: string
+          description: Worker properties list
     WorkerResponse:
       description: Represents a worker response.
       type: object
       properties:
         responseMessage:
           type: string
+info:
+  title: SignServer REST Interface
+  version: 1.3.0
+paths:
+  /workers:
+    get:
+      description: "Required role: admin role \n\n"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListWorkersResponse"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    post:
+      summary: Submit data for adding a new worker from multiple properties
+      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
+        \ worker properties to add a new worker."
+      requestBody:
+        description: The request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkerRequest"
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "409":
+          description: Worker already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /workers/reload:
+    post:
+      responses:
+        "200":
+          description: Workers successfully reloaded
+          content:
+            application/json: {}
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: No such worker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+      summary: Reload workers
+      description: "Required role: admin role \n\nSubmit a list of worker IDs to reload\
+        \ configurations from the database. The request without body reloads all the\
+        \ workers."
+      requestBody:
+        description: The request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReloadRequest"
+        required: true
+  /workers/{idOrName}/process:
+    post:
+      summary: Submit data for processing
+      description: "Required role: set by AUTHTYPE in worker \n\nSubmit data/document/file\
+        \ for processing such as for instance signing and get back the result (i.e.\
+        \ signature)."
+      parameters:
+      - description: Worker Id or name of the worker
+        example: ExampleSigner1
+        schema:
+          anyOf:
+          - type: string
+          - type: integer
+            format: int32
+          type: string
+        name: idOrName
+        in: path
+        required: true
+      requestBody:
+        description: The request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessRequest"
+          multipart/form-data:
+            schema:
+              type: array
+              items: {}
+      responses:
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: No such worker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "503":
+          description: Crypto Token not available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "200":
+          description: The response data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessResponse"
+            application/octet-stream: {}
+  /workers/{id}:
+    patch:
+      summary: Submit data for update and delete worker properties
+      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
+        \ worker properties to update or delete."
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: The request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkerRequest"
+      responses:
+        "200":
+          description: Worker properties successfully updated
+          content:
+            application/json: {}
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    put:
+      summary: Submit data for replace worker properties with the new properties
+      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
+        \ worker properties to replace with current worker properties."
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: The request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkerRequest"
+      responses:
+        "200":
+          description: Worker properties successfully replaced
+          content:
+            application/json: {}
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: No such worker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    delete:
+      summary: Removing worker
+      description: "Required role: admin role \n\nRemoving worker by ID."
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Worker removed successfully
+          content:
+            application/json: {}
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: No such worker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    get:
+      description: "Required role: admin role \n\n"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkerConfigResponse"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: No such worker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    post:
+      summary: Submit data for adding a new worker from multiple properties
+      description: "Required role: admin role \n\nSubmit a worker ID and a list of\
+        \ worker properties to add a new worker."
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: The request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkerRequest"
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad request from the client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Access is forbidden!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "409":
+          description: Worker already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: The server were unable to process the request. See server-side
+            logs for more details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+servers:
+- url: /signserver/rest/v1

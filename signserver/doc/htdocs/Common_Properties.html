@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-02-07T07:00:13.316+0000">
+    <meta name="exp-export-timestamp" content="2025-04-25T09:39:49.060+0000">
     <meta name="exp-page-id" content="370999763">
     <meta name="exp-page-title" content="Common Properties">
     <meta name="exp-page-version" content="1">
@@ -85,7 +85,7 @@
 
 <meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="CommonProperties-top" pageid="370999763" class="flex flex-col" data-confluence-editor-version="v1">
+    <body id="CommonProperties-top" pageid="370999763" class="flex flex-col" data-confluence-editor-version="unknown">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,20 +158,20 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-d7115112b646eaa5dd9ef354263920e57a193c4d42cfd7388a93cd5c687e0b9f"><span class="js-hide-until-loaded">Common Properties</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-bb00b290c7feabab5fcda5007225875cec1a19dcb8e57f14aa2f82bcd539bbdb"><span class="js-hide-until-loaded">Common Properties</span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
                         <p>Properties that have common use among most signers:</p><p><strong>INCLUDE_CERTIFICATE_LEVELS</strong> = Number of certificate levels to include. This property is supported for all signers except MRTDSODSigner, MRTDSigner, and MSAuthCodeTimeStampSigner. The property is optional and defaults to include all certificates in the chain, except for XAdESSigner, where the default is to only include one certificate (the signing certificate). Setting this to 0 (include no certificates) is not supported for TimeStampSigner. To include all certificates specify at least the same value as the number of certificates in the certificate chain.</p><p><strong>REQUESTDN</strong> = Subject DN to be included in a certificate signing request (CSR) by default. Used by interfaces such as the AdminWeb to have a default value already filled in as well as when doing automatic renewals, i.e. using <a href="RenewalWorker.html" data-linked-resource-id="371000078" data-linked-resource-version="3" data-linked-resource-type="page" data-scroll-target-source-id="371000078" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000078/RenewalWorker" data-scroll-link-target-source-id="371000078">Renewal Worker</a> or <a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a>.</p><p><strong>NO_REQUEST_ARCHIVING</strong>&nbsp;= When set to true, instructs the signer that archiving of request data is not to be considered. This implies the signer can make optimizations such as not keeping the original request data intact while doing modifications. This is not allowed to be set to true when archivers used are configured to archive request data. Default: false.</p><p><strong>PEERS_*</strong> = For peers systems-related properties see the <a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a> page.</p>
 <nav id="ht-post-nav">
-        <a href="SignServer_Signers.html" class="ht-post-nav-prev">
+        <a href="APK_Rotate_Signer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Signers</span>
+            <span>APK Rotate Signer</span>
         </a>
 
         <a href="Signers_Algorithm_Support.html" class="ht-post-nav-next">

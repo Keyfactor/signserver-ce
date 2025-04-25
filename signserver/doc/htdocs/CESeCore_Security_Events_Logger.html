@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-02-07T07:00:42.539+0000">
+    <meta name="exp-export-timestamp" content="2025-04-25T09:40:13.841+0000">
     <meta name="exp-page-id" content="371000314">
     <meta name="exp-page-title" content="CESeCore Security Events Logger">
     <meta name="exp-page-version" content="3">
@@ -85,7 +85,7 @@
 
 <meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="CESeCoreSecurityEventsLogger-top" pageid="371000314" class="flex flex-col" data-confluence-editor-version="v1">
+    <body id="CESeCoreSecurityEventsLogger-top" pageid="371000314" class="flex flex-col" data-confluence-editor-version="unknown">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,12 +155,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-74258d2778d158fb5c7ef28e897c6c742db09baf5a497a521e70ae7e971b3dbd"><span class="js-hide-until-loaded">CESeCore Security Events Logger</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-70a7234c638d6979d66599ed8bf5173836fea141f0870813ef51a4bbaf49f076"><span class="js-hide-until-loaded">CESeCore Security Events Logger</span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>The default logging implementation,&nbsp;<strong>org.signserver.server.log.SignServerLog4jDevice</strong>&nbsp;uses Log4J and a similar logging format as the old SystemLogger.</p><h2 id="CESeCoreSecurityEventsLogger-Signedlog" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Signed log</h2><p><span class="status-macro aui-lozenge aui-lozenge-complete">enterprise</span></p><div class="section"><div class="frame note"><div class="content">An example configuration for CESeCore is provided in&nbsp;<strong>conf/cesecore.properties.sample</strong>.</div></div><p>To enable signed audit logs, configure<strong> conf/databaseprotection.properties</strong> (see conf/databaseprotection.properties.sample).</p><p>Also, set the following to enable signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLII:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p>The default logging implementation,&nbsp;<strong>org.signserver.server.log.SignServerLog4jDevice</strong>&nbsp;uses Log4J and a similar logging format as the old SystemLogger.</p><h2 id="CESeCoreSecurityEventsLogger-Signedlog" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Signed log</h2><p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><div class="section"><div class="frame note"><div class="content">An example configuration for CESeCore is provided in&nbsp;<strong>conf/cesecore.properties.sample</strong>.</div></div><p>To enable signed audit logs, configure<strong> conf/databaseprotection.properties</strong> (see conf/databaseprotection.properties.sample).</p><p>Also, set the following to enable signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLII:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">databaseprotection.enablesign.AuditRecordData = true</code></div>
 <div class="line"><code class="plain">databaseprotection.enableverify.AuditRecordData = true</code></div>
 </div>

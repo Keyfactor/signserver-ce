@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-02-07T07:00:59.231+0000">
+    <meta name="exp-export-timestamp" content="2025-04-25T09:40:28.919+0000">
     <meta name="exp-page-id" content="371000823">
     <meta name="exp-page-title" content="Building SignServer with Maven">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="3">
     <meta name="exp-page-scroll-page-id" content="e9b85a7b6f01ed3c387e08ae6245de72">
     <meta name="exp-page-created" content="2022-12-07T09:48:50.000+0000">
-    <meta name="exp-page-last-modified" content="2022-12-07T09:50:07.000+0000">
+    <meta name="exp-page-last-modified" content="2025-02-18T13:17:58.843+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -85,7 +85,7 @@
 
 <meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="BuildingSignServerwithMaven-top" pageid="371000823" class="flex flex-col" data-confluence-editor-version="v1">
+    <body id="BuildingSignServerwithMaven-top" pageid="371000823" class="flex flex-col" data-confluence-editor-version="unknown">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,12 +155,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-961c06b0d7a936c9ae319ed67932f157d60c39995b8ac9799e602c8fe605d114"><span class="js-hide-until-loaded">Building SignServer with Maven</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b2e6c1043571b3537be40a9292cd8fb6d46254efa4deebdc373b496ade8b33d5"><span class="js-hide-until-loaded">Building SignServer with Maven</span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Maven is used for building the sources.</p><h2 id="BuildingSignServerwithMaven-InsecureHTTP" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Insecure HTTP</h2><p>Prior to Maven version 3.2.3, plug-ins and artifacts were fetched from the Maven Central Repository over insecure HTTP.</p><p>Make sure to edit your <code>~/.m2/settings.xml</code> to override the URL of the Maven Central Repository.</p><p>For Community users, refer to <code>doc/sample-maven-settings-community.xml</code> as an example.</p><p>For Keyfactor developers please use doc/<code>sample-maven-settings-primekey.xml</code> which will use an internal repository.</p><h2 id="BuildingSignServerwithMaven-BuildingSignServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Building SignServer</h2><p>To build SignServer from the command line using Maven, execute:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p>Maven is used for building the sources.</p><h2 id="BuildingSignServerwithMaven-InsecureHTTP" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Insecure HTTP</h2><p>Prior to Maven version 3.2.3, plug-ins and artifacts were fetched from the Maven Central Repository over insecure HTTP.</p><p>Make sure to edit your <code>~/.m2/settings.xml</code> to override the URL of the Maven Central Repository.</p><p>For Community users, refer to <code>doc/sample-maven-settings-community.xml</code> as an example.</p><p>For Keyfactor developers please use <code>doc/sample-maven-settings-keyfactor.xml</code> which will use an internal repository.</p><h2 id="BuildingSignServerwithMaven-BuildingSignServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Building SignServer</h2><p>To build SignServer from the command line using Maven, execute:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">mvn install</code></div>
 </div>
 </div><p>This will build all of the SignServer modules, putting the artifacts under <code>./lib</code> and the SignServer/DeployTools module descriptors in <code>./mods-available</code>.</p><h2 id="BuildingSignServerwithMaven-GatheringDependenciesforlaterOfflineBuild" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Gathering Dependencies for later Offline Build</h2><p>It's possible to let Maven gather all of the dependencies to allow performing an offline build at a later stage.</p><p>To gather all of the dependencies, execute:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">

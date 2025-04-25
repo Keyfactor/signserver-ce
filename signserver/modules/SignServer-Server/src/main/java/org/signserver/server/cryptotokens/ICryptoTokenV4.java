@@ -73,6 +73,8 @@ public interface ICryptoTokenV4 {
     
     String PARAM_INCLUDE_DUMMYCERTIFICATE = "INCLUDE_DUMMYCERTIFICATE";
 
+    String PARAM_REQUEST_SELF_RELEASEABLE_KEY = "REQUEST_SELF_RELEASEABLE_KEY";
+
     void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException;
 
     /**

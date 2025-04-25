@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -35,6 +36,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -68,11 +71,15 @@ import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
 import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.cryptotokens.ICryptoInstance;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.log.Loggable;
+
+import static org.signserver.server.cryptotokens.ICryptoTokenV4.PARAM_REQUEST_SELF_RELEASEABLE_KEY;
 
 /**
  * Worker renewing certificate (and optionally keys) for a signer by sending
@@ -658,13 +665,51 @@ public class RenewalWorker extends BaseSigner {
             NoSuchProviderException, KeyManagementException, SignServerException {
 
         EjbcaWS result;
-
         final String urlstr = ejbcaUrl + WS_PATH;
 
-        final KeyStore keystore = getCryptoToken(services).getKeyStore();
+        final ICryptoTokenV4 backingToken = getCryptoToken(services);
+        KeyStore keystore = null;
+        PrivateKey privateKey;
+        List<Certificate> certificates;
+
+        try {
+            keystore = backingToken.getKeyStore();
+            privateKey = (PrivateKey) keystore.getKey(alias, null);
+            Certificate[] certChain = keystore.getCertificateChain(alias);
+            if (certChain == null) {
+                certificates = Collections.emptyList();
+            } else {
+                certificates = Arrays.asList(certChain);
+            }
+        } catch (UnsupportedOperationException ex) {
+            // Handle crypto tokens not implementing getKeyStore
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Got unsupported operation so trying other way", ex);
+            }
+            try {
+                // Request a key that does not require explicit release
+                final HashMap<String, Object> map = new HashMap<>();
+                map.put(PARAM_REQUEST_SELF_RELEASEABLE_KEY, true);
+                final ICryptoInstance cryptoInstance = backingToken.acquireCryptoInstance(alias, map, null);
+                privateKey = cryptoInstance.getPrivateKey();
+                certificates = cryptoInstance.getCertificateChain();
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new NoSuchAlgorithmException(e);
+            } catch (UnsupportedCryptoTokenParameter e) {
+                throw new KeyStoreException("KeyStore and " + PARAM_REQUEST_SELF_RELEASEABLE_KEY + " not supported by CryptoToken", e);
+            } catch (IllegalRequestException e) {
+                throw new SignServerException("Illegal request", e);
+            } catch (NoSuchAliasException e) {
+                throw new SignServerException("No such alias", e);
+            }
+        }
+
+        if (certificates == null) {
+            certificates = Collections.emptyList();
+        }
 
         // Check that the key is there
-        if (!keystore.containsAlias(alias)) {
+        if (privateKey == null) {
             LOG.error("RenewalWorker[" + workerId + "] is missing its key: " + alias);
         } else {
             if (LOG.isDebugEnabled()) {
@@ -747,12 +792,18 @@ public class RenewalWorker extends BaseSigner {
                 = TrustManagerFactory.getInstance("SunX509");
         tTrustManagerFactory.init(keystoreTrusted);
         KeyManager[] keyManagers = kKeyManagerFactory.getKeyManagers();
+
+        X509Certificate[] xcert = new X509Certificate[certificates.size()];
+        for (int i = 0; i < certificates.size(); i++) {
+            xcert[i] = (X509Certificate) certificates.get(i);
+        }
+
         for (int i = 0; i < keyManagers.length; i++) {
             if (keyManagers[i] instanceof X509KeyManager) {
-                keyManagers[i] = new AliasKeyManager(
-                        (X509KeyManager) keyManagers[i], alias, getCertificateChain(alias, keystore));
+                keyManagers[i] = new RenewalWorker.AliasKeyManager(alias, privateKey, xcert);
             }
         }
+
         // Now construct a SSLContext using these (possibly wrapped)
         // KeyManagers, and the TrustManagers. We still use a null
         // SecureRandom, indicating that the defaults should be used.
@@ -851,19 +902,19 @@ public class RenewalWorker extends BaseSigner {
   
     public static class AliasKeyManager implements X509KeyManager {
 
-        private final X509KeyManager base;
+        private final PrivateKey privateKey;
         private final String alias;
         private final X509Certificate[] chain;
 
-        public AliasKeyManager(final X509KeyManager base, final String alias, final X509Certificate[] chain) {
-            this.base = base;
+        public AliasKeyManager(final String alias, final PrivateKey privateKey, final X509Certificate[] chain) {
+            this.privateKey = privateKey;
             this.alias = alias;
             this.chain = chain;
         }
 
         @Override
         public String[] getClientAliases(String string, Principal[] prncpls) {
-            return base.getClientAliases(string, prncpls);
+            return new String[] { alias };
         }
 
         @Override
@@ -874,13 +925,13 @@ public class RenewalWorker extends BaseSigner {
 
         @Override
         public String[] getServerAliases(String string, Principal[] prncpls) {
-            return base.getClientAliases(string, prncpls);
+            return new String[] { alias };
         }
 
         @Override
         public String chooseServerAlias(String string, Principal[] prncpls,
                 Socket socket) {
-            return base.chooseServerAlias(string, prncpls, socket);
+            return alias;
         }
 
         @Override
@@ -890,8 +941,7 @@ public class RenewalWorker extends BaseSigner {
 
         @Override
         public PrivateKey getPrivateKey(String string) {
-            final PrivateKey key = base.getPrivateKey(string);
-            return key;
+            return privateKey;
         }
     }
     

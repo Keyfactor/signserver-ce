@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-02-07T07:00:55.972+0000">
+    <meta name="exp-export-timestamp" content="2025-04-25T09:40:26.025+0000">
     <meta name="exp-page-id" content="371000719">
     <meta name="exp-page-title" content="Database CLI">
     <meta name="exp-page-version" content="2">
@@ -85,7 +85,7 @@
 
 <meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="DatabaseCLI-top" pageid="371000719" class="flex flex-col" data-confluence-editor-version="v1">
+    <body id="DatabaseCLI-top" pageid="371000719" class="flex flex-col" data-confluence-editor-version="unknown">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,12 +155,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-f2e50beaf38814539d9d58211f348d133ebd9db65c88a162986e5c4535f36d20"><span class="js-hide-until-loaded">Database CLI</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-723dda8e7e6edaac3f2c2756748bba4d1472f569c2055bb17043f45017aa6ad6"><span class="js-hide-until-loaded">Database CLI</span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p><span class="status-macro aui-lozenge aui-lozenge-complete">enterprise</span></p><p><br clear="none"></p><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The SignServer Database CLI uses Java Persistence API (JPA) to connect to the SignServer database. The CLI is configured by the dbcli.* properties in signserver_cli.properties.</p></div></div><p>The CLI needs to have the JDBC driver of the selected database available on the classpath. This can be achieved by setting the OPTIONAL_CLASSPATH environment variable when calling the bin/signserver-db script or by putting the JAR under lib/ext/jdbc/ and calling it jdbc.jar. The last method is required to be able to run the JUnit tests.</p><p>Sample usage:</p><div class="source"><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p><br clear="none"></p><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The SignServer Database CLI uses Java Persistence API (JPA) to connect to the SignServer database. The CLI is configured by the dbcli.* properties in signserver_cli.properties.</p></div></div><p>The CLI needs to have the JDBC driver of the selected database available on the classpath. This can be achieved by setting the OPTIONAL_CLASSPATH environment variable when calling the bin/signserver-db script or by putting the JAR under lib/ext/jdbc/ and calling it jdbc.jar. The last method is required to be able to run the JUnit tests.</p><p>Sample usage:</p><div class="source"><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">bin/signserver-db audit</code></div>
 </div>
 </div><h2 id="DatabaseCLI-VerifyAuditlogCommand" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Verify Auditlog Command</h2><p class="prettyprint">The command verifies logs from all nodes starting at sequence number 0, or only from the specified nodes and optional sequence number offsets.</p><p class="prettyprint">Usage:</p></div><div class="section"><div class="source"><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">

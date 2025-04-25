@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-02-07T06:59:55.465+0000">
+    <meta name="exp-export-timestamp" content="2025-04-25T09:39:32.670+0000">
     <meta name="exp-page-id" content="370999396">
     <meta name="exp-page-title" content="Application Server Setup">
-    <meta name="exp-page-version" content="7">
+    <meta name="exp-page-version" content="8">
     <meta name="exp-page-scroll-page-id" content="1e723881166ea06b837eaf12de6e9229">
     <meta name="exp-page-created" content="2023-03-16T07:44:48.000+0000">
-    <meta name="exp-page-last-modified" content="2024-09-26T15:19:41.771+0000">
+    <meta name="exp-page-last-modified" content="2025-02-28T08:23:22.743+0000">
     <meta name="exp-page-labels" content="signserver-software-only">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -152,34 +152,34 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-986ad274fea0ef436ae3783337e3218b4bd92a3a567f7fece23e4d565ed892ae"><span class="js-hide-until-loaded">Application Server Setup</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-8631cbe8d7fc540d2cb51d9a1828644e21485b9a3369c9053d1498071a258c1d"><span class="js-hide-until-loaded">Application Server Setup</span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>This section cover an example on how to install your application server and information on&nbsp;configuring application server-specific settings. For information on supported software, see <a href="Prerequisites.html" data-linked-resource-id="370999384" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999384" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999384/Prerequisites" data-scroll-link-target-source-id="370999384">Prerequisites</a>.</p><h2 id="ApplicationServerSetup-InstallApplicationServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Install Application Server<span class="confluence-anchor-link" id="src-370999396_ApplicationServerSetup-Install-Application-Server"></span></h2><p>Depending on your setup, refer to information from your OS/Linux distribution or database vendor for instructions of how to install your application server.</p><p>For example, to install WildFly 32 in CentOS and starting it, run the following:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
-<div class="line"><code class="plain">unzip wildfly-</code><code class="value">32.0</code><code class="plain">.</code><code class="value">0</code><code class="plain">.Final.zip</code></div>
-<div class="line"><code class="plain">cd wildfly-</code><code class="value">32.0</code><code class="plain">.</code><code class="value">0</code><code class="plain">.Final</code></div>
+                        <p>This section cover an example on how to install your application server and information on&nbsp;configuring application server-specific settings. For information on supported software, see <a href="Prerequisites.html" data-linked-resource-id="370999384" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999384" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999384/Prerequisites" data-scroll-link-target-source-id="370999384">Prerequisites</a>.</p><h2 id="ApplicationServerSetup-InstallApplicationServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Install Application Server<span class="confluence-anchor-link" id="src-370999396_ApplicationServerSetup-Install-Application-Server"></span></h2><p>Depending on your setup, refer to information from your OS/Linux distribution or database vendor for instructions of how to install your application server.</p><p>For example, to install WildFly 35 in CentOS and starting it, run the following:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">unzip wildfly-</code><code class="value">35.0</code><code class="plain">.</code><code class="value">1</code><code class="plain">.Final.zip</code></div>
+<div class="line"><code class="plain">cd wildfly-</code><code class="value">35.0</code><code class="plain">.</code><code class="value">1</code><code class="plain">.Final</code></div>
 <div class="line"><code class="plain">./bin/standalone.sh</code></div>
 </div>
-</div><h2 id="ApplicationServerSetup-ConfigureApplicationServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Configure Application Server<span class="confluence-anchor-link" id="src-370999396_ApplicationServerSetup-Configure-Application-Server"></span></h2><p>Due to differences between application servers, you need to configure application server-specific settings.</p><p>For instructions on how to set up your application server, see <a href="WildFly_32_and_JBoss_EAP_8.html" data-linked-resource-id="370999400" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999400" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999400/WildFly+32+and+JBoss+EAP+8" data-scroll-link-target-source-id="370999400">WildFly 32 and JBoss EAP 8</a>.</p>
+</div><h2 id="ApplicationServerSetup-ConfigureApplicationServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Configure Application Server<span class="confluence-anchor-link" id="src-370999396_ApplicationServerSetup-Configure-Application-Server"></span></h2><p>Due to differences between application servers, you need to configure application server-specific settings.</p><p>For instructions on how to set up your application server, see <a href="WildFly_32+_and_JBoss_EAP_8.html" data-linked-resource-id="370999400" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="370999400" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999400/WildFly+32+and+JBoss+EAP+8" data-scroll-link-target-source-id="370999400">WildFly 35 and JBoss EAP 8</a>.</p>
 <nav id="ht-post-nav">
-        <a href="SignServer_without_Database.html" class="ht-post-nav-prev">
+        <a href="Database_Setup.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer without Database</span>
+            <span>Database Setup</span>
         </a>
 
-        <a href="WildFly_32_and_JBoss_EAP_8.html" class="ht-post-nav-next">
+        <a href="WildFly_32+_and_JBoss_EAP_8.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>WildFly 32 and JBoss EAP 8</span>
+            <span>WildFly 32+ and JBoss EAP 8</span>
         </a>
 </nav>
                     </div>

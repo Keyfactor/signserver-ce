@@ -137,19 +137,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             selector = new DefaultAliasSelector();
         } else {
             try {
-                final Class<?> implClass = Class.forName(aliasSelectorClassName);
-                final Object instance = implClass.newInstance();
-
-                selector = (AliasSelector) instance;
-            } catch (ClassNotFoundException e) {
-                fatalErrors.add("Alias selector class not found: " +
-                                aliasSelectorClassName);
-            } catch (InstantiationException e) {
-                fatalErrors.add("Failed to instansiate alias selector: " +
-                                e.getMessage());
-            } catch (IllegalAccessException e) {
-                fatalErrors.add("Failed to access alias selector class: " +
-                                e.getMessage());
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                selector = classLoaderHelper.load(aliasSelectorClassName, AliasSelector.class, getClass().getClassLoader());
+            } catch (ComponentLoadingException e) {
+                fatalErrors.add("Failed to load Alias Selector using provided implementation class name: " + aliasSelectorClassName);
             }
         }
 
@@ -370,9 +361,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     if (className == null) {
                         cryptoToken = null;
                     } else {
-                        Class<?> implClass = Class.forName(className);
-                        Object obj = implClass.newInstance();
-                        final ICryptoTokenV4 token = (ICryptoTokenV4) obj;
+                        final ComponentLoader classLoaderHelper = new ComponentLoader();
+                        final ICryptoTokenV4 token = classLoaderHelper.load(className, ICryptoTokenV4.class, getClass().getClassLoader());
                         Properties properties = new Properties();
                         properties.putAll(defaultProperties);
                         properties.putAll(config.getProperties());
@@ -400,27 +390,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         cryptoTokenFatalErrors.add(error);
                     }
                     throw new SignServerException("Failed to initialize crypto token: " + e.getMessage(), e);
-                } catch (ClassNotFoundException e) {
-                    final String error = "Crypto token class not found: " + className;
+                } catch (ComponentLoadingException e) {
+                    final String error = "Failed to load Crypto Token using provided implementation class name";
 
                     if (!cryptoTokenFatalErrors.contains(error)) {
                         cryptoTokenFatalErrors.add(error);
                     }
-                    throw new SignServerException("Class not found", e);
-                } catch (IllegalAccessException iae) {
-                    final String error = "Crypto token illegal access";
 
-                    if (!cryptoTokenFatalErrors.contains(error)) {
-                        cryptoTokenFatalErrors.add(error);
-                    }
-                    throw new SignServerException("Illegal access", iae);
-                } catch (InstantiationException ie) {
-                    final String error = "Crypto token instantiation error";
-
-                    if (!cryptoTokenFatalErrors.contains(error)) {
-                        cryptoTokenFatalErrors.add(error);
-                    }
-                    throw new SignServerException("Instantiation error", ie);
+                    throw new SignServerException(error + " : " + className);
                 }
             }
         }

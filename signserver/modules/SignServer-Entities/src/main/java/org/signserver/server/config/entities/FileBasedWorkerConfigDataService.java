@@ -32,6 +32,8 @@ import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
+import org.signserver.common.ComponentLoader;
+import org.signserver.common.ComponentLoadingException;
 import org.signserver.common.util.SecureXMLDecoder;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
@@ -89,8 +91,10 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             LOG.debug(">create(" + workerId + ", " + configClassName + ")");
         }
         try {
-            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassName).newInstance());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | FileBasedDatabaseException e) {
+            ComponentLoader componentLoader = new ComponentLoader();
+            WorkerConfig workerConfig = componentLoader.load(configClassName, WorkerConfig.class, this.getClass().getClassLoader());
+            setWorkerConfig(workerId, workerConfig);
+        } catch (ComponentLoadingException | FileBasedDatabaseException e) {
             LOG.error(e);
         }
     }

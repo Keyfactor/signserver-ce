@@ -19,12 +19,12 @@ import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;
-import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
+import org.signserver.common.ComponentLoader;
+import org.signserver.common.ComponentLoadingException;
 import org.signserver.server.IServices;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.validcache.ValidationCache;
 
@@ -132,18 +132,18 @@ public abstract class BaseValidationService implements IValidationService {
 
     /**
      * Method returning the configured cert type checker if it wasn't configured properly.
-     * 
-     * @return The configured cert purpose checker 
+     *
+     * @return The configured cert purpose checker
      * @throws SignServerException
      */
     protected ICertPurposeChecker getCertPurposeChecker() throws SignServerException {
         if (certTypeChecker == null) {
             String classpath = config.getProperties().getProperty(ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER, ValidationServiceConstants.DEFAULT_CERTPURPOSECHECKER);
             try {
-                Class<?> c = ValidationHelper.class.getClassLoader().loadClass(classpath);
-                certTypeChecker = (ICertPurposeChecker) c.newInstance();
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                certTypeChecker = classLoaderHelper.load(classpath, ICertPurposeChecker.class, getClass().getClassLoader());
                 certTypeChecker.init(config);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            } catch (ComponentLoadingException e) {
                 throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " + ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
             }
         }

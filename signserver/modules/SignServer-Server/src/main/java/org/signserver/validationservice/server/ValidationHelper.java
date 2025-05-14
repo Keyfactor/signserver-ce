@@ -18,9 +18,10 @@ import java.util.Properties;
 
 import jakarta.persistence.EntityManager;
 
+import org.signserver.common.ComponentLoader;
+import org.signserver.common.ComponentLoadingException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
@@ -145,12 +146,12 @@ public class ValidationHelper {
                 String classpath = valprops.getProperty(ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH);
                 if (classpath != null) {
                     try {
-                        Class<?> c = ValidationHelper.class.getClassLoader().loadClass(classpath);
-                        IValidator v = (IValidator) c.newInstance();
+                        final ComponentLoader classLoaderHelper = new ComponentLoader();
+                        IValidator v = classLoaderHelper.load(classpath, IValidator.class, ValidationHelper.class.getClassLoader());
                         v.init(workerId, i, valprops, em);
                         retval.put(i, v);
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                        throw new SignServerException("Error validator with validatorId " + i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
+                    } catch (ComponentLoadingException e) {
+                        throw new SignServerException("Error loading validator class by name with validatorId " + i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
                     }
                 } else {
                     throw new SignServerException("Error validator with validatorId " + i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");

@@ -113,9 +113,8 @@ public class RequestAndResponseManager {
         String classPath = AVAILABLE_REQUEST_TYPES.get(getRequestOrResponeType(data));
         if (classPath != null) {
             try {
-                Class<?> c = RequestAndResponseManager.class.getClassLoader().loadClass(classPath);
-                retval = (ProcessRequest) c.newInstance();
-
+                ComponentLoader componentLoader = new ComponentLoader();
+                retval = componentLoader.load(classPath, ProcessRequest.class, RequestAndResponseManager.class.getClassLoader());
                 retval.parse(new DataInputStream(new ByteArrayInputStream(data)));
             } catch (Exception e) {
                 log.error("Error deserializing IProcessRequest from byte array  : " + e.getMessage(), e);
@@ -140,9 +139,8 @@ public class RequestAndResponseManager {
         String classPath = AVAILABLE_RESPONSE_TYPES.get(getRequestOrResponeType(data));
         if (classPath != null) {
             try {
-                Class<?> c = RequestAndResponseManager.class.getClassLoader().loadClass(classPath);
-                retval = (ProcessResponse) c.newInstance();
-
+                ComponentLoader componentLoader = new ComponentLoader();
+                retval = componentLoader.load(classPath, ProcessResponse.class, RequestAndResponseManager.class.getClassLoader());
                 retval.parse(new DataInputStream(new ByteArrayInputStream(data)));
             } catch (Exception e) {
                 log.error("Error deserializing IProcessResponse from byte array  : " + e.getMessage(), e);

@@ -490,17 +490,12 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 classpath
                         = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE).trim();
 
-                final Class<?> implClass = Class.forName(classpath);
-                final Object obj = implClass.newInstance();
-                timeSource = (ITimeSource) obj;
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                timeSource = classLoaderHelper.load(classpath, ITimeSource.class, getClass().getClassLoader());
                 timeSource.init(config.getProperties());
 
-            } catch (ClassNotFoundException e) {
-                throw new SignServerException("Class not found" + " \"" + classpath + "\"", e);
-            } catch (IllegalAccessException iae) {
-                throw new SignServerException("Illegal access", iae);
-            } catch (InstantiationException ie) {
-                throw new SignServerException("Instantiation error", ie);
+            } catch (ComponentLoadingException e) {
+                throw new SignServerException("Failed to load Time Source using provided implementation class name: " + classpath);
             }
         }
 

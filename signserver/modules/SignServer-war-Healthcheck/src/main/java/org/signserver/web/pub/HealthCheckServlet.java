@@ -26,8 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.ComponentLoader;
 import org.signserver.common.SignServerUtil;
-import org.signserver.web.pub.SameRequestRateLimiter;
 import org.signserver.web.pub.cluster.IHealthCheck;
 import org.signserver.web.pub.cluster.IHealthResponse;
 
@@ -89,13 +89,14 @@ public class HealthCheckServlet extends HttpServlet {
                 log.info("All IP addresses authorized");
                 allIPsAuth = true;
             }
-            
-            healthcheck = (IHealthCheck) HealthCheckServlet.class.getClassLoader().loadClass(config.getInitParameter("HealthCheckClassPath")).newInstance();
+            final ComponentLoader classLoaderHelper = new ComponentLoader();
+
+            healthcheck = classLoaderHelper.load(config.getInitParameter("HealthCheckClassPath"), IHealthCheck.class, getClass().getClassLoader());
             healthcheck.init(config, em);
-            
-            healthresponse = (IHealthResponse) HealthCheckServlet.class.getClassLoader().loadClass(config.getInitParameter("HealthResponseClassPath")).newInstance();
+
+            healthresponse = classLoaderHelper.load(config.getInitParameter("HealthResponseClassPath"), IHealthResponse.class, getClass().getClassLoader());
             healthresponse.init(config);
-            
+
         } catch( Exception e ) {
             throw new ServletException(e);
         }

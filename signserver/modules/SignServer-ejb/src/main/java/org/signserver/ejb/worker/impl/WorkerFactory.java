@@ -117,15 +117,10 @@ public class WorkerFactory {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Loading worker with class name: " + className);
                     }
-                    ClassLoader cl = this.getClass().getClassLoader();
-                    Class<?> implClass = cl.loadClass(className);
-                    result = (IWorker) implClass.newInstance();
-                } catch (ClassNotFoundException e) {
-                    result = new UnloadableWorker("Worker class not found (is the module included in the build?): " + className + ": " + e.getLocalizedMessage());
-                } catch (IllegalAccessException e) {
-                    result = new UnloadableWorker("Could not access worker class: " + className + ": " + e.getLocalizedMessage());
-                } catch (InstantiationException e) {
-                    result = new UnloadableWorker("Could not instantiate worker class: " + className + ": " + e.getLocalizedMessage());
+                    final ComponentLoader classLoaderHelper = new ComponentLoader();
+                    result = classLoaderHelper.load(className, IWorker.class, getClass().getClassLoader());
+                } catch (ComponentLoadingException e) {
+                    result = new UnloadableWorker(e.getLocalizedMessage() + " Class: " + className);
                 }
             }
 
@@ -341,11 +336,10 @@ public class WorkerFactory {
             auth = new ClientCertAuthorizer();
         } else {
             try {
-                Class<?> c = this.getClass().getClassLoader().loadClass(authType);
-                auth = (IAuthorizer) c.newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                LOG.error("Error worker with ID " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                throw new SignServerException("Error worker with ID " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                auth = classLoaderHelper.load(authType, IAuthorizer.class, getClass().getClassLoader());
+            } catch (ComponentLoadingException e) {
+                throw new SignServerException("Error loading Authorizer implementation class name for worker with ID " + workerId + ", AUTHTYPE setting: " + authType);
             }
         }
 
@@ -367,9 +361,9 @@ public class WorkerFactory {
             workerLogger = new AllFieldsWorkerLogger();
         } else {
             try {
-                final Class<?> c = this.getClass().getClassLoader().loadClass(fullClassName);
-                workerLogger = (IWorkerLogger) c.newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                workerLogger = classLoaderHelper.load(fullClassName, IWorkerLogger.class, getClass().getClassLoader());
+            } catch (ComponentLoadingException e) {
                 final String error =
                         "Error worker with ID " + workerId
                         + " misconfiguration, "
@@ -396,9 +390,9 @@ public class WorkerFactory {
             accounter = new NoAccounter();
         } else {
             try {
-                final Class<?> c = this.getClass().getClassLoader().loadClass(fullClassName);
-                accounter = (IAccounter) c.newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                accounter = classLoaderHelper.load(fullClassName, IAccounter.class, getClass().getClassLoader());
+            } catch (ComponentLoadingException e) {
                 final String error =
                         "Error worker with ID " + workerId
                         + " misconfiguration, "
@@ -436,8 +430,8 @@ public class WorkerFactory {
 
                 if (!className.isEmpty()) {
                     try {
-                        final Class<?> c = this.getClass().getClassLoader().loadClass(className);
-                        final Archiver archiver = (Archiver) c.newInstance();
+                        final ComponentLoader classLoaderHelper = new ComponentLoader();
+                        final Archiver archiver = classLoaderHelper.load(className, Archiver.class, getClass().getClassLoader());
                         archivers.add(archiver);
                         try {
                             archiver.init(index, config, context);
@@ -451,7 +445,7 @@ public class WorkerFactory {
                             throw new SignServerException(error);
                         }
                         index++;
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                    } catch (ComponentLoadingException e) {
                         final String error =
                                 "Error worker with ID " + workerId
                                 + " misconfiguration, "

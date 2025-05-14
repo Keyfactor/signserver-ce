@@ -17,7 +17,6 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.signserver.module.cmssigner.FilteredSignedAttributeTableGenerator;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -867,17 +866,12 @@ public class TimeStampSigner extends BaseSigner {
                 classpath
                         = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE).trim();
 
-                final Class<?> implClass = Class.forName(classpath);
-                final Object obj = implClass.getDeclaredConstructor().newInstance();
-                timeSource = (ITimeSource) obj;
+                final ComponentLoader classLoaderHelper = new ComponentLoader();
+                timeSource = classLoaderHelper.load(classpath, ITimeSource.class, getClass().getClassLoader());
                 timeSource.init(config.getProperties());
 
-            } catch (ClassNotFoundException e) {
-                throw new SignServerException("Class not found" + " \"" + classpath + "\"", e);
-            } catch (IllegalAccessException iae) {
-                throw new SignServerException("Illegal access", iae);
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException ie) {
-                throw new SignServerException("Instantiation error", ie);
+            } catch (ComponentLoadingException e) {
+                throw new SignServerException("Failed to load Time Source using provided implementation class name: " + classpath);
             }
         }
 

@@ -21,8 +21,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
+import org.signserver.common.ComponentLoader;
+import org.signserver.common.ComponentLoadingException;
 import org.signserver.common.data.CertificateValidationRequest;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
@@ -81,13 +82,12 @@ public class ValidationServiceWorker extends BaseProcessable {
         String error = null;
         try {
             if (classPath != null) {
-                Class<?> implClass = Class.forName(classPath);
-                retval = (IValidationService) implClass.newInstance();
-
+                ComponentLoader componentLoader = new ComponentLoader();
+                retval = componentLoader.load(classPath, IValidationService.class, this.getClass().getClassLoader());
                 retval.init(workerId, config, em);
             }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+        } catch (ComponentLoadingException e) {
+            error = "Error instantiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class name.";
             LOG.error(error, e);
         }
 

@@ -86,7 +86,7 @@ public class LegacyPKCS11CryptoToken extends BaseCryptoToken implements P11SlotU
         try {
             Thread.currentThread().getContextClassLoader().loadClass(Pkcs11SlotLabel.SUN_PKCS11_CLASS);
         } catch (ClassNotFoundException t) {
-            throw new InstantiationException("PKCS11 provider class " + Pkcs11SlotLabel.SUN_PKCS11_CLASS + " not found.");
+            throw new InstantiationException("Failed to load PKCS11 provider class " + Pkcs11SlotLabel.SUN_PKCS11_CLASS);
         }
     }
 

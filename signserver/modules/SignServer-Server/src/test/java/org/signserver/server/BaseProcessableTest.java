@@ -350,8 +350,8 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
         
         final List<String> fatalErrors = instance.getFatalErrors(services);
-        
-        assertTrue("Should contain error", fatalErrors.contains("Crypto token class not found: org.foo.Bar"));
+
+        assertTrue("Should contain error", fatalErrors.contains("Failed to load Crypto Token using provided implementation class name"));
     }
 
     /**
@@ -707,7 +707,7 @@ public class BaseProcessableTest extends TestCase {
     }
 
     /** CryptoToken only holding its properties and offering a way to access them. */
-    private static class MockedCryptoToken extends NullCryptoToken {
+    public static class MockedCryptoToken extends NullCryptoToken {
 
         private Properties props;
 

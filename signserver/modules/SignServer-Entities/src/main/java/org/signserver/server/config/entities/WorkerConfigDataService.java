@@ -25,6 +25,7 @@ import jakarta.persistence.Query;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
+import org.signserver.common.ComponentLoader;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
@@ -67,7 +68,8 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         wcdb.setSignerType(WorkerType.UNKNOWN.getType());
 
         try {
-            final WorkerConfig config = (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance();
+            ComponentLoader componentLoader = new ComponentLoader();
+            final WorkerConfig config = componentLoader.load(configClassPath, WorkerConfig.class, this.getClass().getClassLoader());
             config.setProperty("NAME", name); // TODO
             setWorkerConfig(workerId, config, wcdb);
         } catch (Exception e) {

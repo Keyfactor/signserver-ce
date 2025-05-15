@@ -17,12 +17,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.WorkerConfig;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.ByteArrayInputStream;
+import java.nio.file.Path;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.cesecore.util.CertTools;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.server.AllowlistUtils;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 import org.signserver.common.SignServerException;
 
@@ -66,7 +69,7 @@ public class PDFSignerParameters {
     private String visible_sig_name;
 
     private String visible_sig_custom_image_base64;
-    private String visible_sig_custom_image_path;
+    private Path visible_sig_custom_image_path;
     private boolean visible_sig_custom_image_scale_to_rectangle = PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT;
 
     private int certification_level = PDFSigner.CERTIFICATION_LEVEL_DEFAULT;
@@ -97,6 +100,7 @@ public class PDFSignerParameters {
     private boolean useTimestamp;
     private boolean useTimestampAuthorization;
     private Image custom_image;
+    private Set<Path> allowListedImagePaths;
 
     private String tsa_worker;
 
@@ -109,10 +113,15 @@ public class PDFSignerParameters {
     private final Set<String> allowPropertyOverride;
 
     public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata, final Set<String> allowPropertyOverride) throws IllegalRequestException, SignServerException {
+        this(workerId, config, configErrors, requestMetadata, allowPropertyOverride, null);
+    }
+
+    public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata, final Set<String> allowPropertyOverride, Set<Path> allowListedImagePaths) throws IllegalRequestException, SignServerException {
         this.workerId = workerId;
         this.config = config;
         this.configErrors = configErrors;
         this.allowPropertyOverride = allowPropertyOverride;
+        this.allowListedImagePaths = allowListedImagePaths;
         extractAndProcessConfigurationProperties(requestMetadata);
     }
 
@@ -381,14 +390,20 @@ public class PDFSignerParameters {
             // custom image path. Do not set if base64 encoded image is
             // specified
             if (visible_sig_custom_image_base64 == null) {
-                visible_sig_custom_image_path = config.getProperty(
-                        PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH, DEFAULT_NULL);
-                LOG.debug("using custom image path : "
-                        + visible_sig_custom_image_path);
+                String tmp_custom_image_path = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH, DEFAULT_NULL);
+                if (tmp_custom_image_path != null) {
+                    visible_sig_custom_image_path = Path.of(tmp_custom_image_path).normalize();
+                }
             }
             
             boolean use_image_from_base64_string = visible_sig_custom_image_base64 != null;                    
             boolean use_image_from_path = visible_sig_custom_image_path != null;
+            if (use_image_from_path) {
+                LOG.debug("using custom image path : "
+                        + visible_sig_custom_image_path);
+            } else {
+                LOG.debug("No valid custom image configuration could be used.");
+            }
                   
             useCustomImage = use_image_from_base64_string
                     || use_image_from_path;
@@ -407,10 +422,19 @@ public class PDFSignerParameters {
                     }
                 } else {
                     try {
-                        imageByteArray = readFile(visible_sig_custom_image_path);
+                        if (AllowlistUtils.isPathAllowed(visible_sig_custom_image_path, allowListedImagePaths)) {
+                            imageByteArray = readFile(visible_sig_custom_image_path.toString());
+                        } else {
+                            if (!configErrors.contains("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path)) {
+                                configErrors.add("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path);
+                                LOG.error("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path);
+                            }
+                        }
                     } catch (IOException ex) {
-                        configErrors.add("Error reading custom image data from path specified: " + ex.getMessage());
-                        LOG.error("Error reading custom image data from path specified", ex);
+                        if (!configErrors.contains("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path)) {
+                            configErrors.add("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path);
+                            LOG.error("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path);
+                        }
                     }
                 }
 
@@ -446,8 +470,10 @@ public class PDFSignerParameters {
                             calculateUpperRightRectangleCoordinatesFromImage();
                         }
                     } catch (BadElementException | IOException ex) {
-                        configErrors.add("Problem constructing image from custom image data: " + ex.getMessage());
-                        LOG.error("Problem constructing image from custom image data", ex);
+                        if (!configErrors.contains("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path)) {
+                            configErrors.add("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path);
+                            LOG.error("Unable to use the provided file path for a custom image: " + visible_sig_custom_image_path);
+                        }
                     }
                 }
                 
@@ -603,7 +629,7 @@ public class PDFSignerParameters {
         return visible_sig_custom_image_base64;
     }
 
-    public String getVisible_sig_custom_image_path() {
+    public Path getVisible_sig_custom_image_path() {
         return visible_sig_custom_image_path;
     }
 

@@ -36,6 +36,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
@@ -52,6 +53,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
+import org.signserver.server.AllowlistUtils;
 import org.signserver.server.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
@@ -218,6 +220,13 @@ public class PDFSigner extends BaseSigner {
      */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
     private String tsaDigestAlgorithmName; // passed to PdfPkcs7
+    private Set<Path> allowedImagePaths;
+
+    /**
+     * Collection of allowed paths that the PDFSigner is allowed to archive signed documents to.
+     * The paths can be defined using the pdfsigner.archive.path.allowed.x property in signserver-deploy.properties.
+     */
+    private Set<Path> allowedArchivePaths;
 
     /** Properties that are configured to be allowed to override. */
     private Set<String> allowPropertyOverride;
@@ -245,23 +254,44 @@ public class PDFSigner extends BaseSigner {
             }
         }
 
+        // Load the allowlists
+        allowedImagePaths = getAllowedCustomImagePaths();
+        allowedArchivePaths = getAllowedArchivePaths();
+
+        // Check custom image settings
+        if (StringUtils.equalsIgnoreCase("TRUE",
+                config.getProperty(ADD_VISIBLE_SIGNATURE, Boolean.FALSE.toString()))) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Visible signature added");
+            }
+
+            if (config.getProperty(VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64) == null) {
+                final String visibleSignatureCustomImagePath = config.getProperty(VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH);
+                if (!AllowlistUtils.isPathAllowed(Path.of(visibleSignatureCustomImagePath), allowedImagePaths)) {
+                    if (!configErrors.contains("Unable to use the provided file path for a custom image: " + visibleSignatureCustomImagePath)) {
+                        configErrors.add("Unable to use the provided file path for a custom image: " + visibleSignatureCustomImagePath);
+                        LOG.error("Unable to use the provided file path for a custom image: " + visibleSignatureCustomImagePath);
+                    }
+                }
+            }
+        }
+
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
                 config.getProperty(PROPERTY_ARCHIVETODISK, Boolean.FALSE.toString()))) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to disk");
             }
-
             final String path = config.getPropertyThatCouldBeEmpty(PROPERTY_ARCHIVETODISK_PATH_BASE);
             if (path == null) {
                 LOG.warn("Worker[" + workerId
                         + "]: Archiving path missing");
                 configErrors.add("Archiving path not specified");
-            } else if (!new File(path).exists()) {
-                LOG.warn("Worker[" + workerId
-                        + "]: Archiving path does not exists: "
-                        + path);
+            } else if (!AllowlistUtils.isPathAllowed(Path.of(path), allowedArchivePaths)) {
+                LOG.error("Archiving path is not allowed");
+                configErrors.add("Archiving path is not allowed");
             }
+
         }
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
 
@@ -302,7 +332,7 @@ public class PDFSigner extends BaseSigner {
 
         try {
             // retrieve and preprocess configuration parameter values
-            new PDFSignerParameters(workerId, config, configErrors, new HashMap<>(), allowPropertyOverride);
+            new PDFSignerParameters(workerId, config, configErrors, new HashMap<>(), allowPropertyOverride, allowedImagePaths);
         } catch (IllegalRequestException | SignServerException ex) {
             configErrors.add("PDF configuration error: " + ex.getMessage());
         }
@@ -1074,7 +1104,7 @@ public class PDFSigner extends BaseSigner {
         }
     }
 
-    private void archiveToDisk(SignatureRequest sReq, ReadableData data, RequestContext requestContext) throws SignServerException {
+    protected void archiveToDisk(SignatureRequest sReq, ReadableData data, RequestContext requestContext) throws SignServerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Archiving to disk");
         }
@@ -1118,6 +1148,12 @@ public class PDFSigner extends BaseSigner {
                 new Date(), fields);
 
         final File outputFile = new File(outputPath, fileNameFromPattern);
+
+        // If the final normalized path is not part of the allowlist, we throw a SignServerException exception with
+        // relevant message.
+        if (!AllowlistUtils.isPathAllowed(outputFile.toPath(), allowedArchivePaths)) {
+            throw new SignServerException("Final archive path is not allowed");
+        }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker[" + workerId + "]: Archive to file: "
@@ -1322,6 +1358,30 @@ public class PDFSigner extends BaseSigner {
 
         // Put the final Producer field
         info.put("Producer", infoProducer);
+    }
+
+    /**
+     * Method for retrieving the entire collection of allowed archiving paths.
+     *
+     * @return A Set of allowed Archiving Paths
+     */
+    protected Set<Path> getAllowedArchivePaths() {
+        if (allowedArchivePaths == null) {
+            return CompileTimeSettings.getInstance().getArchiveAllowlistPaths();
+        }
+        return allowedArchivePaths;
+    }
+
+    /**
+     * Method for retrieving the entire collection of allowed custom image paths.
+     *
+     * @return A Set of allowed Custom Image Paths
+     */
+    protected Set<Path> getAllowedCustomImagePaths() {
+        if (allowedImagePaths == null) {
+            return CompileTimeSettings.getInstance().getCustomImagePathProperties();
+        }
+        return allowedImagePaths;
     }
 
 }

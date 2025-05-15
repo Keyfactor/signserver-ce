@@ -15,10 +15,12 @@ package org.signserver.common;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -74,8 +76,14 @@ public class CompileTimeSettings {
     
     public static final String STATUSREPOSITORY_LOG = "statusrepository.log";
 
+    public static final String ARCHIVE_ALLOWLIST = "pdfsigner.archive.path.allowed";
+    public static final int MAX_ARCHIVE_PATHS = 256;
+
     public static final String WEB_THEME = "web.theme";
-    
+
+    public static final String CUSTOM_IMAGE_PATH_ALLOWLIST = "pdfsigner.image.path.allowed";
+    public static final int MAX_CUSTOM_IMAGE_PATHS = 256;
+
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 
@@ -155,4 +163,45 @@ public class CompileTimeSettings {
         
         return maskedWorkerPropertyNames;
     }
+
+    /**
+     * Retrieves all pdfsigner.archive.path.allowed.x deploy properties.
+     *
+     * @return Collection of normalized allowed paths for PDF archiving
+     */
+     public Set<Path> getArchiveAllowlistPaths() {
+            Set<Path> tmp = new HashSet<>();
+            for (int i = 0; i < MAX_ARCHIVE_PATHS; i++) {
+                final String prop = getProperty(CompileTimeSettings.ARCHIVE_ALLOWLIST + "." + i);
+                if (prop != null && !prop.isEmpty()) {
+                    // if prop starts with ${ and ends with }, treat it as a placeholder
+                    if (prop.startsWith("${") && prop.endsWith("}")) {
+                        continue;
+                    }
+                    tmp.add(Path.of(prop).normalize());
+                }
+            }
+            return tmp;
+     }
+
+    /**
+     * Retrieves all pdfsigner.image.path.allowed.x deploy properties.
+     *
+     * @return Collection of normalized allowed paths for visible signature custom images
+     */
+    public Set<Path> getCustomImagePathProperties() {
+        Set<Path> tmp = new HashSet<>();
+        for (int i = 0; i < MAX_CUSTOM_IMAGE_PATHS; i++) {
+            final String prop = getProperty(CompileTimeSettings.CUSTOM_IMAGE_PATH_ALLOWLIST + "." + i);
+            if (prop != null && !prop.isEmpty()) {
+                // if prop starts with ${ and ends with }, treat it as a placeholder
+                if (prop.startsWith("${") && prop.endsWith("}")) {
+                    continue;
+                }
+                tmp.add(Path.of(prop).normalize());
+            }
+        }
+        return tmp;
+    }
+
 }

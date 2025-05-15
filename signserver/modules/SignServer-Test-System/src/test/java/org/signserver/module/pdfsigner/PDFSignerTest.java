@@ -22,6 +22,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
@@ -29,6 +31,7 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
@@ -481,38 +484,112 @@ public class PDFSignerTest extends ModulesTestCase {
         assertEquals("4311/2010/" + expectedMonth, actual);
     }
 
+    /**
+     * Testing archiving with a path that is allowed.
+     * @throws Exception
+     */
     @Test
     public void test10ArchiveToDisk() throws Exception {
-        final File archiveFolder = new File(getSignServerHome() + File.separator
-                + "tmp" + File.separator + "archivetest");
+        File expectedFile = null;
+        try {
+            final String allowList = this.getConfig().getProperty("test.archive.existingAllowedFolder");
+            Assume.assumeTrue("Test requires test.archive.existingAllowedFolder to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
 
-        if (!archiveFolder.exists()) {
-            assertTrue("Create dir: " + archiveFolder, archiveFolder.mkdirs());
+            final File archiveFolder = new File(allowList);
+
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
+                    allowList);
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
+                    "${DATE:yyyy}/${WORKERID}");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
+                    "${REQUESTID}.pdf");
+            workerSession.reloadConfiguration(WORKERID);
+
+            final GenericSignResponse res = signGenericDocument(WORKERID,
+                    Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+
+            final Calendar cal = Calendar.getInstance();
+            final String year = String.valueOf(cal.get(Calendar.YEAR));
+
+            expectedFile = new File(archiveFolder, year + "/" + WORKERID + "/" + res.getRequestID() + ".pdf");
+
+            assertTrue("File: " + expectedFile, expectedFile.exists());
+
+            final PdfReader reader = new PdfReader(res.getProcessedData());
+            assertNotNull("ok archived doc", reader);
+        } finally {
+            FileUtils.deleteQuietly(expectedFile);
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN");
+            workerSession.reloadConfiguration(WORKERID);
         }
+    }
 
-        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
-        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
-                archiveFolder.getAbsolutePath());
-        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
-                "${DATE:yyyy}/${WORKERID}");
-        workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
-                "${REQUESTID}.pdf");
-        workerSession.reloadConfiguration(WORKERID);
+    /**
+     * Testing archiving where ARCHIVETODISK_PATH_BASE is not an allowed path.
+     */
+    @Test
+    public void test10ArchiveToDiskNoAllowedPath() throws CryptoTokenOfflineException, IllegalRequestException {
+        try {
+            final String allowList = this.getConfig().getProperty("test.archive.existingAllowedFolder");
+            Assume.assumeTrue("Test requires test.archive.existingAllowedFolder to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
 
-        final GenericSignResponse res = signGenericDocument(WORKERID,
-                Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
+                    "/not/a/allowed/path");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
+                    "${DATE:yyyy}/${WORKERID}");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
+                    "${REQUESTID}.pdf");
+            workerSession.reloadConfiguration(WORKERID);
 
-        final Calendar cal = Calendar.getInstance();
-        final String year = String.valueOf(cal.get(Calendar.YEAR));
+            signGenericDocument(WORKERID, Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+            fail("Should have thrown exception");
+        } catch (SignServerException ex) {
+            assertTrue("Worker should be misconfigured, meaning the archiving path is not allowed",
+                    ex.getMessage().contains("Worker is misconfigured"));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN");
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
 
-        final File expectedFile = new File(archiveFolder, year + "/" + WORKERID + "/" + res.getRequestID() + ".pdf");
+    /**
+     * Testing archiving where ARCHIVETODISK_PATH_BASE path is allowed but the FINAL canonical path is not.
+     */
+    @Test
+    public void test10ArchiveToDiskFinalPathNotAllowed() throws CryptoTokenOfflineException, IllegalRequestException {
+        try {
+            final String allowList = this.getConfig().getProperty("test.archive.existingAllowedFolder");
+            Assume.assumeTrue("Test requires test.archive.existingAllowedFolder to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
 
-        assertTrue("File: " + expectedFile, expectedFile.exists());
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK", "True");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE",
+                    allowList);
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN",
+                    "../");
+            workerSession.setWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN",
+                    "../server.log");
+            workerSession.reloadConfiguration(WORKERID);
 
-        final PdfReader reader = new PdfReader(res.getProcessedData());
-        assertNotNull("ok archived doc", reader);
-
-        expectedFile.delete();
+            signGenericDocument(WORKERID, Base64.decode((testpdf1 + testpdf2 + testpdf3 + testpdf4).getBytes()));
+            fail("Should have thrown exception.");
+        } catch (SignServerException ex) {
+            assertTrue("Final archive path should not be allowed",
+                    ex.getMessage().contains("Final archive path is not allowed"));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_BASE");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_PATH_PATTERN");
+            workerSession.removeWorkerProperty(WORKERID, "ARCHIVETODISK_FILENAME_PATTERN");
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
 
     @Test

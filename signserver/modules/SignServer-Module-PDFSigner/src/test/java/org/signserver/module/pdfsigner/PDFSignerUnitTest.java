@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -58,6 +61,7 @@ import com.lowagie.text.pdf.TSAClient;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -78,7 +82,10 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.cesecore.util.CertTools;
+import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -109,6 +116,7 @@ import org.signserver.testutils.ModulesTestCase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import com.lowagie.text.pdf.AcroFields;
@@ -258,6 +266,17 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private File sampleSignedSHA256;
     private File sampleWithSubsectionInXref;
     private File sampleSignedVersion16;
+
+    // This path will be assigned in @BeforeClass
+    private static Path archivingPath;
+
+    // Paths that will be used in the inner class MockedPathingPDFSigner. These paths will be returned
+    // when trying to retrieve that objects allowList.
+    private final static Path ALLOWED_PATH = Path.of("/this/path/is/allowed").normalize();
+    private final static Path ALLOWED_PATH_SPECIAL_CHARACTER = Path.of("/this/pa,th/is/all\\owed").normalize();
+    private final static Path ALLOWED_RELATIVE_PATH = Path.of("src/test/resources").normalize();
+    private final static Path ALLOWED_ARCHIVING_RELATIVE_PATH = Path.of("archiving").normalize();
+
 //    private File sampleLowprintingOwner123;
 
     private final JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
@@ -284,6 +303,17 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         sampleWithSubsectionInXref = new File(home, "res/test/pdf/sample-with-subsection-in-xref.pdf");
         sampleSignedVersion16 = new File(home, "res/test/pdf/sample-signed-version-16.pdf");
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
+    }
+
+    @BeforeClass
+    public static void setUpArchivingDirrectory() throws IOException {
+        // Create directory where we can temporarily store archived documents.
+        createArchivingDirectory();
+    }
+
+    @AfterClass
+    public static void tearDownArchivingDirectory() {
+        FileUtils.deleteQuietly(new File(String.valueOf(archivingPath)));
     }
 
     @Before
@@ -1699,15 +1729,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         workerConfig.setProperty("CERTIFICATION_LEVEL", "invalid_value");
         workerConfig.setProperty("SET_PERMISSIONS", "_invalid_value");
         workerConfig.setProperty("ADD_VISIBLE_SIGNATURE", "True");
-        workerConfig.setProperty("VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH", "_invalid_value");
+        workerConfig.setProperty("VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH", "/not/allowlisted/path/image.png");
         workerConfig.setProperty("VISIBLE_SIGNATURE_RECTANGLE", "0,0,0");
+        workerConfig.setProperty("ARCHIVETODISK", "TRUE");
+        workerConfig.setProperty("ARCHIVETODISK_PATH_BASE", "/this/path/is/not/allowed");
 
-        final PDFSigner instance = new PDFSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) {
-                return null;
-            }
-        };
+        final MockedPathingPDFSigner instance = new MockedPathingPDFSigner();
+
         instance.init(WORKER1, workerConfig, null, null);
 
         final String fatalErrors = instance.getFatalErrors(null).toString();
@@ -1717,9 +1745,194 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertTrue("Should contain error: " + fatalErrors,
                 fatalErrors.contains("Unknown permission value"));
         assertTrue("Should contain error: " + fatalErrors,
-                fatalErrors.contains("Error reading custom image data from path specified"));
+                fatalErrors.contains("Unable to use the provided file path for a custom image: /not/allowlisted/"));
         assertTrue("Should contain error: " + fatalErrors,
                 fatalErrors.contains("RECTANGLE property must contain 4 comma separated values with no spaces"));
+        assertTrue("Should contain error: " + fatalErrors,
+                fatalErrors.contains("Archiving path is not allowed"));
+    }
+
+    /**
+     * Test different archiving configurations against the archiving path allowlist.
+     */
+    @Test
+    public void test23ArchivingAllowlistTest() {
+        // Testing check in PDFSigner.init() using absolute path
+        assertTrue("Setting ARCHIVING_PATH_BASE to allowed absolute path. Should be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_PATH.toString())
+                        .init().fatalErrors().isEmpty());
+
+        assertTrue("Setting ARCHIVING_PATH_BASE to allowed absolute path that traverses back to /this/path/is/allowed " +
+                        "and should therefore be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_PATH + "/but/also/this/../../../")
+                        .init().fatalErrors().isEmpty());
+
+        assertTrue("Setting ARCHIVING_PATH_BASE to allowed absolute path with special characters. Should be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_PATH_SPECIAL_CHARACTER.toString())
+                        .init().fatalErrors().isEmpty());
+
+        assertTrue("Setting ARCHIVETODISK_PATH_BASE to disallowed absolute path. Should not be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase("/not/allowed/")
+                        .init().fatalErrors().contains("Archiving path is not allowed"));
+
+        assertTrue("Setting ARCHIVETODISK_PATH_BASE to empty string. Should not be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase("")
+                        .init().fatalErrors().contains("Archiving path is not allowed"));
+
+        assertTrue("Setting ARCHIVETODISK_PATH_BASE to absolute path that will travers upwards. Should not be allowed",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_PATH + "/../../")
+                        .init().fatalErrors().contains("Archiving path is not allowed"));
+
+        // Testing check in PDFSigner.init() using relative path
+        assertTrue("Setting ARCHIVING_PATH_BASE to allowed relative path. Should be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_RELATIVE_PATH.toString())
+                        .init().fatalErrors().isEmpty());
+
+        assertTrue("Setting ARCHIVING_PATH_BASE to allowed relative path that traverses back to /this/path/is/allowed " +
+                        "and should therefore be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_RELATIVE_PATH + "/but/also/this/../../../")
+                        .init().fatalErrors().isEmpty());
+
+        assertTrue("Setting ARCHIVETODISK_PATH_BASE to disallowed relative path. Should not be allowed.",
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase(ALLOWED_RELATIVE_PATH + "/../../")
+                        .init().fatalErrors().contains("Archiving path is not allowed"));
+
+        // Testing check in PDFSigner.archiveToDisk() using absolute path
+        SignServerException exception = Assert.assertThrows("Setting ARCHIVETODISK_PATH_BASE to allowed absolute path but then " +
+                        "adding ARCHIVETODISK_FILENAME_PATTERN and ARCHIVETODISK_PATH_PATTERN to try to traverse to " +
+                        "directory not included in allowlist. Should not be allowed",
+                SignServerException.class, () ->
+                new PDFSignerBuilder()
+                        .enableArchiveToDisk()
+                        .archiveToDiskPathBase("/this/path/is/allowed")
+                        .archiveToDiskPathPattern("../")
+                        .archiveToDiskFilenamePattern("../server.log")
+                        .init()
+                        .archiveToDisk());
+        assertTrue("Same exception class caught, but message is not expected.", exception.getMessage().contains("Final archive path is not allowed"));
+
+        // Testing check in PDFSigner.archiveToDisk() using relative path
+        exception = Assert.assertThrows("Setting ARCHIVETODISK_PATH_BASE to allowed relative path but then " +
+                        "adding ARCHIVETODISK_FILENAME_PATTERN and ARCHIVETODISK_PATH_PATTERN to try to traverse to " +
+                        "directory not included in allowlist. Should not be allowed",
+                SignServerException.class, () ->
+                        new PDFSignerBuilder()
+                                .enableArchiveToDisk()
+                                .archiveToDiskPathBase(ALLOWED_RELATIVE_PATH.toString())
+                                .archiveToDiskPathPattern("../")
+                                .archiveToDiskFilenamePattern("../server.log")
+                                .init()
+                                .archiveToDisk());
+        assertTrue("Same exception class caught, but message is not expected.", exception.getMessage().contains("Final archive path is not allowed"));
+
+        // Testing check in PDFSigner.archiveToDisk(), all should succeed.
+        try {
+            // Using absolute path
+            new PDFSignerBuilder()
+                    .enableArchiveToDisk()
+                    .archiveToDiskPathBase(archivingPath.toString())
+                    .init()
+                    .archiveToDisk();
+
+            new PDFSignerBuilder()
+                    .enableArchiveToDisk()
+                    .archiveToDiskPathBase(archivingPath.toString())
+                    .init()
+                    .archiveToDiskPathPattern("my/archiving/dir")
+                    .archiveToDiskFilenamePattern("mypdf.pdf")
+                    .archiveToDisk();
+
+            new PDFSignerBuilder()
+                    .enableArchiveToDisk()
+                    .archiveToDiskPathBase(archivingPath.toString())
+                    .init()
+                    .archiveToDiskPathPattern("my/archiving/dir")
+                    .archiveToDiskFilenamePattern("../../../mypdf.pdf")
+                    .archiveToDisk();
+
+            new PDFSignerBuilder()
+                    .enableArchiveToDisk()
+                    .archiveToDiskPathBase(archivingPath.toString())
+                    .archiveToDiskFilenamePattern("../../mypdf.pdf")
+                    .init()
+                    .archiveToDisk();
+
+            // Using relative path
+            new PDFSignerBuilder()
+                    .enableArchiveToDisk()
+                    .archiveToDiskPathBase(ALLOWED_ARCHIVING_RELATIVE_PATH.toString())
+                    .init()
+                    .archiveToDisk();
+
+            new PDFSignerBuilder()
+                    .enableArchiveToDisk()
+                    .archiveToDiskPathBase(ALLOWED_ARCHIVING_RELATIVE_PATH.toString())
+                    .init()
+                    .archiveToDiskPathPattern("my/archiving/dir")
+                    .archiveToDiskFilenamePattern("../../../mypdf.pdf")
+                    .archiveToDisk();
+        } catch (SignServerException ex) {
+            // The tests should never throw a SignServerException exception.
+            fail("Should not throw exception." + ex.getMessage());
+        }
+    }
+
+    /**
+     * Test different custom image paths against the custom image path allowlist.
+     */
+    @Test
+    public void test23CustomImageAllowlistTests() throws FileNotFoundException {
+
+        final String CWD = getSignServerHome() + "/modules/SignServer-Module-PDFSigner";
+        // Testing check in PDFSigner.init()
+        assertTrue("Tests using a custom image path with a path that is allowed.",
+                new PDFSignerBuilder()
+                        .enableAddVisibleSignature()
+                        .visibleSignatureCustomImagePath(CWD + "/src/test/resources/primekey.png")
+                        .init().fatalErrors().isEmpty());
+
+        assertTrue("Setting VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH that directory traversal to a non-allowlisted path. Should result in an error.",
+                new PDFSignerBuilder()
+                        .enableAddVisibleSignature()
+                        .visibleSignatureCustomImagePath(CWD + "/src/test/resources/../primekey.png")
+                        .init().fatalErrors().contains("Unable to use the provided file path for a custom image: " + CWD + "/src/test/primekey.png"));
+
+        assertTrue("Setting VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH to disallowed path. Should not be allowed",
+                new PDFSignerBuilder()
+                        .enableAddVisibleSignature()
+                        .visibleSignatureCustomImagePath(CWD + "/src/pom.xml")
+                        .init().fatalErrors().contains("Unable to use the provided file path for a custom image: " + CWD + "/src/pom.xml"));
+
+        assertTrue("Setting VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH to a path that is not a supported image type.",
+                new PDFSignerBuilder()
+                        .enableAddVisibleSignature()
+                        .visibleSignatureCustomImagePath(CWD + "/src/test/resources/log4j.properties")
+                        .init().fatalErrors().contains("Unable to use the provided file path for a custom image: " + CWD + "/src/test/resources/log4j.properties"));
+
+        assertTrue("Setting VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH to a path pointing to a non-existing file. Should result in an error.",
+                new PDFSignerBuilder()
+                        .enableAddVisibleSignature()
+                        .visibleSignatureCustomImagePath(CWD + "/src/test/resources/doesnotexist.png")
+                        .init().fatalErrors().contains("Unable to use the provided file path for a custom image: " + CWD + "/src/test/resources/doesnotexist.png"));
+
     }
 
     /**
@@ -2195,6 +2408,31 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Mocked PDFSigner used to emulate allowlists for archiving and custom image paths.
+     */
+    private static class MockedPathingPDFSigner extends PDFSigner {
+        @Override
+        public ICryptoTokenV4 getCryptoToken(final IServices services) {
+            return null;
+        }
+
+        @Override
+        protected Set<Path> getAllowedArchivePaths() {
+            return new HashSet<>(List.of(ALLOWED_PATH, ALLOWED_PATH_SPECIAL_CHARACTER, ALLOWED_RELATIVE_PATH, ALLOWED_ARCHIVING_RELATIVE_PATH, archivingPath));
+        }
+
+        @Override
+        protected Set<Path> getAllowedCustomImagePaths() {
+            Path CWD = null;
+            try {
+                CWD = Path.of(getSignServerHome().getPath()).normalize();
+            } catch (FileNotFoundException e) {
+                // DO NOTHING
+            }
+            return new HashSet<>(List.of(ALLOWED_PATH, ALLOWED_PATH_SPECIAL_CHARACTER, ALLOWED_RELATIVE_PATH, CWD));
+        }
+    }
 
     /**
      * Tests that we don't get an exception trying to sign a document with the
@@ -2479,4 +2717,82 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             throw new IOException("PDF did not require a password");
         }
     }
+
+    /**
+     * Inner class using the builder pattern that makes it easy to set up archiving and custom image path
+     * for testing purposes.
+     */
+    private static class PDFSignerBuilder {
+        
+        private WorkerConfig workerConfig = new WorkerConfig();
+        private MockedPathingPDFSigner instance = new MockedPathingPDFSigner();
+
+        public PDFSignerBuilder() {
+            workerConfig.setProperty("TYPE", "PROCESSABLE");
+        }
+
+        public PDFSignerBuilder enableArchiveToDisk() {
+            workerConfig.setProperty("ARCHIVETODISK", "TRUE");
+            return this;
+        }
+
+        public PDFSignerBuilder archiveToDiskPathBase(String property) {
+            workerConfig.setProperty("ARCHIVETODISK_PATH_BASE", property);
+            return this;
+        }
+
+        public PDFSignerBuilder archiveToDiskPathPattern(String property) {
+            workerConfig.setProperty("ARCHIVETODISK_PATH_PATTERN", property);
+            return this;
+        }
+
+        public PDFSignerBuilder archiveToDiskFilenamePattern(String property) {
+            workerConfig.setProperty("ARCHIVETODISK_FILENAME_PATTERN", property);
+            return this;
+        }
+
+        public PDFSignerBuilder enableAddVisibleSignature() {
+            workerConfig.setProperty("ADD_VISIBLE_SIGNATURE", "TRUE");
+            return this;
+        }
+
+        public PDFSignerBuilder visibleSignatureCustomImagePath(String property) {
+            workerConfig.setProperty("VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH", property);
+            return this;
+        }
+
+        public void archiveToDisk() throws SignServerException {
+            // Mocked data that is required for the PDFSigner.archiveToDisk method.
+            RequestContext requestContext = new RequestContext();
+            CloseableReadableData requestData = ModulesTestCase.createRequestData(new byte[]{});
+            CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            this.instance.archiveToDisk(request, requestData, requestContext);
+        }
+
+        public PDFSignerBuilder init() {
+            this.instance.init(WORKER1, workerConfig, null, null);
+            return this;
+        }
+
+        public List<String> fatalErrors() {
+            return instance.getFatalErrors(null);
+        }
+        
+    }
+
+    /**
+     * Creates a temporary directory used for testing archiving capabilities with the archiving allowlist.
+     * @throws IOException
+     */
+    private static void createArchivingDirectory() throws IOException {
+        try {
+            Path tempDir = Paths.get(getSignServerHome() + "/modules/SignServer-Module-PDFSigner/archiving");
+            archivingPath = Files.createDirectory(tempDir);
+        } catch (IOException e) {
+            throw new IOException("Something went wrong creating archiving directory: " + e.getMessage());
+        }
+
+    }
+    
 }

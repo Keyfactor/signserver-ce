@@ -377,6 +377,24 @@
 #cryptotoken.p11.lib.135.name=GCP KMS P11
 #cryptotoken.p11.lib.135.file=/opt/gcp/libkmsp11-1.1-linux-amd64/libkmsp11.so
 
+# ------------ Custom Image Path Allowlist -------------
+#
+# To configure a list of allowed directories that custom images can be used for visible signatures, enter the desired paths in the pdfsigner.image.path.allowed below.
+# Each property correspond to an entry in the custom image path allowlist for that file directory. Up to 256 different allowlist entries are allowed.
+# These properties are applicable to the PDFSigner and the AdESSigner (with PAdES) when using images as visible signatures.
+#pdfsigner.image.path.allowed.0=
+#pdfsigner.image.path.allowed.1=
+#pdfsigner.image.path.allowed.2=
+
+# ------------- PDF Archiving paths -------------------------
+#
+# To configure a list of allowed paths that PDF archiving can write to, enter the desired paths in the pdfsigner.archive.path.allowed below.
+# Each property correspond to an entry in the archiving allowlist for that file directory. Up to 256 different allowlist entries are allowed.
+# These properties are applicable to the PDFSigner.
+#pdfsigner.archive.path.allowed.0=
+#pdfsigner.archive.path.allowed.1=
+#pdfsigner.archive.path.allowed.2=
+
 # ------------ Peer Connector settings (Enterprise Edition only) --------------
 #
 # These settings are never expected to be used and should be considered deprecated. If you do need

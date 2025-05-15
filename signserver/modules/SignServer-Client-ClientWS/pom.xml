@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>7.3.1</version>
+        <version>7.3.2-Alpha-1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Client-ClientWS</artifactId>
     <name>SignServer-Client-ClientWS</name>

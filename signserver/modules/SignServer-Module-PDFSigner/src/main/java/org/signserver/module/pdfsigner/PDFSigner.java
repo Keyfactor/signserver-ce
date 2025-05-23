@@ -220,6 +220,11 @@ public class PDFSigner extends BaseSigner {
      */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
     private String tsaDigestAlgorithmName; // passed to PdfPkcs7
+
+    /**
+     * Collection of allowed paths that the PDFSigner is allowed to get custom images for visible signatures.
+     * The paths can be defined using the pdf.image.path.allowed.x property in signserver-deploy.properties.
+     */
     private Set<Path> allowedImagePaths;
 
     /**
@@ -266,8 +271,12 @@ public class PDFSigner extends BaseSigner {
             }
 
             if (config.getProperty(VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64) == null) {
-                final String visibleSignatureCustomImagePath = config.getProperty(VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH);
-                if (!AllowlistUtils.isPathAllowed(Path.of(visibleSignatureCustomImagePath), allowedImagePaths)) {
+                final String tmpCustomImagePath = config.getProperty(VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH, DEFAULT_NULL);
+                Path visibleSignatureCustomImagePath = null;
+                if (tmpCustomImagePath != null) {
+                    visibleSignatureCustomImagePath = Path.of(tmpCustomImagePath).normalize();
+                }
+                if (!AllowlistUtils.isPathAllowed(visibleSignatureCustomImagePath, allowedImagePaths)) {
                     if (!configErrors.contains("Unable to use the provided file path for a custom image: " + visibleSignatureCustomImagePath)) {
                         configErrors.add("Unable to use the provided file path for a custom image: " + visibleSignatureCustomImagePath);
                         LOG.error("Unable to use the provided file path for a custom image: " + visibleSignatureCustomImagePath);

@@ -1933,6 +1933,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                         .visibleSignatureCustomImagePath(CWD + "/src/test/resources/doesnotexist.png")
                         .init().fatalErrors().contains("Unable to use the provided file path for a custom image: " + CWD + "/src/test/resources/doesnotexist.png"));
 
+        assertEquals("Setting VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH to a path pointing to a non-existing file outside of the allowlist should only result in one configError",
+                1,
+                new PDFSignerBuilder()
+                        .enableAddVisibleSignature()
+                        .visibleSignatureCustomImagePath(CWD + "/src/doesnotexist.png")
+                        .init().fatalErrors().size());
     }
 
     /**

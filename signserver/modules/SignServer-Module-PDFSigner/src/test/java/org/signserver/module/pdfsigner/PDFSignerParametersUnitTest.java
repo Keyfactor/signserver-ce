@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Collections;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -52,7 +52,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertTrue("ADD_VISIBLE_SIGNATURE overridden", 
@@ -77,7 +77,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertEquals("VISIBLE_SIGNATURE_PAGE overridden", "4", instance.getVisible_sig_page());
@@ -101,7 +101,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertEquals("VISIBLE_SIGNATURE_RECTANGLE overridden", "7,8,9,10", instance.getVisible_sig_rectangle());
@@ -130,7 +130,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertFalse("USE_TIMESTAMP overridden", instance.isUseTimestamp());
@@ -155,7 +155,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertTrue("USE_TIMESTAMP overridden", instance.isUseTimestamp());
@@ -179,7 +179,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertTrue("EMBED_CRL overridden", instance.isEmbed_crl());
@@ -203,7 +203,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertTrue("EMBED_OCSP_RESPONSE overridden", instance.isEmbed_ocsp_response());
@@ -226,7 +226,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertEquals("REMOVE_PERMISSIONS overridden", 
@@ -251,7 +251,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertEquals("SET_PERMISSIONS overridden", 
@@ -276,7 +276,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertEquals("REMOVE_PERMISSIONS overridden", 
@@ -303,7 +303,7 @@ public class PDFSignerParametersUnitTest {
         final LinkedList<String> configErrors = new LinkedList<>();
         
         // when
-        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride, Collections.emptySet());
         
         // then
         assertEquals("VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 overridden", image, instance.getVisible_sig_custom_image_base64());

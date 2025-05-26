@@ -425,7 +425,7 @@ public class PDFSigner extends BaseSigner {
         // retrieve and preprocess configuration parameter values
         // XXX: Note: below a new instance of configError is passed in. Actually we do not want to collect errors at this stage but will do it like this for now
         final ArrayList<String> processingErrors = new ArrayList<>();
-        final PDFSignerParameters params = new PDFSignerParameters(workerId, config, processingErrors, metadata, allowPropertyOverride);
+        final PDFSignerParameters params = new PDFSignerParameters(workerId, config, processingErrors, metadata, allowPropertyOverride, allowedImagePaths);
         if (!processingErrors.isEmpty()) {
             throw new IllegalRequestException(processingErrors.toString());
         }

@@ -112,10 +112,6 @@ public class PDFSignerParameters {
 
     private final Set<String> allowPropertyOverride;
 
-    public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata, final Set<String> allowPropertyOverride) throws IllegalRequestException, SignServerException {
-        this(workerId, config, configErrors, requestMetadata, allowPropertyOverride, null);
-    }
-
     public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata, final Set<String> allowPropertyOverride, Set<Path> allowListedImagePaths) throws IllegalRequestException, SignServerException {
         this.workerId = workerId;
         this.config = config;

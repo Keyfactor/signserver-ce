@@ -1734,7 +1734,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         workerConfig.setProperty("ARCHIVETODISK", "TRUE");
         workerConfig.setProperty("ARCHIVETODISK_PATH_BASE", "/this/path/is/not/allowed");
 
-        final MockedPathingPDFSigner instance = new MockedPathingPDFSigner();
+        final MockedPathingPDFSigner instance = new MockedPathingPDFSigner(null);
 
         instance.init(WORKER1, workerConfig, null, null);
 
@@ -2375,6 +2375,35 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
 
     /**
+     * Test signing with visible signature from an allowed file path.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testSignWithAllowedVisibleSignaturePath() throws Exception {
+
+        workerSession.setWorkerProperty(WORKER1, "ADD_VISIBLE_SIGNATURE", "true");
+        workerSession.setWorkerProperty(WORKER1, "VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH", ALLOWED_RELATIVE_PATH + "/primekey.png");
+        workerSession.reloadConfiguration(WORKER1);
+
+        ReadableData requestData = createRequestDataKeepingFile(sampleOk);
+        try (CloseableWritableData responseData = createResponseData(true)) {
+
+            final SignatureRequest request = new SignatureRequest(100,
+                    requestData, responseData);
+
+            final SignatureResponse response = (SignatureResponse)
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), request, new RequestContext(true));
+            assertEquals("requestId", 100, response.getRequestID());
+
+            Certificate signercert = response.getSignerCertificate();
+            assertNotNull(signercert);
+
+            assertTrue("data processed", responseData.toReadableData().getLength() > 0);
+            assertTrue("data processed", responseData.toReadableData().getAsByteArray().length > 0);
+        }
+    }
+
+    /**
      * Helper method creating a mocked token ECDSA keys.
      *
      * @param useRSA True if ECDSA is to be used, otherwise RSA
@@ -2418,9 +2447,14 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Mocked PDFSigner used to emulate allowlists for archiving and custom image paths.
      */
     private static class MockedPathingPDFSigner extends PDFSigner {
+
+        public MockedPathingPDFSigner(ICryptoTokenV4 cryptoToken) {
+            this.cryptoToken = cryptoToken;
+        }
+
         @Override
         public ICryptoTokenV4 getCryptoToken(final IServices services) {
-            return null;
+            return cryptoToken;
         }
 
         @Override
@@ -2470,7 +2504,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         final List<String> configErrors = new LinkedList<>();
         config.setProperty("TSA_URL", "http://any-tsa.example.com");
-        final PDFSignerParameters params = new PDFSignerParameters(1234, config, configErrors, new HashMap<>(), new HashSet<>());
+        final PDFSignerParameters params = new PDFSignerParameters(1234, config, configErrors, new HashMap<>(), new HashSet<>(), Collections.emptySet());
 
         instance.setIncludeCertificateLevels(1);
 
@@ -2583,12 +2617,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new PDFSigner() {
-                @Override
-                public ICryptoTokenV4 getCryptoToken(final IServices services) {
-                    return token;
-                }
-            });
+                    new MockedPathingPDFSigner(token));
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -2614,12 +2643,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new PDFSigner() {
-                @Override
-                public ICryptoTokenV4 getCryptoToken(final IServices services) {
-                    return tokenCRL;
-                }
-            });
+                    new MockedPathingPDFSigner(tokenCRL));
             workerSession.reloadConfiguration(workerId);
         }
     }
@@ -2731,7 +2755,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private static class PDFSignerBuilder {
         
         private WorkerConfig workerConfig = new WorkerConfig();
-        private MockedPathingPDFSigner instance = new MockedPathingPDFSigner();
+        private MockedPathingPDFSigner instance = new MockedPathingPDFSigner(null);
 
         public PDFSignerBuilder() {
             workerConfig.setProperty("TYPE", "PROCESSABLE");

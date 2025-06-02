@@ -15,6 +15,7 @@ package org.signserver.web;
 import org.signserver.testutils.WebTestCase;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
@@ -99,6 +100,27 @@ public class HealthCheckTest extends WebTestCase {
             assertStatusReturned(NO_FIELDS, 500);
             String body = new String(sendAndReadyBody(NO_FIELDS));
             assertFalse("Not ALLOK: " + body, body.contains("ALLOK"));
+
+            // test healthcheck with no worker checking (should be OK)
+            final Map<String, String> noneWorkerIdFields =
+                    Map.of("workerId", "none");
+            assertStatusReturned(noneWorkerIdFields, 200);
+            body = new String(sendAndReadyBody(noneWorkerIdFields));
+            assertTrue("Contains ALLOK: " + body, body.contains("ALLOK"));
+
+            // test healthcheck with explicitly including worker ID to check (should fail)
+            final Map<String, String> dummySigner1IdFields =
+                    Map.of("workerId", Integer.toString(getSignerIdDummy1()));
+            assertStatusReturned(dummySigner1IdFields, 500);
+            body = new String(sendAndReadyBody(dummySigner1IdFields));
+            assertFalse("Not ALLOK: " + body, body.contains("ALLOK"));
+
+            // test healthcheck with explicitly including another worker ID (should be OK)
+            final Map<String, String> otherWorkerIdFields =
+                    Map.of("workerId", "4711");
+            assertStatusReturned(otherWorkerIdFields, 200);
+            body = new String(sendAndReadyBody(otherWorkerIdFields));
+            assertTrue("Contains ALLOK: " + body, body.contains("ALLOK"));
         } finally {
             // remove offline worker so it won't interfere with the next tests
             removeWorker(getSignerIdDummy1());

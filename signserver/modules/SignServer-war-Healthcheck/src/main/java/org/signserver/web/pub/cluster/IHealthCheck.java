@@ -16,6 +16,7 @@ package org.signserver.web.pub.cluster;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpServletRequest;
+import org.signserver.web.pub.HealthCheckServlet.QueryParameters;
 
 
 /**
@@ -40,9 +41,11 @@ public interface IHealthCheck {
      * Method used to check the health of a specific application.
      *
      * @param request Servlet request
+     * @param queryParameters
      * @return Null if everyting is OK, othervise it should return a String as
      * errormessage.
      */
-    public String checkHealth(HttpServletRequest request);
+    public String checkHealth(HttpServletRequest request,
+                              QueryParameters queryParameters);
 
 }

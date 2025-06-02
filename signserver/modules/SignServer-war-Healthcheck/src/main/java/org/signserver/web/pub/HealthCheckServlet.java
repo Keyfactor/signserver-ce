@@ -24,6 +24,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.ComponentLoader;
@@ -59,12 +67,118 @@ public class HealthCheckServlet extends HttpServlet {
 
     private String[] authIPs = null;
     private boolean allIPsAuth;
-    
-    private static final SameRequestRateLimiter<String> rateLimiter = new SameRequestRateLimiter<>();
+
+    // have one rate limiter per QueryParameter, since it customizes the response
+    private static final ConcurrentHashMap<QueryParameters, SameRequestRateLimiter<String>> rateLimiter = new ConcurrentHashMap<>();
     
     /** EntityManager is conditionally injected from web.xml. */
     private EntityManager em;
-    
+
+    /**
+     * I hold all the query parameters to customize the health check.
+     * I can also be used as key in a map to allow for rate limiting
+     * customized health checks.
+     */
+    public static class QueryParameters {
+        final private Set<Integer> workerIds;
+        private boolean dontCheckWorkers;
+
+        public QueryParameters(HttpServletRequest request) throws ServletException {
+            workerIds = new HashSet<>();
+
+            if (ServletFileUpload.isMultipartContent(request)) {
+                final ServletFileUpload upload =
+                        new ServletFileUpload(new DiskFileItemFactory());
+
+                try {
+                    final List<FileItem> items = upload.parseRequest(request);
+
+                    for (final FileItem item : items) {
+                        if (item.isFormField() &&
+                            "workerId".equals(item.getFieldName())) {
+                            final String workerId = item.getString();
+
+                            if ("none".equals(workerId)) {
+                                dontCheckWorkers = true;
+                                break;
+                            }
+
+                            try {
+                                workerIds.add(Integer.valueOf(workerId));
+                            } catch (NumberFormatException e) {
+                                log.error("Illegal worker ID: " + workerId);
+                            }
+                        }
+                    }
+                } catch (FileUploadException e) {
+                    throw new ServletException("Upload failed: ", e);
+                }   
+            } else {
+                final String[] workerIdStrings = request.getParameterValues("workerId");
+
+                if (workerIdStrings != null) {
+                    for (final String workerId : workerIdStrings) {
+                        /* if "none" is specified as a workerId parameter
+                         * treat it as specifying no workers should be checked
+                         */
+                        if ("none".equalsIgnoreCase(workerId)) {
+                            dontCheckWorkers = true;
+                            break;
+                        }
+
+                        try {
+                            workerIds.add(Integer.valueOf(workerId));
+                        } catch (NumberFormatException e) {
+                            log.error("Illegal worker ID: " + workerId);
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Determine if a given worker ID should be health checked.
+         * 
+         * @param workerId
+         * @return True if worker should be included in health check
+         */
+        public boolean shouldCheckWorker(final int workerId) {
+            return !dontCheckWorkers &&
+                   (workerIds.contains(workerId) || workerIds.isEmpty());
+        }
+
+        /**
+         * Determine if all worker checks should be skipped.
+         *
+         * @return True if all worker checks should be skipped 
+         */
+        public boolean isDontCheckWorkers() {
+            return dontCheckWorkers;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.hashCode(workerIds.toArray());
+
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            QueryParameters other = (QueryParameters) obj;
+            return Arrays.equals(workerIds.toArray(), other.workerIds.toArray());
+        }
+
+    }
+
     /**
      * Servlet init
      *
@@ -138,7 +252,7 @@ public class HealthCheckServlet extends HttpServlet {
         log.trace("<doGet()");
     }
     
-    private void check(HttpServletRequest request, HttpServletResponse response){
+    private void check(HttpServletRequest request, HttpServletResponse response) throws ServletException{
     	boolean authorizedIP = false;
     	String remoteIP = request.getRemoteAddr();
     	if (allIPsAuth) {
@@ -152,11 +266,16 @@ public class HealthCheckServlet extends HttpServlet {
     	}
 
     	if (authorizedIP) {
-    	    final SameRequestRateLimiter<String>.Result result = rateLimiter.getResult();
+            final QueryParameters queryParameters = new QueryParameters(request);
+            // if we've got multiple HealthChecks with the same query parameters at the same time, only do one
+            final SameRequestRateLimiter<String>.Result result = rateLimiter
+                .computeIfAbsent(queryParameters, t ->
+                                 new SameRequestRateLimiter<>()).getResult();
     	    
     	    if (result.isFirst()) {
     	        try {
-    	            result.setValue(healthcheck.checkHealth(request));
+    	            result.setValue(healthcheck.checkHealth(request,
+                                                            queryParameters));
     	        } catch (Throwable t) {
     	            result.setError(t);
     	        }

@@ -38,6 +38,7 @@ import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
+import org.signserver.web.pub.HealthCheckServlet.QueryParameters;
 import org.signserver.web.pub.cluster.IHealthCheck;
 
 /**
@@ -100,7 +101,8 @@ public class SignServerHealthCheck implements IHealthCheck {
     }
 
     @Override
-    public String checkHealth(HttpServletRequest request) {
+    public String checkHealth(HttpServletRequest request,
+                              QueryParameters queryParameters) {
         final LinkedList<String> errors = new LinkedList<>();
         
         if (LOG.isDebugEnabled()) {
@@ -121,7 +123,9 @@ public class SignServerHealthCheck implements IHealthCheck {
             
             if (errors.size() == 0) {
                 errors.addAll(HealthCheckUtils.checkMemory(minfreememory));
-                errors.addAll(checkSigners());
+                if (!queryParameters.isDontCheckWorkers()) {
+                    errors.addAll(checkSigners(queryParameters));
+                }
             }
         }
         
@@ -144,12 +148,17 @@ public class SignServerHealthCheck implements IHealthCheck {
         return result;
     }
 
-    private List<String> checkSigners() {
+    private List<String> checkSigners(final QueryParameters queryParameters) {
         final LinkedList<String> result = new LinkedList<>();
         Iterator<Integer> iter = getWorkerSession().getWorkers(WorkerType.PROCESSABLE).iterator();
         while (iter.hasNext()) {
             int processableId = ((Integer) iter.next());
 
+            if (!queryParameters.shouldCheckWorker(processableId)) {
+                LOG.debug("Skip checking worker " + processableId);
+                continue;
+            }
+            
             try {
                 WorkerStatus workerStatus = getWorkerSession().getStatus(new WorkerIdentifier(processableId));
                 if (workerStatus.isDisabled()) {

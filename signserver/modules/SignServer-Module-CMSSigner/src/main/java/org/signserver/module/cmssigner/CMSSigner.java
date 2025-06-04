@@ -318,6 +318,17 @@ public class CMSSigner extends BaseSigner {
         throw new UnsupportedOperationException("Base CMS signer doesn't support extending CMS data");
     }
 
+    protected JcaSignerInfoGeneratorBuilder createSignerInfoGeneratorBuilder(
+            final DigestCalculatorProvider calc,
+            final boolean directSignature)
+            throws OperatorCreationException {
+        JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder =
+                new JcaSignerInfoGeneratorBuilder(calc);
+        signerInfoGeneratorBuilder.setDirectSignature(directSignature);
+
+        return signerInfoGeneratorBuilder;
+    }
+    
     private void signData(final ICryptoInstance crypto,
                           final X509Certificate cert,
                           final Collection<Certificate> certs,
@@ -331,9 +342,10 @@ public class CMSSigner extends BaseSigner {
                     = new CMSSignedDataStreamGenerator();
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         
-        JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(
-                new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
-        signerInfoGeneratorBuilder.setDirectSignature(directSignature);
+        final DigestCalculatorProvider calc =
+                new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
+        JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder =
+                createSignerInfoGeneratorBuilder(calc, directSignature);
         generator.addSignerInfoGenerator(signerInfoGeneratorBuilder.build(contentSigner, cert));
         generator.addCertificates(new JcaCertStore(certs));
         
@@ -434,8 +446,9 @@ public class CMSSigner extends BaseSigner {
                 return digestCalculator;
             }  
         };
-        
-        final JcaSignerInfoGeneratorBuilder siBuilder = new JcaSignerInfoGeneratorBuilder(calcProv);
+
+        final JcaSignerInfoGeneratorBuilder siBuilder =
+                createSignerInfoGeneratorBuilder(calcProv, false);
         final SignerInfoGenerator sig = siBuilder.build(contentSigner, cert);
 
         generator.addSignerInfoGenerator(sig);

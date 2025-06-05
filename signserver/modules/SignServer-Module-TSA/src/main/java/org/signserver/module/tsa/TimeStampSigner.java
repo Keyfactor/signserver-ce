@@ -778,6 +778,7 @@ public class TimeStampSigner extends BaseSigner {
 
             return new SignatureResponse(sReq.getRequestID(),
                     responseData,
+                    cert == null ? null : cert.getPublicKey(),
                     cert,
                     archiveId,
                     archivables,

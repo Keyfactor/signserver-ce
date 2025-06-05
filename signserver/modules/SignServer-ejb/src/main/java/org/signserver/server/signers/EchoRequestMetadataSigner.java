@@ -77,7 +77,7 @@ public class EchoRequestMetadataSigner extends BaseSigner {
             writer.close();
 
             if (!isSOD) {
-                return new SignatureResponse(reqId, responseData, null, null, null, "text/plain");
+                return new SignatureResponse(reqId, responseData, null, null, null, null, "text/plain");
             } else {
                 return new SODResponse(reqId, responseData, null, null, null, null);            
             }

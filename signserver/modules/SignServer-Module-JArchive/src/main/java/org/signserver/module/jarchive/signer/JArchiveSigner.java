@@ -448,7 +448,7 @@ public class JArchiveSigner extends BaseSigner {
         requestContext.setRequestFulfilledByWorker(true);
 
         // Return the response
-        return new SignatureResponse(sReq.getRequestID(), responseData, signerCert, archiveId, archivables, RESPONSE_CONTENT_TYPE);
+        return new SignatureResponse(sReq.getRequestID(), responseData, signerCert == null ? null : signerCert.getPublicKey(), signerCert, archiveId, archivables, RESPONSE_CONTENT_TYPE);
     }
 
     @Override

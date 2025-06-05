@@ -172,7 +172,7 @@ public class DebianDpkgSigSigner extends BaseOpenPGPSigner {
             requestContext.setRequestFulfilledByWorker(true);
 
             // Return the response
-            return new SignatureResponse(sReq.getRequestID(), responseData, signerCert, archiveId, archivables, RESPONSE_CONTENT_TYPE);
+            return new SignatureResponse(sReq.getRequestID(), responseData, signerCert == null ? null : signerCert.getPublicKey(), signerCert, archiveId, archivables, RESPONSE_CONTENT_TYPE);
 
         } catch (UnsupportedEncodingException ex) {
             // This is a server-side error

@@ -123,7 +123,7 @@ public class StatusPropertiesWorker extends BaseSigner {
         requestContext.setRequestFulfilledByWorker(true);
 
         return new SignatureResponse(request.getRequestID(),
-                    responseData, null, null, null, "text/plain");
+                    responseData, null, null, null, null, "text/plain");
     }
 
     private Properties process(final Properties requestData, final RequestContext context) throws IllegalRequestException {
@@ -186,7 +186,7 @@ public class StatusPropertiesWorker extends BaseSigner {
     }
 
     @Override
-    protected boolean isNoCertificates() {
+    public boolean isNoCertificates() {
         // This worker does not require any signer certificate so don't
         // report any error or information about it.
         return true;

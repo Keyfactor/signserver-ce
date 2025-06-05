@@ -404,7 +404,8 @@ public class XAdESSigner extends BaseSigner {
         requestContext.setRequestFulfilledByWorker(true);
         
         return new SignatureResponse(sReq.getRequestID(), responseData,
-                    cert, archiveId, archivables, CONTENT_TYPE);
+                cert == null ? null : cert.getPublicKey(),
+                cert, archiveId, archivables, CONTENT_TYPE);
     }
 
     /**

@@ -162,7 +162,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                     out.write(resp.getEncoded());
                 }
 
-                result = new SignatureResponse(request.getRequestID(), responseData, null, null, null, RESPONSE_CONTENT_TYPE);
+                result = new SignatureResponse(request.getRequestID(), responseData, null, null, null, null, RESPONSE_CONTENT_TYPE);
             } else {
                 // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
                 nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);

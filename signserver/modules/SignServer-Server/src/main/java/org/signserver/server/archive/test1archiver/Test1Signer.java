@@ -15,6 +15,7 @@ package org.signserver.server.archive.test1archiver;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.Certificate;
 import java.util.Collections;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveData;
@@ -71,8 +72,9 @@ public class Test1Signer extends BaseSigner {
         
         String archiveId = String.valueOf(request.getRequestID()) + "-" + System.currentTimeMillis();
         try {
+            Certificate cert = getSigningCertificate(requestContext.getServices());
             result = new SignatureResponse(((SignatureRequest) request).getRequestID(),
-                    responseData, getSigningCertificate(requestContext.getServices()),
+                    responseData, cert == null ? null : cert.getPublicKey(), cert,
                     archiveId,
                     Collections.singletonList(new ArchiveDataArchivable(archiveId, new ArchiveData(responseData.toReadableData().getAsByteArray()), Archivable.TYPE_RESPONSE)), "text/plain");
         } catch (IOException ex) {

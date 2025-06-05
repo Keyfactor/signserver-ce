@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -67,6 +69,7 @@ import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.util.CertTools;
+import org.eclipse.jetty.io.WriterOutputStream;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,6 +88,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
@@ -92,6 +96,7 @@ import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.testutils.TestUtils;
 
 /**
  * Test signing with all signers using a PKCS11CryptoToken.
@@ -357,6 +362,46 @@ public class P11SignTest {
 
             assertTrue("signature verification", verifySignature(plainText, signatureBytes, "SHA256withRSAandMGF1", xcert.getPublicKey(), "BC"));
         } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+
+    @Test
+    public void testPlainSigner_SHA256withRSA_noCerts() throws Exception {
+        final int workerId = WORKER_PLAIN;
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            workerSession.generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), "RSA", "3072", TEST_KEY_ALIAS, pin.toCharArray());
+
+            setPlainSignerProperties();
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA256withRSA");
+            workerSession.setWorkerProperty(workerId, "NOCERTIFICATES", "TRUE");
+            workerSession.reloadConfiguration(workerId);
+
+            // Test active
+            WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(workerId));
+            List<String> errors = status.getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+
+            StringWriter writer = new StringWriter();
+            status.displayStatus(new PrintStream(new WriterOutputStream(writer)), true);
+            PublicKey publicKey = TestUtils.readPublicKeyFromPemString(writer.toString());
+            assertNotNull("public key in status output", publicKey);
+
+            byte[] plainText = "some-data".getBytes(StandardCharsets.US_ASCII);
+
+            // Test signing
+            GenericSignResponse response = testCase.signGenericDocument(workerId, plainText, new RemoteRequestContext(), true);
+            byte[] signatureBytes = response.getProcessedData();
+
+            assertTrue("signature verification", verifySignature(plainText, signatureBytes, "SHA256withRSA", publicKey, "BC"));
+        } finally {
+            try {
+                workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN), TEST_KEY_ALIAS);
+            } catch (SignServerException | CryptoTokenOfflineException ignored) {}
             testCase.removeWorker(workerId);
         }
     }

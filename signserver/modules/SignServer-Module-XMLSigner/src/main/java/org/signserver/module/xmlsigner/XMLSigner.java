@@ -269,6 +269,7 @@ public class XMLSigner extends BaseSigner {
         requestContext.setRequestFulfilledByWorker(true);
 
         return new SignatureResponse(sReq.getRequestID(), responseData,
+                cert == null ? null : cert.getPublicKey(),
                 cert,
                 archiveId, archivables, CONTENT_TYPE);
     }

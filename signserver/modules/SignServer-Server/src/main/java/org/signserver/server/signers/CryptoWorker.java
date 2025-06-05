@@ -28,7 +28,7 @@ public class CryptoWorker extends NullSigner {
     private static final String WORKER_TYPE = "CryptoWorker";
 
     @Override
-    protected boolean isNoCertificates() {
+    public boolean isNoCertificates() {
         return true;
     }
 

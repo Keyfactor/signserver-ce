@@ -1968,7 +1968,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         assertFalse("Should not contain error",
                 fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
-        assertTrue("There should not be any error so that we can assume that worker will be online", fatalErrors.isEmpty());
+        assertTrue("There should not be any error so that we can assume that worker will be online but had: " + fatalErrors, fatalErrors.isEmpty());
     }
 
     /**
@@ -1997,7 +1997,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final List<String> fatalErrors = instance.getFatalErrors(null);
 
-        assertTrue("There should not be any error so that we can assume that worker will be online", fatalErrors.isEmpty());
+        assertTrue("There should not be any error so that we can assume that worker will be online but had: " + fatalErrors, fatalErrors.isEmpty());
     }
 
     /**
@@ -2415,6 +2415,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             CertBuilderException, CertificateException, InvalidAlgorithmParameterException {
         final KeyPair signerKeyPair = useECDSA ? CryptoUtils.generateEcCurve("prime256v1") : CryptoUtils.generateRSA(1024);
         CertBuilder certBuilder = new CertBuilder();
+        certBuilder.setSubjectKeyPair(signerKeyPair);
 
         if (cdpUrl != null) {
             certBuilder = certBuilder.addCDPURI(cdpUrl);

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.common.data;
 
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import org.signserver.common.IArchivableProcessResponse;
@@ -31,6 +32,7 @@ public class SignatureResponse extends Response implements IArchivableProcessRes
     private final String archiveId;
     private final String contentType;
     private final Collection<? extends Archivable> archivables;
+    private final PublicKey signerPublicKey;
     
     /**
      * Creates a GenericWorkResponse, works as a simple VO.
@@ -44,11 +46,13 @@ public class SignatureResponse extends Response implements IArchivableProcessRes
      * @see org.signserver.common.ProcessRequest
      */
     public SignatureResponse(int requestID, WritableData responseData,
+            PublicKey signerPublicKey,
             Certificate signerCertificate,
             String archiveId, Collection<? extends Archivable> archivables,
             String contentType) {
         this.requestID = requestID;
         this.responseData = responseData;
+        this.signerPublicKey = signerPublicKey;
         this.signerCertificate = signerCertificate;
         this.archiveId = archiveId;
         this.archivables = archivables;
@@ -65,6 +69,10 @@ public class SignatureResponse extends Response implements IArchivableProcessRes
 
     public Certificate getSignerCertificate() {
         return signerCertificate;
+    }
+
+    public PublicKey getSignerPublicKey() {
+        return signerPublicKey;
     }
 
     public String getArchiveId() {

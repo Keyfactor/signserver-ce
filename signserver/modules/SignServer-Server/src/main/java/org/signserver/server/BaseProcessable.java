@@ -487,6 +487,44 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return result;
     }
 
+    public PublicKey getSigningPublicKey(IServices services) throws CryptoTokenOfflineException {
+        return getSigningPublicKey(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY), services);
+    }
+
+    public PublicKey getSigningPublicKey(String alias, IServices services) throws CryptoTokenOfflineException {
+        final PublicKey result;
+
+        final Certificate certFromConfig;
+        if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
+            certFromConfig = null;
+        } else {
+            certFromConfig = config.getSignerCertificate();
+        }
+        if (certFromConfig == null) {
+            RequestContext context = new RequestContext(true);
+            context.setServices(services);
+            ICryptoInstance crypto = null;
+            try {
+                crypto = acquireDefaultCryptoInstance(new HashMap<>(),
+                                                      alias, context);
+                result = crypto.getPublicKey();
+            } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
+                throw new CryptoTokenOfflineException("Unable to get public key from token: " + ex.getLocalizedMessage(), ex);
+            } finally {
+                if (crypto != null) {
+                    try {
+                        releaseCryptoInstance(crypto, context);
+                    } catch (SignServerException ex) {
+                        log.warn("Unable to release crypto instance", ex);
+                    }
+                }
+            }
+        } else {
+            result = certFromConfig.getPublicKey();
+        }
+
+        return result;
+    }
 
     /**
      * Method that returns the certificate chain used when signing.
@@ -728,14 +766,15 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @param request Signing request
      * @param requestContentType Type of request data (typically a mime type)
      * @param responseContentType Type of response data (typically a mime type)
-     * @param signerCert Signer certificate
+     * @param signerPublicKey Signer public key
+     * @param signerCert Signer certificate (if any)
      * @return The signature response
      * @throws SignServerException 
      */
     protected SignatureResponse createBasicSignatureResponse(
             final RequestContext requestContext, final SignatureRequest request,
             final String requestContentType, final String responseContentType,
-            final Certificate signerCert)
+            final PublicKey signerPublicKey, final Certificate signerCert)
             throws SignServerException {
         // Create the archivables (request and response)
         final String archiveId = createArchiveId(new byte[0], 
@@ -751,9 +790,32 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         // Return the response
         return new SignatureResponse(request.getRequestID(),
-                                     request.getResponseData(), signerCert,
+                                     request.getResponseData(),
+                                     signerPublicKey, signerCert,
                                      archiveId, archivables,
                                      responseContentType);
+    }
+
+    /**
+     * Creates a basic response given a request, context, and content types
+     * using an archive ID based on the hash of a fixed empty data (byte[0]),
+     * to avoid rehashing the input data.If a more specific computation of the
+     * archive ID is desired, this needs to be done by the implementation.
+     *
+     * @param requestContext Request context
+     * @param request Signing request
+     * @param requestContentType Type of request data (typically a mime type)
+     * @param responseContentType Type of response data (typically a mime type)
+     * @param signerCert Signer certificate (if any)
+     * @return The signature response
+     * @throws SignServerException 
+     */
+    protected SignatureResponse createBasicSignatureResponse(
+            final RequestContext requestContext, final SignatureRequest request,
+            final String requestContentType, final String responseContentType,
+            final Certificate signerCert)
+            throws SignServerException {
+        return createBasicSignatureResponse(requestContext, request, requestContentType, responseContentType, signerCert == null ? null : signerCert.getPublicKey(), signerCert);
     }
 
     /**
@@ -1062,8 +1124,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * crypto token referenced by worker is a crypto token not requiring
      * certificates.
      */
-    protected boolean isNoCertificates() {
-        boolean noCertInConfig = Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()));
+    @Override
+    public boolean isNoCertificates() {
+        boolean noCertInConfig = Boolean.parseBoolean(config.getProperty(SignServerConstants.NOCERTIFICATES, Boolean.FALSE.toString()));
         boolean noCertificatesRequired = cryptoToken != null && cryptoToken.isNoCertificatesRequired();
         return noCertInConfig || noCertificatesRequired;
     }

@@ -82,7 +82,7 @@ public class DummySigner extends BaseSigner {
 
         SignatureRequest req = (SignatureRequest) signRequest;
 
-        return new SignatureResponse(req.getRequestID(), req.getResponseData(), null, null, null, "text/plain");
+        return new SignatureResponse(req.getRequestID(), req.getResponseData(), null, null, null, null, "text/plain");
     }
 
     private long getWaitTime() {

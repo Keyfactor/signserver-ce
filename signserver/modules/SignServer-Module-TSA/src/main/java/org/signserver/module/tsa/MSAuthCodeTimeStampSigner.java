@@ -434,6 +434,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
             return new SignatureResponse(sReq.getRequestID(),
                     responseData,
+                    x509cert == null ? null : x509cert.getPublicKey(),
                     x509cert,
                     archiveId,
                     archivables,

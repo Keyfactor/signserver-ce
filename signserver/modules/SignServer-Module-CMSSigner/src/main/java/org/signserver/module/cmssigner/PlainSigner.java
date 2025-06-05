@@ -27,7 +27,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.ECPublicKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.util.Arrays;
@@ -38,13 +37,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import jakarta.persistence.EntityManager;
+import java.io.StringWriter;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.io.pem.PemWriter;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Request;
@@ -66,6 +68,7 @@ import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 import org.signserver.server.HashDigestUtils;
+import static org.signserver.server.cryptotokens.ICryptoTokenV4.PARAM_INCLUDE_DUMMYCERTIFICATE;
 
 /**
  * A Signer signing arbitrary content and produces a plain signature.
@@ -171,14 +174,14 @@ public class PlainSigner extends BaseSigner {
      * Get signature algorithm to use for signing.
      *
      * @param requestContext
-     * @param signerCert
+     * @param publicKey
      * @return signature algorithm to use when signing
      */
     protected String getSignatureAlgorithm(final RequestContext requestContext,
-                                           final Certificate signerCert) {
+                                           final PublicKey publicKey) {
         final String sigAlg =
                 signatureAlgorithm == null ?
-                AlgorithmTools.getDefaultSignatureAlgorithm(signerCert.getPublicKey()) :
+                AlgorithmTools.getDefaultSignatureAlgorithm(publicKey) :
                 signatureAlgorithm;
 
         return sigAlg;
@@ -249,22 +252,22 @@ public class PlainSigner extends BaseSigner {
         ICryptoInstance crypto = null;
         try (OutputStream out = responseData.getAsInMemoryOutputStream()) {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
-            // Get certificate chain and signer certificate
-            final List<Certificate> certs = this.getSigningCertificateChain(crypto);
-            if (certs == null) {
-                throw new IllegalArgumentException(
-                        "Null certificate chain. This signer needs a certificate.");
-            }
 
+            // Get public key and possibly the certificate if available
+            final PublicKey publicKey = crypto.getPublicKey();
+            if (publicKey == null) {
+                throw new IllegalArgumentException(
+                        "Null public key. This signer needs a public key or certificate.");
+            }
             final Certificate cert = this.getSigningCertificate(crypto);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
+                LOG.debug("SigningCert: " + cert == null ? null : ((X509Certificate) cert).getSubjectDN());
             }
 
             // Private key
             final PrivateKey privKey = crypto.getPrivateKey();
 
-            final String sigAlg = getSignatureAlgorithm(requestContext, cert);
+            final String sigAlg = getSignatureAlgorithm(requestContext, publicKey);
             final String sigAlgUpperCase = sigAlg.toUpperCase(Locale.ENGLISH);
             final byte[] signedbytes;
 
@@ -399,7 +402,7 @@ public class PlainSigner extends BaseSigner {
             requestContext.setRequestFulfilledByWorker(true);
 
             return new SignatureResponse(sReq.getRequestID(),
-                        responseData, cert, archiveId,
+                        responseData, publicKey, cert, archiveId,
                         archivables,
                         CONTENT_TYPE);
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | OperatorCreationException | InvalidAlgorithmParameterException ex) {
@@ -427,6 +430,49 @@ public class PlainSigner extends BaseSigner {
         final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
+    }
+
+    @Override
+    public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
+        WorkerStatusInfo status = (WorkerStatusInfo) super.getStatus(additionalFatalErrors, services);
+
+        // Add public key information
+        final RequestContext context = new RequestContext(true);
+        context.setServices(services);
+        ICryptoInstance crypto = null;
+        try {
+            final Map<String, Object> params = new HashMap<>();
+            params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
+            crypto = acquireDefaultCryptoInstance(params, context);
+
+            PublicKey publicKey = crypto.getPublicKey();
+            if (publicKey != null) {
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Key Algorithm", publicKey.getAlgorithm()));
+
+                StringWriter out = new StringWriter();
+                PemWriter pw = new PemWriter(out);
+                pw.writeObject(new JcaMiscPEMGenerator(publicKey));
+                pw.flush();
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Public Key", out.toString()));
+            }
+        } catch (CryptoTokenOfflineException e) {} // the error will have been picked up by getCryptoTokenFatalErrors already
+        catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to obtain certificate from token", ex);
+            }
+        } catch (IOException ex) {
+            LOG.error("Unable to encode public key", ex);
+        } finally {
+            if (crypto != null) {
+                try {
+                    releaseCryptoInstance(crypto, context);
+                } catch (SignServerException ex) {
+                    LOG.warn("Unable to release crypto instance", ex);
+                }
+            }
+        }
+
+        return status;
     }
 
 }

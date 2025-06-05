@@ -171,7 +171,7 @@ public class MockedCryptoToken extends BaseCryptoToken {
     @Override
     public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, NoSuchAliasException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException {
         checkExisting();
-        return new DefaultCryptoInstance(alias, context, provider == null ? Security.getProvider(providerName) : provider, privateKey, certificateChain);
+        return new DefaultCryptoInstance(alias, context, provider == null ? Security.getProvider(providerName) : provider, privateKey, certificateChain, publicKey);
     }
 
     @Override

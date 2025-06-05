@@ -29,6 +29,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import jakarta.ejb.EJBException;
 import jakarta.persistence.EntityManager;
+import java.security.cert.Certificate;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
@@ -146,8 +147,10 @@ public class MRTDSigner extends BaseSigner {
                     // The client can be charged for the request
                     requestContext.setRequestFulfilledByWorker(true);
                     
+                    Certificate cert = getSigningCertificate(crypto);
+                    
                     return new SignatureResponse(req.getRequestID(), responseData,
-                                                         getSigningCertificate(crypto),
+                                                         cert == null ? null : cert.getPublicKey(), cert,
                                                          archiveId, archivables, CONTENT_TYPE);
                 } catch (IOException ex) {
                     throw new SignServerException("IO error", ex);

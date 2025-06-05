@@ -100,7 +100,7 @@ public class DebugSigner extends BaseSigner {
         final SignatureResponse resp =
                 new SignatureResponse(sReq.getRequestID(),
                         responseData,
-                        null, null, null, null);
+                        null, null, null, null, null);
         return resp;
     }
     

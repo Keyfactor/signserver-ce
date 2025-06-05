@@ -255,7 +255,7 @@ public class RenewalWorker extends BaseSigner {
         }
 
         return new SignatureResponse(request.getRequestID(),
-                    responseData, null, null, null, "text/plain");
+                    responseData, null, null, null, null, "text/plain");
     }
 
     /**

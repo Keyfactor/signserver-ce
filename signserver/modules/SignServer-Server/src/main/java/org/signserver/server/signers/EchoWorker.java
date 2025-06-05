@@ -108,7 +108,7 @@ public class EchoWorker extends BaseProcessable {
 
         // Return the response as usual
         return new SignatureResponse(request.getRequestID(), responseData,
-                    null,
+                    null, null,
                     archiveId, null, "application/octet-stream");
     }
 

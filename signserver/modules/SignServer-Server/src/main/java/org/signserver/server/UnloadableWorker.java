@@ -55,7 +55,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
      * @return Always true.
      */
     @Override
-    protected boolean isNoCertificates() {
+    public boolean isNoCertificates() {
         return true;
     }
 

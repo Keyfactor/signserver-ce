@@ -579,7 +579,7 @@ public class CMSSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
             
-            return new SignatureResponse(sReq.getRequestID(), responseData, cert, archiveId, archivables, CONTENT_TYPE);
+            return new SignatureResponse(sReq.getRequestID(), responseData, cert == null ? null : cert.getPublicKey(), cert, archiveId, archivables, CONTENT_TYPE);
         } catch (OperatorCreationException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);

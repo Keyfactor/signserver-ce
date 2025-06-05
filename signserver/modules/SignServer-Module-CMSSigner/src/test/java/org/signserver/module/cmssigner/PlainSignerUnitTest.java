@@ -19,6 +19,7 @@ import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -26,6 +27,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -65,10 +67,10 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PlainSignerTest {
+public class PlainSignerUnitTest {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(PlainSignerTest.class);
+    private static final Logger LOG = Logger.getLogger(PlainSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenECDSA;
@@ -87,9 +89,11 @@ public class PlainSignerTest {
     private static MockedCryptoToken tokenML_DSA_44;
     private static MockedCryptoToken tokenML_DSA_65;
     private static MockedCryptoToken tokenML_DSA_87;
+    private static MockedCryptoToken tokenRSA_noCert;
+    private static MockedCryptoToken tokenML_DSA_44_noCert;
 
 
-    public PlainSignerTest() {
+    public PlainSignerUnitTest() {
     }
     
     @BeforeClass
@@ -130,6 +134,7 @@ public class PlainSignerTest {
                     caCertificate
                 };
         tokenRSA = new MockedCryptoToken(signerKeyPairRSA.getPrivate(), signerKeyPairRSA.getPublic(), certChainRSA[0], Arrays.asList(certChainRSA), "BC");
+        tokenRSA_noCert = new MockedCryptoToken(signerKeyPairRSA.getPrivate(), signerKeyPairRSA.getPublic(), null, List.of(), "BC");
 
         // Create signer key-pair (ECDSA) and issue certificate
         final KeyPair signerKeyPairECDSA = CryptoUtils.generateEcCurve("prime256v1");
@@ -420,6 +425,7 @@ public class PlainSignerTest {
                         caCertificate
                 };
         tokenML_DSA_44 = new MockedCryptoToken(signerKeyPairMLDSA_44.getPrivate(), signerKeyPairMLDSA_44.getPublic(), certChainMLDSA_44[0], Arrays.asList(certChainMLDSA_44), "BC");
+        tokenML_DSA_44_noCert = new MockedCryptoToken(signerKeyPairMLDSA_44.getPrivate(), signerKeyPairMLDSA_44.getPublic(), null, List.of(), "BC");
 
         // Create signer key-pair (ML-DSA-65) and issue certificate
         final KeyPair signerKeyPairMLDSA_65 = CryptoUtils.generateSLHDSA("ML-DSA-65");
@@ -902,9 +908,16 @@ public class PlainSignerTest {
         assertTrue("consistent signature", signature.verify(resp.getProcessedData()));
     }
     
+    private void assertSignedAndVerifiable(byte[] plainText, String signatureAlgorithm, SimplifiedResponse resp, PublicKey publicKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
+        Signature signature = Signature.getInstance(signatureAlgorithm, "BC");
+        signature.initVerify(publicKey);
+        signature.update(plainText);
+        assertTrue("consistent signature", signature.verify(resp.getProcessedData()));
+    }
+
     private void assertRequestDigestMatches(byte[] plainText, String digestAlgorithm, SimplifiedResponse resp, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
         assertEquals("digestAlg", digestAlgorithm, String.valueOf(LogMap.getInstance(context).get("REQUEST_DIGEST_ALGORITHM")));
-        
+
         final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         final String expected = Hex.toHexString(md.digest(plainText));
         Object actual = LogMap.getInstance(context).get("REQUEST_DIGEST");
@@ -1433,6 +1446,67 @@ public class PlainSignerTest {
 
         SimplifiedResponse resp = sign(hash, tokenRSA, config, context);
         assertSignedAndVerifiable(plainText, "SHA384withRSAandMGF1", tokenRSA, resp);
+    }
+
+    /**
+     * Tests that there is a configuration error for missing certificate/chain and this also tests
+     * that 'tokenRSA_noCert' has no certificate so that the other tests will work.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testInit_errorForMissingCertificate() throws Exception {
+        LOG.info("testInit_errorForMissingCertificate");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        PlainSigner instance = new MockedPlainSigner(tokenRSA_noCert);
+        instance.init(1, config, new SignServerContext(), null);
+
+        List<String> actually = instance.getFatalErrors(null);
+        assertTrue("error about signer certificate: " + actually,
+                actually.containsAll(List.of("No signer certificate available", "Certificate chain not available")));
+    }
+
+    /**
+     * Tests that there is no configuration error even if the token is missing certificates when
+     * the property NOCERTIFICATES has been configured.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testInit_NOCERTIFICATES() throws Exception {
+        LOG.info("testInit_NOCERTIFICATES");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("NOCERTIFICATES", "TRUE");
+        PlainSigner instance = new MockedPlainSigner(tokenRSA_noCert);
+        instance.init(1, config, new SignServerContext(), null);
+
+        assertEquals("no fatal errors", List.of(), instance.getFatalErrors(null));
+    }
+
+    /**
+     * Test signing using an RSA key-pair with NOCERTIFICATES configured and a token
+     * without certificate.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testNormalSigning_NOCERTIFICATES() throws Exception {
+        LOG.info("testNormalSigning_NOCERTIFICATES");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenRSA_noCert, createConfig(null));
+        assertSignedAndVerifiable(plainText, "SHA256withRSA", resp, tokenRSA_noCert.getPublicKey(0));
+    }
+
+    /**
+     * Test signing using an ML-DSA key-pair with NOCERTIFICATES configured and a token
+     * without certificate.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testNormalSigning_MLDSA_44_NOCERTIFICATES() throws Exception {
+        LOG.info("testNormalSigning_NOCERTIFICATES");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenML_DSA_44_noCert, createConfig("ML-DSA-44"));
+        assertSignedAndVerifiable(plainText, "ML-DSA-44", resp, tokenML_DSA_44_noCert.getPublicKey(0));
     }
     
 }

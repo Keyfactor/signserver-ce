@@ -25,7 +25,7 @@ import org.signserver.server.archive.Archivable;
 public class SODResponse extends SignatureResponse {
 
     public SODResponse(int requestID, WritableData responseData, Certificate signerCertificate, String archiveId, Collection<? extends Archivable> archivables, String contentType) {
-        super(requestID, responseData, signerCertificate, archiveId, archivables, contentType);
+        super(requestID, responseData, signerCertificate == null ? null: signerCertificate.getPublicKey(), signerCertificate, archiveId, archivables, contentType);
     }
 
 }

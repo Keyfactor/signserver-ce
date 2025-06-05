@@ -33,6 +33,7 @@ import org.signserver.common.QueryException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.DuplicateAliasException;
 import org.signserver.common.NoSuchAliasException;
+import org.signserver.common.SignServerConstants;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
@@ -234,4 +235,18 @@ public interface IProcessable extends IWorker {
      * @return each certificate issue found
      */
     List<String> getCertificateIssues(List<Certificate> certificateChain);
+    
+    /**
+     * Indicates if this worker is configured to not be configured with any
+     * certificates or crypto token referenced by worker requires no
+     * certificates. This can be overridden by worker implementations to not
+     * require the user to explicitly configure this. Otherwise the value
+     * of NOCERTIFICATES property is used.
+     *
+     * @return By default, returns true if this worker is configured to
+     * not use any certificates.
+     */
+    default boolean isNoCertificates() {
+        return Boolean.parseBoolean(getConfig().getProperty(SignServerConstants.NOCERTIFICATES));
+    }
 }

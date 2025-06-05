@@ -102,44 +102,44 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         long keyUsageCounterValue = 0;
         int status = isCryptoTokenActive(services) ? WorkerStatus.STATUS_ACTIVE : WorkerStatus.STATUS_OFFLINE;
         X509Certificate signerCertificate = null;
+        PublicKey publicKey = null;
 
-        if (!isNoCertificates()) {
-            RequestContext context = new RequestContext(true);
-            context.setServices(services);
-            ICryptoInstance crypto = null;
-            try {
-                crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
+        RequestContext context = new RequestContext(true);
+        context.setServices(services);
+        ICryptoInstance crypto = null;
+        try {
+            crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
 
-                signerCertificate = (X509Certificate) getSigningCertificate(crypto);
-                if (signerCertificate != null) {
-                    final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            signerCertificate = (X509Certificate) getSigningCertificate(crypto);
+            publicKey = crypto.getPublicKey();
+            if (publicKey != null && (signerCertificate != null || isNoCertificates())) {
+                final long keyUsageLimit = Long.parseLong(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
-                    KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounterHash.create(signerCertificate.getPublicKey()));
-                    if ((counter == null && !keyUsageCounterDisabled) 
-                            || (keyUsageLimit != -1 && status == WorkerStatus.STATUS_ACTIVE && (counter == null || counter.getCounter() >= keyUsageLimit))) {
-                        fatalErrors.add("Key usage limit exceeded or not initialized");
-                    }
-
-                    if (counter != null) {
-                        keyUsageCounterValue = counter.getCounter();
-                    }
+                KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounterHash.create(publicKey));
+                if ((counter == null && !keyUsageCounterDisabled) 
+                        || (keyUsageLimit != -1 && status == WorkerStatus.STATUS_ACTIVE && (counter == null || counter.getCounter() >= keyUsageLimit))) {
+                    fatalErrors.add("Key usage limit exceeded or not initialized");
                 }
-            } catch (CryptoTokenOfflineException e) {
-                // The error will have been picked up by getCryptoTokenFatalErrors already
-            } catch (NumberFormatException e) {
-                fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT + ": " + e.getMessage());
-            } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException e) {
-                fatalErrors.add("Unable to obtain certificate from token: " + e.getLocalizedMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to obtain certificate from token", e);
+
+                if (counter != null) {
+                    keyUsageCounterValue = counter.getCounter();
                 }
-            } finally {
-                if (crypto != null) {
-                    try {
-                        releaseCryptoInstance(crypto, context);
-                    } catch (SignServerException e) {
-                        LOG.warn("Unable to release crypto instance", e);
-                    }
+            }
+        } catch (CryptoTokenOfflineException e) {
+            // The error will have been picked up by getCryptoTokenFatalErrors already
+        } catch (NumberFormatException e) {
+            fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT + ": " + e.getMessage());
+        } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException e) {
+            fatalErrors.add("Unable to obtain certificate from token: " + e.getLocalizedMessage());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to obtain certificate from token", e);
+            }
+        } finally {
+            if (crypto != null) {
+                try {
+                    releaseCryptoInstance(crypto, context);
+                } catch (SignServerException e) {
+                    LOG.warn("Unable to release crypto instance", e);
                 }
             }
         }
@@ -160,7 +160,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         briefEntries.add(new WorkerStatusInfo.Entry("Token status", status == WorkerStatus.STATUS_ACTIVE ? "Active" : "Offline"));
 
         // Signings
-        if (!isNoCertificates()) {
+        if (publicKey != null) {
             String signingsValue = String.valueOf(keyUsageCounterValue);
             long keyUsageLimit = -1;
             try {

@@ -105,11 +105,11 @@ public class SignerStatusReportWorker extends BaseSigner {
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
-        return new SignatureResponse(signRequest.getRequestID(), responseData, null, null, null, "text/plain");
+        return new SignatureResponse(signRequest.getRequestID(), responseData, null, null, null, null, "text/plain");
     }
 
     @Override
-    protected boolean isNoCertificates() {
+    public boolean isNoCertificates() {
         // This worker does not require any signer certificate so don't
         // report any error or information about it.
         return true;

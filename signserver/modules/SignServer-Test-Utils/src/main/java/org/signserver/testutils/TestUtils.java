@@ -12,19 +12,29 @@
  *************************************************************************/
 package org.signserver.testutils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringReader;
+import java.security.KeyFactory;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.spec.EdECPoint;
+import java.security.spec.EdECPublicKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.NamedParameterSpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Properties;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -35,11 +45,22 @@ import javax.net.ssl.X509KeyManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.IssuerSerial;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.eac.jcajce.JcaPublicKeyConverter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.math.ec.rfc8032.Ed25519;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.client.cli.defaultimpl.AliasKeyManager;
 import static org.junit.Assert.*;
 import org.signserver.common.util.PathUtil;
@@ -245,5 +266,50 @@ public class TestUtils {
             assertArrayEquals("Hash doesn't match", digest, certId.getCertHash());
             assertEquals("Serial number doesn't match", cert.getSerialNumber(), is.getSerial().getValue());
         }
+    }
+
+    /**
+     * Read the String skipping over anything but the first PEM encoded public key.
+     * @param pemString Text containing anything and potentially a PEM encoded public key
+     * @return PublicKey or null
+     * @throws IOException in case the public key can not be parsed
+     * @throws NoSuchAlgorithmException in case the algorithm is not supported
+     * @throws InvalidKeySpecException in case parsing the public key params failed
+     */
+    public static PublicKey readPublicKeyFromPemString(String pemString) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        PublicKey result = null;
+
+        // Read each line from the status text, skip everything outside the PEM header/footer
+        BufferedReader reader = new BufferedReader(new StringReader(pemString));
+        boolean skip = true;
+        String line;
+        StringBuilder pubkeyBase64 = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            if (skip && line.contains("-----BEGIN PUBLIC KEY-----")) {
+                skip = false;
+            } else if (!skip && line.contains("-----END PUBLIC KEY-----")) {
+                break;
+            } else if (!skip) {
+                pubkeyBase64.append(line.trim());
+            }
+        }
+
+        // Decode Base64
+        byte[] pubKeyBytes = Base64.decode(pubkeyBase64.toString());
+
+        // Parse the public key
+        if (pubKeyBytes.length > 0) {
+            AsymmetricKeyParameter keyParams = PublicKeyFactory.createKey(pubKeyBytes);
+            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(pubKeyBytes);
+            if (keyParams instanceof RSAKeyParameters) {
+                result = KeyFactory.getInstance("RSA", new BouncyCastleProvider()).generatePublic(x509KeySpec);
+            } else if (keyParams instanceof Ed25519PublicKeyParameters) {
+                result = KeyFactory.getInstance("EdDSA", new BouncyCastleProvider()).generatePublic(x509KeySpec);
+            } else {
+                throw new UnsupportedOperationException("Key not supported by test yet: " + keyParams);
+            }
+        }
+
+        return result;
     }
 }

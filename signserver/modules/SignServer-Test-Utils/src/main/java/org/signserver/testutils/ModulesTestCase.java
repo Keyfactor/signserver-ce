@@ -1141,6 +1141,18 @@ public class ModulesTestCase {
         return response;
     }
 
+    public GenericSignResponse signGenericDocument(final int workerId, final byte[] data, final RemoteRequestContext requestContext, boolean noCertificate) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final int requestId = random.nextInt();
+        final GenericSignRequest request = new GenericSignRequest(requestId, data);
+        final GenericSignResponse response = (GenericSignResponse) getProcessSession().process(new WorkerIdentifier(workerId), request, requestContext);
+        assertEquals("requestId", requestId, response.getRequestID());
+        if (!noCertificate) {
+            Certificate signercert = response.getSignerCertificate();
+            assertNotNull(signercert);
+        }
+        return response;
+    }
+
     public PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
             throws InvalidKeyException, NoSuchAlgorithmException {
         final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =

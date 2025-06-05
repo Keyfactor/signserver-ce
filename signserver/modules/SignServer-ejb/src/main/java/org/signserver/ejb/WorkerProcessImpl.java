@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import jakarta.persistence.EntityManager;
+import java.security.PublicKey;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
@@ -228,10 +229,30 @@ class WorkerProcessImpl {
 
             // Check signer certificate            
             Certificate signerCertificate = null;
-            if (res instanceof SignatureResponse) {
-                signerCertificate = ((SignatureResponse) res).getSignerCertificate();
+            PublicKey signerPublicKey = null;
+            if (res instanceof SignatureResponse signRes) {
+                signerCertificate = signRes.getSignerCertificate();
+                signerPublicKey = signRes.getSignerPublicKey();
             }
-            handleSignerCertificate(signerCertificate, workerId, logMap, pwc, requestContext, workerLogger, adminInfo);
+            if (!processable.isNoCertificates()) {
+                handleSignerCertificate(signerCertificate, workerId, logMap, pwc, requestContext, workerLogger, adminInfo);
+            }
+
+            // Check key usage limit (preliminary check only)  XXX: Wasn't the point to do this before actually signing (to not spend resources)?
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key usage counter disabled: " + pwc.isDisableKeyUsageCounter());
+                }
+                if (!pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified()) {
+                    checkSignerKeyUsageCounter(signerPublicKey, workerId, pwc.getKeyUsageLimit(), em,
+                            false, requestContext.getServices());
+                }
+            } catch (CryptoTokenOfflineException ex) {
+                final CryptoTokenOfflineException exception =
+                        new CryptoTokenOfflineException(ex);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                throw exception;
+            }
 
             // Charge the client if the request was successfull
             handleAccounting(worker, requestContext, logMap, request, res, workerLogger, adminInfo);
@@ -241,7 +262,7 @@ class WorkerProcessImpl {
 
             // Check key usage limit
             if (!pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified()) {
-                checkSignerKeyUsageCounter(signerCertificate, workerId, pwc.getKeyUsageLimit(), em, true, requestContext.getServices());
+                checkSignerKeyUsageCounter(signerPublicKey, workerId, pwc.getKeyUsageLimit(), em, true, requestContext.getServices());
             }
 
             // Output successfully
@@ -320,14 +341,14 @@ class WorkerProcessImpl {
      * @param em
      * @throws CryptoTokenOfflineException
      */
-    private void checkSignerKeyUsageCounter(final Certificate cert,
+    private void checkSignerKeyUsageCounter(final PublicKey publicKey,
             final int workerId, final long keyUsageLimit, EntityManager em,
             final boolean increment, final IServices services)
         throws CryptoTokenOfflineException {
 
-        if (cert != null) {
+        if (publicKey != null) {
             final String keyHash
-                    = KeyUsageCounterHash.create(cert.getPublicKey());
+                    = KeyUsageCounterHash.create(publicKey);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Worker[" + workerId +"]: "
@@ -466,15 +487,6 @@ class WorkerProcessImpl {
                     // Check if the signer has a signer certificate and if that
                     // certificate have ok validity and private key usage periods.
                     ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), pwc.isCheckCertValidity(), pwc.isCheckPrivateKeyValidity(), pwc.getMinRemainingCertValidity(), cert);
-                }
-
-                // Check key usage limit (preliminary check only)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Key usage counter disabled: " + pwc.isDisableKeyUsageCounter());
-                }
-                if (!pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified()) {
-                    checkSignerKeyUsageCounter(signerCertificate, workerId, pwc.getKeyUsageLimit(), em,
-                            false, requestContext.getServices());
                 }
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =

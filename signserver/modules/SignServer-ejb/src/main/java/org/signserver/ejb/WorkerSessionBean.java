@@ -31,6 +31,7 @@ import jakarta.ejb.SessionContext;
 import jakarta.ejb.Stateless;
 import javax.naming.NamingException;
 import jakarta.persistence.EntityManager;
+import java.security.PublicKey;
 
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
@@ -1574,27 +1575,29 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         // Try to insert a key usage counter entry for this worker's public
         // key
         // Get worker instance
-        if (worker instanceof BaseProcessable) {
+        if (worker instanceof BaseProcessable processable) {
             try {
-                final Certificate cert = ((BaseProcessable)worker)
-                        .getSigningCertificate(services);
-                if (cert != null) {
-                    final String keyHash = KeyUsageCounterHash
-                            .create(cert.getPublicKey());
+                final Certificate cert = processable.getSigningCertificate(services);
 
-                    KeyUsageCounter counter
-                            = keyUsageCounterDataService.getCounter(keyHash);
+                if (cert != null || processable.isNoCertificates()) {
+                    final PublicKey publicKey = processable.getSigningPublicKey(services);
+                    if (publicKey != null) {
+                        final String keyHash = KeyUsageCounterHash.create(publicKey);
 
-                    if (counter == null) {
-                        keyUsageCounterDataService.create(keyHash);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Worker[" + worker.getConfig().getProperty("NAME") + "]: "
-                                    + "new key usage counter initialized");
-                        }
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Worker[" + worker.getConfig().getProperty("NAME") + "]: "
-                                    + "key usage counter: " + counter.getCounter());
+                        KeyUsageCounter counter
+                                = keyUsageCounterDataService.getCounter(keyHash);
+
+                        if (counter == null) {
+                            keyUsageCounterDataService.create(keyHash);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Worker[" + worker.getConfig().getProperty("NAME") + "]: "
+                                        + "new key usage counter initialized");
+                            }
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Worker[" + worker.getConfig().getProperty("NAME") + "]: "
+                                        + "key usage counter: " + counter.getCounter());
+                            }
                         }
                     }
                 }

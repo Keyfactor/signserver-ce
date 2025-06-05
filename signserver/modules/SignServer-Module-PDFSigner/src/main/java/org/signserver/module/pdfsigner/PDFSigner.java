@@ -492,10 +492,11 @@ public class PDFSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
 
+            Certificate cert = certificates.isEmpty() ? null : certificates.get(0);
 
             return new SignatureResponse(sReq.getRequestID(),
                     responseData,
-                    certificates.isEmpty() ? null : certificates.get(0),
+                    cert == null ? null : cert.getPublicKey(), cert,
                     archiveId, archivables, CONTENT_TYPE);
         } catch (DocumentException e) {
             throw new IllegalRequestException("Could not sign document: "

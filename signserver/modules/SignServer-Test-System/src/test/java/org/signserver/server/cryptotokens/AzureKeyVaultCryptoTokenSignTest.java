@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Signature;
 import java.security.cert.Certificate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -34,9 +33,11 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -57,7 +58,6 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
-import static org.junit.Assert.assertFalse;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +66,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RemoteRequestContext;
@@ -75,6 +76,7 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
+import org.signserver.common.WorkerStatus;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -712,6 +714,67 @@ public class AzureKeyVaultCryptoTokenSignTest {
             Set<String> expected = new HashSet<>(aliases1);
             expected.remove(alias);
             assertEquals("new key removed", expected, aliases2);
+        } finally {
+            testCase.removeWorker(tokenId);
+        }
+    }
+
+    /**
+     * Test that setting a default key is not required for an Azure Key Vault Crypto Worker to be active
+     */
+    @Test
+    public void testNoDefaultKeyNeededForCryptoWorker() throws InvalidWorkerIdException {
+        LOG.info("testNoDefaultKeyNeededForCryptoWorker");
+
+        final int tokenId = CRYPTO_TOKEN;
+
+        try {
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, AzureKeyVaultCryptoToken.class.getName());
+            workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
+            workerSession.setWorkerProperty(tokenId, "KEY_VAULT_NAME", keyVaultName);
+            workerSession.setWorkerProperty(tokenId, "KEY_VAULT_CLIENT_ID", keyVaultClientId);
+            workerSession.setWorkerProperty(tokenId, "KEY_VAULT_TYPE", keyVaultType);
+            workerSession.setWorkerProperty(tokenId, "PIN", pin);
+            workerSession.reloadConfiguration(tokenId);
+            WorkerIdentifier tokenIdentifier = new WorkerIdentifier(tokenId);
+            WorkerStatus workerStatus = workerSession.getStatus(tokenIdentifier);
+            boolean workerActive = workerSession.isTokenActive(tokenIdentifier);
+            assertTrue(workerStatus.getFatalErrors().isEmpty());
+            assertTrue(workerActive);
+        } finally {
+            testCase.removeWorker(tokenId);
+        }
+    }
+
+    /**
+     * Test that setting a default key is not required for an Azure Key Vault Crypto Worker to be active but is offline
+     * due to not being able to establish connection to the HSM.
+     */
+    @Test
+    public void testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection() throws InvalidWorkerIdException{
+        LOG.info("testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection");
+
+        final int tokenId = CRYPTO_TOKEN;
+
+        try {
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, AzureKeyVaultCryptoToken.class.getName());
+            workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
+            workerSession.setWorkerProperty(tokenId, "KEY_VAULT_NAME", "non.existing.domain.name.010203");
+            workerSession.setWorkerProperty(tokenId, "KEY_VAULT_CLIENT_ID", "keyVaultClientId");
+            workerSession.setWorkerProperty(tokenId, "KEY_VAULT_TYPE", keyVaultType);
+            workerSession.setWorkerProperty(tokenId, "PIN", pin);
+            workerSession.reloadConfiguration(tokenId);
+            WorkerIdentifier tokenIdentifier = new WorkerIdentifier(tokenId);
+            WorkerStatus workerStatus = workerSession.getStatus(tokenIdentifier);
+            boolean workerActive = workerSession.isTokenActive(tokenIdentifier);
+            assertFalse(workerStatus.getFatalErrors().isEmpty());
+            assertTrue(workerStatus.getFatalErrors().contains("Failed to initialize crypto token: java.net.UnknownHostException: non.existing.domain.name.010203: Name or service not known"));
+            assertTrue(workerStatus.getFatalErrors().contains("Crypto Token is disconnected"));
+            assertFalse(workerActive);
         } finally {
             testCase.removeWorker(tokenId);
         }

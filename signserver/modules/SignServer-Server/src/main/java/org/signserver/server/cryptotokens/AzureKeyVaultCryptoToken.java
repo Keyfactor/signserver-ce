@@ -13,6 +13,7 @@
 package org.signserver.server.cryptotokens;
 
 import java.io.IOException;
+
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.security.InvalidAlgorithmParameterException;
@@ -37,8 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.token.AzureCryptoToken;
-import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
-import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -193,17 +192,24 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                     sb.append("nextKeyAlias: ").append(nextKeyAlias).append("\n");
                     LOG.debug(sb.toString());
                 }
-                for (String testKey : new String[]{keyAlias, nextKeyAlias}) {
-                    if (testKey != null && !testKey.isEmpty()) {
-                        PrivateKey privateKey = delegate.getPrivateKey(testKey);
-                        if (privateKey != null) {
-                            PublicKey publicKey = delegate.getPublicKey(testKey);
-                            CryptoTokenHelper.testSignAndVerify(privateKey, publicKey, delegate.getSignProviderName(), signatureAlgorithm);
-                            result = WorkerStatus.STATUS_ACTIVE;
+                if (StringUtils.isBlank(keyAlias) && StringUtils.isBlank(nextKeyAlias)) {
+                    searchTokenEntries(0, 0, QueryCriteria.create(), false, null, null);
+                    result = WorkerStatus.STATUS_ACTIVE;
+                } else {
+                    for (String testKey : new String[]{keyAlias, nextKeyAlias}) {
+                        if (!StringUtils.isBlank(testKey)) {
+                            PrivateKey privateKey = delegate.getPrivateKey(testKey);
+                            if (privateKey != null) {
+                                PublicKey publicKey = delegate.getPublicKey(testKey);
+                                CryptoTokenHelper.testSignAndVerify(privateKey, publicKey, delegate.getSignProviderName(), signatureAlgorithm);
+                                result = WorkerStatus.STATUS_ACTIVE;
+                            }
                         }
                     }
                 }
-            } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
+            } catch (com.keyfactor.util.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException |
+                     NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException |
+                     OperatorCreationException | IOException | QueryException | CryptoTokenOfflineException ex) {
                 LOG.error("Error testing activation", ex);
             }
         }

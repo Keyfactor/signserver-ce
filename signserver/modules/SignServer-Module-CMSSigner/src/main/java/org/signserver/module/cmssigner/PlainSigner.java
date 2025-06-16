@@ -172,18 +172,29 @@ public class PlainSigner extends BaseSigner {
 
     /**
      * Get signature algorithm to use for signing.
-     *
+     * We prioritize the source of the signature algorithm in the following order:
+     * <ol>
+     *     <li>RequestContext (Request metadata)</li>
+     *     <li>Worker property (SIGNATUREALGORITHM)</li>
+     *     <li>Lastly, we try to find a valid signature algorithm based on the public key present in the provided certificate</li>
+     * </ol>
      * @param requestContext
      * @param publicKey
      * @return signature algorithm to use when signing
      */
     protected String getSignatureAlgorithm(final RequestContext requestContext,
                                            final PublicKey publicKey) {
-        final String sigAlg =
-                signatureAlgorithm == null ?
-                AlgorithmTools.getDefaultSignatureAlgorithm(publicKey) :
-                signatureAlgorithm;
+        String sigAlg = null;
+        if (requestContext != null) {
+            sigAlg = RequestMetadata.getInstance(requestContext).get("SIGNATUREALGORITHM");
+        }
 
+        if (sigAlg == null) {
+            LOG.debug("No signature algorithm in request metadata");
+            sigAlg = config.getProperty("SIGNATUREALGORITHM") != null
+                    ? config.getProperty("SIGNATUREALGORITHM")
+                    : AlgorithmTools.getDefaultSignatureAlgorithm(publicKey);
+        }
         return sigAlg;
     }
     
@@ -268,7 +279,7 @@ public class PlainSigner extends BaseSigner {
             final PrivateKey privKey = crypto.getPrivateKey();
 
             final String sigAlg = getSignatureAlgorithm(requestContext, publicKey);
-            final String sigAlgUpperCase = sigAlg.toUpperCase(Locale.ENGLISH);
+            String sigAlgUpperCase = sigAlg.toUpperCase(Locale.ENGLISH);
             final byte[] signedbytes;
 
             if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
@@ -281,7 +292,8 @@ public class PlainSigner extends BaseSigner {
                     firstNoSuchAlgorithmException = ex;
                     // Fortanix HSM requires digest algorithm in the signing request even if it is client side hash (NONEwith)
                     try {
-                        signature = Signature.getInstance(sigAlg + "/" + clientSideHashAlgorithm, crypto.getProvider());
+                        sigAlgUpperCase = sigAlgUpperCase + "/" + clientSideHashAlgorithm;
+                        signature = Signature.getInstance(sigAlgUpperCase, crypto.getProvider());
                     } catch (NoSuchAlgorithmException secondNoSuchAlgorithmException) {
                         secondNoSuchAlgorithmException.addSuppressed(firstNoSuchAlgorithmException);
                         throw new NoSuchAlgorithmException(secondNoSuchAlgorithmException);
@@ -297,7 +309,7 @@ public class PlainSigner extends BaseSigner {
                     throw new IllegalRequestException("Input length doesn't match hash digest algorithm specified through request metadata");
                 }
 
-                if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
+                if (sigAlgUpperCase.contains("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
                     final Integer saltLength = HASH_ALGORITHM_AND_SALT_MAP.get(clientSideHashAlgorithm);
                     if(saltLength == null) {
                         throw new InvalidKeyException("Unsupported digest for PSS parameters: " + clientSideHashAlgorithm);
@@ -306,18 +318,24 @@ public class PlainSigner extends BaseSigner {
                     signature.setParameter(params);
                 }
 
-                if (sigAlgUpperCase.equals("NONEWITHRSA")) {
-                    final byte[] modifierBytes =
+                if (sigAlgUpperCase.startsWith("NONEWITHRSA")) {
+                    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                    // Fortanix does the PKCS v1.5 padding themselves, meaning, we need to send the raw data to be signed
+                    // to Fortanix.
+                    // Since Fortanix requires the digest algorithm to be present in the signing request, we assume that
+                    // if the signature algorithm contains "NONEWITHRSA/SHA", then Fortanix will be receiver of the data,
+                    // so we skip the PKCS v1.5 padding.
+                    if (!sigAlgUpperCase.contains("NONEWITHRSAANDMGF1/SHA") && !sigAlgUpperCase.contains("NONEWITHRSA/SHA")) {
+                        final byte[] modifierBytes =
                             getModifierBytes(clientSideHashAlgorithm);
 
                     if (modifierBytes == null) {
                         throw new IllegalArgumentException("RSA padding unknown for hash algorithm: " +
                                                            clientSideHashAlgorithm);
                     }
-
-                    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-                    baos.write(modifierBytes);
+                        baos.write(modifierBytes);
+                    }
                     baos.write(data);
 
                     dataToSign = baos.toByteArray();

@@ -326,7 +326,7 @@ public class PlainSigner extends BaseSigner {
                     // Since Fortanix requires the digest algorithm to be present in the signing request, we assume that
                     // if the signature algorithm contains "NONEWITHRSA/SHA", then Fortanix will be receiver of the data,
                     // so we skip the PKCS v1.5 padding.
-                    if (!sigAlgUpperCase.contains("NONEWITHRSAANDMGF1/SHA") && !sigAlgUpperCase.contains("NONEWITHRSA/SHA")) {
+                    if (sigAlgUpperCase.equals("NONEWITHRSA")) {
                         final byte[] modifierBytes =
                             getModifierBytes(clientSideHashAlgorithm);
 

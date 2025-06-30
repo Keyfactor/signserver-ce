@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import static io.restassured.http.ContentType.MULTIPART;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -1755,6 +1759,33 @@ public class RestWorkersTest extends ModulesTestCase {
             assertTrue("Check that the response contains error key.", responseJsonObject.containsKey("error"));
         } finally {
             removeWorker(HELLO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test OpenAPI is working and returns in JSON format
+     */
+    @Test
+    public void testOpenAPI() {
+        LOG.debug("testOpenAPI");
+
+        String urlString = getSignServerBaseURL() + "/openapi?format=JSON";
+
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+
+            int responseCode = conn.getResponseCode();
+            String contentType = conn.getContentType();
+            assertEquals("Check response status code is 200 for OpenAPI URL:" + urlString, 200, responseCode);
+            assertEquals("Check that the response is JSON.", "application/json", contentType);
+
+        } catch (IOException e) {
+            System.out.println("Error checking URL: " + e.getMessage());
         }
     }
 

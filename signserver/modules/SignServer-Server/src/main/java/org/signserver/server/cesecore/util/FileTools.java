@@ -28,6 +28,7 @@ import java.io.PrintStream;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.nio.file.Files;
 
 import org.apache.log4j.Logger;
 
@@ -178,15 +179,12 @@ public abstract class FileTools {
     }
 
     public static File createTempDirectory(File location) throws IOException {
-        final File temp = File.createTempFile("tmp", Long.toString(System.nanoTime()), location);
-        if (!(temp.delete())) {
-            throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
+        // Use Files.createTempDirectory to avoid race condition
+        if (location != null) {
+            return Files.createTempDirectory(location.toPath(), "tmp" + Long.toString(System.nanoTime())).toFile();
+        } else {
+            return Files.createTempDirectory("tmp" + Long.toString(System.nanoTime())).toFile();
         }
-        //Known race condition exists here, not sure what an attacker would accomplish with it though
-        if (!temp.mkdir()) {
-            throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
-        }
-        return temp;
     }
     
     /**

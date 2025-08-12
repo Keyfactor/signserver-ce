@@ -152,7 +152,7 @@ public class OpenPGPSigner extends BaseOpenPGPSigner {
                 // signature value
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
                 signerCert = (X509Certificate) getSigningCertificate(cryptoInstance);
-                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
+                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
                 PGPPrivateKey pgpPrivateKey = new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey());
 
                 final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));

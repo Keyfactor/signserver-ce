@@ -74,10 +74,13 @@ public class OpenPGPSignerTest {
     private static final int WORKER_OPENPGPSIGNER = 40000;
     
     private static final String SIGNER00003 = "signer00003";
-    private static final String SIGNER00003_KEYID = "F7B50A4D55F6E703";   
+    private static final String SIGNER00003_KEYID = "F7B50A4D55F6E703";
+    private static final String SIGNER00003_KEYID_RSA_GENERAL = "D18D3718FAB9BDCD";
     private static final String SIGNER00001 = "signer00001";
     private static final String SIGNER00001_KEYID = "4B821662F54A5923";
-    private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);   
+    private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);
+    private static final String RSA_GENERAL_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_GENERAL);
+    private static final String CERT_GEN_USE_LEGACY_RSA_SIGN = "CERT_GEN_USE_LEGACY_RSA_SIGN";
 
     private final File sampleBinaryFile;
 
@@ -165,7 +168,7 @@ public class OpenPGPSignerTest {
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide() throws Exception {
         LOG.info("testAddUserIdDetachedSignAndVerify_serverSide");
-        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true, true);
     }
 
     /**
@@ -177,7 +180,7 @@ public class OpenPGPSignerTest {
     @Test
     public void testAddUserIdClearTextSignAndVerify_serverSide() throws Exception {
         LOG.info("testAddUserIdClearTextSignAndVerify_serverSide");
-        addUserIdClearTextSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+        addUserIdClearTextSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true, true);
     }
 
     /**
@@ -189,7 +192,7 @@ public class OpenPGPSignerTest {
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSideBinaryForm() throws Exception {
         LOG.info("testAddUserIdDetachedSignAndVerify_serverSideBinaryForm");
-        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, false);
+        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, false, true);
     }
 
     /**
@@ -200,7 +203,7 @@ public class OpenPGPSignerTest {
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide_otherKeyId() throws Exception {
         LOG.info("testAddUserIdDetachedSignAndVerify_serverSide_otherKeyId");
-        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true, true);
     }
 
     /**
@@ -211,13 +214,26 @@ public class OpenPGPSignerTest {
     @Test
     public void testAddUserIdClearTextSignAndVerify_serverSide_otherKeyId() throws Exception {
         LOG.info("testAddUserIdClearTextSignAndVerify_serverSide_otherKeyId");
-        addUserIdClearTextSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+        addUserIdClearTextSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true, true);
+    }
+
+    /**
+     * Tests adding a User Id to the public key, sign something producing
+     * detached signature and verifying it by using RSA_GENERAL.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_serverSide_RSA_GENERAL() throws Exception {
+        LOG.info("testAddUserIdDetachedSignAndVerify_serverSide_RSA_GENERAL");
+        addUserIdDetachedSignAndVerify(null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID_RSA_GENERAL, RSA_GENERAL_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true, false);
     }
 
     private void setupOpenPGPSignerOnlyProperties(final int workerId,
             final String keyAlias,
             final boolean detachedSignature,
-            final boolean armored)
+            final boolean armored,
+            boolean useLegacyRsaSign)
             throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
@@ -227,8 +243,8 @@ public class OpenPGPSignerTest {
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", testCase.getSignerNameDummy1());
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", keyAlias);
         workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", String.valueOf(detachedSignature));
-        workerSession.setWorkerProperty(workerId, "RESPONSE_FORMAT",
-                armored ? "ARMORED" : "BINARY");
+        workerSession.setWorkerProperty(workerId, "RESPONSE_FORMAT", armored ? "ARMORED" : "BINARY");
+        workerSession.setWorkerProperty(workerId, CERT_GEN_USE_LEGACY_RSA_SIGN, Boolean.toString(useLegacyRsaSign));
     }
 
     /**
@@ -243,7 +259,8 @@ public class OpenPGPSignerTest {
             final String keyId,
             final String keyAlgorithm,
             final int expectedOutcome,
-            final boolean armored)
+            final boolean armored,
+            boolean useLegacyRsaSign)
             throws Exception {
         int workerId = 0;
         File outFile = null;
@@ -253,7 +270,7 @@ public class OpenPGPSignerTest {
 
             workerId = WORKER_OPENPGPSIGNER;
             setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, keyAlias,
-                    true, armored);
+                    true, armored, useLegacyRsaSign);
             if (clientSideDigestAlgorithm != null) {
                 throw new Exception("Must not specify digest algorithm for testing server-side");
 
@@ -321,7 +338,8 @@ public class OpenPGPSignerTest {
             final String keyId,
             final String keyAlgorithm,
             final int expectedOutcome,
-            final boolean armored)
+            final boolean armored,
+            final boolean useLegacyRsaSign)
             throws Exception {
         int workerId = 0;
         File outFile = null;
@@ -331,7 +349,7 @@ public class OpenPGPSignerTest {
 
             workerId = WORKER_OPENPGPSIGNER;
             setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, keyAlias,
-                    false, armored);
+                    false, armored, useLegacyRsaSign);
             if (clientSideDigestAlgorithm != null) {
                 throw new Exception("Must not specify digest algorithm for testing server-side");
             }

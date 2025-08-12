@@ -85,7 +85,8 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
     public static final String PROPERTY_DIGEST_ALGORITHM = "DIGEST_ALGORITHM";
     public static final String PROPERTY_GENERATE_REVOCATION_CERTIFICATE
             = "GENERATE_REVOCATION_CERTIFICATE";
-    
+    private static final String CERT_GEN_USE_LEGACY_RSA_SIGN = "CERT_GEN_USE_LEGACY_RSA_SIGN";
+
     // Default values
     private static final boolean DEFAULT_GENERATE_REVOCATION_CERTIFICATE = false;
     private static final int DEFAULT_DIGEST_ALGORITHM = PGPUtil.SHA256;
@@ -203,10 +204,12 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
             final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
             final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
             final boolean generateForDefaultKey = keyAlias.equals(config.getProperty("DEFAULTKEY"));
+            // If CERT_GEN_USE_LEGACY_RSA_SIGN is not set or is true use RSA_SIGN otherwise use RSA_GENERAL
+            final String useLegacyRsaSign = config.getProperty(CERT_GEN_USE_LEGACY_RSA_SIGN, Boolean.toString(true));
             final PGPPublicKey pgpPublicKey =
                     pgpCertificate != null && generateForDefaultKey ?
                     pgpCertificate :
-                    conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert),
+                    conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert, Boolean.parseBoolean(useLegacyRsaSign)),
                                          x509Cert.getPublicKey(),
                                          x509Cert.getNotBefore());
 
@@ -319,7 +322,7 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
             try {
                 final X509Certificate signerCert = (X509Certificate) getSigningCertificate(services);
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
-                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
+                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
 
                 if (!Arrays.equals(pgpPublicKey.getPublicKeyPacket().getKey().getEncoded(), pgpCertificate.getPublicKeyPacket().getKey().getEncoded())) {
                     result.add("Configured " + PROPERTY_PGPPUBLICKEY + " not matching the key");
@@ -341,7 +344,21 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
 
         return result;
     }
-    
+
+    protected int getKeyAlgorithm(X509Certificate signerCert) throws PGPException, SignServerException {
+        PGPPublicKey installedPgpCertificate = null;
+        if (config != null) {
+            installedPgpCertificate = OpenPGPUtils.getInstalledPgpCertificate(config);
+        }
+        final int keyAlgorithm;
+        if (installedPgpCertificate != null) {
+            keyAlgorithm = installedPgpCertificate.getAlgorithm();
+        } else {
+            keyAlgorithm = OpenPGPUtils.getKeyAlgorithm(signerCert);
+        }
+        return keyAlgorithm;
+    }
+
     @Override
     public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         WorkerStatusInfo status = (WorkerStatusInfo) super.getStatus(additionalFatalErrors, services);
@@ -360,10 +377,20 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
                 X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
 
-                PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+                PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+                String keyID;
+                String primaryKeyFingerprint;
 
-                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Key ID", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID())));
-                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Primary key fingerprint", Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH)));
+                if (OpenPGPUtils.getInstalledPgpCertificate(config) == null) {
+                    keyID = OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID());
+                    primaryKeyFingerprint = Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH);
+                } else {
+                    keyID = OpenPGPUtils.formatKeyID(pgpCertificate.getKeyID());
+                    primaryKeyFingerprint = Hex.toHexString(pgpCertificate.getFingerprint()).toUpperCase(Locale.ENGLISH);
+                }
+
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Key ID", keyID));
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Primary key fingerprint", primaryKeyFingerprint));
 
                 // Empty public key
                 if (pgpCertificate != null) {

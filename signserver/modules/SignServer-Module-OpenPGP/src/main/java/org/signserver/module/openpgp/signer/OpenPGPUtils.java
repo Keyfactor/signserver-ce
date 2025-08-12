@@ -29,6 +29,8 @@ import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.jcajce.JcaPGPPublicKeyRingCollection;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerConfig;
+import static org.signserver.module.openpgp.signer.BaseOpenPGPSigner.PROPERTY_PGPPUBLICKEY;
 
 /**
  * Utility methods for OpenPGP functionality.
@@ -39,17 +41,33 @@ import org.signserver.common.SignServerException;
 public class OpenPGPUtils {
 
     /**
-     * Get the OpenPGP Key Algorithm ID given the provided certificate.
+     * Overloaded method to return legacy RSA_SIGN if the worker property is not set.
      *
      * @param x509Cert to get public key algorithm from
      * @return the OpenPGP Key Algorithm ID
      * @throws SignServerException
      */
     public static int getKeyAlgorithm(X509Certificate x509Cert) throws SignServerException {
+        return getKeyAlgorithm(x509Cert, true);
+    }
+
+    /**
+     * Get the OpenPGP Key Algorithm ID given the provided certificate.
+     *
+     * @param x509Cert         to get public key algorithm from
+     * @param useLegacyRsaSign a flag to use RSA_SIGN or RSA_GENERAL
+     * @return the OpenPGP Key Algorithm ID
+     * @throws SignServerException
+     */
+    public static int getKeyAlgorithm(X509Certificate x509Cert, boolean useLegacyRsaSign) throws SignServerException {
         final int keyAlg;
         switch (x509Cert.getPublicKey().getAlgorithm()) {
             case "RSA":
-                keyAlg = PublicKeyAlgorithmTags.RSA_SIGN;
+                if (useLegacyRsaSign) {
+                    keyAlg = PublicKeyAlgorithmTags.RSA_SIGN;
+                } else {
+                    keyAlg = PublicKeyAlgorithmTags.RSA_GENERAL;
+                }
                 break;
             case "EC":
                 keyAlg = PublicKeyAlgorithmTags.ECDSA;
@@ -185,5 +203,28 @@ public class OpenPGPUtils {
         default:
             throw new PGPException("Unsupported OpenPGP Hash Algorithm");
         }
+    }
+
+    /**
+     * Get the installed PGP certificate from the worker.
+     *
+     * @param config worker configuration
+     * @return PGPPublicKey PGP certificate
+     * @throws PGPException for error parsing PGP certificate
+     */
+    public static PGPPublicKey getInstalledPgpCertificate(WorkerConfig config) throws PGPException{
+        PGPPublicKey pgpCertificate = null;
+        // Extract pgpCertificate from Optional property PGPPUBLICKEY to get the key algorithm from it.
+        final String publicKeyValue = config.getProperty(PROPERTY_PGPPUBLICKEY);
+        if (publicKeyValue != null) {
+            try {
+                final List<PGPPublicKey> keys = OpenPGPUtils.parsePublicKeys(publicKeyValue);
+                if (!keys.isEmpty()) {
+                    pgpCertificate = keys.get(0);
+                }
+            } catch (IOException | PGPException ex) {
+                throw new PGPException("Error parsing pgp public key: " + ex.getMessage(), ex);            }
+        }
+        return pgpCertificate;
     }
 }

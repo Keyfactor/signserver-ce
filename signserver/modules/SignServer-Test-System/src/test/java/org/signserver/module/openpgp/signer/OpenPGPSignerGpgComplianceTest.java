@@ -83,7 +83,9 @@ public class OpenPGPSignerGpgComplianceTest {
     
     private static final String RSA2048_ALIAS = "signer00001";    
     private static final String RSA4096_ALIAS = "ts40003";    
-    private static final String NISTP256_ALIAS = "signer00002";   
+    private static final String NISTP256_ALIAS = "signer00002";
+
+    private static final String CERT_GEN_USE_LEGACY_RSA_SIGN = "CERT_GEN_USE_LEGACY_RSA_SIGN";
 
     private static boolean enabled;
     private static boolean ecdsaSupported;
@@ -181,6 +183,12 @@ public class OpenPGPSignerGpgComplianceTest {
         signAndVerify("rsa2048", "SHA-256", false, true);
     }    
     
+    @Test
+    public void testDetachedSigning_RSA_SHA256_RSA_GENERAL() throws Exception {
+        LOG.info("testDetachedSigning_RSA_SHA256_RSA_GENERAL");
+        signAndVerify("rsa2048", "SHA-256", false, true, false);
+    }
+
     @Test
     public void testDetachedSigning_RSA_SHA1() throws Exception {
         LOG.info("testDetachedSigning_RSA_SHA1");
@@ -383,22 +391,39 @@ public class OpenPGPSignerGpgComplianceTest {
     }
     
     /**
-     * Sets up a signer using a key with the chosen algorithm, 
-     * then adds a user ID to the public key,
-     * then imports the public key in a new local key ring and trusts it,
-     * then performs a signing,
-     * then verifies the signature using GPG2 and checks that it succeeds 
-     * and has the expected algorithms.
+     * Overloaded method to support legacy RSA_SIGN tests without adding the CERT_GEN_USE_LEGACY_RSA_SIGN worker property
      *
      * @param expectedKeyAlgorithm in gpg format
      * @param digestAlgorithm to use
      * @param revokeAfter if true, issue and import a revocation certificate afterwards
-     * @throws Exception 
+     * @throws Exception
      */
     private void signAndVerify(final String expectedKeyAlgorithm,
             final String digestAlgorithm,
             final boolean revokeAfter,
             final boolean detachedSignature) throws Exception {
+        signAndVerify(expectedKeyAlgorithm, digestAlgorithm, revokeAfter, detachedSignature, true);
+    }
+
+    /**
+     * Sets up a signer using a key with the chosen algorithm,
+     * then adds a user ID to the public key,
+     * then imports the public key in a new local key ring and trusts it,
+     * then performs a signing,
+     * then verifies the signature using GPG2 and checks that it succeeds
+     * and has the expected algorithms.
+     *
+     * @param expectedKeyAlgorithm in gpg format
+     * @param digestAlgorithm to use
+     * @param revokeAfter if true, issue and import a revocation certificate afterwards
+     * @param useLegacyRsaSign if false, adds CERT_GEN_USE_LEGACY_RSA_SIGN = false in worker and use RSA_GENERAL in tests
+     * @throws Exception
+     */
+    private void signAndVerify(final String expectedKeyAlgorithm,
+            final String digestAlgorithm,
+            final boolean revokeAfter,
+            final boolean detachedSignature,
+            boolean useLegacyRsaSign) throws Exception {
         final int workerId = 42;
         final String workerName = "OpenPGPSigner-" + expectedKeyAlgorithm + "-" + digestAlgorithm;
         final File inFile = new File(helper.getSignServerHome(), detachedSignature ? "res/test/HelloJar.jar" : "res/test/stub.c");  // Let's use any binary file as input for detached and any text file for clear-text
@@ -438,8 +463,13 @@ public class OpenPGPSignerGpgComplianceTest {
                     throw new UnsupportedOperationException("Test does not support key algorithm: " + expectedKeyAlgorithm);
                 }
             }
-            
-            helper.getWorkerSession().setWorkerProperty(workerId, "DIGEST_ALGORITHM", digestAlgorithm);            
+
+            if (useLegacyRsaSign){
+                helper.getWorkerSession().setWorkerProperty(workerId, CERT_GEN_USE_LEGACY_RSA_SIGN, "true");
+            } else {
+                helper.getWorkerSession().setWorkerProperty(workerId, CERT_GEN_USE_LEGACY_RSA_SIGN, "false");
+            }
+            helper.getWorkerSession().setWorkerProperty(workerId, "DIGEST_ALGORITHM", digestAlgorithm);
             helper.getWorkerSession().reloadConfiguration(workerId);
 
             // Add User ID and get public key
@@ -448,6 +478,16 @@ public class OpenPGPSignerGpgComplianceTest {
             FileUtils.writeByteArrayToFile(publicKeyFile, publicKeyBytes);
             final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(requestData.toArmoredForm()).get(0);
 
+            // Add PGPPUBLICKEY worker property when testing RSA_GENERAL and remove it for other legacy tests
+            if (useLegacyRsaSign){
+                helper.getWorkerSession().removeWorkerProperty(workerId, "PGPPUBLICKEY");
+            } else {
+                String publicKeyArmored = requestData.toArmoredForm();
+                assertTrue("public key header: " + publicKeyArmored, publicKeyArmored.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----"));
+                assertTrue("public key footer: " + publicKeyArmored, publicKeyArmored.contains("-----END PGP PUBLIC KEY BLOCK-----"));
+                helper.getWorkerSession().setWorkerProperty(workerId, "PGPPUBLICKEY", publicKeyArmored);
+                helper.getWorkerSession().reloadConfiguration(workerId);
+            }
             // Import public key
             trustFile.delete(); // Seems to be a bug in older versions of gpg not liking that the file is empty but non-existing is fine: https://dev.gnupg.org/T2417
             // For GPG 2.0 it seems public key algorithm 3 is not supported (?) so we had to add --allow-non-selfsigned-uid

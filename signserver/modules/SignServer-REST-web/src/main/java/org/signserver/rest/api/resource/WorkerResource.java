@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Base64;
+import org.eclipse.microprofile.openapi.annotations.enums.ParameterIn;
 import org.signserver.admin.common.auth.AdminAuthHelper;
 import org.signserver.common.*;
 import org.signserver.common.ForbiddenException;
@@ -66,7 +67,10 @@ import org.apache.commons.fileupload.FileUploadBase;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.media.SchemaProperty;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -156,6 +160,12 @@ public class WorkerResource {
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "201",
             description = ""
@@ -165,7 +175,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -173,7 +183,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -181,7 +191,7 @@ public class WorkerResource {
             description = "Worker already exists.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage409.class)
             )
     )
     @APIResponse(
@@ -189,7 +199,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
@@ -201,11 +211,39 @@ public class WorkerResource {
     public Response addWorker(
 
             @Context final HttpServletRequest httpServletRequest,
-            @PathParam("id") final int id,
+            @PathParam("id") 
+            @Parameter(name = "id", description = "Worker id", example = "1") final int id,
             @RequestBody(
                     description = "The request",
-                    required = true
-            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+                    required = true,
+                    content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = WorkerRequest.class),
+                    examples = {
+                        @ExampleObject(name = "PlainSigner", value ="""
+                              {"properties": {
+                                      "CRYPTOTOKEN": "CryptoTokenP12",
+                                      "AUTHTYPE": "NOAUTH",
+                                      "IMPLEMENTATION_CLASS": "org.signserver.module.cmssigner.PlainSigner",
+                                      "DEFAULTKEY": "signer00003",
+                                      "TYPE": "PROCESSABLE",
+                                      "DISABLEKEYUSAGECOUNTER": "true",
+                                      "NAME": "PlainSigner"
+                                  }}"""),
+                        @ExampleObject(name = "CryptoTokenP12", value = """ 
+                                {
+                                    "properties": {
+                                        "KEYSTOREPATH" : "/opt/signserver/res/test/dss10/dss10_keystore.p12",
+                                        "IMPLEMENTATION_CLASS": "org.signserver.server.signers.CryptoWorker",
+                                        "KEYSTORETYPE": "PKCS12",
+                                        "KEYSTOREPASSWORD": "foo123",
+                                        "TYPE": "CRYPTO_WORKER",
+                                        "CRYPTOTOKEN_IMPLEMENTATION_CLASS": "org.signserver.server.cryptotokens.KeystoreCryptoToken",
+                                        "NAME": "CryptoTokenP12"
+                                    }
+                                }""" 
+                        
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "addWorker", String.valueOf(id));
 
@@ -243,6 +281,12 @@ public class WorkerResource {
     @Path("/")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "201",
             description = ""
@@ -252,7 +296,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -260,7 +304,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -268,7 +312,7 @@ public class WorkerResource {
             description = "Worker already exists.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage409.class)
             )
     )
     @APIResponse(
@@ -276,7 +320,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
@@ -290,8 +334,35 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
                     description = "The request",
-                    required = true
-            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+                    required = true,
+                    content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = WorkerRequest.class),
+                    examples = {
+                        @ExampleObject(name = "PlainSigner", value ="""
+                              {"properties": {
+                                      "CRYPTOTOKEN": "CryptoTokenP12",
+                                      "AUTHTYPE": "NOAUTH",
+                                      "IMPLEMENTATION_CLASS": "org.signserver.module.cmssigner.PlainSigner",
+                                      "DEFAULTKEY": "signer00003",
+                                      "TYPE": "PROCESSABLE",
+                                      "DISABLEKEYUSAGECOUNTER": "true",
+                                      "NAME": "PlainSigner"
+                                  }}"""),
+                        @ExampleObject(name = "CryptoTokenP12", value = """ 
+                                {
+                                    "properties": {
+                                        "KEYSTOREPATH" : "/opt/signserver/res/test/dss10/dss10_keystore.p12",
+                                        "IMPLEMENTATION_CLASS": "org.signserver.server.signers.CryptoWorker",
+                                        "KEYSTORETYPE": "PKCS12",
+                                        "KEYSTOREPASSWORD": "foo123",
+                                        "TYPE": "CRYPTO_WORKER",
+                                        "CRYPTOTOKEN_IMPLEMENTATION_CLASS": "org.signserver.server.cryptotokens.KeystoreCryptoToken",
+                                        "NAME": "CryptoTokenP12"
+                                    }
+                                }""" 
+                        
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "addWorkerWithoutID");
 
@@ -332,6 +403,12 @@ public class WorkerResource {
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             description = "Worker properties successfully updated",
@@ -343,7 +420,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -351,7 +428,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -359,7 +436,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
@@ -370,11 +447,28 @@ public class WorkerResource {
     public Response updateAndDeleteWorkerProperties(
 
             @Context final HttpServletRequest httpServletRequest,
-            @PathParam("id") final int id,
+            @PathParam("id") 
+            @Parameter(name = "id", description = "Worker id", example = "1") final int id,
             @RequestBody(
                     description = "The request",
-                    required = true
-            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+                    required = true,
+                    content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = WorkerRequest.class),
+                    examples = {
+                        @ExampleObject(name = "Change existing property name", value ="""
+                              {"properties": {
+                                      "NAME": "NewPlainSigner"
+                                  }}"""),
+                        @ExampleObject(name = "Add new properties for clientside hashing", value = """ 
+                                {
+                                    "properties": {
+                                        "CLIENTSIDEHASHING" : "true",
+                                        "ACCEPTED_HASH_DIGEST_ALGORITHMS": "SHA-256,SHA-384,SHA-512"
+                                    }
+                                }""" 
+                        
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "updateAndDeleteWorkerProperties",
                 String.valueOf(id));
@@ -421,6 +515,12 @@ public class WorkerResource {
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             description = "Worker properties successfully replaced",
@@ -432,7 +532,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -440,7 +540,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -448,7 +548,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -456,7 +556,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
@@ -468,11 +568,39 @@ public class WorkerResource {
     public Response replaceAllWorkerProperties(
 
             @Context final HttpServletRequest httpServletRequest,
-            @PathParam("id") final int id,
+            @PathParam("id") 
+            @Parameter(name = "id", description = "Worker id", example = "1") final int id,
             @RequestBody(
                     description = "The request",
-                    required = true
-            ) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+                    required = true,
+                    content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = WorkerRequest.class),
+                    examples = {
+                        @ExampleObject(name = "PlainSigner", value ="""
+                              {"properties": {
+                                      "CRYPTOTOKEN": "CryptoTokenP12",
+                                      "AUTHTYPE": "NOAUTH",
+                                      "IMPLEMENTATION_CLASS": "org.signserver.module.cmssigner.PlainSigner",
+                                      "DEFAULTKEY": "signer00003",
+                                      "TYPE": "PROCESSABLE",
+                                      "DISABLEKEYUSAGECOUNTER": "true",
+                                      "NAME": "PlainSigner"
+                                  }}"""),
+                        @ExampleObject(name = "CryptoTokenP12", value = """ 
+                                {
+                                    "properties": {
+                                        "KEYSTOREPATH" : "/opt/signserver/res/test/dss10/dss10_keystore.p12",
+                                        "IMPLEMENTATION_CLASS": "org.signserver.server.signers.CryptoWorker",
+                                        "KEYSTORETYPE": "PKCS12",
+                                        "KEYSTOREPASSWORD": "foo123",
+                                        "TYPE": "CRYPTO_WORKER",
+                                        "CRYPTOTOKEN_IMPLEMENTATION_CLASS": "org.signserver.server.cryptotokens.KeystoreCryptoToken",
+                                        "NAME": "CryptoTokenP12"
+                                    }
+                                }""" 
+                        
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "replaceAllWorkerProperties",
                 String.valueOf(id));
@@ -500,6 +628,12 @@ public class WorkerResource {
     @DELETE
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             description = "Worker removed successfully",
@@ -511,7 +645,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -519,7 +653,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -527,7 +661,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -535,7 +669,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
@@ -545,7 +679,8 @@ public class WorkerResource {
     )
     public Response removeWorker(
             @Context final HttpServletRequest httpServletRequest,
-            @PathParam("id") final int id
+            @PathParam("id") 
+            @Parameter(name = "id", description = "Worker id", example = "1") final int id
     ) throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "removeWorker",
@@ -570,6 +705,12 @@ public class WorkerResource {
     @Path("reload")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             description = "Workers successfully reloaded",
@@ -581,7 +722,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -589,7 +730,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -597,7 +738,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -605,7 +746,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
@@ -617,8 +758,21 @@ public class WorkerResource {
     public Response reload(
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
-                    description = "The request"
-            ) final ReloadRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+                    description = "The request",
+                    content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = WorkerRequest.class),
+                    examples = {
+                        @ExampleObject(name = "Reload one worker", value ="""
+                              {"workerIDs": [
+                                      1
+                                    ]}"""),
+                        @ExampleObject(name = "Reload several workers", value = """
+                              {"workerIDs": [
+                                      1, 2
+                                    ]}""" 
+                        
+            )})) final ReloadRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "reload");
 
@@ -651,6 +805,12 @@ public class WorkerResource {
     @POST
     @Path("reload")
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             description = "All workers successfully reloaded",
@@ -662,7 +822,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -670,7 +830,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     public Response reloadAll(
@@ -698,18 +858,36 @@ public class WorkerResource {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = WorkerConfigResponse.class))
-    )
+                    schema = @Schema(implementation = WorkerConfigResponse.class),
+                        example = """
+                                  {
+                                      "properties": {
+                                          "CRYPTOTOKEN": "CryptoTokenP12",
+                                          "AUTHTYPE": "NOAUTH",
+                                          "IMPLEMENTATION_CLASS": "org.signserver.module.cmssigner.PlainSigner",
+                                          "DEFAULTKEY": "signer00003",
+                                          "TYPE": "PROCESSABLE",
+                                          "DISABLEKEYUSAGECOUNTER": "true",
+                                          "NAME": "PlainSigner"
+                                      }
+                                  }"""
+            ))
     @APIResponse(
             responseCode = "403",
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -717,7 +895,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -725,15 +903,17 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
+            summary = "Request to get worker configuration",
             description = "Required role: admin role \n\n"
     )
     public Response getConfig(
             @Context final HttpServletRequest httpServletRequest,
-            @PathParam("id") final int id)
+            @PathParam("id") 
+            @Parameter(name = "id", description = "Worker id", example = "1") final int id)
             throws IllegalRequestException, AdminNotAuthorizedException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "getConfig", String.valueOf(id));
@@ -763,6 +943,12 @@ public class WorkerResource {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             content = @Content(
@@ -774,7 +960,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -782,10 +968,11 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @Operation(
+            summary = "Request to get list of workers",
             description = "Required role: admin role \n\n"
     )
     public Response listWorkers(
@@ -824,6 +1011,12 @@ public class WorkerResource {
     @Path("{idOrName}/process")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponseSchema(
             value = ProcessResponse.class,
             responseCode = "200",
@@ -834,7 +1027,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -842,7 +1035,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -850,7 +1043,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -858,7 +1051,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @APIResponse(
@@ -866,7 +1059,7 @@ public class WorkerResource {
             description = "Crypto Token not available",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage503.class)
             )
     )
     @Operation(
@@ -878,8 +1071,7 @@ public class WorkerResource {
     public Response processByJsonReturningJson(
             @Parameter(
                     description = "Worker Id or name of the worker",
-                    example = "ExampleSigner1",
-                    schema = @Schema(anyOf = {String.class, Integer.class})
+                    example = "ExampleSigner1"
             )
             @PathParam("idOrName") final String idOrName,
             @Context final HttpServletRequest httpServletRequest,
@@ -1044,6 +1236,12 @@ public class WorkerResource {
     @Path("{idOrName}/process")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({MediaType.APPLICATION_JSON})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponseSchema(
             value = ProcessResponse.class,
             responseCode = "200",
@@ -1054,7 +1252,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -1062,7 +1260,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -1070,7 +1268,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -1078,7 +1276,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @APIResponse(
@@ -1086,7 +1284,7 @@ public class WorkerResource {
             description = "Crypto Token not available",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage503.class)
             )
     )
     @Operation(
@@ -1096,9 +1294,20 @@ public class WorkerResource {
                     + "instance signing and get back the result (i.e. signature)."
     )
     public Response processByFormDataReturnJson(
+            @Parameter(
+                    description = "Worker Id or name of the worker",
+                    example = "ExampleSigner1"
+            )
             @PathParam("idOrName") final String idOrName,
             List<EntityPart> entityParts,
-            @Context final HttpServletRequest httpServletRequest) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+            @Context final HttpServletRequest httpServletRequest,
+            @RequestBody(
+                    description = "The request",
+                    required = true,
+                    content = @Content(
+                    mediaType = MediaType.MULTIPART_FORM_DATA,
+                    schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.STRING, format = "binary")})
+            )) final ProcessRequest request) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
 
         // The following check must be the first line in REST public methods (note: admin operations has a different one)
         auth.checkCustomHeader(httpServletRequest);
@@ -1117,6 +1326,12 @@ public class WorkerResource {
     @Path("{idOrName}/process")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({MediaType.APPLICATION_OCTET_STREAM})
+    @Parameter(
+            name = "X-Keyfactor-Requested-With",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
+    )
     @APIResponse(
             responseCode = "200",
             description = "The response data",
@@ -1129,7 +1344,7 @@ public class WorkerResource {
             description = "Bad request from the client",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
             )
     )
     @APIResponse(
@@ -1137,7 +1352,7 @@ public class WorkerResource {
             description = "Access is forbidden!",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
             )
     )
     @APIResponse(
@@ -1145,7 +1360,7 @@ public class WorkerResource {
             description = "No such worker",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
             )
     )
     @APIResponse(
@@ -1153,7 +1368,7 @@ public class WorkerResource {
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
             )
     )
     @APIResponse(
@@ -1161,7 +1376,7 @@ public class WorkerResource {
             description = "Crypto Token not available",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.class)
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage503.class)
             )
     )
     @Operation(
@@ -1171,9 +1386,20 @@ public class WorkerResource {
                     + "instance signing and get back the result (i.e. signature)."
     )
     public Response processByFormDataReturnFile(
+            @Parameter(
+                    description = "Worker Id or name of the worker",
+                    example = "ExampleSigner1"
+            )
             @PathParam("idOrName") final String idOrName,
             List<EntityPart> entityParts,
-            @Context final HttpServletRequest httpServletRequest) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+            @Context final HttpServletRequest httpServletRequest,
+            @RequestBody(
+                    description = "The request",
+                    required = true,
+                    content = @Content(
+                    mediaType = MediaType.MULTIPART_FORM_DATA,
+                    schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.STRING, format = "binary")})
+            )) final ProcessRequest request) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
 
         // The following check must be the first line in REST public methods (note: admin operations has a different one)
         auth.checkCustomHeader(httpServletRequest);

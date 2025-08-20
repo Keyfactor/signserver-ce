@@ -28,19 +28,26 @@ public class ProcessRequest {
 
     @Schema(
         required = true,
-        description = "The input data to be processed (i.e. signed)."
+        description = "The input data to be processed (i.e. signed).",
+        example = "8sobtsfpB9Btr+Roflefznazfk6Tt2BQItpS5szCb9I="
     )
     private String data;
 
     @Schema(
         required = false,
-        description = "Additional encoding of the input data."
+        description = "Additional encoding of the input data.",
+        example = "BASE64"
     )
     private DataEncoding encoding;
 
     @Schema(
         required = false,
-        description = "Additional request metadata for the worker."
+        description = "Additional request metadata for the worker.",
+        example = """
+                  {
+                    "USING_CLIENTSUPPLIED_HASH":"true",
+                    "CLIENTSIDE_HASHDIGESTALGORITHM":"SHA256"
+                  }"""
     )
     private HashMap<String, String> metaData;
 

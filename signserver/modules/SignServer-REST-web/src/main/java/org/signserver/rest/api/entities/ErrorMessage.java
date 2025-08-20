@@ -28,5 +28,35 @@ public class ErrorMessage {
     public String getError() {
         return error;
     }
+    
+    public static class ErrorMessage400 {
+        @Schema(example = "Bad request from the client")
+        private String error;
+    }
+    
+    public static class ErrorMessage403 {
+        @Schema(example = "Access is forbidden!")
+        private String error;
+    }
+    
+    public static class ErrorMessage404 {
+        @Schema(example = "No such worker")
+        private String error;
+    }
+    
+    public static class ErrorMessage409 {
+        @Schema(example = "Worker already exists.")
+        private String error;
+    }
+    
+    public static class ErrorMessage500 {
+        @Schema(example = "The server were unable to process the request. See server-side logs for more details.")
+        private String error;
+    }
+    
+    public static class ErrorMessage503 {
+        @Schema(example = "Crypto Token not available")
+        private String error;
+    }
 
 }

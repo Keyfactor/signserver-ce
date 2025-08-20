@@ -25,14 +25,12 @@ import java.util.Map;
         description = "Represents a worker request."
 )
 public class WorkerRequest {
-
     @Schema(
             required = false,
             description = "Worker properties list"
 
     )
     private Map<String, String> properties;
-
 
     public WorkerRequest(Map<String, String> properties) {
         this.properties = properties;
@@ -48,6 +46,4 @@ public class WorkerRequest {
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
-
-
 }

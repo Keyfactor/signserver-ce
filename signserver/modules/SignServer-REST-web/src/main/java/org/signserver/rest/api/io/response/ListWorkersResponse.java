@@ -40,7 +40,9 @@ public class ListWorkersResponse {
     }
     
     public static class Worker {
+        @Schema(example = "1")
         private int id;
+        @Schema(example = "PlainSigner")
         private String name;
 
         public Worker(final int id, final String name) {

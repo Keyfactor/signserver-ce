@@ -1423,6 +1423,58 @@ public class PlainSignerUnitTest {
     }
 
     /**
+     * Test that Signing works and signature is verified when signature algorithm is provided and input is SHA-384 hash digest.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNONESigning_RSA_SHA384_clientSide_no_signature_algorithm_provided() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA384_clientSide_no_signature_algorithm_provided");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-384");
+
+        WorkerConfig config = createConfig(""); // No signature algorithm provided as a property
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-384");
+
+        SimplifiedResponse resp = sign(hash, tokenRSA, config, context);
+        assertSignedAndVerifiable(plainText, "SHA384withRSA", tokenRSA, resp);
+    }
+
+    /**
+     * Test that Signing works and signature is verified when signature algorithm is provided and input is SHA-384 hash digest.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNONESigning_ECDSA_SHA384_clientSide_no_signature_algorithm_provided() throws Exception {
+        LOG.info("testNONESigning_ECDSA_SHA384_clientSide_no_signature_algorithm_provided");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        final RequestContext context = new RequestContext();
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-384");
+
+        WorkerConfig config = createConfig(""); // No signature algorithm provided as a property
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-384");
+
+        SimplifiedResponse resp = sign(hash, tokenECDSA, config, context);
+        assertSignedAndVerifiable(plainText, "SHA384withECDSA", tokenECDSA, resp);
+    }
+
+    /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSAandMGF1 and input is SHA-384 hash digest.
      * 
      * @throws Exception 

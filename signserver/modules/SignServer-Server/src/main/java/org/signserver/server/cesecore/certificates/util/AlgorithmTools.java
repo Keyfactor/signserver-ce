@@ -372,6 +372,33 @@ public abstract class AlgorithmTools {
     }
 
     /**
+     * Gets the signature algorithm matching a specific key algorithm when client-side hashing is used.
+     * @param publicKey to get matching signature algorithm for
+     * @return The signature algorithm matching the public key algorithm or
+     * the default if no matching was found and client-side hashing is used.
+     */
+    public static String getDefaultSignatureAlgorithmClientSide(final PublicKey publicKey) throws NoSuchAlgorithmException {
+        final String result;
+        if (publicKey == null) {
+            throw new IllegalArgumentException("Null public key. Unable to retrieve default signature algorithm.");
+        }
+        final String keyAlg = publicKey.getAlgorithm().toUpperCase(Locale.ENGLISH);
+        switch (keyAlg) {
+            case "ECDSA":
+                result = "NONEwithECDSA";
+                break;
+            case "RSA":
+                result = "NONEwithRSA";
+                break;
+            default: {
+                    throw new NoSuchAlgorithmException("No default signature algorithm for client-side hashing could be retrieved from the provided public key.");
+                }
+        }
+        return result;
+    }
+
+
+    /**
      * Gets the key algorithm matching a specific signature algorithm.
      * @param signatureAlgorithm to get matching key algorithm for
      * @return The key algorithm matching the signature or algorithm or

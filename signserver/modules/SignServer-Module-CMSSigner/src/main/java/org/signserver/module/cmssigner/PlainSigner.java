@@ -183,7 +183,7 @@ public class PlainSigner extends BaseSigner {
      * @return signature algorithm to use when signing
      */
     protected String getSignatureAlgorithm(final RequestContext requestContext,
-                                           final PublicKey publicKey) {
+                                           final PublicKey publicKey) throws NoSuchAlgorithmException, IllegalRequestException {
         String sigAlg = null;
         if (requestContext != null) {
             sigAlg = RequestMetadata.getInstance(requestContext).get("SIGNATUREALGORITHM");
@@ -191,9 +191,15 @@ public class PlainSigner extends BaseSigner {
 
         if (sigAlg == null) {
             LOG.debug("No signature algorithm in request metadata");
-            sigAlg = config.getProperty("SIGNATUREALGORITHM") != null
-                    ? config.getProperty("SIGNATUREALGORITHM")
-                    : AlgorithmTools.getDefaultSignatureAlgorithm(publicKey);
+            if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
+                sigAlg = config.getProperty("SIGNATUREALGORITHM") != null
+                        ? config.getProperty("SIGNATUREALGORITHM")
+                        : AlgorithmTools.getDefaultSignatureAlgorithmClientSide(publicKey);
+            } else {
+                sigAlg = config.getProperty("SIGNATUREALGORITHM") != null
+                        ? config.getProperty("SIGNATUREALGORITHM")
+                        : AlgorithmTools.getDefaultSignatureAlgorithm(publicKey);
+            }
         }
         return sigAlg;
     }

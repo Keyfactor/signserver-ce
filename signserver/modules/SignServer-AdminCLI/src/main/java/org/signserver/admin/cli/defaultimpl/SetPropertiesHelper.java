@@ -44,8 +44,8 @@ public class SetPropertiesHelper {
     private PrintStream out;
     private AdminCommandHelper helper = new AdminCommandHelper();
     private List<Integer> workerDeclarations = new ArrayList<>();
-    private final Map<String, AuthClientEntry> addAuthClientGen2EntryMap = new HashMap<>();
-    private final Map<String, AuthClientEntry> removeAuthClientGen2EntryMap = new HashMap<>();
+    private final Map<Integer, AuthClientEntry> addAuthClientGen2EntryMap = new HashMap<>();
+    private final Map<Integer, AuthClientEntry> removeAuthClientGen2EntryMap = new HashMap<>();
     private List<AuthClientEntry> addAuthClientGen2Entries = new ArrayList<>();
     private List<AuthClientEntry> removeAuthClientGen2Entries = new ArrayList<>();
 
@@ -346,13 +346,13 @@ public class SetPropertiesHelper {
         }
     }
     
-    private void checkAllGen2AuthClientRulesValid(Map<String, AuthClientEntry> authClientGen2EntryMap, boolean add) throws RemoteException, CommandFailureException {
+    private void checkAllGen2AuthClientRulesValid(Map<Integer, AuthClientEntry> authClientGen2EntryMap, boolean add) throws RemoteException, CommandFailureException {
         boolean allRulesValild = true;
         StringBuilder errorMessage = new StringBuilder();
         Iterator it = authClientGen2EntryMap.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, AuthClientEntry> pair = (Map.Entry) it.next();
-            String seqNO = pair.getKey();
+            Map.Entry<Integer, AuthClientEntry> pair = (Map.Entry) it.next();
+            String seqNO = pair.getValue().getSeqNumber();
             AuthClientEntry entry = pair.getValue();
             CertificateMatchingRule rule = entry.getRule();
             if (allMandatoryFieldsExistInProvidedRule(rule)) {
@@ -395,16 +395,16 @@ public class SetPropertiesHelper {
 
         AuthClientEntry entry;
         if (add) {
-            entry = addAuthClientGen2EntryMap.get(clientRuleSeq);
+            entry = addAuthClientGen2EntryMap.get(workerId);
             if (entry == null) {
-                entry = new AuthClientEntry(new CertificateMatchingRule(), workerId);
-                addAuthClientGen2EntryMap.put(clientRuleSeq, entry);
+                entry = new AuthClientEntry(workerId, clientRuleSeq, new CertificateMatchingRule());
+                addAuthClientGen2EntryMap.put(workerId, entry);
             }
         } else {
-            entry = removeAuthClientGen2EntryMap.get(clientRuleSeq);
+            entry = removeAuthClientGen2EntryMap.get(workerId);
             if (entry == null) {
-                entry = new AuthClientEntry(new CertificateMatchingRule(), workerId);
-                removeAuthClientGen2EntryMap.put(clientRuleSeq, entry);
+                entry = new AuthClientEntry(workerId, clientRuleSeq, new CertificateMatchingRule());
+                removeAuthClientGen2EntryMap.put(workerId, entry);
             }
         }
 
@@ -509,10 +509,12 @@ public class SetPropertiesHelper {
     private static class AuthClientEntry {
 
         private CertificateMatchingRule rule;
+        private String seqNumber;
         private int workerId;
 
-        public AuthClientEntry(CertificateMatchingRule rule, int workerId) {
+        public AuthClientEntry(int workerId, String seqNumber, CertificateMatchingRule rule) {
             this.rule = rule;
+            this.seqNumber = seqNumber;
             this.workerId = workerId;
         }
 
@@ -527,11 +529,19 @@ public class SetPropertiesHelper {
             this.rule = rule;
         }
 
+        public String getSeqNumber() {
+            return seqNumber;
+        }
+
+        public void setSeqNumber(String seqNumber) {
+            this.seqNumber = seqNumber;
+        }
+
         public int getWorkerId() {
             return workerId;
         }
 
-        public void setWorkerIdOrName(int workerId) {
+        public void setWorkerId(int workerId) {
             this.workerId = workerId;
         }
     }

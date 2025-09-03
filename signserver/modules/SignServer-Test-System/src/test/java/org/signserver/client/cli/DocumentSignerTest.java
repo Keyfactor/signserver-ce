@@ -13,10 +13,18 @@
 package org.signserver.client.cli;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.security.Signature;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runners.MethodSorters;
@@ -27,6 +35,8 @@ import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
@@ -41,6 +51,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertArrayEquals;
+import static org.signserver.server.data.impl.UploadConfig.HTTP_MAX_UPLOAD_SIZE;
 
 /**
  * Tests for the signdocument command of Client CLI.
@@ -74,13 +86,19 @@ public class DocumentSignerTest extends ModulesTestCase {
     /** Worker ID for XML Signer to use with Username authorization */
     private static final int WORKERID7 = 6672;
 
+    /** Worker ID for Plain Signer to use with sign client standard input */
+    private static final int WORKERID8 = 6678;
+
+    /** Worker ID for CMS Signer to use with sign client standard input */
+    private static final int WORKERID9 = 6679;
+
 
     private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private final String SIGN_KEY_CERT_CN = "P11RequestSign";
 
     private String dss10KeyStorePath;
 
-    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3, WORKERID4, WORKERID5, WORKERID7};
+    private static final int[] WORKERS = new int[]{WORKERID, WORKERID2, WORKERID3, WORKERID4, WORKERID5, WORKERID7, WORKERID8, WORKERID9};
 
     private static File signserverhome;
 
@@ -121,6 +139,13 @@ public class DocumentSignerTest extends ModulesTestCase {
 
         // Worker 5 (Used for username authorization)
         addDummySigner(WORKERID7, "TestXMLSignerUserAuth", true);
+
+        // Worker 8 (Used for plain signer sign client standard input)
+        addSigner("org.signserver.module.cmssigner.PlainSigner", WORKERID8, "TestPlainSigner", true);
+
+        // Worker 9 (Used for CMS signer sign client standard input)
+        addSigner("org.signserver.module.cmssigner.CMSSigner", WORKERID9, "TestCMSSigner", true);
+
     }
 
     @Test
@@ -436,6 +461,219 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         } finally {
             FileUtils.deleteQuietly(doc);
+        }
+    }
+
+    /**
+     * Generates ASCII text.
+     *
+     * @param sizeMb number of megabytes (MB) to generate
+     * @return byte array of sizeMb length containing ASCII bytes
+     * @throws IllegalArgumentException if sizeMb is negative or size in bytes exceeds array limits
+     */
+    public static byte[] generateAsciiBytes(int sizeMb) {
+        if (sizeMb < 0) {
+            throw new IllegalArgumentException("sizeMb must be >= 0");
+        }
+        final long sizeBytesLong = Math.multiplyExact(sizeMb, 1024L * 1024L);
+        if (sizeBytesLong > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Requested size too large for a single byte array: " + sizeBytesLong + " bytes");
+        }
+        final int sizeBytes = (int) sizeBytesLong;
+        final byte[] out = new byte[sizeBytes];
+
+        // Fill the arry with 'A' and 'B'
+        for (int i = 0; i < sizeBytes; i++) {
+            out[i] = (i & 1) == 0 ? (byte) 'A' : (byte) 'B';
+        }
+        return out;
+    }
+
+    /**
+     * Tests sign and verify via sign client standard input with plain signer.
+     */
+    @Test
+    public void test02signAndVerifyPlainSingerFromStandardInput() throws Exception {
+        LOG.info("test02signAndVerifyPlainSingerFromStandardInput");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        InputStream originalIn = System.in;
+
+        try {
+            System.setIn(new ByteArrayInputStream(plainText));
+            byte[] signatureBytes = execute("signdocument", "-workername", "TestPlainSigner", "-stdin");
+            Signature signature = Signature.getInstance("SHA256withRSA", "BC");
+            signature.initVerify(getCurrentWorkerSession().getSignerCertificate(new WorkerIdentifier(WORKERID8)));
+            signature.update(plainText);
+            assertTrue("consistent signature", signature.verify(signatureBytes));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            System.setIn(originalIn);
+        }
+    }
+
+    /**
+     * Tests sign and verify via sign client standard input with plain signer. Sends data chunk by chunk.
+     */
+    @Test
+    public void test02signAndVerifyPlainSingerFromStandardInput_Buffer_4096() throws Exception {
+        LOG.info("test02signAndVerifyPlainSingerFromStandardInput_Buffer_4096");
+        byte[] plainText = generateAsciiBytes(1);
+        InputStream originalIn = System.in;
+        PipedInputStream pin;
+        PipedOutputStream pout;
+        Thread feeder;
+        try {
+            pin = new PipedInputStream();
+            pout = new PipedOutputStream(pin);
+            System.setIn(pin);
+
+            PipedOutputStream poutForThread = pout;
+            feeder = new Thread(() -> {
+                try {
+                    final int maxChunk = 4096;
+                    int offset = 0;
+                    while (offset < plainText.length) {
+                        int len = Math.min(maxChunk, plainText.length - offset);
+                        poutForThread.write(plainText, offset, len);
+                        poutForThread.flush();
+                        offset += len;
+                    }
+                } catch (IOException ignore) {
+                } finally {
+                    try {
+                        poutForThread.close();
+                    } catch (IOException ignore) {
+                    }
+                }
+            }, "stdin-feeder");
+            feeder.start();
+
+            byte[] signatureBytes = execute("signdocument", "-workername", "TestPlainSigner", "-stdin");
+
+            Signature signature = Signature.getInstance("SHA256withRSA", "BC");
+            signature.initVerify(getCurrentWorkerSession().getSignerCertificate(new WorkerIdentifier(WORKERID8)));
+            signature.update(plainText);
+            assertTrue("consistent signature", signature.verify(signatureBytes));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            System.setIn(originalIn);
+        }
+    }
+
+    /**
+     * Tests sign and verify via sign client standard input with plain signer.
+     * Sends data chunk by chunk with a second delay in between.
+     */
+    @Test
+    public void test02signAndVerifyPlainSingerFromStandardInput_Buffer_4096_WithDelay() throws Exception {
+        LOG.info("test02signAndVerifyPlainSingerFromStandardInput_Buffer_4096_WithDelay");
+
+        byte[] plainText = ("A".repeat(10 * 1024)).getBytes("ASCII");
+        "sample-data!".getBytes("ASCII");
+        InputStream originalIn = System.in;
+        PipedInputStream pin;
+        PipedOutputStream pout;
+        Thread feeder;
+        try {
+            pin = new PipedInputStream();
+            pout = new PipedOutputStream(pin);
+            System.setIn(pin);
+
+            PipedOutputStream poutForThread = pout;
+            feeder = new Thread(() -> {
+                try {
+                    final int maxChunk = 4096;
+                    int offset = 0;
+                    while (offset < plainText.length) {
+                        int len = Math.min(maxChunk, plainText.length - offset);
+                        poutForThread.write(plainText, offset, len);
+                        poutForThread.flush();
+                        offset += len;
+                        Thread.sleep(1000);
+                    }
+                } catch (IOException ignore) {
+                } catch (InterruptedException ignore) {
+                } finally {
+                    try {
+                        poutForThread.close();
+                    } catch (IOException ignore) {
+                    }
+                }
+            }, "stdin-feeder");
+            feeder.start();
+
+            byte[] signatureBytes = execute("signdocument", "-workername", "TestPlainSigner", "-stdin");
+
+            Signature signature = Signature.getInstance("SHA256withRSA", "BC");
+            signature.initVerify(getCurrentWorkerSession().getSignerCertificate(new WorkerIdentifier(WORKERID8)));
+            signature.update(plainText);
+            assertTrue("consistent signature", signature.verify(signatureBytes));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            System.setIn(originalIn);
+        }
+    }
+
+
+    /**
+     * Tests sign and verify a large file via sign client standard input with plain signer.
+     */
+    @Test
+    public void test02signAndVerifyPlainSingerFromStandardInput_LargeFile() throws Exception {
+        LOG.info("test02signAndVerifyPlainSingerFromStandardInput_LargeFile");
+        byte[] plainText = generateAsciiBytes(300);
+        InputStream originalIn = System.in;
+
+        try {
+            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE, "514572800");
+            // Need to wait for three seconds to pass the Global Configuration cache time.
+            Thread.sleep(3000);
+            System.setIn(new ByteArrayInputStream(plainText));
+            byte[] signatureBytes = execute("signdocument", "-workername", "TestPlainSigner", "-stdin");
+            Signature signature = Signature.getInstance("SHA256withRSA", "BC");
+            signature.initVerify(getCurrentWorkerSession().getSignerCertificate(new WorkerIdentifier(WORKERID8)));
+            signature.update(plainText);
+            assertTrue("consistent signature", signature.verify(signatureBytes));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
+            System.setIn(originalIn);
+        }
+    }
+
+    /**
+     * Tests sign and verify via sign client standard input with CMS signer.
+     */
+    @Test
+    public void test02signAndVerifyCMSSingerFromStandardInput() throws Exception {
+        LOG.info("test02signAndVerifyCMSSingerFromStandardInput");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        InputStream originalIn = System.in;
+
+        try {
+            System.setIn(new ByteArrayInputStream(plainText));
+            byte[] signatureBytes = execute("signdocument", "-workername", "TestCMSSigner", "-stdin");
+            CMSSignedData cmsSignedData = new CMSSignedData(signatureBytes);
+            byte[] content = (byte[]) cmsSignedData.getSignedContent().getContent();
+            assertArrayEquals("Input data and the data inside CMS signature are equal.", plainText, content);
+            SignerInformation signer = cmsSignedData.getSignerInfos().getSigners().iterator().next();
+            SignerInformationVerifier verifier = new JcaSignerInfoVerifierBuilder(
+                    new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC")
+                    .build(getCurrentWorkerSession().getSignerCertificate(new WorkerIdentifier(WORKERID9)).getPublicKey());
+            assertTrue("consistent signature", signer.verify(verifier));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            System.setIn(originalIn);
         }
     }
 

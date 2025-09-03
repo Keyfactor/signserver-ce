@@ -145,7 +145,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         LOG.info("failOnIncorrectOptionsBothInDirAndDataSpecified");
         // given
         expectedException.expect(IllegalCommandArgumentsException.class);
-        expectedException.expectMessage("Can not specify both -data and -indir");
+        expectedException.expectMessage("Can not specify more than one of -data, -infile, -indir or -stdin");
         // when
         execute("signdocument", "-workername", "TestXMLSigner",
                         "-indir", inDir.getRoot().getAbsolutePath(),

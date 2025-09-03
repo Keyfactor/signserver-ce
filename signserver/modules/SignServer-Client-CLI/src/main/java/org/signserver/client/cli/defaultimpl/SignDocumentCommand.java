@@ -100,7 +100,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     /** Option OUTDIR. */
     public static final String OUTDIR = "outdir";
-    
+
+    /** Option STDIN. */
+    public static final String STDIN = "stdin";
+
     /** Option THREADS. */
     public static final String THREADS = "threads";
     
@@ -189,6 +192,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("DATA_DESCRIPTION"));
         OPTIONS.addOption(INFILE, true,
                 TEXTS.getString("INFILE_DESCRIPTION"));
+        OPTIONS.addOption(STDIN, false,
+                TEXTS.getString("STDIN_DESCRIPTION"));
         OPTIONS.addOption(OUTFILE, true,
                 TEXTS.getString("OUTFILE_DESCRIPTION"));
         OPTIONS.addOption(HOST, true,
@@ -276,6 +281,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Directory to write files to. */
     private File outDir;
+
+    /** Standard Input to read the data from. */
+    private BufferedInputStream stdinStream;
     
     /** Number of threads to use when running in batch mode. */
     private Integer threads;
@@ -345,8 +353,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL)
             .append("n) ").append(COMMAND).append(" -data \"<root/>\" -servlet /signserver/worker/XMLSigner").append(NL)
             .append("o) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -data \"<root/>\"").append(NL)
-            .append("p) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -infile /tmp/document.xml").append(NL);
-
+            .append("p) ").append(COMMAND).append(" -protocol REST -workername XMLSigner -infile /tmp/document.xml").append(NL)
+            .append("q) cat data.bin | signclient ").append(COMMAND).append(" -workername XMLSigner -stdin").append(NL);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         
@@ -408,6 +416,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
         if (line.hasOption(OUTDIR)) {
             outDir = new File(line.getOptionValue(OUTDIR, null));
+        }
+        if (line.hasOption(STDIN)) {
+            stdinStream = new BufferedInputStream(System.in);
         }
         if (line.hasOption(THREADS)) {
             threads = Integer.parseInt(line.getOptionValue(THREADS, null));
@@ -530,26 +541,33 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throw new IllegalCommandArgumentsException("Must specify -workername or -workerid when not using protocol HTTP");
         }
 
-        if (data == null && inFile == null && inDir == null && outDir == null) {
-            throw new IllegalCommandArgumentsException("Missing -data, -infile or -indir");
+        if (data == null && inFile == null && inDir == null && outDir == null && stdinStream == null) {
+            throw new IllegalCommandArgumentsException("Missing -data, -infile, -indir or -stdin");
         }
         
         if (inDir != null && outDir == null) {
             throw new IllegalCommandArgumentsException("Missing -outdir");
         }
-        if (data != null && inFile != null) {
-            throw new IllegalCommandArgumentsException("Can not specify both -data and -infile");
+
+        int inputSources = 0;
+        if (data != null) {
+            inputSources++;
         }
-        if (data != null && inDir != null) {
-            throw new IllegalCommandArgumentsException("Can not specify both -data and -indir");
+        if (inFile != null) {
+            inputSources++;
         }
-        if (inFile != null && inDir != null) {
-            throw new IllegalCommandArgumentsException("Can not specify both -infile and -indir");
+        if (inDir != null) {
+            inputSources++;
+        }
+        if (stdinStream != null) {
+            inputSources++;
+        }
+        if (inputSources > 1) {
+            throw new IllegalCommandArgumentsException("Can not specify more than one of -data, -infile, -indir or -stdin");
         }
         if (inFile != null && outDir != null) {
             throw new IllegalCommandArgumentsException("Can not specify both -infile and -outdir");
         }
-
         if (inDir != null && inDir.equals(outDir)) {
             throw new IllegalCommandArgumentsException("Can not specify the same directory as -indir and -outdir");
         }
@@ -684,16 +702,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param outFile directory
      * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
-    protected boolean runBatch(TransferManager manager, final File inFile, final File outFile) {
+    protected boolean runBatch(TransferManager manager, final File inFile, final File outFile, final BufferedInputStream stdinStream) {
         final byte[] bytes;
         final long size;
         
         Map<String, Object> requestContext = new HashMap<>();
-        if (inFile == null) {
+        if (data != null) {
             bytes = data.getBytes();
             size = bytes.length;
             requestContext.put("FILENAME", "noname.dat");
-        } else {
+        } else if (inFile != null) {
             if (!inFile.exists()) {
                 LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                                                inFile.getAbsolutePath()));
@@ -702,6 +720,25 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             requestContext.put("FILENAME", inFile.getName());
             bytes = null;
             size = inFile.length();
+        } else {
+            byte[] tmpBytes;
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                final byte[] buf = new byte[4096];
+                int read;
+                while ((read = stdinStream.read(buf)) != -1) {
+                    baos.write(buf, 0, read);
+                }
+                tmpBytes = baos.toByteArray();
+                if (tmpBytes.length == 0) {
+                    LOG.error("Nothing available on standard input.");
+                    return false;
+                }
+                size = tmpBytes.length;
+            } catch (IOException ex) {
+                LOG.error("Failed to read data from standard input: " + ex.getMessage(), ex);
+                return false;
+            }
+            bytes = tmpBytes;
         }
         return runFile(manager, requestContext, inFile, bytes, size, outFile);
     }
@@ -1073,7 +1110,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             
             if (inFile != null) {
                 LOG.debug("Will request for single file " + inFile);
-                if (!runBatch(null, inFile, outFile)) {
+                if (!runBatch(null, inFile, outFile, null)) {
                     throw new CommandFailureException("There was a failure");
                 }
             } else if(inDir != null) {
@@ -1143,10 +1180,15 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 if (producer.hasFailures()) {
                     throw new CommandFailureException("At least one file failed.");
                 }
-                
+
+            } else if (stdinStream != null) {
+                LOG.debug("Will request for data from standard input.");
+                if (!runBatch(null, null, outFile, stdinStream)) {
+                    throw new CommandFailureException("There was a failure");
+                }
             } else {
                 LOG.debug("Will requst for the specified data");
-                if (!runBatch(null, null, outFile)) {
+                if (!runBatch(null, null, outFile, null)) {
                     throw new CommandFailureException("There was a failure");
                 }
             }
@@ -1183,12 +1225,12 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Sending " + file + "...");
                 }
-                runBatch(producer, file, new File(outDir, file.getName()));
+                runBatch(producer, file, new File(outDir, file.getName()), null);
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace(id + ": No more work.");
             }
         }
     }
-    
+
 }

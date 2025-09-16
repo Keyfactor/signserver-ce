@@ -346,7 +346,19 @@ public class CMSSigner extends BaseSigner {
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
         JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder =
                 createSignerInfoGeneratorBuilder(calc, directSignature);
-        generator.addSignerInfoGenerator(signerInfoGeneratorBuilder.build(contentSigner, cert));
+
+        // When we are executing the JcaSignerInfoGeneratorBuilder.build(..) method, BouncyCastle tries
+        // to find a digest algorithm based on the key OID, this mapping can be found in DefaultDigestAlgorithmIdentifierFinder.
+        // In BouncyCastle version 1.80, LMS does not have any digest algorithms mapped to it, so we will be faced with
+        // "no digest algorithm specified for signature algorithm" when trying to add the SignerInfoGenerator.
+        // Therefore, we need to set the digest algorithm manually if an LMS key is used. As of SignServer 7.4.0 we only support
+        // one type of LMS key (LMS_SHA256_N32_H5) which uses SHA-256 as digest algorithm, that's why we can assume that
+        // if an LMS key is provided, we can always set the digest algorithm to SHA-256.
+        if ("LMS".equalsIgnoreCase(sigAlg)) {
+            generator.addSignerInfoGenerator(signerInfoGeneratorBuilder.setContentDigest(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256)).build(contentSigner, cert));
+        } else {
+            generator.addSignerInfoGenerator(signerInfoGeneratorBuilder.build(contentSigner, cert));
+        }
         generator.addCertificates(new JcaCertStore(certs));
         
         // Should the content be detached or not

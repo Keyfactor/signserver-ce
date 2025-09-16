@@ -13,7 +13,6 @@
 package org.signserver.server.cryptotokens;
 
 import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
@@ -153,12 +152,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             }
         }
 
-        if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
-            Security.removeProvider("BCPQC");
-            if (Security.addProvider(new BouncyCastlePQCProvider()) < 0) {
-                LOG.error("Cannot even install BCPQCprovider again!");
-            }
-        }
     }
 
     @Override

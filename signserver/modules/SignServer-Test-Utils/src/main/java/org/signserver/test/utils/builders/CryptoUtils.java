@@ -104,7 +104,7 @@ public class CryptoUtils {
     }
 
     public static KeyPair generateLMS_SHA256_N32_H5() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator g = KeyPairGenerator.getInstance("LMS", "BCPQC");
+        KeyPairGenerator g = KeyPairGenerator.getInstance("LMS", "BC");
         return g.generateKeyPair();
     }
 

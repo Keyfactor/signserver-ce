@@ -511,6 +511,7 @@ Installation Guide for details.
             <param name="dist.includes" value="
                 bin/signclient,
                 bin/signclient.cmd,
+                bin/signwrapper-gpg,
                 conf/log4j.properties,
                 doc/lgpl-2.1.txt,
                 res/deploytools/cesecore/defaultvalues.properties,

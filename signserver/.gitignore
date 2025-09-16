@@ -65,6 +65,7 @@ dist-*/
 /bin/sntp-tool
 /bin/sntp-tool.cmd
 /bin/timemonitor-in-background.sh
+/bin/signwrapper*
 
 /conf/signserver_deploy.properties
 /conf/signserver_cli.properties

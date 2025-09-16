@@ -45,7 +45,6 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.AlgorithmNameFinder;
 import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Hex;
 import static org.junit.Assert.*;
@@ -104,7 +103,6 @@ public class CMSSignerUnitTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        Security.addProvider(new BouncyCastlePQCProvider());
         {
             final KeyPair signerKeyPair;
             final String signatureAlgorithm;

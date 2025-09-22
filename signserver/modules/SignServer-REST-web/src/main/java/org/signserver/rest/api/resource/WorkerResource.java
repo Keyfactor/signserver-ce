@@ -1299,7 +1299,6 @@ public class WorkerResource {
                     example = "ExampleSigner1"
             )
             @PathParam("idOrName") final String idOrName,
-            List<EntityPart> entityParts,
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
                     description = "The request",
@@ -1307,7 +1306,7 @@ public class WorkerResource {
                     content = @Content(
                     mediaType = MediaType.MULTIPART_FORM_DATA,
                     schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.STRING, format = "binary")})
-            )) final ProcessRequest request) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+            )) final List<EntityPart> entityParts) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
 
         // The following check must be the first line in REST public methods (note: admin operations has a different one)
         auth.checkCustomHeader(httpServletRequest);
@@ -1391,7 +1390,6 @@ public class WorkerResource {
                     example = "ExampleSigner1"
             )
             @PathParam("idOrName") final String idOrName,
-            List<EntityPart> entityParts,
             @Context final HttpServletRequest httpServletRequest,
             @RequestBody(
                     description = "The request",
@@ -1399,7 +1397,7 @@ public class WorkerResource {
                     content = @Content(
                     mediaType = MediaType.MULTIPART_FORM_DATA,
                     schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.STRING, format = "binary")})
-            )) final ProcessRequest request) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
+            )) final List<EntityPart> entityParts) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
 
         // The following check must be the first line in REST public methods (note: admin operations has a different one)
         auth.checkCustomHeader(httpServletRequest);

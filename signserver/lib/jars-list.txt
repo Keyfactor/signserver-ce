@@ -34,7 +34,7 @@ e0b2b980a84fc6533c5ce291f1917b32c507f62bcad64198fff44368c2196a3d  ./ext/commons-
 be925b437aa08be8624631a129635b35b20bb7c94e271b7998738e87a034335d  ./ext/commons-fileupload-1.5-signserver7.0.0.jar;       "Apache Commons"
 4aa4ca48f3dfd30b78220b7881d8cb93eac4093ec94361b6befa9487998a550b  ./ext/commons-io-2.17.0.jar;                            "Apache Commons"
 50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c  ./ext/commons-lang-2.6.jar;                             "Apache Commons"
-4ee380259c068d1dbe9e84ab52186f2acd65de067ec09beff731fca1697fdb16  ./ext/commons-lang3-3.11.jar;                           "Apache Commons"
+4eeeae8d20c078abb64b015ec158add383ac581571cddc45c68f0c9ae0230720  ./ext/commons-lang3-3.18.0.jar;                         "Apache Commons"
 daddea1ea0be0f56978ab3006b8ac92834afeefbd9b7e4e6316fca57df0fa636  ./ext/commons-logging-1.2.jar;                          "Apache Commons"
 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308  ./ext/commons-math3-3.6.1.jar;                          "Apache Commons"
 e3c1566f821b84489308cd933f57e8c00dd8714dc96b898bef844386510d3461  ./ext/commons-net-3.9.0.jar;                            "Apache Commons"

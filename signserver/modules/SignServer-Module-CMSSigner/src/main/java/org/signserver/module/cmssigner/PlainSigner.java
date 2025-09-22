@@ -278,7 +278,7 @@ public class PlainSigner extends BaseSigner {
             }
             final Certificate cert = this.getSigningCertificate(crypto);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("SigningCert: " + cert == null ? null : ((X509Certificate) cert).getSubjectDN());
+                LOG.debug("SigningCert: " + (cert == null ? null : ((X509Certificate) cert).getSubjectDN()));
             }
 
             // Private key

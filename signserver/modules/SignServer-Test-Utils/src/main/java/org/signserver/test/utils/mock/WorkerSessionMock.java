@@ -179,7 +179,8 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
-    public Response process(final AdminInfo adminInfo, WorkerIdentifier workerId, Request request,
+    public Response process(final AdminInfo adminInfo, WorkerIdentifier workerId,
+                            Optional<String> certId, Request request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         lastRequestContext = requestContext;
@@ -559,6 +560,7 @@ public class WorkerSessionMock implements WorkerSessionLocal,
                                                 List<String> propertiesToRemove) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
 
     private static class Worker {
         private final IProcessable processable;

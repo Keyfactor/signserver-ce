@@ -10,10 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb.worker.impl;
+package org.signserver.server.ejb;
 
 import java.util.List;
-import java.util.Properties;
+
 import org.signserver.common.SignServerConstants;
 import static org.signserver.common.SignServerConstants.DISABLED;
 import static org.signserver.common.SignServerConstants.DISABLEKEYUSAGECOUNTER;
@@ -39,13 +39,15 @@ public class PreloadedWorkerConfig {
     private final boolean checkPrivateKeyValidity;
     private final int minRemainingCertValidity;
 
+    private boolean clientVisible;
+
     /**
      * Parse and construct the worker configuration.
      *
      * @param config to parse
      * @param fatalErrors list to add configuration errors to
      */
-    protected PreloadedWorkerConfig(final WorkerConfig config, final List<String> fatalErrors) {
+    public PreloadedWorkerConfig(final WorkerConfig config, final List<String> fatalErrors) {
         this.name = config.getProperty(NAME);
         this.disabled = config.getProperty(DISABLED, "FALSE").equalsIgnoreCase("TRUE"); // TODO: Make stricter check
 
@@ -76,6 +78,8 @@ public class PreloadedWorkerConfig {
             minRemainingCertValidityValue = 0;
         }
         this.minRemainingCertValidity = minRemainingCertValidityValue;
+
+        this.clientVisible = config.getProperty("CLIENT_VISIBLE", Boolean.FALSE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
     }
 
     public String getName() {
@@ -109,5 +113,7 @@ public class PreloadedWorkerConfig {
     public int getMinRemainingCertValidity() {
         return minRemainingCertValidity;
     }
-    
+
+    public boolean isClientVisible() { return clientVisible;}
+
 }

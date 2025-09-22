@@ -29,13 +29,13 @@ import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceContext;
 import org.signserver.common.ServiceLocator;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.ejb.AllServicesImpl;
 import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
@@ -70,7 +70,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
     private GlobalConfigurationSessionLocal globalConfigurationSession;
     
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;

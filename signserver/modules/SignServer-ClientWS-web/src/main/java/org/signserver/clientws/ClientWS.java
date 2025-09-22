@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import jakarta.annotation.PostConstruct;
@@ -158,7 +159,7 @@ public class ClientWS {
             }
             
 
-            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), workerIdentifier, req, requestContext);
+            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), workerIdentifier, Optional.empty(), req, requestContext);
 
             if (resp instanceof SignatureResponse) {
                 final SignatureResponse signResponse = (SignatureResponse) resp;
@@ -270,7 +271,7 @@ public class ClientWS {
             final SODRequest req = new SODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
             final Response resp = getProcessSession().process(
                     new AdminInfo("CLI user", null, null),
-                    WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext
+                    WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), req, requestContext
             );
 
             if (resp instanceof SODResponse) {

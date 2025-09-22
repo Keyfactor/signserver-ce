@@ -10,9 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb.worker.impl;
+package org.signserver.server.ejb;
 
 import java.util.List;
+
 import org.signserver.server.IAccounter;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IWorker;

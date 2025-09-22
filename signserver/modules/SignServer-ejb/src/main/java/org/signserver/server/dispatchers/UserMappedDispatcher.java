@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -124,7 +124,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
         } else {
             try {
                 response = getWorkerSession(requestContext).process(new AdminInfo("Client user", null, null),
-                        new WorkerIdentifier(workerName), signRequest,
+                        new WorkerIdentifier(workerName), Optional.empty(), signRequest,
                         nextContext);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Dispatched to worker: "

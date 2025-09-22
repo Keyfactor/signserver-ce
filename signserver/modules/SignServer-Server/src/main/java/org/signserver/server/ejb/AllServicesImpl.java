@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb;
+package org.signserver.server.ejb;
 
 import jakarta.persistence.EntityManager;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;

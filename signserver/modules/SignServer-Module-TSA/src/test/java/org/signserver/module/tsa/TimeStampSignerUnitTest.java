@@ -21,6 +21,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Boolean;
@@ -360,7 +361,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
             processSession.process(new AdminInfo("Client user", null, null),
-                    new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
+                    new WorkerIdentifier(WORKER2), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             final TimeStampResponse timeStampResponse = new TimeStampResponse(responseData.toReadableData().getAsByteArray());
             timeStampResponse.validate(timeStampRequest);
@@ -434,7 +435,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
 
-            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
+            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
+                    Optional.empty(), signRequest, new MockedRequestContext(services));
 
             return new TimeStampResponse(responseData.toReadableData().getAsInputStream());
         }

@@ -35,7 +35,8 @@ import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.DispatcherProcessTransactionSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
+import org.signserver.server.ejb.AllServicesImpl;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
@@ -44,6 +45,8 @@ import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
+
+import java.util.Optional;
 
 /**
  * Session bean implementing the process methods in the same way as the
@@ -66,7 +69,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
     private GlobalConfigurationSessionLocal globalConfigurationSession;
 
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -135,15 +138,15 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
 
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final Request request, final RequestContext requestContext)
+                            Optional<String> certId, final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
         if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
             // use separate transaction bean to avoid deadlock
-            return dispatcherProcessTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
+            return dispatcherProcessTransSession.processWithTransaction(adminInfo, wi, certId, request, requestContext);
         } else {
-            return processImpl.process(adminInfo, wi, request, requestContext);
+            return processImpl.process(adminInfo, wi, certId, request, requestContext);
         }
     }
 

@@ -15,6 +15,8 @@ package org.signserver.module.xmlvalidator;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -40,7 +42,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 public class MockedWorkerSession implements ProcessSessionLocal, InternalProcessSessionLocal {
 
     @Override
-    public Response process(AdminInfo admin, WorkerIdentifier workerId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response process(AdminInfo admin, WorkerIdentifier workerId, Optional<String> certId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         CertificateValidationRequest vr = (CertificateValidationRequest) request;
         String[] validPurposes = new String[] { ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE };
 

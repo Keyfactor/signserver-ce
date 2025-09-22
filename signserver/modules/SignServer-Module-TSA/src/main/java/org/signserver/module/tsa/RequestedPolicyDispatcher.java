@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.Optional;
 import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
@@ -167,7 +167,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
                 nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
 
-                result = getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, request, nextContext);
+                result = getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, Optional.empty(), request, nextContext);
             }
         } catch (final IOException e) {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, new ExceptionLoggable(e));

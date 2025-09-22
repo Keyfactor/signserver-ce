@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJB;
@@ -339,7 +340,7 @@ public class SignServerWS {
 
                 final Response resp = getProcessSession().process(
                         new AdminInfo("Client user", null, null),
-                        wi, req2, requestContext);
+                        wi, Optional.empty(), req2, requestContext);
                 final ProcessResponse processResponse;
                 //
                 if (resp instanceof SignatureResponse) {

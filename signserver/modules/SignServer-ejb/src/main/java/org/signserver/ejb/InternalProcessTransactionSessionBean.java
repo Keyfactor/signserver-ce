@@ -28,12 +28,14 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.InternalProcessTransactionSessionLocal;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
+
+import java.util.Optional;
 
 /**
  * Internal session Bean handling the worker process requests when transaction
@@ -58,7 +60,7 @@ public class InternalProcessTransactionSessionBean implements InternalProcessTra
     private SecurityEventsLoggerSessionLocal logSession;
 
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
 
     EntityManager em;
 
@@ -92,15 +94,16 @@ public class InternalProcessTransactionSessionBean implements InternalProcessTra
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public Response processWithTransaction(final AdminInfo info,
-            final WorkerIdentifier wi,
-            final Request request,
-            final RequestContext requestContext)
+                                           final WorkerIdentifier wi,
+                                           Optional<String> certId,
+                                           final Request request,
+                                           final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process in transaction: " + wi);
         }
 
-        return processImpl.process(info, wi, request, requestContext);
+        return processImpl.process(info, wi, certId, request, requestContext);
     }
 
 }

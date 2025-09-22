@@ -25,7 +25,7 @@ import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.*;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.config.entities.FileBasedGlobalConfigurationDataService;
 import org.signserver.server.config.entities.GlobalConfigurationDataBean;
@@ -53,7 +53,7 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
     private static final Logger LOG = Logger.getLogger(GlobalConfigurationSessionBean.class);
     
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;

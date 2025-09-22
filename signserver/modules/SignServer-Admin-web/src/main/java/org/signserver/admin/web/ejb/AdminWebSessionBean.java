@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import jakarta.ejb.EJB;
@@ -46,7 +47,6 @@ import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -418,7 +418,7 @@ public class AdminWebSessionBean {
                     req2 = new LegacyRequest(req);
                 }
 
-                Response resp = process.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req2, requestContext);
+                Response resp = process.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), req2, requestContext);
     
                 ProcessResponse processResponse;
                 if (resp instanceof SignatureResponse && responseData != null) {

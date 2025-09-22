@@ -27,6 +27,8 @@ import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 
 import java.io.IOException;
+import java.util.Optional;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import org.signserver.common.CryptoTokenOfflineException;
@@ -92,7 +94,7 @@ public class InternalTimeStampTokenFetcher {
             }
 
             session.process(new AdminInfo("Client user", null, null),
-                    wi, new SignatureRequest(hashCode(), requestData, responseData), context);
+                    wi, Optional.empty(), new SignatureRequest(hashCode(), requestData, responseData), context);
 
             final byte[] respBytes = responseData.toReadableData().getAsByteArray();
             TimeStampResponse response = new TimeStampResponse(respBytes);

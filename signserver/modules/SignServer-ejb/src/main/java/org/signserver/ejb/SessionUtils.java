@@ -14,9 +14,9 @@ package org.signserver.ejb;
 
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.worker.impl.PreloadedWorkerConfig;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
-import org.signserver.ejb.worker.impl.WorkerWithComponents;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
+import org.signserver.server.ejb.PreloadedWorkerConfig;
+import org.signserver.server.ejb.WorkerWithComponents;
 import org.signserver.server.IServices;
 import org.signserver.server.IWorker;
 
@@ -34,7 +34,7 @@ public class SessionUtils {
      * @param wi
      * @return true if the request needs a transaction
      */
-    public static boolean needsTransaction(final WorkerManagerSingletonBean session,
+    public static boolean needsTransaction(final WorkerManagerSingletonLocal session,
                                            final WorkerIdentifier wi, IServices services) {
         try {
             final WorkerWithComponents workerWithComponents = session.getWorkerWithComponents(wi);

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
@@ -116,7 +117,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
 
-            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
+            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             return responseData.toReadableData().getAsByteArray();
         }

@@ -18,6 +18,8 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
 import jakarta.persistence.EntityManager;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.XMLSignature;
@@ -186,7 +188,8 @@ public class XMLValidator extends BaseValidator {
 
             try {
                 LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);
-                response = getProcessSession(requestContext).process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(validationServiceWorker), vr, new RequestContext());
+                response = getProcessSession(requestContext).process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(validationServiceWorker),
+                        Optional.empty(), vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {

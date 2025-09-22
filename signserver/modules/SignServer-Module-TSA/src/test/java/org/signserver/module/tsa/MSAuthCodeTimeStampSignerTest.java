@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
@@ -234,7 +235,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
             // create sample hard-coded request
             SignatureRequest signRequest = new SignatureRequest(REQUEST_ID, requestData, responseData);
 
-            resp = (SignatureResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
+            resp = (SignatureResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             // check that the response contains the needed attributes
             buf = responseData.toReadableData().getAsByteArray();
@@ -609,7 +610,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
             // create sample hard-coded request
             SignatureRequest signRequest = new SignatureRequest(REQUEST_ID, requestData, responseData);
 
-            workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
+            workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), Optional.empty(), signRequest, new MockedRequestContext(services));
         } catch (SignServerException expected) {
             assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
         }

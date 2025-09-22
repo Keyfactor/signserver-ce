@@ -40,6 +40,7 @@
         <module>SignServer-ejb</module>
         <module>CESeCore-jars</module>
         <module>SignServer-OpenPGP-Common</module>
+        <module>SignServer-ejb-interfaces2</module>
 
         <!-- Interfaces -->
         <module>SignServer-Admin-Common</module>

@@ -43,7 +43,7 @@ import org.signserver.common.WorkerType;
 import static org.signserver.common.util.PropertiesConstants.GLOBAL_PREFIX_DOT;
 import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
 import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
 import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.SignServerEventTypes;
@@ -93,7 +93,7 @@ public class StartupSingletonBean {
     private SecurityEventsLoggerSessionLocal logSession;
 
     @EJB
-    private WorkerManagerSingletonBean workerManager;
+    private WorkerManagerSingletonLocal workerManager;
 
     private ServiceTimerSessionLocal getTimedServiceSession(){
     	return timedServiceSession;

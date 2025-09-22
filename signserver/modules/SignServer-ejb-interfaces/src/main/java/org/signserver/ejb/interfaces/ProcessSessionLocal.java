@@ -22,6 +22,8 @@ import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.server.log.AdminInfo;
 
+import java.util.Optional;
+
 /**
  * Local interface for the process session to be used internally when invoking
  * some processing.
@@ -46,9 +48,8 @@ public interface ProcessSessionLocal {
      * @throws SignServerException if some other error occurred server side
      * during process.
      */
-    Response process(final AdminInfo info, WorkerIdentifier wi, Request request,
-            RequestContext requestContext)
+    Response process(final AdminInfo info, WorkerIdentifier wi, Optional<String> certId,
+                     Request request, RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
-            SignServerException;        
-    
+            SignServerException;
 }

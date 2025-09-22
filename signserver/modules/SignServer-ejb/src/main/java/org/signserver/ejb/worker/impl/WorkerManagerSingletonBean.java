@@ -18,12 +18,14 @@ import jakarta.ejb.ConcurrencyManagement;
 import jakarta.ejb.ConcurrencyManagementType;
 import jakarta.ejb.Singleton;
 import jakarta.persistence.EntityManager;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
 import org.apache.log4j.Logger;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.server.IWorker;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.ejb.WorkerWithComponents;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
@@ -41,7 +43,7 @@ import org.signserver.server.nodb.FileBasedDatabaseManager;
  */
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN) // Currently the WorkerFactory handles concurrency, we might change this to be handled by the container instead after refactoring
 @Singleton
-public class WorkerManagerSingletonBean {
+public class WorkerManagerSingletonBean implements WorkerManagerSingletonLocal {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerManagerSingletonBean.class);
@@ -77,65 +79,42 @@ public class WorkerManagerSingletonBean {
         }
     }
 
-    /**
-     * Get a worker instance given the workerId.
-     *
-     * @param wi Id of worker to get
-     * @return The worker instance
-     * @throws NoSuchWorkerException in case the worker does not exist
-     */
+    @Override
     public IWorker getWorker(final WorkerIdentifier wi) throws NoSuchWorkerException {
         return workerFactory.getWorker(wi);
     }
-    
+
+    @Override
     public WorkerWithComponents getWorkerWithComponents(final WorkerIdentifier wi) throws NoSuchWorkerException {
         return workerFactory.getWorkerWithComponents(wi, workerContext);
     }
 
-    /**
-     * Force a reload of the given worker.
-     *
-     * @param wi to reload
-     */
+    @Override
     public void reloadWorker(WorkerIdentifier wi) {
         workerFactory.reloadWorker(wi);
     }
 
-    /**
-     * Forget all created instances of workers and their resources.
-     */
+    @Override
     public void flush() {
         workerFactory.flush();
     }
-    
-    /**
-     * List all worker IDs available in the database.
-     *
-     * @return a list of all available worker IDs
-     */
+
+    @Override
     public List<Integer> getAllWorkerIDs() {
         return workerConfigService.findAllIds();
     }
-    
-    /**
-     * List all worker names available in the database.
-     *
-     * @return a list of all available worker names
-     */
+
+    @Override
     public List<String> getAllWorkerNames() {
         return workerConfigService.findAllNames();
     }
-    
-    /**
-     * List all worker IDs available in database of the given type.
-     *
-     * @param workerType type of worker to list
-     * @return a list of all available worker IDs of the given type
-     */
+
+    @Override
     public List<Integer> getAllWorkerIDs(final WorkerType workerType) {
         return workerConfigService.findAllIds(workerType);
     }
 
+    @Override
     public void upgradeWorkerNames() {
         workerConfigService.populateNameColumn();
     }

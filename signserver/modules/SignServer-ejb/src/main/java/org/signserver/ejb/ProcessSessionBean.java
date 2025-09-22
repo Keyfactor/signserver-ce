@@ -15,6 +15,7 @@ package org.signserver.ejb;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 import jakarta.annotation.PostConstruct;
@@ -60,7 +61,8 @@ import org.signserver.common.data.SODRequest;
 import org.signserver.common.data.SODResponse;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
+import org.signserver.server.ejb.AllServicesImpl;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
@@ -103,7 +105,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     private GlobalConfigurationSessionLocal globalConfigurationSession;
     
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -233,7 +235,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             }
             
             ProcessResponse result;
-            Response response = process(wi, req2, remoteContext, servicesImpl);
+            Response response = process(wi, Optional.empty(), req2, remoteContext, servicesImpl);
             
             if (response instanceof SODResponse) {
                 SODResponse sigResp = (SODResponse) response;
@@ -296,7 +298,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
     }
     
-    private Response process(WorkerIdentifier wi, Request request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    private Response process(WorkerIdentifier wi, Optional<String> certId, Request request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         // Create a new RequestContext at server-side
         final RequestContext requestContext = new RequestContext(true);
 
@@ -320,7 +322,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
 
         // Put services
         requestContext.setServices(servicesImpl);
-        return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
+        return process(new AdminInfo("Client user", null, null), wi, certId, request, requestContext);
     }
     
     
@@ -328,7 +330,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final Request request, final RequestContext requestContext)
+                            Optional<String> certId, final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
@@ -338,10 +340,10 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         
         if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
             // use separate transaction bean to avoid deadlock
-            return processTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
+            return processTransSession.processWithTransaction(adminInfo, wi, certId, request, requestContext);
         } else {
-            return processImpl.process(adminInfo, wi, request, requestContext);
+            return processImpl.process(adminInfo, wi, certId, request, requestContext);
         }
-    }        
-    
+    }
+
 }

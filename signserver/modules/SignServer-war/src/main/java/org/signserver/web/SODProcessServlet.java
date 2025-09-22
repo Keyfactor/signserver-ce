@@ -23,6 +23,7 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import jakarta.ejb.EJB;
 
@@ -195,7 +196,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                     String key = (String) o;
                     if (key.startsWith(DATAGROUP_PROPERTY_NAME)) {
                         try {
-                            Integer dataGroupId = new Integer(key.substring(DATAGROUP_PROPERTY_NAME.length()));
+                            int dataGroupId = Integer.parseInt(key.substring(DATAGROUP_PROPERTY_NAME.length()));
                             if ((dataGroupId > -1) && (dataGroupId < 17)) {
                                 String dataStr = req.getParameter(key);
                                 if ((dataStr != null) && (dataStr.length() > 0)) {
@@ -290,7 +291,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                     dataGroups, ldsVersion, unicodeVersion, responseData);
 
                 response = (SODResponse) getProcessSession().process(new AdminInfo("Client user", null, null),
-                        wi, signRequest, context);
+                        wi, Optional.empty(), signRequest, context);
 
                 if (response.getRequestID() != requestId) {
                     LOG.error("Response ID " + response.getRequestID()

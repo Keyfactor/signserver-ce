@@ -17,16 +17,27 @@ import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.server.*;
+import org.signserver.server.BaseProcessable;
+import org.signserver.server.ClientCertAuthorizer;
+import org.signserver.server.CryptoTokenSupplier;
+import org.signserver.server.IAccounter;
+import org.signserver.server.IAuthorizer;
+import org.signserver.server.IProcessable;
+import org.signserver.server.IServices;
+import org.signserver.server.IWorker;
+import org.signserver.server.NoAccounter;
+import org.signserver.server.NoAuthorizer;
+import org.signserver.server.ejb.PreloadedWorkerConfig;
+import org.signserver.server.SignServerContext;
+import org.signserver.server.UnloadableWorker;
+import org.signserver.server.ejb.WorkerWithComponents;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
 import org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.server.ClientCertAuthorizer;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.UnloadableWorker;
 
 /**
  * Loads worker configurations and instantiates the implementations and caches

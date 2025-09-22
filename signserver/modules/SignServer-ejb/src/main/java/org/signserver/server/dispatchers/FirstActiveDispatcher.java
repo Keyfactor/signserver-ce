@@ -15,6 +15,8 @@ package org.signserver.server.dispatchers;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
 import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -92,7 +94,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                             + name + ")");
                 } else {
                     response = requestContext.getServices().get(DispatcherProcessSessionLocal.class).process(new AdminInfo("Client user", null, null), 
-                            new WorkerIdentifier(workerName), signRequest,
+                            new WorkerIdentifier(workerName), Optional.ofNullable((String) requestContext.get("certId")), signRequest,
                             nextContext);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Dispatched to worker: "

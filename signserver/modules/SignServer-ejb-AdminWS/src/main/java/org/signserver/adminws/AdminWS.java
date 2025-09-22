@@ -19,13 +19,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import jakarta.annotation.PostConstruct;
@@ -1095,7 +1095,7 @@ public class AdminWS {
                     req2 = new LegacyRequest(req);
                 }
 
-                Response resp = processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req2, requestContext);
+                Response resp = processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), req2, requestContext);
 
                 ProcessResponse processResponse;
                 if (resp instanceof SignatureResponse) {

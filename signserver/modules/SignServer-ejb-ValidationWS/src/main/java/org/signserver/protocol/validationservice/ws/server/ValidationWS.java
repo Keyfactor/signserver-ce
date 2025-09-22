@@ -17,6 +17,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
@@ -103,7 +105,7 @@ public class ValidationWS implements IValidationWS {
             MessageContext msgContext = wsContext.getMessageContext();
             CredentialUtils.addToRequestContext(context, (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST), clientCertificate);
         
-            res = (CertificateValidationResponse) getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(serviceNameOrId), req, context);
+            res = (CertificateValidationResponse) getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(serviceNameOrId), Optional.empty(),  req, context);
         } catch (CryptoTokenOfflineException e) {
             throw new SignServerException("Error using cryptotoken when validating certificate, it seems to be offline : " + e.getMessage());
         } catch (NoSuchWorkerException ex) {

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import jakarta.persistence.EntityManager;
 import java.security.PublicKey;
+import java.util.Optional;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
@@ -39,10 +40,12 @@ import org.signserver.common.data.DocumentValidationResponse;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureResponse;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
-import org.signserver.ejb.worker.impl.WorkerWithComponents;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
+import org.signserver.server.ejb.WorkerWithComponents;
+import org.signserver.server.ejb.PreloadedWorkerConfig;
 import org.signserver.server.AccounterException;
 import org.signserver.server.IAuthorizer;
+import org.signserver.server.IServices;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
 import org.signserver.server.KeyUsageCounterHash;
@@ -62,8 +65,6 @@ import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.log.WorkerLoggerException;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
-import org.signserver.ejb.worker.impl.PreloadedWorkerConfig;
-import org.signserver.server.IServices;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.Loggable;
 
@@ -81,7 +82,7 @@ class WorkerProcessImpl {
 
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
 
-    private final WorkerManagerSingletonBean workerManagerSession;
+    private final WorkerManagerSingletonLocal workerManagerSession;
 
     private final SecurityEventsLoggerSessionLocal logSession;
 
@@ -92,7 +93,7 @@ class WorkerProcessImpl {
      * @param workerManagerSession The worker manager session
      * @param logSession The log session
      */
-    public WorkerProcessImpl(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService, WorkerManagerSingletonBean workerManagerSession, SecurityEventsLoggerSessionLocal logSession) {
+    public WorkerProcessImpl(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService, WorkerManagerSingletonLocal workerManagerSession, SecurityEventsLoggerSessionLocal logSession) {
         this.em = em;
         this.keyUsageCounterDataService = keyUsageCounterDataService;
         this.workerManagerSession = workerManagerSession;
@@ -104,14 +105,14 @@ class WorkerProcessImpl {
     /**
      * @see WorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    public Response process(WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
+    public Response process(WorkerIdentifier wi, Optional<String> certId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return process(new AdminInfo("Client user", null, null), wi, certId, request, requestContext);
     }
 
     /**
      * @see WorkerSessionLocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
+    public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi, Optional<String> certId,
             final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
@@ -323,7 +324,7 @@ class WorkerProcessImpl {
     }
 
     private void logException(final AdminInfo adminInfo, final Exception ex, LogMap logMap,
-    		IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {
+                             IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {
         if (workerLogger == null) {
             throw new WorkerLoggerException("Worker logger misconfigured", ex);
         }
@@ -342,8 +343,8 @@ class WorkerProcessImpl {
      * @throws CryptoTokenOfflineException
      */
     private void checkSignerKeyUsageCounter(final PublicKey publicKey,
-            final int workerId, final long keyUsageLimit, EntityManager em,
-            final boolean increment, final IServices services)
+                                            final int workerId, final long keyUsageLimit, EntityManager em,
+                                            final boolean increment, final IServices services)
         throws CryptoTokenOfflineException {
 
         if (publicKey != null) {
@@ -598,5 +599,4 @@ class WorkerProcessImpl {
             throw exception;
         }
     }
-
 }

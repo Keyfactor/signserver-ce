@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Endpoint;
@@ -623,7 +624,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             SignatureResponse response
                     = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
+                        new WorkerIdentifier(6110), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }
@@ -659,7 +660,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             SignatureResponse response
                     = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
+                        new WorkerIdentifier(6110), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
         }
@@ -695,7 +696,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             SignatureResponse response
                     = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
+                        new WorkerIdentifier(6110), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }

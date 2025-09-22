@@ -28,12 +28,14 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.ProcessTransactionSessionLocal;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
+
+import java.util.Optional;
 
 /**
  * Session Bean handling the worker process requests when transaction is needed.
@@ -57,7 +59,7 @@ public class ProcessTransactionSessionBean implements ProcessTransactionSessionL
     private SecurityEventsLoggerSessionLocal logSession;
 
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
 
     EntityManager em;
 
@@ -92,6 +94,7 @@ public class ProcessTransactionSessionBean implements ProcessTransactionSessionL
     @Override
     public Response processWithTransaction(final AdminInfo info,
             final WorkerIdentifier wi,
+            Optional<String> certId,
             final Request request,
             final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
@@ -99,7 +102,7 @@ public class ProcessTransactionSessionBean implements ProcessTransactionSessionL
             LOG.debug(">process in transaction: " + wi);
         }
 
-        return processImpl.process(info, wi, request, requestContext);
+        return processImpl.process(info, wi, certId, request, requestContext);
     }
 
 }

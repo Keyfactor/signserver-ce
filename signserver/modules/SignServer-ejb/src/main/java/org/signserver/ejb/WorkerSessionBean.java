@@ -47,7 +47,15 @@ import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.util.PropertiesConstants;
-import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces2.WorkerManagerSingletonLocal;
+import org.signserver.server.ejb.WorkerWithComponents;
 import org.signserver.server.*;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
@@ -60,20 +68,13 @@ import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
-import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
-import org.signserver.ejb.interfaces.ProcessSessionLocal;
-import org.signserver.ejb.worker.impl.WorkerWithComponents;
+import org.signserver.server.ejb.AllServicesImpl;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.*;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.ejb.interfaces.WorkerSessionLocal;
-import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
-import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
@@ -104,7 +105,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     private ServiceTimerSessionLocal serviceTimerSession;
     
     @EJB
-    private WorkerManagerSingletonBean workerManagerSession;
+    private WorkerManagerSingletonLocal workerManagerSession;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;

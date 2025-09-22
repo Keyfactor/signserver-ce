@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.IWorker;
+import org.signserver.server.ejb.WorkerWithComponents;
 
 /**
  * Holder for loaded workers and workers+components as well as the mapping from

@@ -22,6 +22,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminPrincipal;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.InvalidWorkerIdException;
@@ -36,17 +37,17 @@ import org.signserver.common.InvalidWorkerIdException;
 public class AdminWebPropertiesApplier extends PropertiesApplier {
 
     private final AdminWebSessionBean sessionBean;
-    private final X509Certificate adminCertificate;
+    private final AdminPrincipal principal;
 
-    public AdminWebPropertiesApplier(AdminWebSessionBean sessionBean, X509Certificate adminCertificate) {
+    public AdminWebPropertiesApplier(AdminWebSessionBean sessionBean, AdminPrincipal principal) {
         this.sessionBean = sessionBean;
-        this.adminCertificate = adminCertificate;
+        this.principal = principal;
     }
 
     @Override
     protected void setGlobalProperty(String scope, String key, String value) throws PropertiesApplierException {
         try {
-            sessionBean.setGlobalProperty(adminCertificate, scope, key, value);
+            sessionBean.setGlobalProperty(principal, scope, key, value);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -55,7 +56,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void removeGlobalProperty(String scope, String key) throws PropertiesApplierException {
         try {
-            sessionBean.removeGlobalProperty(adminCertificate, scope, key);
+            sessionBean.removeGlobalProperty(principal, scope, key);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -64,7 +65,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void setWorkerProperty(int workerId, String key, String value) throws PropertiesApplierException {
         try {
-            sessionBean.setWorkerProperty(adminCertificate, workerId, key, value);
+            sessionBean.setWorkerProperty(principal, workerId, key, value);
         } catch (AdminNotAuthorizedException | EJBException e) {
             throw new PropertiesApplierException(e);
         }
@@ -73,7 +74,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void removeWorkerProperty(int workerId, String key) throws PropertiesApplierException {
         try {
-            sessionBean.removeWorkerProperty(adminCertificate, workerId, key);
+            sessionBean.removeWorkerProperty(principal, workerId, key);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -82,7 +83,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void uploadSignerCertificate(int workerId, byte[] signerCert) throws PropertiesApplierException {
         try {
-            sessionBean.uploadSignerCertificate(adminCertificate, workerId, signerCert, GlobalConfiguration.SCOPE_GLOBAL);
+            sessionBean.uploadSignerCertificate(principal, workerId, signerCert, GlobalConfiguration.SCOPE_GLOBAL);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         } catch (IllegalRequestException ex) {
@@ -94,7 +95,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void uploadSignerCertificateChain(int workerId,
             List<byte[]> signerCertChain) throws PropertiesApplierException {
         try {
-            sessionBean.uploadSignerCertificateChain(adminCertificate, workerId, signerCertChain, GlobalConfiguration.SCOPE_GLOBAL);
+            sessionBean.uploadSignerCertificateChain(principal, workerId, signerCertChain, GlobalConfiguration.SCOPE_GLOBAL);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         } catch (IllegalRequestException ex) {
@@ -105,7 +106,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected int genFreeWorkerId() throws PropertiesApplierException {
         try {
-            final List<Integer> workerIds = sessionBean.getAllWorkers(adminCertificate);
+            final List<Integer> workerIds = sessionBean.getAllWorkers(principal);
             int max = 0;
 
             for (final int workerId : workerIds) {
@@ -125,7 +126,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected int getWorkerId(final String workerName) throws PropertiesApplierException {
         try {
-            int workerId = sessionBean.getWorkerId(adminCertificate, workerName);
+            int workerId = sessionBean.getWorkerId(principal, workerName);
 
             if (workerId == 0) {
                 throw new PropertiesApplierException("Unknown worker: " + workerName);
@@ -140,7 +141,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void addAuthorizedClient(int workerId, AuthorizedClient authClient) throws PropertiesApplierException {
         try {
-            sessionBean.addAuthorizedClient(adminCertificate, workerId, authClient);
+            sessionBean.addAuthorizedClient(principal, workerId, authClient);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -149,7 +150,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void addAuthorizedClientGen2(int workerId, CertificateMatchingRule authClient) throws PropertiesApplierException {
         try {
-            sessionBean.addAuthorizedClientGen2(adminCertificate, workerId, authClient);
+            sessionBean.addAuthorizedClientGen2(principal, workerId, authClient);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -158,7 +159,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void removeAuthorizedClient(int workerId, AuthorizedClient authClient) throws PropertiesApplierException {
         try {
-            sessionBean.removeAuthorizedClient(adminCertificate, workerId, authClient);
+            sessionBean.removeAuthorizedClient(principal, workerId, authClient);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -167,7 +168,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     @Override
     protected void removeAuthorizedClientGen2(int workerId, CertificateMatchingRule authClient) throws PropertiesApplierException {
         try {
-            sessionBean.removeAuthorizedClientGen2(adminCertificate, workerId, authClient);
+            sessionBean.removeAuthorizedClientGen2(principal, workerId, authClient);
         } catch (AdminNotAuthorizedException e) {
             throw new PropertiesApplierException(e);
         }
@@ -180,13 +181,13 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
         final List<String> alreadyExistingWorkerNames = new ArrayList<String>();
         errorMessage.append("Worker(s) with name already exists:");
         try {
-            List existingWorkerNamesInDB = sessionBean.getAllWorkerNames(adminCertificate);
+            List existingWorkerNamesInDB = sessionBean.getAllWorkerNames(principal);
             for (int i = 0; i < workerNames.size(); i++) {
                 final String workerName = workerNames.get(i);
                 final String workerId = workerIds.get(i);
                 if (existingWorkerNamesInDB.contains(workerName)) {
                     try {
-                        final String workerIdInDB = String.valueOf(sessionBean.getWorkerIdByName(adminCertificate, workerName));
+                        final String workerIdInDB = String.valueOf(sessionBean.getWorkerIdByName(principal, workerName));
 
                         if (!workerIdInDB.equals(workerId)) {
                             alreadyExistingWorkerNames.add(workerName);

@@ -30,7 +30,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJB;
 import jakarta.ejb.EJBException;
 import jakarta.faces.annotation.ManagedProperty;
@@ -50,6 +49,8 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.admin.web.ejb.NotLoggedInException;
 import org.signserver.common.CertificateMatchingRule;
@@ -76,6 +77,9 @@ public class WorkerAuthBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -160,7 +164,7 @@ public class WorkerAuthBean implements Serializable {
         if (status == null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             try {
-                workerSessionBean.getStatus(authBean.getAdminCertificate(), new WorkerIdentifier(getId())).displayStatus(new PrintStream(bout, false, StandardCharsets.UTF_8.toString()), true);
+                workerSessionBean.getStatus(loginBean.getAdminPrincipal(), new WorkerIdentifier(getId())).displayStatus(new PrintStream(bout, false, StandardCharsets.UTF_8.toString()), true);
                 status = bout.toString(StandardCharsets.UTF_8.toString());
             } catch (UnsupportedEncodingException | InvalidWorkerIdException ex) {
                 throw new IllegalStateException(ex);
@@ -186,7 +190,7 @@ public class WorkerAuthBean implements Serializable {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), getId());
         }
         return workerConfig;
     }
@@ -225,7 +229,7 @@ public class WorkerAuthBean implements Serializable {
         destroyKeyStep = 2;
         destroyKeySuccess = false;
         try {
-            destroyKeySuccess = workerSessionBean.removeKey(authBean.getAdminCertificate(), id, destroyKeyAlias);
+            destroyKeySuccess = workerSessionBean.removeKey(loginBean.getAdminPrincipal(), id, destroyKeyAlias);
             destroyKeyError = null;
         } catch (AdminNotAuthorizedException ex) {
             destroyKeyError = "Authorization denied:\n" + ex.getLocalizedMessage();
@@ -323,10 +327,10 @@ public class WorkerAuthBean implements Serializable {
         client.setMatchSubjectWithType(MatchSubjectWithType.valueOf(matchSubjectWithType));
         client.setMatchIssuerWithType(MatchIssuerWithType.valueOf(matchIssuerWithType));
 
-        boolean removed = workerSessionBean.removeAuthorizedClientGen2(authBean.getAdminCertificate(), worker.getId(), oldAuthorizedClient);
+        boolean removed = workerSessionBean.removeAuthorizedClientGen2(loginBean.getAdminPrincipal(), worker.getId(), oldAuthorizedClient);
         if (removed) {
-            workerSessionBean.addAuthorizedClientGen2(authBean.getAdminCertificate(), worker.getId(), client);
-            workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+            workerSessionBean.addAuthorizedClientGen2(loginBean.getAdminPrincipal(), worker.getId(), client);
+            workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
         }
 
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
@@ -365,8 +369,8 @@ public class WorkerAuthBean implements Serializable {
         certMatchingRule.setMatchSubjectWithType(MatchSubjectWithType.valueOf(matchSubjectWithType));
         certMatchingRule.setMatchIssuerWithType(MatchIssuerWithType.valueOf(matchIssuerWithType));
 
-        workerSessionBean.addAuthorizedClientGen2(authBean.getAdminCertificate(), worker.getId(), certMatchingRule);
-        workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+        workerSessionBean.addAuthorizedClientGen2(loginBean.getAdminPrincipal(), worker.getId(), certMatchingRule);
+        workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
     }
 
@@ -382,7 +386,11 @@ public class WorkerAuthBean implements Serializable {
     
     public void loadCurrentAction() throws NotLoggedInException {
         cert = null;
-        certificate = getAuthBean().getAdminCertificate();
+        if (loginBean.getAdminPrincipal() instanceof ClientCertAdminPrincipal clientCertPrincipal) {
+            certificate = clientCertPrincipal.getClientCert();
+        } else {
+            certificate = null;
+        }
         importState = true;
         fromCertificate = false;
     }
@@ -504,7 +512,6 @@ public class WorkerAuthBean implements Serializable {
     }
 
     public String addPropertyAction() throws AdminNotAuthorizedException {
-        //workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), id, property, propertyValue);
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
     }
 
@@ -515,13 +522,13 @@ public class WorkerAuthBean implements Serializable {
         certMatchingRule.setDescription(description);
         certMatchingRule.setMatchSubjectWithType(MatchSubjectWithType.valueOf(matchSubjectWithType));
         certMatchingRule.setMatchIssuerWithType(MatchIssuerWithType.valueOf(matchIssuerWithType));
-        workerSessionBean.removeAuthorizedClientGen2(getAuthBean().getAdminCertificate(), id, certMatchingRule);
-        workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+        workerSessionBean.removeAuthorizedClientGen2(loginBean.getAdminPrincipal(), id, certMatchingRule);
+        workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
     }
     
     public Collection<CertificateMatchingRule> getAuthorizedClientsGen2() throws AdminNotAuthorizedException {
-        return workerSessionBean.getAuthorizedClientsGen2(authBean.getAdminCertificate(), id);
+        return workerSessionBean.getAuthorizedClientsGen2(loginBean.getAdminPrincipal(), id);
     }
 
     public Collection<AuthField> getSubjectFieldsFromCert() throws CertificateParsingException {
@@ -767,7 +774,7 @@ public class WorkerAuthBean implements Serializable {
      */
     public String reloadFromDatabase() throws AdminNotAuthorizedException {
 
-        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+        workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), getId());
         
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }

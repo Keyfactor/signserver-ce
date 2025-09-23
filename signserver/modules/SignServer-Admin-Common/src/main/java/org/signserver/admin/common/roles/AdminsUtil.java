@@ -15,7 +15,10 @@ package org.signserver.admin.common.roles;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.SignServerUtil;
@@ -199,6 +202,12 @@ public class AdminsUtil {
             }
         }
         return buf.toString();
+    }
+
+    public static String getRolesString(List<String> roles) {
+        return roles.stream()
+                .collect(Collectors.joining(", "))
+                .trim();
     }
 
 }

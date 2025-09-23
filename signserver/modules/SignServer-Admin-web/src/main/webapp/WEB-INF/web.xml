@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="http://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <filter>
         <filter-name>ClickjackFilterDeny</filter-name>
         <filter-class>org.signserver.web.common.owasp.filters.ClickjackFilter</filter-class>
@@ -15,6 +15,10 @@
     <filter>
         <filter-name>NoCacheFilter</filter-name>
         <filter-class>org.signserver.web.common.filters.NoCacheFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>org.signserver.admin.web.auth.LoginFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>ClickjackFilterDeny</filter-name>
@@ -33,6 +37,10 @@
         <url-pattern>*.xhtml</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>*.xhtml</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
@@ -55,6 +63,10 @@
     <welcome-file-list>
         <welcome-file>workers.xhtml</welcome-file>
     </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*</url-pattern>
+    </servlet-mapping>
     <!-- Special page for authorization denied -->
     <error-page>
         <exception-type>org.signserver.admin.common.auth.AdminNotAuthorizedException</exception-type>
@@ -109,6 +121,6 @@
             <http-method-omission>POST</http-method-omission>
             <http-method-omission>HEAD</http-method-omission>
         </web-resource-collection>
-        <auth-constraint />
+        <auth-constraint/>
     </security-constraint>
 </web-app>

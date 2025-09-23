@@ -109,7 +109,7 @@ public class RemoveKeysBean extends BulkBean {
             Item worker = it.next();
             if (worker.getSuccessMessage() == null) {
                 try {
-                    if (workerSessionBean.removeKey(getAuthBean().getAdminCertificate(), id, worker.getAlias())) {
+                    if (workerSessionBean.removeKey(loginBean.getAdminPrincipal(), id, worker.getAlias())) {
                         worker.setSuccessMessage("Removed");
                     } else {
                         worker.setSuccessMessage(null);

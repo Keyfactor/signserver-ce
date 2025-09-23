@@ -71,7 +71,7 @@ public class CertificatesBulkBean extends BulkBean {
             myWorkers = new ArrayList<>();
             int index = 0;
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id);
+                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -131,12 +131,12 @@ public class CertificatesBulkBean extends BulkBean {
 
                     if (worker.isInToken()) {
 
-                        getWorkerSessionBean().importCertificateChain(getAuthBean().getAdminCertificate(), worker.getId(),
+                        getWorkerSessionBean().importCertificateChain(loginBean.getAdminPrincipal(), worker.getId(),
                                 signerChainBytes,
                                 worker.getAlias(), null);
                     } else {
-                        getWorkerSessionBean().uploadSignerCertificateChain(getAuthBean().getAdminCertificate(), worker.getId(), signerChainBytes, scope);
-                        getWorkerSessionBean().uploadSignerCertificate(getAuthBean().getAdminCertificate(), worker.getId(), asByteArray(signerCert), scope);
+                        getWorkerSessionBean().uploadSignerCertificateChain(loginBean.getAdminPrincipal(), worker.getId(), signerChainBytes, scope);
+                        getWorkerSessionBean().uploadSignerCertificate(loginBean.getAdminPrincipal(), worker.getId(), asByteArray(signerCert), scope);
                     }
 
                     // Set DEFAULTKEY to NEXTCERTSIGNKEY
@@ -147,12 +147,12 @@ public class CertificatesBulkBean extends BulkBean {
                         final String nextCertSignKey
                                 = worker.getConfig()
                                         .getProperty("NEXTCERTSIGNKEY");
-                        getWorkerSessionBean().setWorkerProperty(getAuthBean().getAdminCertificate(), worker.getId(), "DEFAULTKEY", nextCertSignKey);
-                        getWorkerSessionBean().removeWorkerProperty(getAuthBean().getAdminCertificate(), worker.getId(), "NEXTCERTSIGNKEY");
+                        getWorkerSessionBean().setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), "DEFAULTKEY", nextCertSignKey);
+                        getWorkerSessionBean().removeWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), "NEXTCERTSIGNKEY");
                     } else {
-                        getWorkerSessionBean().setWorkerProperty(getAuthBean().getAdminCertificate(), worker.getId(), "DEFAULTKEY", worker.getAlias());
+                        getWorkerSessionBean().setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), "DEFAULTKEY", worker.getAlias());
                     }
-                    getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
+                    getWorkerSessionBean().reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
 
                     getSelectedIds().remove(worker.getId());
                     worker.setError(null);
@@ -328,7 +328,7 @@ public class CertificatesBulkBean extends BulkBean {
         
         public List<String> getCertificateIssues() throws InvalidWorkerIdException, NotLoggedInException, AdminNotAuthorizedException {
             if (certificateIssues == null) {
-                certificateIssues = getWorkerSessionBean().getCertificateIssues(getAuthBean().getAdminCertificate(), getId(), certificates);
+                certificateIssues = getWorkerSessionBean().getCertificateIssues(loginBean.getAdminPrincipal(), getId(), certificates);
             }
             return certificateIssues;
         }

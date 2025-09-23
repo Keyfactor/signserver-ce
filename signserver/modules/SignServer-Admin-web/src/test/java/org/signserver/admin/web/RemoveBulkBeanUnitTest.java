@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminPrincipal;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.admin.web.ejb.NotLoggedInException;
 import org.signserver.common.GlobalConfiguration;
@@ -64,6 +66,15 @@ public class RemoveBulkBeanUnitTest {
         private List<RemoveBulkBean.MyWorker> mySelectedWorkers;
         private int reloadCount;
 
+        public MockedRemoveBulkBean() {
+            this.loginBean = new LoginBean() {
+                @Override
+                public AdminPrincipal getAdminPrincipal() {
+                    return null;
+                }
+            };
+        }
+
         @Override
         public AdminWebSessionBean getWorkerSessionBean() {
             return new AdminWebSessionBean() {
@@ -73,18 +84,18 @@ public class RemoveBulkBeanUnitTest {
                 }
 
                 @Override
-                public GlobalConfiguration getGlobalConfiguration(X509Certificate adminCertificate) throws AdminNotAuthorizedException {
+                public GlobalConfiguration getGlobalConfiguration(AdminPrincipal principal) throws AdminNotAuthorizedException {
                     Properties properties = new Properties();
                     return new GlobalConfiguration(properties, GlobalConfiguration.STATE_INSYNC, "1.0-beta3");
                 }
 
                 @Override
-                public boolean removeWorkerProperty(X509Certificate adminCertificate, int workerId, String key) throws AdminNotAuthorizedException {
+                public boolean removeWorkerProperty(AdminPrincipal principal, int workerId, String key) throws AdminNotAuthorizedException {
                     return true;
                 }
 
                 @Override
-                public void reloadConfiguration(X509Certificate adminCertificate, Integer workerId) throws AdminNotAuthorizedException {
+                public void reloadConfiguration(AdminPrincipal principal, Integer workerId) throws AdminNotAuthorizedException {
                     reloadCount++;
                 }
 

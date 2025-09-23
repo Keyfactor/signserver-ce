@@ -25,7 +25,7 @@
 
     <body>
 
-        <ui:composition template="WEB-INF/templates/template.xhtml">
+        <ui:composition template="#{loginBean.loggedIn ? 'WEB-INF/templates/template.xhtml' : 'WEB-INF/templates/template-notloggedin.xhtml'}">
 
             <ui:define name="title">
                 <h:outputText value="#{text['View_Expired']}"/>

@@ -48,6 +48,7 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 
 import static java.util.Map.entry;
+import org.signserver.admin.web.auth.LoginBean;
 
 /**
  *
@@ -63,6 +64,9 @@ public class CryptoTokenBean implements Serializable {
 
     //@ManagedProperty(value = "#{param.id}")
     private Integer id;
+
+    @Inject
+    private LoginBean loginBean;
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
@@ -134,7 +138,7 @@ public class CryptoTokenBean implements Serializable {
             } else {
                 Boolean moreAvailable = null;
                 try {
-                    TokenSearchResults results = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(),
+                    TokenSearchResults results = workerSessionBean.queryTokenEntries(loginBean.getAdminPrincipal(),
                             id,
                             pagination.getFromIndex(), pagination.getMaxEntries(),
                             Collections.<QueryCondition>emptyList(),

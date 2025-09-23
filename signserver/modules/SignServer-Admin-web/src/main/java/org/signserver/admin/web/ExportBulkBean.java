@@ -72,7 +72,7 @@ public class ExportBulkBean extends BulkBean {
         if (myWorkers == null) {
             myWorkers = new ArrayList<>();
             for (int id : getWorkerIdsList()) {
-                Properties config = getWorkerSessionBean().getProperties(getAuthBean().getAdminCertificate(), id);
+                Properties config = getWorkerSessionBean().getProperties(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -80,7 +80,7 @@ public class ExportBulkBean extends BulkBean {
                     exists = false;
                 }
 
-                Collection<CertificateMatchingRule> authorizedClients = getWorkerSessionBean().getAuthorizedClientsGen2(getAuthBean().getAdminCertificate(), id);
+                Collection<CertificateMatchingRule> authorizedClients = getWorkerSessionBean().getAuthorizedClientsGen2(loginBean.getAdminPrincipal(), id);
 
                 MyWorker worker = new MyWorker(id, exists, name, config, authorizedClients);
                 myWorkers.add(worker);
@@ -109,7 +109,7 @@ public class ExportBulkBean extends BulkBean {
     public String generateAction() {
         generated = false;
         try {
-            Properties globalConfig = getWorkerSessionBean().getGlobalConfiguration(getAuthBean().getAdminCertificate()).getConfig();
+            Properties globalConfig = getWorkerSessionBean().getGlobalConfiguration(loginBean.getAdminPrincipal()).getConfig();
             outProperties = new Properties();
 
             if (exportNonWorkerGlobalConfig) {
@@ -184,10 +184,10 @@ public class ExportBulkBean extends BulkBean {
 
     private List<MyWorker> getAllWorkers() throws AdminNotAuthorizedException {
         List<MyWorker> results = new ArrayList<>();
-        for (int id : getWorkerSessionBean().getAllWorkers(getAuthBean().getAdminCertificate())) {
-            Properties config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id).getProperties();
+        for (int id : getWorkerSessionBean().getAllWorkers(loginBean.getAdminPrincipal())) {
+            Properties config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id).getProperties();
             final String name = config.getProperty("NAME", String.valueOf(id));
-            Collection<CertificateMatchingRule> authorizedClients = getWorkerSessionBean().getAuthorizedClientsGen2(getAuthBean().getAdminCertificate(), id);
+            Collection<CertificateMatchingRule> authorizedClients = getWorkerSessionBean().getAuthorizedClientsGen2(loginBean.getAdminPrincipal(), id);
             results.add(new MyWorker(id, name != null, name, config, authorizedClients));
         }
         return results;

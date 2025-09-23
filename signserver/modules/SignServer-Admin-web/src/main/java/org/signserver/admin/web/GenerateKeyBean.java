@@ -33,6 +33,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.common.config.RekeyUtil;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -52,6 +53,9 @@ public class GenerateKeyBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -88,7 +92,7 @@ public class GenerateKeyBean implements Serializable {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), getId());
         }
         return workerConfig;
     }
@@ -210,7 +214,7 @@ public class GenerateKeyBean implements Serializable {
             String newAlias = null;
             try {
                 // Generate key
-                newAlias = workerSessionBean.generateSignerKey(authBean.getAdminCertificate(),
+                newAlias = workerSessionBean.generateSignerKey(loginBean.getAdminPrincipal(),
                         new WorkerIdentifier(getId()), item.getKeyAlg(), item.getKeySpec(), item.getAlias(), "");
 
                 if (newAlias == null) {

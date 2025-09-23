@@ -13,7 +13,9 @@
 package org.signserver.admin.common.auth;
 
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
@@ -39,76 +41,117 @@ public class AdminAuthHelper {
         this.global = globalConfigurationSession;
     }
 
-    public AdminInfo requireAdminAuthorization(final X509Certificate cert, final String operation,
-            final String... args) throws AdminNotAuthorizedException {
+    public AdminInfo requireAdminAuthorization(final AdminPrincipal principal, final String operation,
+                                              final String... args) throws AdminNotAuthorizedException {
         LOG.debug(">requireAdminAuthorization");
 
-        if (cert == null) {
+        if (principal == null) {
             throw new AdminNotAuthorizedException(
                     "Administrator not authorized to resource. "
                     + "Client certificate authentication required.");
         } else {
-           final boolean authorized = isAdminAuthorized(cert);
+            final boolean authorized = principal.getRoles().contains("admin");
 
-           log(cert, authorized, operation, args);
+            log(principal, authorized, operation, args);
 
-           if (!authorized) {
-               throw new AdminNotAuthorizedException(
-                       "Administrator not authorized to resource.");
-           }
-           
-           return new AdminInfo(cert.getSubjectDN().getName(),
-                   cert.getIssuerDN().getName(), cert.getSerialNumber());
+            if (!authorized) {
+                throw new AdminNotAuthorizedException(
+                        "Administrator not authorized to resource.");
+            }
+
+            return principal.getAdminInfo();
         }
     }
-    
-    public AdminInfo requireAuditorAuthorization(final X509Certificate cert, final String operation,
+
+    public AdminInfo requireAuditorAuthorization(final AdminPrincipal principal, final String operation,
             final String... args) throws AdminNotAuthorizedException {
         LOG.debug(">requireAuditorAuthorization");
 
-        if (cert == null) {
+        if (principal == null) {
             throw new AdminNotAuthorizedException(
                     "Auditor not authorized to resource. "
                     + "Client certificate authentication required.");
         } else {
-           final boolean authorized = isAuditorAuthorized(cert);
+            final boolean authorized = principal.getRoles().contains("auditor");
 
-           log(cert, authorized, operation, args);
+            log(principal, authorized, operation, args);
 
-           if (!authorized) {
-               throw new AdminNotAuthorizedException(
-                       "Auditor not authorized to resource.");
-           }
-           
-           return new AdminInfo(cert.getSubjectDN().getName(),
-                   cert.getIssuerDN().getName(), cert.getSerialNumber());
+            if (!authorized) {
+                throw new AdminNotAuthorizedException(
+                        "Auditor not authorized to resource.");
+            }
+
+            return principal.getAdminInfo();
         }
     }
-    
-    public AdminInfo requireArchiveAuditorAuthorization(final X509Certificate cert, final String operation,
-            final String... args) throws AdminNotAuthorizedException {
+
+    public AdminInfo requireArchiveAuditorAuthorization(final AdminPrincipal principal, final String operation,
+                                                        final String... args) throws AdminNotAuthorizedException {
         LOG.debug(">requireArchiveAuditorAuthorization");
 
-        if (cert == null) {
+        if (principal == null) {
             throw new AdminNotAuthorizedException(
                     "Archive auditor not authorized to resource. "
                     + "Client certificate authentication required.");
         } else {
-           final boolean authorized = isArchiveAuditorAuthorized(cert);
+            final boolean authorized = principal.getRoles().contains("archive_auditor");
 
-           log(cert, authorized, operation, args);
+            log(principal, authorized, operation, args);
 
-           if (!authorized) {
-               throw new AdminNotAuthorizedException(
-                       "Archive auditor not authorized to resource.");
-           }
-           
-           return new AdminInfo(cert.getSubjectDN().getName(),
-                   cert.getIssuerDN().getName(), cert.getSerialNumber());
+            if (!authorized) {
+                throw new AdminNotAuthorizedException(
+                        "Archive auditor not authorized to resource.");
+            }
+
+            return principal.getAdminInfo();
         }
     }
-    
-    private void log(final X509Certificate certificate, 
+
+    private void log(final AdminPrincipal principal, final boolean authorized, final String operation, final String... args) throws AdminNotAuthorizedException {
+        if (principal instanceof ClientCertAdminPrincipal clientCertAdminPrincipal) {
+            log(clientCertAdminPrincipal.getClientCert(), authorized, operation, args);
+        } else if (principal instanceof OidcAdminPrincipal oidcAdminPrincipal) {
+            log(oidcAdminPrincipal, authorized, operation, args);
+        } else {
+            throw new AdminNotAuthorizedException("Unsupported principal: " + (principal == null ? null : principal.getClass().getName()));
+        }
+    }
+private void log(final OidcAdminPrincipal user,
+                     final boolean authorized, final String operation,
+                     final String... args) {
+        final StringBuilder line = new StringBuilder()
+                .append("ADMIN OPERATION")
+                .append("; ")
+
+                .append("subject=")
+                .append(user.getAdminInfo().getSubject())
+                .append("; ")
+
+                .append("serialNumber=")
+                .append(user.getAdminInfo().getSerialNumber())
+                .append("; ")
+
+                .append("issuer=")
+                .append(user.getAdminInfo().getIssuer())
+                .append("; ")
+
+                .append("authorized=")
+                .append(authorized)
+                .append("; ")
+
+                .append("operation=")
+                .append(operation)
+                .append("; ")
+
+                .append("arguments=");
+        for (String arg : args) {
+            line.append(arg.replace(";", "\\;").replace("=", "\\="));
+            line.append(",");
+        }
+        line.append(";");
+        LOG.info(line.toString());
+    }
+    private void log(final X509Certificate certificate,
             final boolean authorized, final String operation,
             final String... args) {
         final StringBuilder line = new StringBuilder()
@@ -164,11 +207,11 @@ public class AdminAuthHelper {
     public boolean isAuditorAuthorized(final X509Certificate cert) { 
         return hasAuthorization(cert, getWSClients("WSAUDITORS"));
     }
-    
+
     public boolean isArchiveAuditorAuthorized(final X509Certificate cert) {
         return hasAuthorization(cert, getWSClients("WSARCHIVEAUDITORS"));
     }
-    
+
     public boolean isPeerAuthorizedNoLogging(final X509Certificate cert, final String operation,
             final String... args) {
         LOG.debug(">isPeerAuthorizedNoLogging");
@@ -199,7 +242,23 @@ public class AdminAuthHelper {
             return ClientEntry.clientEntriesFromProperty(adminsProperty);
         }
     }
-    
-    
-    
+
+    /**
+     * List all roles the provided certificate matches.
+     * @param cert to match against roles
+     * @return list of roles
+     */
+    public List<String> getRoles(X509Certificate cert) {
+        ArrayList<String> roles = new ArrayList<>(3);
+        if (isAdminAuthorized(cert)) {
+            roles.add("admin");
+        }
+        if (isAuditorAuthorized(cert)) {
+            roles.add("auditor");
+        }
+        if (isArchiveAuditorAuthorized(cert)) {
+            roles.add("archive_auditor");
+        }
+        return roles;
+    }
 }

@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -94,7 +93,7 @@ public class CSRBulkBean extends BulkBean {
             int index = 0;
             Iterator<String> ks = getKeysList().iterator();
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id);
+                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -119,7 +118,7 @@ public class CSRBulkBean extends BulkBean {
                 final String signatureAlgorithm = config.getProperty(RenewalUtils.PROPERTY_SIGNATUREALGORITHM, "");
                 Certificate signerCert;
                 try {
-                    final List<Certificate> certificateList = getWorkerSessionBean().getSignerCertificateChain(getAuthBean().getAdminCertificate(), id);
+                    final List<Certificate> certificateList = getWorkerSessionBean().getSignerCertificateChain(loginBean.getAdminPrincipal(), id);
                     if (certificateList != null) {
                         signerCert = certificateList.get(0);
                     } else {
@@ -219,7 +218,7 @@ public class CSRBulkBean extends BulkBean {
                 certReqInfo.setAttributes(null);
 
                 final AbstractCertReqData reqData = getWorkerSessionBean()
-                        .getPKCS10CertificateRequestForAlias(getAuthBean().getAdminCertificate(), worker.getId(),
+                        .getPKCS10CertificateRequestForAlias(loginBean.getAdminPrincipal(), worker.getId(),
                                 certReqInfo, explicitEccParameters, worker.getAlias());
 
                 if (reqData == null) {
@@ -234,7 +233,7 @@ public class CSRBulkBean extends BulkBean {
                         GenericSignRequest req = new GenericSignRequest(ThreadLocalRandom.current().nextInt(), reqData.toArmoredForm().getBytes(StandardCharsets.UTF_8));
 
                         final Collection<byte[]> results
-                                = getWorkerSessionBean().process(getAuthBean().getAdminCertificate(),
+                                = getWorkerSessionBean().process(loginBean.getAdminPrincipal(),
                                         String.valueOf(requestSigner),
                                         Collections.singletonList(RequestAndResponseManager.serializeProcessRequest(req)));
                         ProcessResponse response = RequestAndResponseManager.parseProcessResponse(results.iterator().next());

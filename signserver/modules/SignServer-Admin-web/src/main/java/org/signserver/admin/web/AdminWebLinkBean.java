@@ -32,10 +32,10 @@ import org.signserver.common.CompileTimeSettings;
  */
 @Named
 @RequestScoped
-public class LoginBean implements Serializable {
+public class AdminWebLinkBean implements Serializable {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(LoginBean.class);
+    private static final Logger LOG = Logger.getLogger(AdminWebLinkBean.class);
     
     private static final String HTTPSERVER_EXTERNAL_PRIVHTTPS = "httpserver.external.privhttps";
     

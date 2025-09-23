@@ -58,9 +58,13 @@ public class AuthenticationBean implements Serializable {
         return adminCertificate;
     }
 
-    public String getUserDisplayName() throws NotLoggedInException {
+    public String getUserDisplayName() {
         final String result;
-        final X509Certificate cert = getAdminCertificate();
+        X509Certificate cert = null;
+        
+        try {
+            cert = getAdminCertificate();
+        } catch (NotLoggedInException ignored) {}
         if (cert == null) {
             result = "n/a";
         } else {

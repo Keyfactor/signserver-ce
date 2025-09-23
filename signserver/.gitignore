@@ -76,6 +76,7 @@ dist-*/
 /conf/timemonitor-log4j.properties
 /conf/signserver_build.properties
 /conf/timemonitor-log4j2.properties
+/conf/oidc.properties
 
 # Enterprise Edition sample configuration files
 /conf/cesecore.properties.sample

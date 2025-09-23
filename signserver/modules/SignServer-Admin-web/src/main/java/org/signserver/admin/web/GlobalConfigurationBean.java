@@ -33,6 +33,7 @@ import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -49,6 +50,9 @@ public class GlobalConfigurationBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -78,7 +82,7 @@ public class GlobalConfigurationBean implements Serializable {
 
     public List<Entry<Object, Object>> getConfig() throws AdminNotAuthorizedException {
         if (config == null) {
-            GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(authBean.getAdminCertificate());
+            GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(loginBean.getAdminPrincipal());
             config = new ArrayList<>(globalConfiguration.getConfig().entrySet());
             Collections.sort(config, new Comparator<Entry<Object, Object>>() {
                 @Override
@@ -118,7 +122,7 @@ public class GlobalConfigurationBean implements Serializable {
 
     public String getPropertyValue() throws AdminNotAuthorizedException {
         if (propertyValue == null) {
-            GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(authBean.getAdminCertificate());
+            GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(loginBean.getAdminPrincipal());
             propertyValue = globalConfiguration.getProperty(property, "");
         }
         return propertyValue;
@@ -162,13 +166,13 @@ public class GlobalConfigurationBean implements Serializable {
                 oldKey = oldPropertyName;
             }
 
-            workerSessionBean.removeGlobalProperty(getAuthBean().getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, oldKey);
+            workerSessionBean.removeGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, oldKey);
         }
 
         // Remove illegal characters
         key = key.replaceAll(",", "").replaceAll("%", "");
 
-        workerSessionBean.setGlobalProperty(getAuthBean().getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, key, propertyValue);
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, key, propertyValue);
         return "global-configuration?faces-redirect=true";
     }
 
@@ -178,7 +182,7 @@ public class GlobalConfigurationBean implements Serializable {
             if (prop.contains(".")) {
                 prop = prop.substring(prop.indexOf(".") + 1);
             }
-            workerSessionBean.removeGlobalProperty(getAuthBean().getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, prop);
+            workerSessionBean.removeGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, prop);
         }
         return "global-configuration?faces-redirect=true";
     }
@@ -196,7 +200,7 @@ public class GlobalConfigurationBean implements Serializable {
         // Remove illegal characters
         oldKey = oldKey.replaceAll(",", "").replaceAll("%", "");
 
-        workerSessionBean.setGlobalProperty(getAuthBean().getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, oldKey, propertyValue);
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, oldKey, propertyValue);
         return "global-configuration?faces-redirect=true";
     }
 

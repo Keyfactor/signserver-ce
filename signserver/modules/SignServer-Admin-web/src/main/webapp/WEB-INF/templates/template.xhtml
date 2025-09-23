@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="jakarta.faces.facelets"
-      xmlns:h="jakarta.faces.html">
+      xmlns:h="jakarta.faces.html" xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <ui:remove>
     <!--
@@ -49,15 +49,39 @@
                 </div>
                 <div class="kfds-header-right">
                     <ul class="SS_infoList">
+                        <h:panelGroup>
+                            <li class="SS_infoItem">
+                                <label>
+                                    <h:outputText value="#{text['Login_method_COLON']}"/>
+                                </label>
+                                <div class="mx-0.5">
+                                    <h:outputText value="#{loginBean.loginType}"/>
+                                </div>
+                            </li>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{loginBean.loginTypeOIDC}">
+                            <li class="SS_infoItem">
+                                <label>
+                                    <h:outputText value="#{text['OIDC_USERNAME_COLON']}"/>
+                                </label>
+                                <div class="mx-0.5">
+                                    <dfn> <abbr title="#{loginBean.clientTokens.subject}">
+                                        <h:outputText value="#{loginBean.adminPrincipal.adminInfo.subject}"/>
+                                    </abbr>
+                                    </dfn>
+                                </div>
+                            </li>
+                        </h:panelGroup>
+                        
                         <li class="SS_infoItem">
                             <label>
-                                <h:outputText value="#{text['User_COLON']}"/>
+                                <h:outputText value="#{text['Roles_COLON']}"/>
                             </label>
                             <div class="mx-0.5">
-                                <h:outputText value="#{authenticationBean.userDisplayName}"/>
+                                <h:outputText value="#{loginBean.rolesString}"/>
                             </div>
                         </li>
-        
+
                         <li class="SS_infoItem">
                             <label>
                                 <h:outputText value="#{text['Node_COLON']}"/>
@@ -86,9 +110,6 @@
                     </ul>
                 </div>
               </header>   
-        
-            
-  
 
             <div class="clearBoth"></div>
 
@@ -108,6 +129,9 @@
                     </li>
                     <li>
                         <h:link outcome="archive" class="#{activeMenu == 'archive' ? 'active' : ''}"><h:outputText value="#{text['Archive']}"/></h:link>
+                    </li>
+                    <li class="last">
+                        <h:link outcome="logout" class="#{activeMenu == 'logout' ? 'active' : ''}"><h:outputText value="#{text['Logout']}"/></h:link>
                     </li>
                     <li class="last">
                         <h:outputLink value="#{adminWebBean.documentationLink}" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>

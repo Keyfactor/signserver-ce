@@ -40,6 +40,7 @@ import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.util.PropertiesParser;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -56,6 +57,9 @@ public class AddWorkerBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -303,7 +307,7 @@ public class AddWorkerBean implements Serializable {
                     // TODO: maybe add a "more errors..." view later...
                     errorMessage = "Error parsing properties: " + errors.get(0);
                 } else {
-                    final PropertiesApplier applier = new AdminWebPropertiesApplier(workerSessionBean, authBean.getAdminCertificate());
+                    final PropertiesApplier applier = new AdminWebPropertiesApplier(workerSessionBean, loginBean.getAdminPrincipal());
 
                     applier.apply(parser);
 
@@ -314,7 +318,7 @@ public class AddWorkerBean implements Serializable {
 
                         try {
                             for (final int id : modifiedWorkers) {
-                                workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), id);
+                                workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), id);
                             }
                             errorMessage = null;
                         } catch (AdminNotAuthorizedException e) {

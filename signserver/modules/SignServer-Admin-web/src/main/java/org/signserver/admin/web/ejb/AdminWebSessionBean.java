@@ -20,7 +20,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -31,6 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import java.security.cert.X509Certificate;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
@@ -41,6 +41,8 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.clauses.Order;
 import org.signserver.admin.common.auth.AdminAuthHelper;
+import org.signserver.admin.common.auth.AdminPrincipal;
+import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
 import org.signserver.admin.common.query.QueryCondition;
 import org.signserver.admin.common.query.QueryOrdering;
 import org.signserver.admin.common.query.QueryUtil;
@@ -136,62 +138,62 @@ public class AdminWebSessionBean {
         auth = new AdminAuthHelper(global);
     }
 
-    public WorkerConfig getCurrentWorkerConfig(final X509Certificate adminCertificate, final int workerId) throws AdminNotAuthorizedException {
-        AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "getCurrentWorkerConfig",
+    public WorkerConfig getCurrentWorkerConfig(final AdminPrincipal principal, final int workerId) throws AdminNotAuthorizedException {
+        AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "getCurrentWorkerConfig",
                 String.valueOf(workerId));
         return worker.getCurrentWorkerConfig(adminInfo, workerId);
     }
 
-    public Properties getProperties(final X509Certificate adminCertificate,
+    public Properties getProperties(final AdminPrincipal principal,
                                      final int workerId)
             throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "exportWorkerConfig",
+        auth.requireAdminAuthorization(principal, "exportWorkerConfig",
                 String.valueOf(workerId));
         return worker.exportWorkerConfig(workerId);
     }
     
-    public WorkerStatus getStatus(final X509Certificate adminCertificate, final WorkerIdentifier wi) throws AdminNotAuthorizedException, InvalidWorkerIdException {
-        auth.requireAdminAuthorization(adminCertificate, "getStatus", wi.toString());
+    public WorkerStatus getStatus(final AdminPrincipal principal, final WorkerIdentifier wi) throws AdminNotAuthorizedException, InvalidWorkerIdException {
+        auth.requireAdminAuthorization(principal, "getStatus", wi.toString());
         return worker.getStatus(wi);
     }
     
-    public boolean isTokenActive(final X509Certificate adminCertificate, final WorkerIdentifier wi) throws InvalidWorkerIdException, AuthorizationDeniedException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "isTokenActive", wi.toString());
+    public boolean isTokenActive(final AdminPrincipal principal, final WorkerIdentifier wi) throws InvalidWorkerIdException, AuthorizationDeniedException, AdminNotAuthorizedException {
+        auth.requireAdminAuthorization(principal, "isTokenActive", wi.toString());
         return worker.isTokenActive(wi);
     }
 
-    public List<Integer> getAllWorkers(final X509Certificate adminCertificate) throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getAllWorkers");
+    public List<Integer> getAllWorkers(final AdminPrincipal principal) throws AdminNotAuthorizedException {
+        auth.requireAdminAuthorization(principal, "getAllWorkers");
         return worker.getAllWorkers();
     }
     
-    public List<String> getAllWorkerNames(final X509Certificate adminCertificate) throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getAllWorkerNames");
+    public List<String> getAllWorkerNames(final AdminPrincipal principal) throws AdminNotAuthorizedException {
+        auth.requireAdminAuthorization(principal, "getAllWorkerNames");
         return worker.getAllWorkerNames();
     }
     
-    public int getWorkerIdByName(final X509Certificate adminCertificate, String workerName) throws AdminNotAuthorizedException, InvalidWorkerIdException {
-        auth.requireAdminAuthorization(adminCertificate, "getWorkerId", workerName);
+    public int getWorkerIdByName(final AdminPrincipal principal, String workerName) throws AdminNotAuthorizedException, InvalidWorkerIdException {
+        auth.requireAdminAuthorization(principal, "getWorkerId", workerName);
         return worker.getWorkerId(workerName);
     }
     
-    public void activateSigner(final X509Certificate adminCertificate, WorkerIdentifier signerId, String authenticationCode)
+    public void activateSigner(final AdminPrincipal principal, WorkerIdentifier signerId, String authenticationCode)
             throws AdminNotAuthorizedException, CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException, InvalidWorkerIdException {
-        auth.requireAdminAuthorization(adminCertificate, "activateSigner", String.valueOf(signerId));
+        auth.requireAdminAuthorization(principal, "activateSigner", String.valueOf(signerId));
         
         worker.activateSigner(signerId, authenticationCode);
     }
     
-    public boolean deactivateSigner(final X509Certificate adminCertificate, final WorkerIdentifier signerId) throws AdminNotAuthorizedException, CryptoTokenOfflineException,
+    public boolean deactivateSigner(final AdminPrincipal principal, final WorkerIdentifier signerId) throws AdminNotAuthorizedException, CryptoTokenOfflineException,
             InvalidWorkerIdException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "deactivateSigner", String.valueOf(signerId));
+        auth.requireAdminAuthorization(principal, "deactivateSigner", String.valueOf(signerId));
         
         return worker.deactivateSigner(signerId);
     }
     
     public String generateSignerKey(
-            final X509Certificate adminCertificate, 
+            final AdminPrincipal principal, 
             final WorkerIdentifier signerId,
             final String keyAlgorithm,
             final String keySpec,
@@ -199,7 +201,7 @@ public class AdminWebSessionBean {
             final String authCode)
             throws AdminNotAuthorizedException, CryptoTokenOfflineException, InvalidWorkerIdException,
             AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "generateSignerKey", String.valueOf(signerId),
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "generateSignerKey", String.valueOf(signerId),
                 keyAlgorithm, keySpec, alias);
         
         return worker.generateSignerKey(adminInfo, signerId, keyAlgorithm, keySpec, alias,
@@ -207,14 +209,14 @@ public class AdminWebSessionBean {
     }
     
     public Collection<KeyTestResult> testKey(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int signerId,
             final String alias,
             final String authCode)
             throws AdminNotAuthorizedException, CryptoTokenOfflineException,
             InvalidWorkerIdException, KeyStoreException,
             AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "testKey", String.valueOf(signerId), alias);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "testKey", String.valueOf(signerId), alias);
 
         // Workaround for KeyTestResult first placed in wrong package
         final Collection<KeyTestResult> results;
@@ -234,7 +236,7 @@ public class AdminWebSessionBean {
     }
     
     public AbstractCertReqData getPKCS10CertificateRequestForAlias(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int signerId,
             final PKCS10CertReqInfo certReqInfo,
             final boolean explicitEccParameters,
@@ -242,7 +244,7 @@ public class AdminWebSessionBean {
                 throws CryptoTokenOfflineException, InvalidWorkerIdException,
                     AdminNotAuthorizedException {
         
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "getPKCS10CertificateRequestForKey",
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "getPKCS10CertificateRequestForKey",
                 String.valueOf(signerId));
         
         final ICertReqData data = worker.getCertificateRequest(adminInfo, new WorkerIdentifier(signerId),
@@ -253,12 +255,12 @@ public class AdminWebSessionBean {
         return (AbstractCertReqData) data;
     }
 
-    public void uploadSignerCertificate(final X509Certificate adminCertificate,
+    public void uploadSignerCertificate(final AdminPrincipal principal,
             final int signerId,
             final byte[] signerCert,
             final String scope)
             throws IllegalRequestException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "uploadSignerCertificate", String.valueOf(signerId));
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "uploadSignerCertificate", String.valueOf(signerId));
         
         try {
             worker.uploadSignerCertificate(adminInfo, signerId, signerCert, scope);
@@ -269,12 +271,12 @@ public class AdminWebSessionBean {
         }
     }
 
-    public void uploadSignerCertificateChain(final X509Certificate adminCertificate,
+    public void uploadSignerCertificateChain(final AdminPrincipal principal,
             final int signerId,
             final List<byte[]> signerCerts,
             final String scope)
                 throws IllegalRequestException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "uploadSignerCertificateChain", String.valueOf(signerId));
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "uploadSignerCertificateChain", String.valueOf(signerId));
         
         try {
             worker.uploadSignerCertificateChain(adminInfo, signerId, signerCerts, scope);
@@ -286,7 +288,7 @@ public class AdminWebSessionBean {
     }
 
     public void importCertificateChain(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId,
             final List<byte[]> certChain,
             final String alias,
@@ -294,54 +296,57 @@ public class AdminWebSessionBean {
             throws CryptoTokenOfflineException, CertificateException,
                    OperationUnsupportedException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
-                auth.requireAdminAuthorization(adminCertificate, "importCertificateChain",
+                auth.requireAdminAuthorization(principal, "importCertificateChain",
                                           String.valueOf(workerId), String.valueOf(alias));
         worker.importCertificateChain(adminInfo, new WorkerIdentifier(workerId), certChain, alias,
                                       authCode == null ? null : authCode.toCharArray());
     }
 
     public Date getSigningValidityNotBefore(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId)
             throws CryptoTokenOfflineException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getSigningValidityNotBefore", 
+        auth.requireAdminAuthorization(principal, "getSigningValidityNotBefore", 
                 String.valueOf(workerId));
         
         return worker.getSigningValidityNotBefore(new WorkerIdentifier(workerId));
     }
     
     public Date getSigningValidityNotAfter(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId)
             throws CryptoTokenOfflineException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getSigningValidityNotAfter",
+        auth.requireAdminAuthorization(principal, "getSigningValidityNotAfter",
                 String.valueOf(workerId));
         
         return worker.getSigningValidityNotAfter(new WorkerIdentifier(workerId));
     }
     
     public long getKeyUsageCounterValue(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId)
             throws CryptoTokenOfflineException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getKeyUsageCounterValue",
+        auth.requireAdminAuthorization(principal, "getKeyUsageCounterValue",
                 String.valueOf(workerId));
 
         return worker.getKeyUsageCounterValue(new WorkerIdentifier(workerId));
     }
     
     public Collection<byte[]> process(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final String workerIdOrName,
             Collection<byte[]> requests)
             throws InvalidWorkerIdException, IllegalRequestException,
             CryptoTokenOfflineException, SignServerException,
             AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "process", workerIdOrName);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "process", workerIdOrName);
 
         final Collection<byte[]> result = new LinkedList<>();
 
-        final X509Certificate clientCertificate = adminCertificate;
+        X509Certificate clientCertificate = null;
+        if (principal instanceof ClientCertAdminPrincipal clientCertAdminPrincipal) {
+            clientCertificate = clientCertAdminPrincipal.getClientCert();
+        }
         
         // Requests from authenticated administrators are considered to come 
         // from the local host and is set to null. This is also the same as 
@@ -351,13 +356,15 @@ public class AdminWebSessionBean {
         final RequestContext requestContext = new RequestContext(
                 clientCertificate, ipAddress);
 
-        IClientCredential credential;
-        final X509Certificate cert = (X509Certificate) clientCertificate;
-        LOG.debug("Authentication: certificate");
-        credential = new CertificateClientCredential(
-                cert.getSerialNumber().toString(16),
-                cert.getIssuerDN().getName());
-        requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
+        if (clientCertificate != null) {
+            IClientCredential credential;
+            final X509Certificate cert = (X509Certificate) clientCertificate;
+            LOG.debug("Authentication: certificate");
+            credential = new CertificateClientCredential(
+                    cert.getSerialNumber().toString(16),
+                    cert.getIssuerDN().getName());
+            requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
+        }
 
         for (byte[] requestBytes : requests) {
             final ProcessRequest req;
@@ -483,49 +490,49 @@ public class AdminWebSessionBean {
     }
 
     public boolean removeKey(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int signerId,
             final String alias)
             throws CryptoTokenOfflineException,
             InvalidWorkerIdException, KeyStoreException,
             SignServerException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "removeKey", String.valueOf(signerId), alias);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeKey", String.valueOf(signerId), alias);
 
         return worker.removeKey(adminInfo, new WorkerIdentifier(signerId), alias);
     }
 
     public boolean removeGlobalProperty(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final String scope,
             final String key)
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "removeGlobalProperty", key);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeGlobalProperty", key);
 
         return global.removeProperty(adminInfo, scope, key);
     }
     
-    public GlobalConfiguration getGlobalConfiguration(final X509Certificate adminCertificate)
+    public GlobalConfiguration getGlobalConfiguration(final AdminPrincipal principal)
             throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getGlobalConfiguration");
+        auth.requireAdminAuthorization(principal, "getGlobalConfiguration");
 
         return global.getGlobalConfiguration();
     }
 
     public Collection<AuthorizedClient> getAuthorizedClients(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId)
             throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getAuthorizedClients",
+        auth.requireAdminAuthorization(principal, "getAuthorizedClients",
                 String.valueOf(workerId));
         
         return worker.getAuthorizedClients(workerId);
     }
     
     public Collection<CertificateMatchingRule> getAuthorizedClientsGen2(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId)
             throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getAuthorizedClientsGen2",
+        auth.requireAdminAuthorization(principal, "getAuthorizedClientsGen2",
                 String.valueOf(workerId));
         
         return worker.getAuthorizedClientsGen2(workerId);
@@ -533,11 +540,11 @@ public class AdminWebSessionBean {
     
     
     public void addAuthorizedClient(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId,
             final AuthorizedClient authClient)
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "addAuthorizedClient", 
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "addAuthorizedClient", 
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
         
@@ -545,21 +552,21 @@ public class AdminWebSessionBean {
     }
     
     public void addAuthorizedClientGen2(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId,
             final CertificateMatchingRule authClient)
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "addAuthorizedClientGen2", authClient.toString());
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "addAuthorizedClientGen2", authClient.toString());
         
         worker.addAuthorizedClientGen2(adminInfo, workerId, authClient);
     }
 
     public boolean removeAuthorizedClient(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId,
             final AuthorizedClient authClient) 
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "removeAuthorizedClient",
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeAuthorizedClient",
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
         
@@ -567,31 +574,31 @@ public class AdminWebSessionBean {
     }
     
     public boolean removeAuthorizedClientGen2(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int workerId,
             final CertificateMatchingRule authClient) 
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "removeAuthorizedClientGen2",authClient.toString());
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeAuthorizedClientGen2",authClient.toString());
         
         return worker.removeAuthorizedClientGen2(adminInfo, workerId, authClient);
     }
     
     public void setGlobalProperty(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final String scope,
             final String key,
             final String value)
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "setGlobalProperty", key);
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "setGlobalProperty", key);
         
         global.setProperty(adminInfo, scope, key, value);
     }
     
     public int getWorkerId(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final String workerName)
             throws AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getWorkerId", workerName);
+        auth.requireAdminAuthorization(principal, "getWorkerId", workerName);
 
         try {
             return worker.getWorkerId(workerName);
@@ -601,30 +608,30 @@ public class AdminWebSessionBean {
     }
     
     public Certificate getSignerCertificate(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int signerId)
             throws CryptoTokenOfflineException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getSignerCertificate",
+        auth.requireAdminAuthorization(principal, "getSignerCertificate",
                 String.valueOf(signerId));
         
         return worker.getSignerCertificate(new WorkerIdentifier(signerId));
     }
     
     public List<Certificate> getSignerCertificateChain(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             final int signerId)
             throws CryptoTokenOfflineException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getSignerCertificateChain",
+        auth.requireAdminAuthorization(principal, "getSignerCertificateChain",
                 String.valueOf(signerId));
         
         return worker.getSignerCertificateChain(new WorkerIdentifier(signerId));
     }
 
     public TokenSearchResults queryTokenEntries(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             int workerId, int startIndex, int max, final List<QueryCondition> conditions, final List<QueryOrdering> orderings, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
         try {
-            final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "queryTokenEntries", String.valueOf(workerId), String.valueOf(startIndex), String.valueOf(max));
+            final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "queryTokenEntries", String.valueOf(workerId), String.valueOf(startIndex), String.valueOf(max));
             final List<Elem> elements = QueryUtil.toElements(conditions);
             final QueryCriteria qc = QueryCriteria.create();
             
@@ -645,9 +652,9 @@ public class AdminWebSessionBean {
     }
     
     public List<? extends AuditLogEntry> queryAuditLog(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             int startIndex, int max, final List<QueryCondition> conditions, final List<QueryOrdering> orderings) throws SignServerException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAuditorAuthorization(adminCertificate, "queryAuditLog", String.valueOf(startIndex), String.valueOf(max));
+        final AdminInfo adminInfo = auth.requireAuditorAuthorization(principal, "queryAuditLog", String.valueOf(startIndex), String.valueOf(max));
         
         // For now we only query one of the available audit devices
         Set<String> devices = auditor.getQuerySupportingLogDevices();
@@ -675,14 +682,14 @@ public class AdminWebSessionBean {
     }
 
     public List<ArchiveMetadata> queryArchive(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             int startIndex,
             int max,
             final List<QueryCondition> conditions,
             final List<QueryOrdering> orderings,
             final boolean includeData)
                     throws SignServerException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireArchiveAuditorAuthorization(adminCertificate, "queryArchive", String.valueOf(startIndex), String.valueOf(max));
+        final AdminInfo adminInfo = auth.requireArchiveAuditorAuthorization(principal, "queryArchive", String.valueOf(startIndex), String.valueOf(max));
 
         final List<Elem> elements = QueryUtil.toElements(conditions);
         final QueryCriteria qc = QueryCriteria.create();
@@ -704,12 +711,12 @@ public class AdminWebSessionBean {
     }
 
     public List<ArchiveMetadata> queryArchiveWithIds(
-            final X509Certificate adminCertificate,
+            final AdminPrincipal principal,
             List<String> uniqueIds,
             boolean includeData)
             throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
-                auth.requireArchiveAuditorAuthorization(adminCertificate, "queryArchiveWithIds");
+                auth.requireArchiveAuditorAuthorization(principal, "queryArchiveWithIds");
 
         try {
             return worker.searchArchiveWithIds(adminInfo, uniqueIds, includeData);
@@ -726,32 +733,32 @@ public class AdminWebSessionBean {
         return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
     }
 
-    public void setWorkerProperty(X509Certificate adminCertificate, Integer workerId, String key, String value) throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "setWorkerProperty",
+    public void setWorkerProperty(AdminPrincipal principal, Integer workerId, String key, String value) throws AdminNotAuthorizedException {
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "setWorkerProperty",
                 String.valueOf(workerId), key);
 
         worker.setWorkerProperty(adminInfo, workerId, key, value);
     }
     
-    public boolean removeWorkerProperty(X509Certificate adminCertificate,
+    public boolean removeWorkerProperty(AdminPrincipal principal,
             final int workerId,
             final String key)
             throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "removeWorkerProperty",
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeWorkerProperty",
                 String.valueOf(workerId), key);
         
         return worker.removeWorkerProperty(adminInfo, workerId, key);
     }
 
-    public void reloadConfiguration(X509Certificate adminCertificate, Integer workerId) throws AdminNotAuthorizedException {
-        final AdminInfo adminInfo = auth.requireAdminAuthorization(adminCertificate, "reloadConfiguration",
+    public void reloadConfiguration(AdminPrincipal principal, Integer workerId) throws AdminNotAuthorizedException {
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "reloadConfiguration",
                 String.valueOf(workerId));
 
         worker.reloadConfiguration(adminInfo, workerId);
     }
     
-    public List<String> getCertificateIssues(X509Certificate adminCertificate, int workerId, List<Certificate> certificateChain) throws InvalidWorkerIdException, AdminNotAuthorizedException {
-        auth.requireAdminAuthorization(adminCertificate, "getCertificateIssues",
+    public List<String> getCertificateIssues(AdminPrincipal principal, int workerId, List<Certificate> certificateChain) throws InvalidWorkerIdException, AdminNotAuthorizedException {
+        auth.requireAdminAuthorization(principal, "getCertificateIssues",
                 String.valueOf(workerId));
         return worker.getCertificateIssues(workerId, certificateChain);
     }

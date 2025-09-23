@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -52,6 +53,9 @@ public class ArchiveDownloadBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -108,7 +112,7 @@ public class ArchiveDownloadBean implements Serializable {
                     }
                 }
 
-                List<ArchiveMetadata> results = workerSessionBean.queryArchiveWithIds(authBean.getAdminCertificate(), ids, true);
+                List<ArchiveMetadata> results = workerSessionBean.queryArchiveWithIds(loginBean.getAdminPrincipal(), ids, true);
 
                 if (results == null || results.isEmpty()) {
                     errorMessage = "No such archive entries";
@@ -136,7 +140,7 @@ public class ArchiveDownloadBean implements Serializable {
 
             } else {
 
-                List<ArchiveMetadata> results = workerSessionBean.queryArchiveWithIds(authBean.getAdminCertificate(), Collections.singletonList(uniqueId), true);
+                List<ArchiveMetadata> results = workerSessionBean.queryArchiveWithIds(loginBean.getAdminPrincipal(), Collections.singletonList(uniqueId), true);
 
                 if (results == null || results.isEmpty()) {
                     errorMessage = "No such archive entry";

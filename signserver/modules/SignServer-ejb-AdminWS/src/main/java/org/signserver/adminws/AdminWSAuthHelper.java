@@ -15,6 +15,8 @@ package org.signserver.adminws;
 import java.security.cert.X509Certificate;
 import java.util.Set;
 import org.signserver.admin.common.auth.AdminAuthHelper;
+import org.signserver.admin.common.auth.AdminPrincipal;
+import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
 import org.signserver.common.ClientEntry;
 import org.signserver.server.log.AdminInfo;
 
@@ -36,7 +38,7 @@ public class AdminWSAuthHelper {
 
     public AdminInfo requireAdminAuthorization(X509Certificate cert, String operation, String... args) throws AdminNotAuthorizedException {
         try {
-            return delegate.requireAdminAuthorization(cert, operation, args);
+            return delegate.requireAdminAuthorization(getAdminPrincipal(cert), operation, args);
         } catch (org.signserver.admin.common.auth.AdminNotAuthorizedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage(), ex);
         }
@@ -44,7 +46,7 @@ public class AdminWSAuthHelper {
 
     public AdminInfo requireAuditorAuthorization(X509Certificate cert, String operation, String... args) throws AdminNotAuthorizedException {
         try {
-            return delegate.requireAuditorAuthorization(cert, operation, args);
+            return delegate.requireAuditorAuthorization(getAdminPrincipal(cert), operation, args);
         } catch (org.signserver.admin.common.auth.AdminNotAuthorizedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage(), ex);
         }
@@ -52,7 +54,7 @@ public class AdminWSAuthHelper {
 
     public AdminInfo requireArchiveAuditorAuthorization(X509Certificate cert, String operation, String... args) throws AdminNotAuthorizedException {
         try {
-            return delegate.requireArchiveAuditorAuthorization(cert, operation, args);
+            return delegate.requireArchiveAuditorAuthorization(getAdminPrincipal(cert), operation, args);
         } catch (org.signserver.admin.common.auth.AdminNotAuthorizedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage(), ex);
         }
@@ -78,5 +80,7 @@ public class AdminWSAuthHelper {
         return delegate.getWSClients(propertyName);
     }
     
-    
+    private AdminPrincipal getAdminPrincipal(X509Certificate cert) throws org.signserver.admin.common.auth.AdminNotAuthorizedException {
+        return new ClientCertAdminPrincipal(cert, delegate.getRoles(cert));
+    }
 }

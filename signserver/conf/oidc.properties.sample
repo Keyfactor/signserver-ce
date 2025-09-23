@@ -1,0 +1,22 @@
+#Sample for Auth0
+#oidc.clientId=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#oidc.clientSecret=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#oidc.clientName=test
+#oidc.providerUri=https://dev-xxxxxxxxxxxxxxxx.us.auth0.com/
+#oidc.providerLogOutUri=https://dev-xxxxxxxxxxxxxxxx.us.auth0.com/v2/logout
+#oidc.logoutUri=https://localhost:8443/signserver
+#oidc.redirectUri=https://localhost:8443/signserver/adminweb/workers.xhtml
+#oidc.loginUri=https://localhost:8443/signserver/adminweb/callback
+#oidc.callerGroupsClaim=kf.roles
+#oidc.audience=https://keyfactor.com/
+
+oidc.clientId=
+oidc.clientSecret=
+oidc.clientName=
+oidc.providerUri=
+oidc.providerLogOutUri=
+oidc.logoutUri=
+oidc.redirectUri=
+oidc.loginUri=
+oidc.callerGroupsClaim=
+oidc.audience=

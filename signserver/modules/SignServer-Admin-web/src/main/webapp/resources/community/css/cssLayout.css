@@ -685,3 +685,54 @@ tr.dss1_odd {
 .hide-element {
     display: none;
 }
+
+.loginBox {
+    border: 1px solid lightgrey;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 3rem auto;
+    border-radius: 5px;
+    padding: 1rem 1.75rem 2rem 1.75rem;
+    gap: 1rem;
+    box-shadow: 2px 2px 3px -2px grey;
+}
+
+.logoutBox {
+    border: 1px solid lightgrey;
+    flex-direction: column;
+    width: 50%;
+    margin: 3rem auto;
+    border-radius: 5px;
+    padding: 1rem 1.75rem 2rem 1.75rem;
+    gap: 1rem;
+    box-shadow: 2px 2px 3px -2px grey;
+}
+
+.loginAlternativeBox {
+    border: thin solid #d3d3d3;
+    display: inline-block;
+    padding: 1.25rem;
+    border-radius: 5px;
+    box-shadow: 2px 2px 4px -1px grey;
+}
+
+.loginAlternativeBox_header {
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.loginAlternativeBox_content {
+    margin-left: 2.813rem;
+}
+
+.loginAlternativeBox_content_warning {
+    margin-left: 2.813rem;
+    color: red !important;
+}
+
+.logoutLink {
+    background: white;
+}

@@ -599,13 +599,31 @@ Installation Guide for details.
             <param name="dist.zipprefix" value=""/>
         </antcall>
     </target>
+
+    <!-- Include the managed templates. -->
+    <condition property="dist.excludes.override" value="${dist.sampleconfigs.managed.true.excludes}">
+        <and>
+            <isset property="dist.sampleconfigs.replacewithmanaged"/>
+            <equals arg1="${dist.sampleconfigs.replacewithmanaged}" arg2="true"/>
+        </and>
+    </condition>
+    <condition property="dist.excludes.override" value="${dist.sampleconfigs.managed.false.excludes}">
+        <and>
+            <isset property="dist.sampleconfigs.replacewithmanaged"/>
+            <equals arg1="${dist.sampleconfigs.replacewithmanaged}" arg2="false"/>
+        </and>
+    </condition>
+    <condition property="dist.excludes.override" value="">
+        <or>
+        <not><isset property="dist.sampleconfigs.replacewithmanaged"/></not>
+        <equals arg1="${dist.sampleconfigs.replacewithmanaged}" arg2=""/>
+        </or>
+    </condition>
+
     <target name="dist:sampleconfigs">
         <antcall target="-dist-no-jar">
-            <param name="dist.includes" value="
-                doc/sample-configs/*.properties,
-                ${dist.sampleconfigs.includes.extra}
-                "/>
-            <param name="dist.excludes.extra" value="${dist.sampleconfigs.excludes.extra}"/>
+            <param name="dist.includes" value="doc/sample-configs/*.properties, ${dist.sampleconfigs.includes.extra}"/>
+            <param name="dist.excludes.extra" value="${dist.excludes.override}, ${dist.sampleconfigs.excludes.extra}"/>
         </antcall>
     </target>
     

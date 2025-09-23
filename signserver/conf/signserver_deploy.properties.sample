@@ -270,12 +270,26 @@
 #   NONE:           No updates are logged.
 #statusrepository.log=ALL
 
-# ------------- CryptoToken Configuration --------------------------------------
+# ------------- Sample-Config Configuration ------------------------------------
 
-# Disable the key generation functionality for all crypto tokens.
-#
-# Default: false
-#cryptotoken.disablekeygeneration=false
+# The includes and excludes attributes specify patterns of files to include
+# or exclude in the sample worker template in AdminWeb. All files are included
+# by default. Files matching the excludes patterns are removed from the set
+# after the includes have been applied.
+
+# Add additional files to the default include pattern
+#dist.sampleconfig.includes.extra=my-custom-worker-template.properties
+
+# Additional files to be excluded from the default exclude pattern
+#dist.sampleconfig.excludes.extra=doc/sample-config/pdfsigner.properties
+
+# Replace the default Crypto Token templates with the corresponding managed ones (Enterprise Edition only)
+#   true:               Replace sample-configs with the current list of managed templates
+#   false (default):    Keep default sample-configs but exclude the managed ones
+#   none/unset:         Exclude nothing
+#dist.sampleconfigs.replacewithmanaged=true
+#dist.sampleconfigs.replacewithmanaged=false
+#dist.sampleconfigs.replacewithmanaged=
 
 # ------------- PKCS11 library definitions -------------------------------------
 #

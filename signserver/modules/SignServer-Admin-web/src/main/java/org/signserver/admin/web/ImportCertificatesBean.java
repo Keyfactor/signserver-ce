@@ -126,7 +126,7 @@ public class ImportCertificatesBean extends BulkBean {
 
                     List<byte[]> signerChainBytes = asByteArrayList(signerChain);
 
-                    workerSessionBean.importCertificateChain(getAuthBean().getAdminCertificate(), id,
+                    workerSessionBean.importCertificateChain(loginBean.getAdminPrincipal(), id,
                             signerChainBytes,
                             worker.getAlias(), null);
 

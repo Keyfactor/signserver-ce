@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJB;
 import jakarta.faces.annotation.ManagedProperty;
 import jakarta.faces.view.ViewScoped;
@@ -35,6 +34,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import static org.signserver.common.SignServerConstants.DISABLED;
 
@@ -56,6 +56,9 @@ public class WorkersBean implements Serializable {
     @Inject
     @ManagedProperty(value = "#{globalConfigurationBean}")
     private GlobalConfigurationBean globalConfigurationBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -105,13 +108,13 @@ public class WorkersBean implements Serializable {
 
     @SuppressWarnings("UseSpecificCatch")
     public List<Worker> getWorkers() throws AdminNotAuthorizedException {
-        GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(authBean.getAdminCertificate());
+        GlobalConfiguration globalConfiguration = workerSessionBean.getGlobalConfiguration(loginBean.getAdminPrincipal());
         boolean workerPageStatusCheckDisabled = Boolean.parseBoolean(globalConfiguration.getConfig().getProperty("GLOB.DISABLE_WORKERS_PAGE_STATUS_CHECK"));
 
         if (workers == null) {
             workers = new ArrayList<>();
-            for (int id : workerSessionBean.getAllWorkers(authBean.getAdminCertificate())) {
-                Properties config = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id).getProperties();
+            for (int id : workerSessionBean.getAllWorkers(loginBean.getAdminPrincipal())) {
+                Properties config = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id).getProperties();
                 final String name = config.getProperty("NAME", String.valueOf(id));
                 Worker w = new Worker(id, true, name, config);
                 if (!workerPageStatusCheckDisabled) {
@@ -120,7 +123,7 @@ public class WorkersBean implements Serializable {
                         if (workerSetAsDisabled) {
                             w.setStatus(text.getString("DISABLED"));
                         } else {
-                            w.setStatus(workerSessionBean.getStatus(authBean.getAdminCertificate(),
+                            w.setStatus(workerSessionBean.getStatus(loginBean.getAdminPrincipal(),
                                     new WorkerIdentifier(id)).getFatalErrors().isEmpty()
                                     ? text.getString("ACTIVE") : text.getString("OFFLINE"));
                         }
@@ -192,7 +195,7 @@ public class WorkersBean implements Serializable {
     public String activateStep2Action() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkers()) {
             try {
-                workerSessionBean.activateSigner(authBean.getAdminCertificate(), new WorkerIdentifier(worker.getId()), activatePassword);
+                workerSessionBean.activateSigner(loginBean.getAdminPrincipal(), new WorkerIdentifier(worker.getId()), activatePassword);
                 selectedIds.remove(worker.getId());
             } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException | InvalidWorkerIdException ex) {
                 worker.setError("Failed: " + ex.getMessage());

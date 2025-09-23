@@ -177,8 +177,13 @@ Installation Guide for details.
     <!-- =================================================================== -->
 
     <!-- Create bundle with sample configs to display in the admin web. -->
-    <target name="-pre-configure-ear" depends="-create-sample-configs-dist"/>
-    
+    <target name="-pre-configure-ear" depends="-create-sample-configs-dist">
+        <!-- Load OIDC configuration -->
+        <property file="${conf}/oidc.properties" />
+        <!-- Empty oidc.providerUrl if not set -->
+        <property name="oidc.providerUri" value="" />
+    </target>
+
     <!-- We also create an ClientCLI dist. -->
     <target name="-post-configure-ear"
             depends="-create-clientcli-dist"/>

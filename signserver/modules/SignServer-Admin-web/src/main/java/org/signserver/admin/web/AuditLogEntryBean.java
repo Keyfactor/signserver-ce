@@ -34,6 +34,7 @@ import org.signserver.admin.common.query.QueryOrdering;
 import org.signserver.common.SignServerException;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.common.query.AuditLogFields;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -54,6 +55,9 @@ public class AuditLogEntryBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -123,7 +127,7 @@ public class AuditLogEntryBean implements Serializable {
                         new QueryCondition(AuditRecordData.FIELD_NODEID, RelationalOperator.EQ, node));
                 try {
 
-                    List<? extends AuditLogEntry> results = workerSessionBean.queryAuditLog(authBean.getAdminCertificate(),
+                    List<? extends AuditLogEntry> results = workerSessionBean.queryAuditLog(loginBean.getAdminPrincipal(),
                             0, 1,
                             conditions,
                             ORDERINGS);

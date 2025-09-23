@@ -10,6 +10,8 @@ import org.signserver.server.log.AdminInfo;
 import java.security.cert.X509Certificate;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.signserver.admin.common.auth.AdminPrincipal;
+import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
 
 /**
  * REST version of the AdminAuthHelper.
@@ -35,7 +37,7 @@ public class WorkerAuthHelper {
         checkCustomHeader(httpServletRequest);
 
         try {
-            return delegate.requireAdminAuthorization(getCertificate(httpServletRequest), operation, args);
+            return delegate.requireAdminAuthorization(getAdminPrincipal(getCertificate(httpServletRequest)), operation, args);
         } catch (org.signserver.admin.common.auth.AdminNotAuthorizedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage(), ex);
         }
@@ -43,7 +45,7 @@ public class WorkerAuthHelper {
 
     public AdminInfo requireAuditorAuthorization(X509Certificate cert, String operation, String... args) throws AdminNotAuthorizedException {
         try {
-            return delegate.requireAuditorAuthorization(cert, operation, args);
+            return delegate.requireAuditorAuthorization(getAdminPrincipal(cert), operation, args);
         } catch (org.signserver.admin.common.auth.AdminNotAuthorizedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage(), ex);
         }
@@ -51,7 +53,7 @@ public class WorkerAuthHelper {
 
     public AdminInfo requireArchiveAuditorAuthorization(X509Certificate cert, String operation, String... args) throws AdminNotAuthorizedException {
         try {
-            return delegate.requireArchiveAuditorAuthorization(cert, operation, args);
+            return delegate.requireArchiveAuditorAuthorization(getAdminPrincipal(cert), operation, args);
         } catch (org.signserver.admin.common.auth.AdminNotAuthorizedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage(), ex);
         }
@@ -101,5 +103,9 @@ public class WorkerAuthHelper {
             return certificates[0];
         }
         return null;
+    }
+
+    private AdminPrincipal getAdminPrincipal(X509Certificate cert) throws AdminNotAuthorizedException {
+        return new ClientCertAdminPrincipal(cert, delegate.getRoles(cert));
     }
 }

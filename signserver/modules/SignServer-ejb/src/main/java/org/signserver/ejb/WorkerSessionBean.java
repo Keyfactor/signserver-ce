@@ -1463,9 +1463,9 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, EventStatus outcome, SignServerModuleTypes module, final WorkerIdentifier wi, Map<String, Object> additionalDetails) {
         try {
         	final String serialNo =
-        			adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString(16);
+        			adminInfo.getSerialNumber() == null ? null : adminInfo.getSerialNumber();
             logSession.log(eventType, outcome, module, SignServerServiceTypes.SIGNSERVER,
-                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, wi.hasId() ? String.valueOf(wi.getId()) : wi.getName(), additionalDetails);
+                    adminInfo.getSubject(), adminInfo.getIssuer(), serialNo, wi.hasId() ? String.valueOf(wi.getId()) : wi.getName(), additionalDetails);
 
         } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);
@@ -1523,7 +1523,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     @Override
     public List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
-        return auditorSession.selectAuditLogs(new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal(adminInfo.getSubjectDN())), startIndex, max, criteria, logDeviceId);
+        return auditorSession.selectAuditLogs(new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal(adminInfo.getSubject())), startIndex, max, criteria, logDeviceId);
     }
 
     @Override

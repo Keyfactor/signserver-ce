@@ -58,7 +58,7 @@ public class TestKeyBulkBean extends BulkBean {
             Iterator<String> ks = getKeysList().iterator();
 
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id);
+                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -130,7 +130,7 @@ public class TestKeyBulkBean extends BulkBean {
             try {
                 // Test the key
                 final Collection<KeyTestResult> result
-                        = getWorkerSessionBean().testKey(getAuthBean().getAdminCertificate(), worker.getId(), worker.getAlias(), "");
+                        = getWorkerSessionBean().testKey(loginBean.getAdminPrincipal(), worker.getId(), worker.getAlias(), "");
 
                 if (result.isEmpty()) {
                     worker.setError("(No key found, token offline?)");

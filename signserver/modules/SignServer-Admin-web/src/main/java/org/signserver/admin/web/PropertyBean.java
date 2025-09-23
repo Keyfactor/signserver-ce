@@ -23,6 +23,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 import java.io.Serializable;
+import org.signserver.admin.web.auth.LoginBean;
 
 /**
  *
@@ -39,6 +40,9 @@ public class PropertyBean implements Serializable {
     @Inject
     @ManagedProperty(value = "#{param.id}")
     private Integer id;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -87,8 +91,8 @@ public class PropertyBean implements Serializable {
 
     public String submit() throws AdminNotAuthorizedException {
         // Set worker property
-        workerSession.setWorkerProperty(authBean.getAdminCertificate(), id, name, value);
-        workerSession.reloadConfiguration(authBean.getAdminCertificate(), id);
+        workerSession.setWorkerProperty(loginBean.getAdminPrincipal(), id, name, value);
+        workerSession.reloadConfiguration(loginBean.getAdminPrincipal(), id);
 
         // Continue to next page
         return "worker-configuration-added";

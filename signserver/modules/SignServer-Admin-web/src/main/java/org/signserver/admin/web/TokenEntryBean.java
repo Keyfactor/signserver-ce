@@ -48,6 +48,7 @@ import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.TokenEntry;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -71,6 +72,9 @@ public class TokenEntryBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -112,7 +116,7 @@ public class TokenEntryBean implements Serializable {
     private TokenEntry getEntry() throws AdminNotAuthorizedException {
         if (entry == null) {
             try {
-                TokenSearchResults search = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(), getId(), 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.keyAlias.name(), RelationalOperator.EQ, key)), Collections.<QueryOrdering>emptyList(), true);
+                TokenSearchResults search = workerSessionBean.queryTokenEntries(loginBean.getAdminPrincipal(), getId(), 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.keyAlias.name(), RelationalOperator.EQ, key)), Collections.<QueryOrdering>emptyList(), true);
                 if (search.getEntries().isEmpty()) {
                     errorMessage = "No result";
                 } else {

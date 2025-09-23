@@ -1180,7 +1180,7 @@ public class ModulesTestCase {
     }
 
     public static AdminInfo createAdminInfo() {
-        return new AdminInfo("CN=Unit Tester", "CN=Testing CA", new BigInteger("4242"));
+        return new AdminInfo("CN=Unit Tester", "CN=Testing CA", "4242");
     }
 
     public static double getJavaVersion() {

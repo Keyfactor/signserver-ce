@@ -40,6 +40,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import static org.signserver.common.SignServerConstants.DISABLED;
 
@@ -64,6 +65,9 @@ public class StatusPropertiesBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -127,7 +131,7 @@ public class StatusPropertiesBean implements Serializable {
 
             String tokenStatus;
             try {
-                tokenStatus = workerSessionBean.isTokenActive(getAuthBean().getAdminCertificate(), new WorkerIdentifier(getId())) ?
+                tokenStatus = workerSessionBean.isTokenActive(loginBean.getAdminPrincipal(), new WorkerIdentifier(getId())) ?
                               text.getString("ACTIVE") : text.getString("OFFLINE");
             } catch (InvalidWorkerIdException ex) {
                 tokenStatus = text.getString("Unknown");
@@ -142,7 +146,7 @@ public class StatusPropertiesBean implements Serializable {
                 if (workerSetAsDisabled) {
                     workerStatus = text.getString("DISABLED");
                 } else {
-                    final WorkerStatus status = workerSessionBean.getStatus(getAuthBean().getAdminCertificate(), new WorkerIdentifier(getId()));
+                    final WorkerStatus status = workerSessionBean.getStatus(loginBean.getAdminPrincipal(), new WorkerIdentifier(getId()));
                     workerStatus = status.getFatalErrors().isEmpty()
                             ? text.getString("ACTIVE") : text.getString("OFFLINE");
                 }
@@ -160,11 +164,11 @@ public class StatusPropertiesBean implements Serializable {
 
             try {
                 Collection<? extends Certificate> certificateChain;
-                Date notBefore = workerSessionBean.getSigningValidityNotBefore(authBean.getAdminCertificate(), (int) getId());
-                Date notAfter = workerSessionBean.getSigningValidityNotAfter(authBean.getAdminCertificate(), (int) getId());
-                Certificate certificate = workerSessionBean.getSignerCertificate(authBean.getAdminCertificate(), (int) getId());
+                Date notBefore = workerSessionBean.getSigningValidityNotBefore(loginBean.getAdminPrincipal(), (int) getId());
+                Date notAfter = workerSessionBean.getSigningValidityNotAfter(loginBean.getAdminPrincipal(), (int) getId());
+                Certificate certificate = workerSessionBean.getSignerCertificate(loginBean.getAdminPrincipal(), (int) getId());
                 try {
-                    certificateChain = workerSessionBean.getSignerCertificateChain(authBean.getAdminCertificate(), getId());
+                    certificateChain = workerSessionBean.getSignerCertificateChain(loginBean.getAdminPrincipal(), getId());
                 } catch (EJBException ex) {
                     // Handle problem caused by bug in server
                     LOG.error("Error getting signer certificate chain", ex);
@@ -195,7 +199,7 @@ public class StatusPropertiesBean implements Serializable {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), getId());
         }
         return workerConfig;
     }

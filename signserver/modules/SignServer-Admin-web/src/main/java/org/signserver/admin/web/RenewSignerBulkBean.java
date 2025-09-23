@@ -57,7 +57,7 @@ public class RenewSignerBulkBean extends BulkBean {
         if (myWorkers == null) {
             myWorkers = new ArrayList<>();
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id);
+                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -105,7 +105,7 @@ public class RenewSignerBulkBean extends BulkBean {
                         = new GenericPropertiesRequest(requestProperties);
 
                 final Collection<byte[]> responses
-                        = getWorkerSessionBean().process(getAuthBean().getAdminCertificate(), worker.getRenewalWorker(),
+                        = getWorkerSessionBean().process(loginBean.getAdminPrincipal(), worker.getRenewalWorker(),
                                 Collections.singletonList(RequestAndResponseManager.serializeProcessRequest(request)));
 
                 final Properties responseProperties;
@@ -150,7 +150,7 @@ public class RenewSignerBulkBean extends BulkBean {
     private void updateStatus(MyWorker worker) throws AdminNotAuthorizedException {
         String notAfter = "n/a";
         try {
-            Date signingValidityNotAfter = getWorkerSessionBean().getSigningValidityNotAfter(getAuthBean().getAdminCertificate(), worker.getId());
+            Date signingValidityNotAfter = getWorkerSessionBean().getSigningValidityNotAfter(loginBean.getAdminPrincipal(), worker.getId());
             if (signingValidityNotAfter != null) {
                 notAfter = signingValidityNotAfter.toString(); // TODO format
             }
@@ -161,7 +161,7 @@ public class RenewSignerBulkBean extends BulkBean {
         final StringBuilder signings = new StringBuilder();
         try {
             final String keyUsageLimit = worker.getConfig().getProperty("KEYUSAGELIMIT");
-            signings.append(String.valueOf(getWorkerSessionBean().getKeyUsageCounterValue(getAuthBean().getAdminCertificate(), worker.getId())));
+            signings.append(String.valueOf(getWorkerSessionBean().getKeyUsageCounterValue(loginBean.getAdminPrincipal(), worker.getId())));
             if (keyUsageLimit != null && !"-1".equals(keyUsageLimit)) {
                 signings.append(" of ").append(keyUsageLimit);
             }

@@ -150,7 +150,7 @@ class WorkerProcessImpl {
             worker = workerManagerSession.getWorkerWithComponents(wi);
         } catch (NoSuchWorkerException ex) {
             Map<String, Object> details = new LinkedHashMap<>();
-            final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
+            final String serNo = adminInfo.getSerialNumber() != null ? adminInfo.getSerialNumber() : null;
 
             // produce backwards-compatible log entries here...
             details.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
@@ -160,7 +160,7 @@ class WorkerProcessImpl {
             details.put(IWorkerLogger.LOG_ID, transactionID);
             details.put(IWorkerLogger.LOG_CLIENT_IP, (String) requestContext.get(RequestContext.REMOTE_IP));
             logSession.log(SignServerEventTypes.PROCESS, EventStatus.FAILURE, SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER,
-                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serNo, null, details);
+                    adminInfo.getSubject(), adminInfo.getIssuer(), serNo, null, details);
             throw ex;
         }
 

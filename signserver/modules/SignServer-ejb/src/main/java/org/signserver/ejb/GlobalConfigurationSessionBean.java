@@ -324,9 +324,9 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
             }
             
             final String serialNo =
-                    adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString(16);
+                    adminInfo.getSerialNumber() == null ? null : adminInfo.getSerialNumber();
             logSession.log(eventType, EventStatus.SUCCESS, SignServerModuleTypes.GLOBAL_CONFIG, SignServerServiceTypes.SIGNSERVER, 
-                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, null, details);
+                    adminInfo.getSubject(), adminInfo.getIssuer(), serialNo, null, details);
         } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);

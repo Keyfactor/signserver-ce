@@ -13,7 +13,6 @@
 
 package org.signserver.server.log;
 
-import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 
 /**
@@ -23,31 +22,36 @@ import java.security.cert.X509Certificate;
  *
  */
 public class AdminInfo {
-    private final String subjectDN;
-    private final String issuerDN;
-    private final BigInteger certSerialNumber;
+    private final String subject;
+    private final String issuer;
+    private final String serialNumber;
 
     public AdminInfo(final X509Certificate clientCert) {
-        subjectDN = clientCert.getSubjectDN().getName();
-        issuerDN = clientCert.getIssuerDN().getName();
-        certSerialNumber = clientCert.getSerialNumber();
+        subject = clientCert.getSubjectDN().getName();
+        issuer = clientCert.getIssuerDN().getName();
+        serialNumber = clientCert.getSerialNumber().toString(16);
     }
-    
-    public AdminInfo(final String subjectDN, final String issuerDN, final BigInteger certSerialNumber) {
-        this.subjectDN = subjectDN;
-        this.issuerDN = issuerDN;
-        this.certSerialNumber = certSerialNumber;
+
+    public AdminInfo(final String subjectDN, final String issuerDN, final String certSerialNumber) {
+        this.subject = subjectDN;
+        this.issuer = issuerDN;
+        this.serialNumber = certSerialNumber;
     }
-    
-    public String getSubjectDN() {
-        return subjectDN;
+    public AdminInfo(final String subject, final String issuer, final String preferredUsername, final String nothing) {
+        this.subject = preferredUsername;
+        this.issuer = issuer;
+        this.serialNumber = subject;
     }
-    
-    public String getIssuerDN() {
-        return issuerDN;
+    public String getSubject() {
+        return subject;
     }
-    
-    public BigInteger getCertSerialNumber() {
-        return certSerialNumber;
+
+    public String getIssuer() {
+        return issuer;
     }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
 }

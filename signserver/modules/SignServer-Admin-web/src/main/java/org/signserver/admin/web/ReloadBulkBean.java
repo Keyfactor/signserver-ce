@@ -53,7 +53,7 @@ public class ReloadBulkBean extends BulkBean {
         if (myWorkers == null) {
             myWorkers = new ArrayList<>();
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id);
+                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -87,13 +87,13 @@ public class ReloadBulkBean extends BulkBean {
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
 
         if (RELOAD_ALL.equals(reloadTarget)) {
-            getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), 0);
+            getWorkerSessionBean().reloadConfiguration(loginBean.getAdminPrincipal(), 0);
 
             return "workers?faces-redirect=true&amp;includeViewParams=true&amp;" + "selected=" + StringUtils.join(getWorkerIdsList(), ",");
         } else {
             for (MyWorker worker : getMySelectedWorkers()) {
                 try {
-                    getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
+                    getWorkerSessionBean().reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
                     worker.setError(null);
                     worker.setSuccess("Reloaded");
                     getSelectedIds().remove(worker.getId());

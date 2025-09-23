@@ -51,7 +51,7 @@ public class RenewKeyBulkBean extends BulkBean {
         if (renewKeyWorkers == null) {
             renewKeyWorkers = new ArrayList<>();
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id);
+                WorkerConfig config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id);
                 String name = config.getProperty("NAME");
                 boolean exists = true;
                 if (name == null) {
@@ -92,7 +92,7 @@ public class RenewKeyBulkBean extends BulkBean {
                 String newAlias = null;
                 try {
                     // Generate key
-                    newAlias = getWorkerSessionBean().generateSignerKey(getAuthBean().getAdminCertificate(), new WorkerIdentifier(worker.getId()),
+                    newAlias = getWorkerSessionBean().generateSignerKey(loginBean.getAdminPrincipal(), new WorkerIdentifier(worker.getId()),
                             worker.getKeyAlgorithm(), worker.getKeySpecification(), worker.getNewKeyAlias(), "");
 
                     if (newAlias == null) {
@@ -111,11 +111,11 @@ public class RenewKeyBulkBean extends BulkBean {
                     //LOG.debug("Created key " + newAlias + " for signer " + signerId);
 
                     // Update key label
-                    getWorkerSessionBean().setWorkerProperty(getAuthBean().getAdminCertificate(), worker.getId(),
+                    getWorkerSessionBean().setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(),
                             "NEXTCERTSIGNKEY", newAlias);
 
                     // Reload configuration
-                    getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
+                    getWorkerSessionBean().reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
 
                     //LOG.debug("Configured new key " + newAlias + " for signer " + signerId);
                     getSelectedIds().remove(worker.getId());

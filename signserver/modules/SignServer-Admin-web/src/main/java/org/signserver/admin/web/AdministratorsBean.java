@@ -41,6 +41,8 @@ import org.signserver.admin.common.roles.AdminsUtil;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.common.SignServerUtil;
 import org.signserver.serviceprovider.PeersInInfo;
@@ -67,6 +69,9 @@ public class AdministratorsBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -116,7 +121,7 @@ public class AdministratorsBean implements Serializable {
 
     private GlobalConfiguration getGlobalConfig() throws AdminNotAuthorizedException {
         if (globalConfig == null) {
-            globalConfig = workerSessionBean.getGlobalConfiguration(authBean.getAdminCertificate());
+            globalConfig = workerSessionBean.getGlobalConfiguration(loginBean.getAdminPrincipal());
         }
         return globalConfig;
     }
@@ -252,19 +257,19 @@ public class AdministratorsBean implements Serializable {
     }
 
     public String allowAnyAction(boolean allowAny) throws AdminNotAuthorizedException {
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN, String.valueOf(allowAny));
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN, String.valueOf(allowAny));
         this.allowAny = null;
         return "administrators?faces-redirect=true";
     }
     
     public String saveAllowIncomingAction() throws AdminNotAuthorizedException {
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncomingPeerSystems));
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncomingPeerSystems));
         this.allowIncomingPeerSystems = null;
         return "administrators?faces-redirect=true";
     }
 
     public String allowIncomingAction(boolean allowIncoming) throws AdminNotAuthorizedException {
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncoming));
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncoming));
         this.allowIncomingPeerSystems = null;
         return "administrators?faces-redirect=true";
     }
@@ -294,19 +299,19 @@ public class AdministratorsBean implements Serializable {
 
         getAdmins().remove(oldEntry);
 
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSAUDITORS",
                 AdminsUtil.serializeAuditors(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSARCHIVEAUDITORS",
                 AdminsUtil.serializeArchiveAuditors(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSPEERS",
                 AdminsUtil.serializePeerSystems(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSADMINS",
                 AdminsUtil.serializeAdmins(admins));
@@ -329,19 +334,19 @@ public class AdministratorsBean implements Serializable {
 
         getAdmins().put(newCred, newEntry);
 
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSAUDITORS",
                 AdminsUtil.serializeAuditors(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSARCHIVEAUDITORS",
                 AdminsUtil.serializeArchiveAuditors(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSPEERS",
                 AdminsUtil.serializePeerSystems(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSADMINS",
                 AdminsUtil.serializeAdmins(admins));
@@ -362,25 +367,25 @@ public class AdministratorsBean implements Serializable {
         getAdmins().put(newCred, newEntry);
 
         if (roleAuditor) {
-            workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+            workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                     GlobalConfiguration.SCOPE_GLOBAL,
                     "WSAUDITORS",
                     AdminsUtil.serializeAuditors(admins));
         }
         if (roleArchiveAuditor) {
-            workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+            workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                     GlobalConfiguration.SCOPE_GLOBAL,
                     "WSARCHIVEAUDITORS",
                     AdminsUtil.serializeArchiveAuditors(admins));
         }
         if (rolePeerSystem) {
-            workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+            workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                     GlobalConfiguration.SCOPE_GLOBAL,
                     "WSPEERS",
                     AdminsUtil.serializePeerSystems(admins));
         }
         if (roleAdmin) {
-            workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+            workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(),
                     GlobalConfiguration.SCOPE_GLOBAL,
                     "WSADMINS",
                     AdminsUtil.serializeAdmins(admins));
@@ -393,9 +398,11 @@ public class AdministratorsBean implements Serializable {
     }
 
     public void loadCurrentAction() throws NotLoggedInException {
-        X509Certificate current = getAuthBean().getAdminCertificate();
-        certSN = current.getSerialNumber().toString(16);
-        issuerDN = AdminsUtil.getIssuerDN(current);
+        if (loginBean.getAdminPrincipal() instanceof ClientCertAdminPrincipal clientCertPrincipal) {
+            X509Certificate current = clientCertPrincipal.getClientCert();
+            certSN = current.getSerialNumber().toString(16);
+            issuerDN = AdminsUtil.getIssuerDN(current);
+        }
     }
 
     public void cancelBrowseAction() {

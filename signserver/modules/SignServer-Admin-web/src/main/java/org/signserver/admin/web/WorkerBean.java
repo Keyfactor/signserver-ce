@@ -43,6 +43,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.common.WorkerType;
 
@@ -67,6 +68,9 @@ public class WorkerBean implements Serializable {
     
     @EJB
     private AdminWebSessionBean workerSessionBean;
+    
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -153,7 +157,7 @@ public class WorkerBean implements Serializable {
         if (status == null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             try {
-                workerSessionBean.getStatus(authBean.getAdminCertificate(), new WorkerIdentifier(id)).displayStatus(new PrintStream(bout, false, StandardCharsets.UTF_8.toString()), true);
+                workerSessionBean.getStatus(loginBean.getAdminPrincipal(), new WorkerIdentifier(id)).displayStatus(new PrintStream(bout, false, StandardCharsets.UTF_8.toString()), true);
                 status = bout.toString(StandardCharsets.UTF_8.toString());
                 status = status.replaceAll(WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER,
                                            MASKED_VALUE);
@@ -190,14 +194,14 @@ public class WorkerBean implements Serializable {
 
     private Properties getWorkerProperties() throws AdminNotAuthorizedException {
         if (workerProperties == null) {
-            workerProperties = workerSessionBean.getProperties(authBean.getAdminCertificate(), getId());
+            workerProperties = workerSessionBean.getProperties(loginBean.getAdminPrincipal(), getId());
         }
         return workerProperties;
     }
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), getId());
         }
         return workerConfig;
     }
@@ -269,7 +273,7 @@ public class WorkerBean implements Serializable {
         destroyKeyStep = 2;
         destroyKeySuccess = false;
         try {
-            destroyKeySuccess = workerSessionBean.removeKey(authBean.getAdminCertificate(), getId(), destroyKeyAlias);
+            destroyKeySuccess = workerSessionBean.removeKey(loginBean.getAdminPrincipal(), getId(), destroyKeyAlias);
             destroyKeyError = null;
         } catch (AdminNotAuthorizedException ex) {
             destroyKeyError = "Authorization denied:\n" + ex.getLocalizedMessage();
@@ -356,7 +360,7 @@ public class WorkerBean implements Serializable {
         final String oldValue = workerConfig.getProperty(oldPropertyName);
 
         if (!oldPropertyName.equals(key)) {
-            workerSessionBean.removeWorkerProperty(getAuthBean().getAdminCertificate(), getId(), oldPropertyName);
+            workerSessionBean.removeWorkerProperty(loginBean.getAdminPrincipal(), getId(), oldPropertyName);
         }
         
         // Remove illegal characters
@@ -370,18 +374,18 @@ public class WorkerBean implements Serializable {
             // renaming properties (i.e. commenting out) without entering the
             // value again
             if (propertyValueSecret.isEmpty() && propertyValueConfirmation.isEmpty()) {
-                workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(),
+                workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(),
                                                     getId(), key, oldValue);
             } else if (!propertyValueConfirmation.equals(propertyValueSecret)) {
                 propertyValueConfirmationError = text.getString("The_values_do_not_match");
                 return null;
             } else {
-                workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), getId(), key, propertyValueSecret);
+                workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), getId(), key, propertyValueSecret);
             }
         } else {
-            workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), getId(), key, propertyValue);
+            workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), getId(), key, propertyValue);
         }
-        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+        workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), getId());
         return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
@@ -391,15 +395,15 @@ public class WorkerBean implements Serializable {
         // Remove illegal characters
         key = key.replaceAll(",", "").replaceAll("%", "");
 
-        workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), getId(), key, propertyValue);
-        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+        workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), getId(), key, propertyValue);
+        workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), getId());
         return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
     public String removePropertyAction() throws AdminNotAuthorizedException {
         for (String prop : getToDelete()) {
-            workerSessionBean.removeWorkerProperty(getAuthBean().getAdminCertificate(), getId(), prop);
-            workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+            workerSessionBean.removeWorkerProperty(loginBean.getAdminPrincipal(), getId(), prop);
+            workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), getId());
         }
         return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }

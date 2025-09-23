@@ -35,6 +35,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import static org.signserver.common.SignServerConstants.DISABLED;
 
@@ -52,6 +53,9 @@ public class BulkBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    protected LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -127,7 +131,7 @@ public class BulkBean implements Serializable {
     }
     
     public int getWorkerIdByName(String workerName) throws AdminNotAuthorizedException {
-        int workerId = workerSessionBean.getWorkerId(authBean.getAdminCertificate(), workerName);
+        int workerId = workerSessionBean.getWorkerId(loginBean.getAdminPrincipal(), workerName);
         if (workerId == 0) {
             return -1;
         } else {
@@ -136,7 +140,7 @@ public class BulkBean implements Serializable {
     }
     
     public Worker getWorker(int workerId) throws AdminNotAuthorizedException {
-        WorkerConfig config = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), workerId);
+        WorkerConfig config = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), workerId);
         String name = config.getProperty("NAME");
         boolean exists = true;
         if (name == null) {
@@ -204,7 +208,7 @@ public class BulkBean implements Serializable {
     public String activateAction() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkersForActivation()) {
             try {
-                workerSessionBean.activateSigner(authBean.getAdminCertificate(), new WorkerIdentifier(worker.getId()), activatePassword);
+                workerSessionBean.activateSigner(loginBean.getAdminPrincipal(), new WorkerIdentifier(worker.getId()), activatePassword);
                 selectedIds.remove(worker.getId());
                 worker.setError("");
                 worker.setSuccess("Activated");
@@ -223,7 +227,7 @@ public class BulkBean implements Serializable {
     public String deactivateAction() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkersForActivation()) {
             try {
-                workerSessionBean.deactivateSigner(authBean.getAdminCertificate(), new WorkerIdentifier(worker.getId()));
+                workerSessionBean.deactivateSigner(loginBean.getAdminPrincipal(), new WorkerIdentifier(worker.getId()));
                 selectedIds.remove(worker.getId());
                 worker.setError("");
                 worker.setSuccess("Deactivated");
@@ -242,8 +246,8 @@ public class BulkBean implements Serializable {
     public String enableAction() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkers()) {
             try {
-               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), DISABLED, "FALSE");
-               workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+               workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), DISABLED, "FALSE");
+               workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
                selectedIds.remove(worker.getId());
                worker.setError("");
                worker.setSuccess("Enabled");
@@ -263,8 +267,8 @@ public class BulkBean implements Serializable {
      public String disableAction() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkers()) {
             try {
-               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), DISABLED, "TRUE");
-               workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+               workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), DISABLED, "TRUE");
+               workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
                selectedIds.remove(worker.getId());
                worker.setError("");
                worker.setSuccess("Disabled");
@@ -286,8 +290,8 @@ public class BulkBean implements Serializable {
             availableWorkersMenu = new ArrayList<>();
             availableWorkersMenu.add(new SelectItem("--", ""));
             // XXX: Should be some better API to get all the worker names without loading all config
-            for (Integer id : getWorkerSessionBean().getAllWorkers(getAuthBean().getAdminCertificate())) {
-                Properties config = getWorkerSessionBean().getCurrentWorkerConfig(getAuthBean().getAdminCertificate(), id).getProperties();
+            for (Integer id : getWorkerSessionBean().getAllWorkers(loginBean.getAdminPrincipal())) {
+                Properties config = getWorkerSessionBean().getCurrentWorkerConfig(loginBean.getAdminPrincipal(), id).getProperties();
                 final String name = config.getProperty("NAME", String.valueOf(id));
                 availableWorkersMenu.add(new SelectItem(name + " (" + id + ")", name));
             }

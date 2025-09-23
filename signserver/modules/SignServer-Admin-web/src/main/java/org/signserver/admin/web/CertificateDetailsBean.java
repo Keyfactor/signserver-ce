@@ -64,6 +64,7 @@ import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.TokenEntry;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -91,6 +92,9 @@ public class CertificateDetailsBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @Inject
+    private LoginBean loginBean;
 
     @Inject
     @ManagedProperty(value = "#{authenticationBean}")
@@ -159,7 +163,7 @@ public class CertificateDetailsBean implements Serializable {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(loginBean.getAdminPrincipal(), getId());
         }
         return workerConfig;
     }
@@ -221,7 +225,7 @@ public class CertificateDetailsBean implements Serializable {
                 if (certificate == null) {
                     if (keyInToken != null && !keyInToken.isEmpty()) {
                         try {
-                            TokenSearchResults search = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(), getId(), 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.keyAlias.name(), RelationalOperator.EQ, keyInToken)), Collections.<QueryOrdering>emptyList(), true);
+                            TokenSearchResults search = workerSessionBean.queryTokenEntries(loginBean.getAdminPrincipal(), getId(), 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.keyAlias.name(), RelationalOperator.EQ, keyInToken)), Collections.<QueryOrdering>emptyList(), true);
                             if (search.getEntries().isEmpty()) {
                                 LOG.error("No result");
                             } else {
@@ -235,12 +239,12 @@ public class CertificateDetailsBean implements Serializable {
                             LOG.error(ex);
                         }
                     } else if (withChain) {
-                        certificateChain = workerSessionBean.getSignerCertificateChain(authBean.getAdminCertificate(), getId());
+                        certificateChain = workerSessionBean.getSignerCertificateChain(loginBean.getAdminPrincipal(), getId());
                         if (certificateChain != null) {
                             certificate = (X509Certificate) certificateChain.iterator().next();
                         }
                     } else {
-                        certificate = (X509Certificate) workerSessionBean.getSignerCertificate(authBean.getAdminCertificate(), getId());
+                        certificate = (X509Certificate) workerSessionBean.getSignerCertificate(loginBean.getAdminPrincipal(), getId());
                         certificateChain = Arrays.asList((Certificate) certificate);
                     }
                 }

@@ -7,11 +7,13 @@
 package org.signserver.web.common.owasp.filters;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -23,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Hex;
+import org.signserver.admin.common.config.OidcConfig;
 
 /**
  * Sample filter implementation to define a set of Content Security Policies.<br>
@@ -102,7 +105,7 @@ public class ContentSecurityPolicyFilter implements Filter {
 		// --Define loading policies for Images
 		cspPolicies.add("img-src " + originLocationRef);
 		// --Define loading policies for Form
-		cspPolicies.add("form-action " + originLocationRef);
+        cspPolicies.add("form-action " + originLocationRef + " " + getProviderURI());
 		// --Define loading policies for Audios/Videos
 		if (APP_USE_AUDIOS_OR_VIDEOS) {
 			cspPolicies.add("media-src " + originLocationRef);
@@ -124,6 +127,20 @@ public class ContentSecurityPolicyFilter implements Filter {
 		// Target formating
 		this.policies = cspPolicies.toString().replaceAll("(\\[|\\])", "").replaceAll(",", ";").trim();
 	}
+
+    // Loading the oidc properties
+    public String getProviderURI() {
+        final Properties properties = new Properties();
+        try (InputStream in = OidcConfig.class.getResourceAsStream("/oidc.properties")) {
+            if (in != null) {
+                properties.load(in);
+                return properties.getProperty("oidc.providerUri");
+            }
+        } catch (IOException ex) {
+            // DO NOTHING
+        }
+        return null;
+    }
 
 	/**
 	 * Add CSP policies on each HTTP response.
@@ -193,4 +210,5 @@ public class ContentSecurityPolicyFilter implements Filter {
 	public void destroy() {
 		// Not used
 	}
+
 }

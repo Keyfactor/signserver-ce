@@ -27,6 +27,8 @@ import org.signserver.admin.common.config.OidcConfig;
 
 import java.io.IOException;
 import org.apache.log4j.Logger;
+import org.signserver.admin.web.auth.LoginFilter;
+import org.signserver.admin.web.auth.LoginType;
 import org.signserver.admin.web.auth.OidcAuthBean;
 
 /**
@@ -63,38 +65,42 @@ public class CallbackServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
-        // Programatically trigger login, as we do not want to specify @HttpContraint(rolesAllowed=...)
-        AuthenticationStatus status = null;
-        try {
-            status = securityContext.authenticate(request, response, new AuthenticationParameters());
-        } catch (IllegalStateException ex) {
-            LOG.error("OIDC properties misconfigured: ", ex);
-            // We assume oidc.properties has been misconfigured, so we redirect to login.xhtml with query parameter
-            // containing relevant error code.
-            response.sendRedirect(request.getContextPath() + "/login.xhtml?error=1");
-        } catch (Exception ex) {
-            LOG.error("OIDC authentication failed: ", ex);
-            // We assume OIDC authentication failed, so we redirect to login.xhtml with query parameter
-            // containing relevant error code.
-            response.sendRedirect(request.getContextPath() + "/login.xhtml?error=2");
-        }
-
-        if (oidcAuthBean.isOidcAuthenticated() && !oidcAuthBean.isAudienceValidOrNotUsed()) {
-            LOG.error("The audience value is defined in the oidc.properties file. During authentication, SignServer checks that this value matches the audience provided by the Identity Provider." +
-                    " If they do not match, authentication fails due to an invalid audience.");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Expected audience: " + oidcConfig.getAudience() + " Received audience from the Identity Provider: "
-                        + context.getIdentityToken().getJwtClaims().getAudience());
+        final LoginType loginType = (LoginType) request.getSession().getAttribute(LoginFilter.LOGGEDIN_ATTRIBUTE);
+        if (loginType == null) {
+            // Programatically trigger login, as we do not want to specify @HttpContraint(rolesAllowed=...)
+            AuthenticationStatus status = null;
+            try {
+                status = securityContext.authenticate(request, response, new AuthenticationParameters());
+            } catch (IllegalStateException ex) {
+                LOG.error("OIDC properties misconfigured: ", ex);
+                // We assume oidc.properties has been misconfigured, so we redirect to login.xhtml with query parameter
+                // containing relevant error code.
+                response.sendRedirect(request.getContextPath() + "/login.xhtml?error=1");
+            } catch (Exception ex) {
+                LOG.error("OIDC authentication failed: ", ex);
+                // We assume OIDC authentication failed, so we redirect to login.xhtml with query parameter
+                // containing relevant error code.
+                response.sendRedirect(request.getContextPath() + "/login.xhtml?error=2");
+                return;
             }
-            // We assume the Audience in the IdentityToken does not match with the audience value set in the oidc properties file
-            // so we redirect to login.xhtml with query parameter
-            // containing relevant error code.
-            response.sendRedirect(request.getContextPath() + "/login.xhtml?error=3");
-        }
 
-        if (status == AuthenticationStatus.SUCCESS && oidcAuthBean.isAudienceValidOrNotUsed()) {
-            LOG.info("OIDC callback success. Redirecting to: " + oidcConfig.getRedirectUri());
-            response.sendRedirect(oidcConfig.getRedirectUri());
+            if (oidcAuthBean.isOidcAuthenticated() && !oidcAuthBean.isAudienceValidOrNotUsed()) {
+                LOG.error("The audience value is defined in the oidc.properties file. During authentication, SignServer checks that this value matches the audience provided by the Identity Provider." +
+                        " If they do not match, authentication fails due to an invalid audience.");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Expected audience: " + oidcConfig.getAudience() + " Received audience from the Identity Provider: "
+                            + context.getIdentityToken().getJwtClaims().getAudience());
+                }
+                // We assume the Audience in the IdentityToken does not match with the audience value set in the oidc properties file
+                // so we redirect to login.xhtml with query parameter
+                // containing relevant error code.
+                response.sendRedirect(request.getContextPath() + "/login.xhtml?error=3");
+            } else if (status == AuthenticationStatus.SUCCESS && oidcAuthBean.isAudienceValidOrNotUsed()) {
+                LOG.info("OIDC callback success. Redirecting to: " + oidcConfig.getRedirectUri());
+                response.sendRedirect(oidcConfig.getRedirectUri());
+            }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/login.xhtml");
         }
     }
 }

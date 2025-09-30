@@ -31,7 +31,7 @@ import java.security.cert.X509Certificate;
 public class LoginFilter implements Filter {
 
     /** Session attribute for the logged in state. */
-    protected static final String LOGGEDIN_ATTRIBUTE = "LOGGEDIN";
+    public static final String LOGGEDIN_ATTRIBUTE = "LOGGEDIN";
 
     public LoginFilter() {
     }

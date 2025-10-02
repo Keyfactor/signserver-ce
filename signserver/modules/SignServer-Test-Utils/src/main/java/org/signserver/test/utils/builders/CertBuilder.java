@@ -103,7 +103,7 @@ public class CertBuilder implements Cloneable {
     public PrivateKey getIssuerPrivateKey() throws NoSuchAlgorithmException, NoSuchProviderException {
         if (issuerPrivateKey == null) {
             if (_subjectKeyPair == null) {
-                _subjectKeyPair = CryptoUtils.generateRSA(1024);
+                _subjectKeyPair = CryptoUtils.generateRSA(2048);
             }
             issuerPrivateKey = _subjectKeyPair.getPrivate();
         }
@@ -118,7 +118,7 @@ public class CertBuilder implements Cloneable {
     public PublicKey getSubjectPublicKey() throws NoSuchAlgorithmException, NoSuchProviderException {
         if (subjectPublicKey == null) {
             if (_subjectKeyPair == null) {
-                _subjectKeyPair = CryptoUtils.generateRSA(1024);
+                _subjectKeyPair = CryptoUtils.generateRSA(2048);
             }
             subjectPublicKey = _subjectKeyPair.getPublic();
         }
@@ -127,7 +127,7 @@ public class CertBuilder implements Cloneable {
 
     public KeyPair getSubjectKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
         if (_subjectKeyPair == null) {
-            _subjectKeyPair = CryptoUtils.generateRSA(1024);
+            _subjectKeyPair = CryptoUtils.generateRSA(2048);
         }
         return _subjectKeyPair;
     }
@@ -178,7 +178,7 @@ public class CertBuilder implements Cloneable {
 
     public String getSignatureAlgorithm() {
         if (signatureAlgorithm == null) {
-            signatureAlgorithm = "SHA1withRSA";
+            signatureAlgorithm = "SHA256withRSA";
         }
         return signatureAlgorithm;
     }

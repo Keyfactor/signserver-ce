@@ -46,7 +46,7 @@ import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.cesecore.certificates.util.DNFieldExtractor;
-import org.cesecore.util.CertTools;
+import com.keyfactor.util.CertTools;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
@@ -103,7 +103,7 @@ public class ClientCertAuthorizerRdnTest {
 
         X509Certificate caCert =
                 (X509Certificate) ks.getCertificate("SignatureKeyAlias");
-        PrivateKey issuerPrivKey = (PrivateKey)ks.getKey("SignatureKeyAlias", "foo123".toCharArray());
+        PrivateKey issuerPrivKey = (PrivateKey) ks.getKey("SignatureKeyAlias", "foo123".toCharArray());
         
         ca = new CA(issuerPrivKey, caCert);
     }
@@ -131,6 +131,7 @@ public class ClientCertAuthorizerRdnTest {
             TEST.getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "org.signserver.server.ClientCertAuthorizer");
             TEST.getWorkerSession().reloadConfiguration(signerId);
 
+
             // Add all authorizations
             for (AuthorizedClientEntry auth : authorizations) {
                 LOG.info("Adding rule " + auth);
@@ -149,7 +150,7 @@ public class ClientCertAuthorizerRdnTest {
                 LOG.info("Signing with bad keystore: " + keyStore);
                 assertEquals("signdocument with bad keystore: " + keyStore.getAbsolutePath(), -2,
                         client.execute("signdocument", "-workerid", String.valueOf(signerId),
-                                       "-data", "foo", "-protocol", "CLIENTWS",
+                                       "-data", "foo", "-protocol", "HTTP",
                                        "-host", "localhost",
                                        "-port", "8443",
                                        "-keystore",
@@ -165,7 +166,7 @@ public class ClientCertAuthorizerRdnTest {
                 LOG.info("Signing with good keystore: " + keyStore);
                 assertEquals("signdocument with good keystore: " + keyStore.getAbsolutePath(), 0,
                         client.execute("signdocument", "-workerid", String.valueOf(signerId),
-                                       "-data", "foo", "-protocol", "CLIENTWS",
+                                       "-data", "foo", "-protocol", "HTTP",
                                        "-host", "localhost",
                                        "-port", "8443",
                                        "-keystore",

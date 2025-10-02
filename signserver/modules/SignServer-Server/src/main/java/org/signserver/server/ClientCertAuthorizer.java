@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.certificates.util.DNFieldExtractor;
-import org.cesecore.util.CertTools;
+import com.keyfactor.util.CertTools;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.AuthorizedClientEntry;
 import org.signserver.common.IllegalRequestException;

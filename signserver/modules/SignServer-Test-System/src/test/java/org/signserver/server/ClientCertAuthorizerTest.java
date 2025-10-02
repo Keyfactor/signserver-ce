@@ -373,7 +373,7 @@ public class ClientCertAuthorizerTest {
 
             X509Certificate caCert =
                     (X509Certificate) ks.getCertificate("SignatureKeyAlias");
-            PrivateKey issuerPrivKey = (PrivateKey)ks.getKey("SignatureKeyAlias", "foo123".toCharArray());
+            PrivateKey issuerPrivKey = (PrivateKey) ks.getKey("SignatureKeyAlias", "foo123".toCharArray());
 
             final CertBuilder builder =
                     generateCertBuilderWithAdditionalDNComponent(caCert, issuerPrivKey,
@@ -382,12 +382,12 @@ public class ClientCertAuthorizerTest {
             final X509Certificate clientCert =
                     new JcaX509CertificateConverter().getCertificate(builder.build());
             final PrivateKey clientPrivKey = builder.getSubjectKeyPair().getPrivate();
-            
+
             // store client cert in a keystore
-            final File tmpFile = File.createTempFile("client", "p12");
+            final File tmpFile = File.createTempFile("client", ".p12");
             final KeyStore clientKs = KeyStore.getInstance("PKCS12", "BC");
             final Certificate[] chain = {clientCert, caCert};
-            
+
             clientKs.load(null, "foo123".toCharArray());
             clientKs.setCertificateEntry("Admin Three", clientCert);
             clientKs.setKeyEntry("Admin Three", clientPrivKey, "foo123".toCharArray(), chain);
@@ -410,15 +410,14 @@ public class ClientCertAuthorizerTest {
 
             assertEquals("execute signdocument", 0,
                     client.execute("signdocument", "-workerid", String.valueOf(signerId),
-                                   "-data", "foo", "-protocol", "CLIENTWS",
+                                   "-data", "foo",
                                    "-host", "localhost",
                                    "-port", "8443",
-                                   "-keystore",
-                                   tmpFile.getAbsolutePath(),
+                                   "-keystore", tmpFile.getAbsolutePath(),
                                    "-keystorepwd", "foo123",
-                                   "-truststore",
-                                   dss10Path + File.separator + "dss10_truststore.jks",
+                                   "-truststore", dss10Path + File.separator + "dss10_truststore.jks",
                                    "-truststorepwd", "changeit"));
+
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }

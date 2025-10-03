@@ -150,7 +150,7 @@ public class ClientCertAuthorizerRdnTest {
                 LOG.info("Signing with bad keystore: " + keyStore);
                 assertEquals("signdocument with bad keystore: " + keyStore.getAbsolutePath(), -2,
                         client.execute("signdocument", "-workerid", String.valueOf(signerId),
-                                       "-data", "foo", "-protocol", "HTTP",
+                                       "-data", "foo", "-protocol", "CLIENTWS",
                                        "-host", "localhost",
                                        "-port", "8443",
                                        "-keystore",
@@ -166,7 +166,7 @@ public class ClientCertAuthorizerRdnTest {
                 LOG.info("Signing with good keystore: " + keyStore);
                 assertEquals("signdocument with good keystore: " + keyStore.getAbsolutePath(), 0,
                         client.execute("signdocument", "-workerid", String.valueOf(signerId),
-                                       "-data", "foo", "-protocol", "HTTP",
+                                       "-data", "foo", "-protocol", "CLIENTWS",
                                        "-host", "localhost",
                                        "-port", "8443",
                                        "-keystore",

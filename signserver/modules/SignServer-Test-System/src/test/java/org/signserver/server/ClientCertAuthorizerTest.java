@@ -384,7 +384,7 @@ public class ClientCertAuthorizerTest {
             final PrivateKey clientPrivKey = builder.getSubjectKeyPair().getPrivate();
 
             // store client cert in a keystore
-            final File tmpFile = File.createTempFile("client", ".p12");
+            final File tmpFile = File.createTempFile("client", "p12");
             final KeyStore clientKs = KeyStore.getInstance("PKCS12", "BC");
             final Certificate[] chain = {clientCert, caCert};
 
@@ -410,7 +410,7 @@ public class ClientCertAuthorizerTest {
 
             assertEquals("execute signdocument", 0,
                     client.execute("signdocument", "-workerid", String.valueOf(signerId),
-                                   "-data", "foo",
+                                   "-data", "foo", "-protocol", "CLIENTWS",
                                    "-host", "localhost",
                                    "-port", "8443",
                                    "-keystore", tmpFile.getAbsolutePath(),

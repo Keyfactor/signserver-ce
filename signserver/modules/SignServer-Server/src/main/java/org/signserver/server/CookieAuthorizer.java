@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -23,7 +24,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;
 import org.signserver.server.log.LogMap;
 import org.signserver.common.RequestContext;
-import org.apache.commons.lang.StringUtils;
 
  /** 
   * Cookie Authorizer is used for Airlock feature where custom client cookies

@@ -13,8 +13,9 @@
 package org.signserver.cli;
 
 import java.io.File;
+
+import com.keyfactor.util.certificate.DnComponents;
 import org.apache.log4j.Logger;
-import com.keyfactor.util.CertTools;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 
@@ -260,7 +261,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints rule with 789abcdef", cli.getOut(), "789abcdef");
             assertPrinted("prints rule with 123ab", cli.getOut(), "123ab");
-            assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), CertTools.stringToBCDNString("CN=ManagementCA1, C=SE"));
+            assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), DnComponents.stringToBCDNString("CN=ManagementCA1, C=SE"));
             assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
 
             // Add one more but of new type

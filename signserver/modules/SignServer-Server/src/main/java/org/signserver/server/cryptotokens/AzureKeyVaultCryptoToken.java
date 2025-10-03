@@ -14,6 +14,7 @@ package org.signserver.server.cryptotokens;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.security.InvalidAlgorithmParameterException;
@@ -34,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.token.AzureCryptoToken;

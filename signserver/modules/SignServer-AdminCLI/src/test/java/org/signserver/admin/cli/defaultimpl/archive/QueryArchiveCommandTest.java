@@ -162,16 +162,16 @@ public class QueryArchiveCommandTest extends TestCase {
     }
     
     /**
-     * Test that parsing a date criteria using an ISO format date works.
+     * Test that parsing a date criteria using ISO 8601 format date works.
      * @throws Exception
      */
     public void test10DateISO() throws Exception {
-        final String criteria = "time EQ 2013-02-11 14:00:00+0100";
+        final String criteria = "time EQ 2013-02-11 14:00:00+01:00";
         final Term term = QueryArchiveCommand.parseCriteria(criteria);
-        
+
         assertEquals("Operation", RelationalOperator.EQ, term.getOperator());
         assertEquals("Name", ArchiveMetadata.TIME, term.getName());
-        assertEquals("Value", 1360587600000L, term.getValue()); 
+        assertEquals("Value", 1360587600000L, term.getValue());
     }
     
     public void test11DateInvalid() throws Exception {

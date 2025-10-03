@@ -18,10 +18,10 @@ import java.util.Properties;
 import java.util.HashSet;
 import java.util.HashMap;
 
-import jakarta.annotation.ManagedBean;
+
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;

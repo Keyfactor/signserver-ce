@@ -23,9 +23,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.keyfactor.util.CertTools;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.cesecore.util.CertTools;
 
 /**
  * Containing common util methods used for various reasons.

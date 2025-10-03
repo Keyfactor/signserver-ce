@@ -26,12 +26,12 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Optional;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJBException;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.xml.ws.soap.SOAPFaultException;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;

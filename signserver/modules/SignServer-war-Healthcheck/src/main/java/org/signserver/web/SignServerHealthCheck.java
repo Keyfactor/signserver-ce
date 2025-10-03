@@ -28,7 +28,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;

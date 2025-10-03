@@ -18,6 +18,7 @@ import jakarta.faces.view.ViewScoped;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.apache.commons.lang3.StringUtils;
 import org.signserver.admin.web.ejb.NotLoggedInException;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -33,7 +34,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 import jakarta.ejb.EJB;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesApplier;

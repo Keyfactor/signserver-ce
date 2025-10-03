@@ -26,10 +26,6 @@
 
     <dependencies>
         <dependency>
-            <artifactId>commons-lang</artifactId>
-            <groupId>commons-lang</groupId>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Common</artifactId>
             <version>${project.version}</version>

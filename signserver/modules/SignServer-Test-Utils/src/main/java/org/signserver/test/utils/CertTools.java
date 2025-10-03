@@ -41,8 +41,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -657,23 +658,23 @@ public class CertTools {
      * set default values. Mostly used to be able to do JUnit testing
      */
     private static void checkImplicitParams() {
-        if (StringUtils.contains(IMPLICITLYCA_Q, "ecdsa.implicitlyca.q")) {
+        if (Strings.CS.contains(IMPLICITLYCA_Q, "ecdsa.implicitlyca.q")) {
         	log.info("IMPLICITLYCA_Q not set, using default.");
         	IMPLICITLYCA_Q = "883423532389192164791648750360308885314476597252960362792450860609699839";
         }
-        if (StringUtils.contains(IMPLICITLYCA_A, "ecdsa.implicitlyca.a")) {
+        if (Strings.CS.contains(IMPLICITLYCA_A, "ecdsa.implicitlyca.a")) {
         	log.info("IMPLICITLYCA_A not set, using default.");
         	IMPLICITLYCA_A = "7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc";
         }
-        if (StringUtils.contains(IMPLICITLYCA_B, "ecdsa.implicitlyca.b")) {
+        if (Strings.CS.contains(IMPLICITLYCA_B, "ecdsa.implicitlyca.b")) {
         	log.info("IMPLICITLYCA_B not set, using default.");
         	IMPLICITLYCA_B = "6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a";
         }
-        if (StringUtils.contains(IMPLICITLYCA_G, "ecdsa.implicitlyca.g")) {
+        if (Strings.CS.contains(IMPLICITLYCA_G, "ecdsa.implicitlyca.g")) {
         	log.info("IMPLICITLYCA_G not set, using default.");
         	IMPLICITLYCA_G = "020ffa963cdca8816ccc33b8642bedf905c3d358573d3f27fbbd3b3cb9aaaf";
         }
-        if (StringUtils.contains(IMPLICITLYCA_N, "ecdsa.implicitlyca.n")) {
+        if (Strings.CS.contains(IMPLICITLYCA_N, "ecdsa.implicitlyca.n")) {
         	log.info("IMPLICITLYCA_N not set, using default.");
         	IMPLICITLYCA_N = "883423532389192164791648750360308884807550341691627752275345424702807307";
         }

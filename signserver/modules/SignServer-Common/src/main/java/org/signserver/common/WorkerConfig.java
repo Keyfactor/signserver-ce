@@ -31,7 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.internal.UpgradeableDataHashMap;
@@ -397,7 +399,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public boolean shouldMaskProperty(final String propertyName) {
         final String propertyNameTrimmed =
-                StringUtils.removeEnd(StringUtils.removeStart(propertyName, "_"), "_");
+                Strings.CS.removeEnd(Strings.CS.removeStart(propertyName, "_"), "_");
 
         return getMaskedProperties().contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
     }

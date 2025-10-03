@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jakarta.persistence.EntityManager;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.ArchiveDataVO;

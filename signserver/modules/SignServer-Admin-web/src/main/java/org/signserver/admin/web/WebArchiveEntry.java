@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.signserver.common.ArchiveMetadata;
 
 /**

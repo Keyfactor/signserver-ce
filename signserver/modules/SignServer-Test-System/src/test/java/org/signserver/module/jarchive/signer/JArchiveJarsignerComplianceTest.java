@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;

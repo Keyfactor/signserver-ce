@@ -11,16 +11,17 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 echo "Will call mvn install:install-file with certain dependencies from ${DIR}/ext/."
 
 # Install KFC dependencies not yet in Central
-XCU_VERSION=5.2.3
+XCU_VERSION=5.3.7
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-${XCU_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/x509-common-util-${XCU_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=jar -Dclassifier=sources
+mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/x509-common-util-${XCU_VERSION}.pom" -DgroupId=com.keyfactor -DartifactId=x509-common-util -Dversion=${XCU_VERSION} -Dpackaging=pom
 
 CRYPTOTOKENS_VERSION=2.4.4
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/cryptotokens-api-${CRYPTOTOKENS_VERSION}.jar" -DgroupId=com.keyfactor -DartifactId=cryptotokens-api -Dversion=${CRYPTOTOKENS_VERSION} -Dpackaging=jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/cryptotokens-api-${CRYPTOTOKENS_VERSION}-sources.jar" -DgroupId=com.keyfactor -DartifactId=cryptotokens-api -Dversion=${CRYPTOTOKENS_VERSION} -Dpackaging=jar -Dclassifier=sources
 
 # Install DeployTools dependencies
-DEPLOYTOOLS_VERSION=2.3
+DEPLOYTOOLS_VERSION=2.4
 
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/DeployTools-${DEPLOYTOOLS_VERSION}.pom" -DgroupId=org.signserver.deploytools -DartifactId=DeployTools -Dversion=${DEPLOYTOOLS_VERSION} -Dpackaging=pom
 
@@ -46,7 +47,7 @@ XADES4J_VERSION=2.2.1-signserver7.0.0
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/xades4j-${XADES4J_VERSION}.jar" -DgroupId=org.signserver.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/../modules/source-jars/xades4j-${XADES4J_VERSION}-sources.jar" -DgroupId=org.signserver.xades4j -DartifactId=xades4j -Dversion=${XADES4J_VERSION} -Dpackaging=jar -Dclassifier=sources
 
-CESECORE_VERSION=7.0.0.1signserver7.0.0
+CESECORE_VERSION=7.0.0.1signserver7.4.0
 # cesecore-common jar
 mvn ${MVN_OPTS} install:install-file -Dfile="${DIR}/ext/cesecore-common-${CESECORE_VERSION}.jar" -DgroupId=org.ejbca.cesecore -DartifactId=cesecore-common -Dversion=${CESECORE_VERSION} -Dpackaging=jar
 

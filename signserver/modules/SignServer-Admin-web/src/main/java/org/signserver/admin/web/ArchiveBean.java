@@ -32,8 +32,8 @@ import jakarta.faces.view.ViewScoped;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.elems.RelationalOperator;

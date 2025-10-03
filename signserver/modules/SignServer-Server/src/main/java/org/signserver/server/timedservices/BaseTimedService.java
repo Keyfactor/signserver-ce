@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import jakarta.persistence.EntityManager;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;

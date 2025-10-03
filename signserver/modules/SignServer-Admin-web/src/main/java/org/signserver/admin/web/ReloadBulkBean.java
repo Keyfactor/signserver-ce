@@ -16,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;

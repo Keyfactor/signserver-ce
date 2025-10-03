@@ -31,8 +31,6 @@ public class OidcConfig {
     private static final Logger LOG = Logger.getLogger(OidcConfig.class);
 
     private String clientId;
-    // Client Name is used in Keycloak
-    private String clientName;
     private String clientSecret;
     private String providerUri;
     private String logoutUri;
@@ -53,7 +51,6 @@ public class OidcConfig {
                 properties.load(in);
                 clientId = properties.getProperty("oidc.clientId");
                 clientSecret = properties.getProperty("oidc.clientSecret");
-                clientName = properties.getProperty("oidc.clientName");
                 providerUri = properties.getProperty("oidc.providerUri");
                 logoutUri = properties.getProperty("oidc.logoutUri");
                 redirectUri = properties.getProperty("oidc.redirectUri");
@@ -90,14 +87,6 @@ public class OidcConfig {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
-    }
-
-    public String getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
     }
 
     public void setClientSecret(String clientSecret) {

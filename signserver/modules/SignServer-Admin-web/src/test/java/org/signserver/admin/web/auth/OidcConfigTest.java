@@ -38,7 +38,6 @@ public class OidcConfigTest {
 
         // Verify values loaded from src/test/resources/oidc.properties
         assertEquals("test-client-id", cfg.getClientId());
-        assertEquals("Test Client", cfg.getClientName());
         assertEquals("test-secret", cfg.getClientSecret());
         assertEquals("https://provider.example", cfg.getProviderUri());
         assertEquals("https://app.example/signserver", cfg.getLogoutUri());

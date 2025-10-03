@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.common.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.cesecore.util.CertTools;
 import org.cesecore.util.Base64;
 import java.io.ByteArrayInputStream;
@@ -25,7 +26,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;

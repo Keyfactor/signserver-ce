@@ -13,7 +13,8 @@
 package org.signserver.admin.web;
 
 import java.util.Properties;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 

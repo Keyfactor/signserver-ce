@@ -30,7 +30,8 @@ import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.RenewalUtils;
 import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;

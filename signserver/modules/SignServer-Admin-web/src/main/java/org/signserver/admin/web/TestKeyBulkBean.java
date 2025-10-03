@@ -20,11 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import org.apache.commons.lang.StringUtils;
 import jakarta.ejb.EJBException;
+import org.apache.commons.lang3.StringUtils;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;

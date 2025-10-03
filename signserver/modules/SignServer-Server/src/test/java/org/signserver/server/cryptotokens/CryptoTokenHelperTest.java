@@ -30,7 +30,8 @@ import java.util.concurrent.TimeUnit;
 import javax.security.auth.x500.X500Principal;
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -256,7 +257,7 @@ public class CryptoTokenHelperTest extends TestCase {
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
-        assertTrue("New signature algorithm", StringUtils.containsIgnoreCase(expectedSigAlg, certAfter.getSigAlgName()));
+        assertTrue("New signature algorithm", Strings.CI.contains(expectedSigAlg, certAfter.getSigAlgName()));
         assertTrue("Validity time more than about 20 years: " + certAfter.getNotAfter(), TimeUnit.MILLISECONDS.toDays(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()) > 7300);
 
         // Custom validity

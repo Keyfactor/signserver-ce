@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJB;
 import jakarta.faces.annotation.ManagedProperty;
 import jakarta.faces.context.FacesContext;
@@ -30,7 +29,7 @@ import jakarta.faces.view.ViewScoped;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.signserver.admin.common.query.QueryCondition;
@@ -47,7 +46,6 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 
-import static java.util.Map.entry;
 import org.signserver.admin.web.auth.LoginBean;
 
 /**

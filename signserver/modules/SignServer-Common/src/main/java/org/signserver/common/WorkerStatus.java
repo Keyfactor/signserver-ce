@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import org.apache.commons.lang3.time.FastDateFormat;
+
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -20,7 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.time.FastDateFormat;
+//import org.apache.commons.lang.time.FastDateFormat;
 
 /**
  * Common base class used to report the status of a signer or service. Should

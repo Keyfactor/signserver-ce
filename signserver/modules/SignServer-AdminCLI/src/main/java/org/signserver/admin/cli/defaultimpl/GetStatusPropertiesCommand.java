@@ -14,7 +14,8 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.util.Date;
 import java.util.Map;
-import org.apache.commons.lang.time.FastDateFormat;
+
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;

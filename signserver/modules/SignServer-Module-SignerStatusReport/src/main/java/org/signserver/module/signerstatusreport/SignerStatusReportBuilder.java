@@ -15,7 +15,8 @@ package org.signserver.module.signerstatusreport;
 import java.security.cert.Certificate;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang.time.FastDateFormat;
+
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.server.KeyUsageCounterHash;

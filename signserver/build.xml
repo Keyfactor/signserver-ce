@@ -14,7 +14,7 @@
 <!-- Version: $Id$ -->
 <project xmlns:if="ant:if" name="signserver" default="usage" basedir=".">
     <description>SignServer targets.</description>
-    <property name="deploytools.version" value="2.3"/>
+    <property name="deploytools.version" value="2.4"/>
 
     <!-- copy in from ../signserver-custom -->
     <property name="customsignserver.home" location="${basedir}/../signserver-custom" />
@@ -196,28 +196,28 @@ Installation Guide for details.
         <echo message="Filtering jars..."/>
 
         <!-- cesecore-common.jar -->
-        <property name="cesecore-common.jar" value="cesecore-common-7.0.0.1signserver7.0.0.jar"/>
+        <property name="cesecore-common.jar" value="cesecore-common-7.0.0.1signserver7.4.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-common.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${cesecore-common.jar}">
             <zipfileset src="${tmp}/${cesecore-common.jar}" excludes="${cesecore.common.excludes}"/>
         </jar>
 
         <!-- x509-common-util.jar -->
-        <property name="kfc-x509-common-util.jar" value="x509-common-util-5.2.3.jar"/>
+        <property name="kfc-x509-common-util.jar" value="x509-common-util-5.3.7.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${kfc-x509-common-util.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${kfc-x509-common-util.jar}">
             <zipfileset src="${tmp}/${kfc-x509-common-util.jar}" excludes="${kfc.x509.common.util.excludes}"/>
         </jar>
 
         <!-- cesecore-ejb.jar -->
-        <property name="cesecore-ejb.jar" value="cesecore-ejb-7.0.0.1signserver7.0.0.jar"/>
+        <property name="cesecore-ejb.jar" value="cesecore-ejb-7.0.0.1signserver7.4.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/${cesecore-ejb.jar}"/>
         <jar destfile="${app.ear.dir}/${cesecore-ejb.jar}">
             <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
         </jar>
 
         <!-- cesecore-entities.jar -->
-        <property name="cesecore-entities.jar" value="cesecore-entity-7.0.0.1signserver7.0.0.jar"/>
+        <property name="cesecore-entities.jar" value="cesecore-entity-7.0.0.1signserver7.4.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-entities.jar}"/>
         <jar destfile="${app.ear.dir}/lib/${cesecore-entities.jar}">
             <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>
@@ -1035,7 +1035,7 @@ SHA-512 checksum: ${signclient.zip.bin.sha512}
                 <include name="ext/commons-io-2.5.jar"/>
                 <include name="ext/commons-lang-2.6.jar"/>
                 <include name="ext/commons-logging-12.jar"/>
-                <include name="ext/commons-configuration.jar"/>
+                <include name="ext/commons-configuration2-2.12.0.jar"/>
                 <include name="ext/ejbca-util.jar"/>
                 <include name="ext/log4j-1.2.14.jar"/>
             </fileset>

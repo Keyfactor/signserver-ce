@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.*;
-import org.apache.commons.lang.StringUtils;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;

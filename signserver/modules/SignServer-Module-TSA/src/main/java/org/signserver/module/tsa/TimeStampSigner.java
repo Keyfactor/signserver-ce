@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.asn1.x509.Extension;
 import org.signserver.module.cmssigner.FilteredSignedAttributeTableGenerator;
 import java.io.IOException;

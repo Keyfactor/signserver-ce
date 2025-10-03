@@ -35,7 +35,7 @@ import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
@@ -203,7 +203,7 @@ public class MRTDSODSigner extends BaseSigner {
             final String doHashing = config.getProperty(PROPERTY_DODATAGROUPHASHING, DEFAULT_DODATAGROUPHASHING);
             final Map<Integer, byte[]> dgvalues = sodRequest.getDataGroupHashes();
             Map<Integer, byte[]> dghashes = dgvalues;
-            if (StringUtils.equalsIgnoreCase(doHashing, "true")) {
+            if (Strings.CI.equals(doHashing, "true")) {
                 if (log.isDebugEnabled()) {
                     log.debug("Converting data group values to hashes using algorithm " + digestAlgorithm);
                 }

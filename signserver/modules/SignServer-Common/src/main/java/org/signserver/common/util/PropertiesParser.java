@@ -12,9 +12,9 @@
  *************************************************************************/
 package org.signserver.common.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 import java.util.*;
-import org.apache.commons.lang.StringUtils;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.GlobalConfiguration;

@@ -45,9 +45,9 @@ public class WS31Dispatcher extends HttpServlet {
         final StringBuilder newUrl = new StringBuilder();
         newUrl.append(NEW_URL);
         final String query = request.getQueryString();
-        if (query != null) {
+        if (query != null && query.contains("wsdl")) {
             newUrl.append("?");
-            newUrl.append(query);
+            newUrl.append("wsdl");
         }
         response.sendRedirect(response.encodeRedirectURL(newUrl.toString()));
     } 

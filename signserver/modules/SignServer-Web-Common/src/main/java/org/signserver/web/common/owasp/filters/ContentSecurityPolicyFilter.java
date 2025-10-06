@@ -13,6 +13,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.inject.Inject;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -23,6 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Hex;
+import org.signserver.admin.common.config.OidcConfig;
 
 /**
  * Sample filter implementation to define a set of Content Security Policies.<br>
@@ -58,6 +60,10 @@ public class ContentSecurityPolicyFilter implements Filter {
 
 	/** Used for Script Nonce */
 	private SecureRandom prng = null;
+
+    /** Used to get the OIDC Config and is only intended to be injected for AdminWeb and is only used for the logout.xhtml. */
+    @Inject
+    private OidcConfig oidcConfig;
 
 	/**
 	 * Used to prepare (one time for all) set of CSP policies that will be applied on each HTTP response.
@@ -141,6 +147,13 @@ public class ContentSecurityPolicyFilter implements Filter {
 
 		/* Step 2 : Add CSP policies to HTTP response */
 		StringBuilder policiesBuffer = new StringBuilder(this.policies);
+
+		//Update form-action for logout requests to include providerUri
+		String requestURI = httpRequest.getRequestURI();
+		if (requestURI.contains("/logout.xhtml")) {
+            String updatedPolicies = policiesBuffer.toString().replaceAll("form-action 'self'", "form-action 'self' " + oidcConfig.getProviderUri());
+            policiesBuffer = new StringBuilder(updatedPolicies);
+        }
 
 		// If resource is a frame add Frame/Sandbox CSP policy
 		if (isFrame) {

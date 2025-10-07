@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.security.auth.x500.X500Principal;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertFalse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -1137,6 +1138,46 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         LOG.info("testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken");
         secretKeyGenerationHelper(SECRET_KEY_PREFIX + "Blowfish", "168");
     }
+
+    /**
+     * Tests that disabling key usage counter should not be needed for Crypto Workers by setting the default key to
+     * a non-existing key, verify that it is offline and then create a key and change the default key
+     * to the newly created key.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCryptoWorkersWithNoCertificateDoesNotRequireKeyUsageCounter() throws Exception {
+        LOG.info("testCryptoWorkersWithNoCertificateDoesNotRequireKeyUsageCounter");
+
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            // Setup crypto token
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "TYPE", "CRYPTO_WORKER");
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "DEFAULTKEY", "doesnotexist");
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "NOCERTIFICATES", "true");
+            workerSession.activateSigner(new WorkerIdentifier(JKS_CRYPTO_TOKEN), pin);
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            // Expect crypto token to be offline because the configured default key does not exist
+            final List<String> errors = workerSession.getStatus(new WorkerIdentifier(JKS_CRYPTO_TOKEN)).getFatalErrors();
+            assertFalse("Fatal errors: " + errors, workerSession.getStatus(new WorkerIdentifier(JKS_CRYPTO_TOKEN)).getFatalErrors().isEmpty());
+
+            // Create a key that has the same name as the set default key that did not exist
+            workerSession.generateSignerKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), "RSA", "1024", "doesnotexist", pin.toCharArray());
+
+            // Expect no errors
+            final List<String> postErrors = workerSession.getStatus(new WorkerIdentifier(JKS_CRYPTO_TOKEN)).getFatalErrors();
+            assertTrue("Fatal errors: " + postErrors, workerSession.getStatus(new WorkerIdentifier(JKS_CRYPTO_TOKEN)).getFatalErrors().isEmpty());
+
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
 
     private void secretKeyGenerationHelper(String algo, String spec) throws Exception {
         try {

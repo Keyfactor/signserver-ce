@@ -112,7 +112,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
             signerCertificate = (X509Certificate) getSigningCertificate(crypto);
             publicKey = crypto.getPublicKey();
-            if (publicKey != null && (signerCertificate != null || isNoCertificates())) {
+            if (publicKey != null && (signerCertificate != null || isNoCertificates()) && config.getProperty("TYPE").equals("PROCESSABLE")) {
                 final long keyUsageLimit = Long.parseLong(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
                 KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounterHash.create(publicKey));

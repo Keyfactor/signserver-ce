@@ -59,6 +59,16 @@
                                 </div>
                             </li>
                         </h:panelGroup>
+                        <h:panelGroup rendered="#{loginBean.loginTypeClientCert}">
+                            <li class="SS_infoItem">
+                                <label>
+                                    <h:outputText value="#{text['User_COLON']}"/>
+                                </label>
+                                <div class="mx-0.5">
+                                    <h:outputText value="#{authenticationBean.userDisplayName}"/>
+                                </div>
+                            </li>
+                        </h:panelGroup>
                         <h:panelGroup rendered="#{loginBean.loginTypeOIDC}">
                             <li class="SS_infoItem">
                                 <label>

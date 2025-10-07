@@ -126,7 +126,11 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
             }
         } catch (CryptoTokenOfflineException e) {
-            // The error will have been picked up by getCryptoTokenFatalErrors already
+            if (crypto == null && isNoCertificates() && config.getProperty("TYPE").equals("PROCESSABLE")) {
+                if (!fatalErrors.contains("Incorrect default key: " + config.getProperty("DEFAULTKEY"))) {
+                    fatalErrors.add("Incorrect default key: " + config.getProperty("DEFAULTKEY"));
+                }
+            }
         } catch (NumberFormatException e) {
             fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT + ": " + e.getMessage());
         } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException e) {

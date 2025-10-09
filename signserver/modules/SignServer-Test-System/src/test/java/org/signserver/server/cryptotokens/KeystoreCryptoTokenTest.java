@@ -1114,6 +1114,32 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
     }
 
+    /**
+     * Tests that not setting a default key when NOCERTIFICATES is true does not result in an error about incorrect key.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNoCertificatesWithoutSpecifiyingKey() throws Exception {
+        LOG.info("testNoCertificatesWithoutSpecifiyingKey");
+
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            workerSession.removeWorkerProperty(JKS_CRYPTO_TOKEN, "DEFAULTKEY");
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "NOCERTIFICATES", "true");
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            List<String> errors = workerSession.getStatus(new WorkerIdentifier(JKS_CRYPTO_TOKEN)).getFatalErrors();
+            assertFalse("Should not contain error about incorrect key but did: " + errors,
+                    errors.toString().contains("Incorrect default key"));
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
     private void setP12CryptoTokenProperties() throws Exception {
         // Create keystore
         keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");

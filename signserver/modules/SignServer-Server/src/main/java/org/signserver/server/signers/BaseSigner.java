@@ -126,7 +126,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
             }
         } catch (CryptoTokenOfflineException e) {
-            if (crypto == null && isNoCertificates() && config.getProperty("TYPE").equals("PROCESSABLE")) {
+            // Most errors will already have been picked up by getCryptoTokenFatalErrors and are ignored here,
+            // instead we only check for the case of a specified but non-existing DEFAULTKEY
+            if (crypto == null && isNoCertificates() && config.getProperty("TYPE").equals("PROCESSABLE") && !StringUtils.isBlank(config.getProperty("DEFAULTKEY"))) {
                 if (!fatalErrors.contains("Incorrect default key: " + config.getProperty("DEFAULTKEY"))) {
                     fatalErrors.add("Incorrect default key: " + config.getProperty("DEFAULTKEY"));
                 }

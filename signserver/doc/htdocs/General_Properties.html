@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000123">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:21.024+0000">
+    <meta name="exp-page-id" content="371000123">
+    <meta name="exp-page-title" content="General Properties">
+    <meta name="exp-page-version" content="7">
+    <meta name="exp-page-scroll-page-id" content="3b9d5c8d3d86c4974dc2d4e0ba009b4b">
+    <meta name="exp-page-created" content="2017-12-06T12:47:14.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-01T08:17:50.659+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>General Properties</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="6e73a94b5904e0aa7a6b2bd75441e6bd3a7736db46cdddf10beeaccf72005939"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="GeneralProperties-top" pageid="371000123" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000123" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="CryptoTokens.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">CryptoTokens</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="General_Properties.html" target="_self" aria-current="page">General Properties</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-9334445388048b89a0ec85e36b0c81382d43d63d972bbbbe8cf23dd4ca317670"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">General Properties</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="56571b9e-a117-4e58-9907-ce585a8afd8e" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.0334%;"><col span="1" style="width: 69.9666%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Property</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>CRYPTOTOKEN_IMPLEMENTATION</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the fully qualified class name of the Crypto token implementation to use. See the following sections for available Crypto tokens.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>KEYALG</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the key algorithm to use when generating new keys. Only for Crypto tokens supporting key generation.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>KEYSPEC</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the key specification to use when generating new keys. Only for Crypto tokens supporting key generation.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>KEYGENERATIONLIMIT</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the limit for the maximum number of keys allowed to be generated. If set and set to 0 or a positive value, key generation is not allowed if the current number of keys equals to or is larger than this value. Default: <code>""</code> = no limit.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>SELFSIGNED_DN</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the Distinguished Name (DN) to use as issuer and subject DN in the self-signed certificate instead of the default one.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>This property can be set on the worker that is going to use the key so that different options can be used for different workers.</p></div></div></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>SELFSIGNED_SIGNATUREALGORITHM</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the signature algorithm to use in the self-signed certificate.</p><p>Default: <code>SHA1withRSA</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>This property can be set on the worker that is going to use the key, so that different options can be used for different workers.</p></div></div></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>SELFSIGNED_VALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the validity time (in seconds) to use in the self-signed certificate instead of the default of about 30 years. If a validity time in seconds would exceed year 9999, it will be defaulted to the date 9999-12-31 23:59:59 UTC.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>This property can be set on the worker that is going to use the key, so that different options can be used for different workers.</p></div></div></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="CryptoTokens.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>CryptoTokens</span>
+        </a>
+
+        <a href="FortanixCryptoToken.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>FortanixCryptoToken</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

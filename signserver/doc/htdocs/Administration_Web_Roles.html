@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1826947194">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:53.550+0000">
+    <meta name="exp-page-id" content="1826947194">
+    <meta name="exp-page-title" content="Administration Web Roles">
+    <meta name="exp-page-version" content="9">
+    <meta name="exp-page-scroll-page-id" content="43a498df03462ae13115ffcd0869c7fd">
+    <meta name="exp-page-created" content="2025-09-25T14:06:59.564+0000">
+    <meta name="exp-page-last-modified" content="2025-10-01T07:16:57.891+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Administration Web Roles</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="9a8e2308a3228445154d5a162edfdc1c4c6f4b939a93c13bcc80d7aa41c172cc"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="AdministrationWebRoles-top" pageid="1826947194" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1826947194" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_User_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer User Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Administration_Web.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Administration Web</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Administration_Web_Roles.html" target="_self" aria-current="page">Administration Web Roles</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-143d93fa64825d0e4f09d8e6b3f39439462cf7d604e6e309bf0956ca625b6365"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Administration Web Roles</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p>There are four pre-defined roles within the Administration Web for managing and deploying SignServer.</p><h2 id="AdministrationWebRoles-Pre-definedRolesinSignServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Pre-defined Roles in SignServer<span class="confluence-anchor-link" id="src-1826947194_AdministrationWebRoles-Pre-defined-Roles-in-SignServer"></span></span></h2><p>The four roles included with SignServer are:</p><ol start="1"><li><p><strong>Admin Role</strong>: Admins have configuration access excluding audit log and archive auditor permissions. Admins are responsible for creating and maintaining SignServer configurations, including global properties, workers, and authorizations. See <a data-card-appearance="inline" href="Administrators_Page.html" rel="nofollow" shape="rect" data-scroll-target-source-id="371000707" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000707/Administrators+Page" data-scroll-link-target-source-id="371000707">Administrators Page</a>. </p></li><li><p><strong>Auditor Role</strong>: Auditors have access to the audit log, which maintains information related to system configuration, worker creation, removal, and modifications. See <a data-card-appearance="inline" href="Audit_Log_Page.html" rel="nofollow" shape="rect" data-scroll-target-source-id="371000711" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000711/Audit+Log+Page" data-scroll-link-target-source-id="371000711">Audit Log Page</a>. </p></li><li><p><strong>Archive Auditor Role</strong>: Archive Auditors have access to the archive log, which contains information about which worker was used to sign an artifact. The log maintains the original and signed documents, which can be optionally downloaded. See <a data-card-appearance="inline" href="Archive_Page.html" rel="nofollow" shape="rect" data-scroll-target-source-id="371000715" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000715/Archive+Page" data-scroll-link-target-source-id="371000715">Archive Page</a>. </p></li><li><p><strong>Peer System Role</strong>: Peer Systems allow for remote operation from an EJBCA instance, acting as an RA for signing certificates and one-time keys and certificates using OneTimeCryptoWorker. It enables automatic renewal of SignServer keys and certificates using the EJBCA peering protocol.</p></li></ol><h2 id="AdministrationWebRoles-PermissionsOverview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Permissions Overview<span class="confluence-anchor-link" id="src-1826947194_AdministrationWebRoles-Permissions-Overview"></span></span></h2><p>The table outlines the default permissions by role and function:</p><div class="table-wrap"><table data-table-width="1800" data-layout="center" data-local-id="0399934f-c333-4bc8-9c27-c87cffea8739" data-table-display-mode="default" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 18.4196%;"><col span="1" style="width: 11.5748%;"><col span="1" style="width: 14.7468%;"><col span="1" style="width: 13.3556%;"><col span="1" style="width: 13.0774%;"><col span="1" style="width: 15.4702%;"><col span="1" style="width: 13.3556%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Role</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Maintain Configuration</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Add, Modify, Delete Workers</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Grant Access to SignServer</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>View Audit Log</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>View Archive Log</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Download Archive Artifacts</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>Administrator</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/cf05dff4d7f1/check.png" width="16" height="16" alt="(tick)"> </p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/cf05dff4d7f1/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/cf05dff4d7f1/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"> </p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>Auditor</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/cf05dff4d7f1/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>Achive Auditor</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/e959b021b0c4/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/cf05dff4d7f1/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/cf05dff4d7f1/check.png" width="16" height="16" alt="(tick)"></p></td></tr></tbody></table></div><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The Peer System is a special role that allows certificates generated by an EJBCA CA, and is used in a SignServer environment to be updated automatically on the SignServer instance.</p></div></div><h2 id="AdministrationWebRoles-AssigningRoles" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Assigning Roles<span class="confluence-anchor-link" id="src-1826947194_AdministrationWebRoles-Assigning-Roles"></span></span></h2><p>To assign roles to users:</p><ol start="1"><li><p><strong>Create a Certificate</strong>: This can be done using EJBCA or any other CA.</p></li><li><p><strong>Load the Certificate</strong>: This involves identifying the certificate serial number and issuer DN.</p></li><li><p><strong>Identify the SignServer Role</strong>: Choose one to four roles. The role can have multiple values, meaning an individual can be assigned as both an Admin and an Auditor.</p></li></ol>
+<nav id="ht-post-nav">
+        <a href="Administrators_Page.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Administrators Page</span>
+        </a>
+
+        <a href="Audit_Log_Page.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Audit Log Page</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

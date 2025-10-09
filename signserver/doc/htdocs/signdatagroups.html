@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:08.647+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:35.513+0000">
     <meta name="exp-page-id" content="370999645">
     <meta name="exp-page-title" content="signdatagroups">
-    <meta name="exp-page-version" content="2">
+    <meta name="exp-page-version" content="9">
     <meta name="exp-page-scroll-page-id" content="8f8f1957356223d7f47c32a9e8ee1a9e">
     <meta name="exp-page-created" content="2018-11-30T09:51:24.000+0000">
-    <meta name="exp-page-last-modified" content="2024-02-17T15:37:09.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-08T08:55:22.077+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>signdatagroups</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="ff1d3df5d6f9125210121378abacaed3e1df9da4fa907c9420ca6c0eeeb12cd7"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="signdatagroups-top" pageid="370999645" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="signdatagroups-top" pageid="370999645" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -145,7 +145,7 @@
                     <a href="SignServer_Integration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Integration</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="Client_CLI.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Client CLI</a>
+                    <a href="SignClient.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignClient</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
                 <a href="signdatagroups.html" target="_self" aria-current="page">signdatagroups</a>
@@ -155,47 +155,57 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-e0f0a94cff968be45f7d5c3f2bf0ac107b72db85ac5e9a3f93629377d20c6655"><span class="js-hide-until-loaded">signdatagroups</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-aa391b90a9a21a8718795229276e1ed3984fba4bb71fb59a28ee83300e8b2aa2"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">signdatagroups</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Sign the specified data groups and produce an SOd (MRTD).</p><pre>$ bin/signclient signdatagroups
-usage: signdatagroups &lt;options&gt;
-Request MRTD data groups to be signed
- -data &lt;arg&gt;            Data to send to the worker.
- -encoding &lt;arg&gt;        Encoding of the data option. None or base64.
-                        Default: none.
- -host &lt;arg&gt;            Server name or IP address. Default: localhost
- -keyalias &lt;arg&gt;        Alias of the key in the keystore to use for
-                        authentication.
- -keystore &lt;arg&gt;        Keystore with private key and certificate for
-                        client certificate authentication.
- -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is
-                        specified but not this keystore password option,
-                        the CLI will instead prompt for the password.
- -metadata &lt;arg&gt;        Additional meta data to send to the signer. The
-                              parameters should be given in the form KEY=VALUE.
-                              This option can be given multiple times.
- -password &lt;arg&gt;        Password for authentication. If username is
-                        specified but not this password option, the CLI
-                        will instead prompt for the password.
- -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for
-                        HTTPS and 8443 for HTTPS with client
-                        authentication.
- -protocol &lt;arg&gt;        Method of interacting with SignServer. HTTP or
-                        CLIENTWS. Default: HTTP.
- -repeat &lt;arg&gt;          Run the operation this number of times. Default: 1
- -servlet &lt;arg&gt;         Servlet to call. Default /signserver/sod
- -truststore &lt;arg&gt;      Keystore with trusted certificates to use with
-                        HTTPS.
- -truststorepwd &lt;arg&gt;   Password for the keystore with trusted
-                        certificates. If truststore is specified but not
-                        this truststore password option, the CLI will
-                        instead prompt for the password.
- -username &lt;arg&gt;        Username for authentication.
- -workerid &lt;arg&gt;        ID of worker which should perform the operation.
- -workername &lt;arg&gt;      Name of worker which should perform the operation.</pre><pre>Sample usages:<br clear="none">a) signdatagroups -workername MRTDSODSigner -data<br clear="none">"1=value1&amp;2=value2&amp;3=value3"<br clear="none">b) signdatagroups -workername MRTDSODSigner -data<br clear="none">"1=PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=&amp;2=BTfUgfc6dXM0MoBS2jr5Ymzt<br clear="none">lwKOILhJ9hFcIs12UZc=&amp;3=idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0="<br clear="none">c) signdatagroups -workername MRTDSODSigner -data<br clear="none">"1=value1&amp;2=value2&amp;3=value3" -metadata param1=value1 -metadata<br clear="none">param2=value2</pre>
+                        <p>Use the SignClient <code>signdatagroups</code> command to sign the specified data groups and produce an SOd (MRTD).</p><h2 id="SignClientsigndatagroupsCommand-Usage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Usage<span class="confluence-anchor-link" id="src-370999645_SignClientsigndatagroupsCommand-Usage"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ bin/signclient signdatagroups</code></div>
+<div class="line"><code class="plain">usage: signdatagroups &lt;options&gt;</code></div>
+<div class="line"><code class="plain">Request MRTD data groups to be signed</code></div>
+<div class="line"><code class="plain"> -data &lt;arg&gt;            Data to send to the worker.</code></div>
+<div class="line"><code class="plain"> -encoding &lt;arg&gt;        Encoding of the data option. None or base64.</code></div>
+<div class="line"><code class="plain">                        Default: none.</code></div>
+<div class="line"><code class="plain"> -host &lt;arg&gt;            Server name or IP address. Default: localhost</code></div>
+<div class="line"><code class="plain"> -keyalias &lt;arg&gt;        Alias of the key in the keystore to use </code><code class="keyword">for</code></div>
+<div class="line"><code class="plain">                        authentication.</code></div>
+<div class="line"><code class="plain"> -keystore &lt;arg&gt;        Keystore with </code><code class="keyword">private</code><code class="plain"> key and certificate </code><code class="keyword">for</code></div>
+<div class="line"><code class="plain">                        client certificate authentication.</code></div>
+<div class="line"><code class="plain"> -keystorepwd &lt;arg&gt;     Password </code><code class="keyword">for</code><code class="plain"> reading the keystore.  If keystore is</code></div>
+<div class="line"><code class="plain">                        specified but not </code><code class="keyword">this</code><code class="plain"> keystore password option,</code></div>
+<div class="line"><code class="plain">                        the CLI will instead prompt </code><code class="keyword">for</code><code class="plain"> the password.</code></div>
+<div class="line"><code class="plain"> -metadata &lt;arg&gt;        Additional meta data to send to the signer. The</code></div>
+<div class="line"><code class="plain">                              parameters should be given in the form KEY=VALUE.</code></div>
+<div class="line"><code class="plain">                              This option can be given multiple times.</code></div>
+<div class="line"><code class="plain"> -password &lt;arg&gt;        Password </code><code class="keyword">for</code><code class="plain"> authentication. If username is</code></div>
+<div class="line"><code class="plain">                        specified but not </code><code class="keyword">this</code><code class="plain"> password option, the CLI</code></div>
+<div class="line"><code class="plain">                        will instead prompt </code><code class="keyword">for</code><code class="plain"> the password.</code></div>
+<div class="line"><code class="plain"> -port &lt;arg&gt;            Server port. Default: </code><code class="value">8080</code><code class="plain"> (</code><code class="keyword">for</code><code class="plain"> HTTP), </code><code class="value">8442</code><code class="plain"> </code><code class="keyword">for</code></div>
+<div class="line"><code class="plain">                        HTTPS and </code><code class="value">8443</code><code class="plain"> </code><code class="keyword">for</code><code class="plain"> HTTPS with client</code></div>
+<div class="line"><code class="plain">                        authentication.</code></div>
+<div class="line"><code class="plain"> -protocol &lt;arg&gt;        Method of interacting with SignServer. HTTP or</code></div>
+<div class="line"><code class="plain">                        CLIENTWS. Default: HTTP.</code></div>
+<div class="line"><code class="plain"> -repeat &lt;arg&gt;          Run the operation </code><code class="keyword">this</code><code class="plain"> number of times. Default: </code><code class="value">1</code></div>
+<div class="line"><code class="plain"> -servlet &lt;arg&gt;         Servlet to call. Default /signserver/sod</code></div>
+<div class="line"><code class="plain"> -truststore &lt;arg&gt;      Keystore with trusted certificates to use with</code></div>
+<div class="line"><code class="plain">                        HTTPS.</code></div>
+<div class="line"><code class="plain"> -truststorepwd &lt;arg&gt;   Password </code><code class="keyword">for</code><code class="plain"> the keystore with trusted</code></div>
+<div class="line"><code class="plain">                        certificates. If truststore is specified but not</code></div>
+<div class="line"><code class="plain">                        </code><code class="keyword">this</code><code class="plain"> truststore password option, the CLI will</code></div>
+<div class="line"><code class="plain">                        instead prompt </code><code class="keyword">for</code><code class="plain"> the password.</code></div>
+<div class="line"><code class="plain"> -username &lt;arg&gt;        Username </code><code class="keyword">for</code><code class="plain"> authentication.</code></div>
+<div class="line"><code class="plain"> -workerid &lt;arg&gt;        ID of worker which should perform the operation.</code></div>
+<div class="line"><code class="plain"> -workername &lt;arg&gt;      Name of worker which should perform the operation.</code></div>
+</div>
+</div><h2 id="SignClientsigndatagroupsCommand-SampleUsages" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sample Usages<span class="confluence-anchor-link" id="src-370999645_SignClientsigndatagroupsCommand-Sample-Usages"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">a) signdatagroups -workername MRTDSODSigner -data</code><code class="string">"1=value1&amp;2=value2&amp;3=value3"</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">b) signdatagroups -workername MRTDSODSigner -data</code><code class="string">"1=PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=&amp;2=BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=&amp;3=idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0="</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">c) signdatagroups -workername MRTDSODSigner -data</code><code class="string">"1=value1&amp;2=value2&amp;3=value3"</code><code class="plain"> -metadata param1=value1 -metadata param2=value2</code></div>
+</div>
+</div>
 <nav id="ht-post-nav">
         <a href="validatecertificate.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
@@ -206,13 +216,13 @@ Request MRTD data groups to be signed
             <span>validatecertificate</span>
         </a>
 
-        <a href="Admin_WS_Interface.html" class="ht-post-nav-next">
+        <a href="SignWrapper-GPG.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Admin WS Interface</span>
+            <span>SignWrapper-GPG</span>
         </a>
 </nav>
                     </div>

@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:38.963+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:17.687+0000">
     <meta name="exp-page-id" content="371000233">
     <meta name="exp-page-title" content="List Based Address Authorizer">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="07ac80c0d3c7556506ec4021b529e569">
     <meta name="exp-page-created" content="2017-05-11T11:37:32.000+0000">
-    <meta name="exp-page-last-modified" content="2017-05-11T11:53:16.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-01T14:39:18.587+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>List Based Address Authorizer</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="13d2d23905532ecbff1aadabf0e880c5337f9184f5e1dc6ee126e40991c82414"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="ListBasedAddressAuthorizer-top" pageid="371000233" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="ListBasedAddressAuthorizer-top" pageid="371000233" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,12 +158,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-7e51534423a23236777ef5e80edcfd58feb1b5a61e9fa759adb048f842f5db6a"><span class="js-hide-until-loaded">List Based Address Authorizer</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0bce71acf65762a05fa6fe83a93bfc6b0dac805e7da5ea8996eb55efa674d5f7"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">List Based Address Authorizer</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>An authorizer that supports white- and blacklisting direct and forwarded addresses (coming via a proxy).</p><p>AUTHTYPE=<strong>org.signserver.server.ListBasedAddressAuthorizer</strong></p><ul><li><strong>WHITELISTED_DIRECT_ADDRESSES</strong> = A comma-separated list of IP addresses allowed direct access.</li><li><strong>BLACKLISTED_DIRECT_ADDRESSES</strong> = A comma-separated list of IP addresses denied direct access.</li><li><strong>WHITELISTED_FORWARDED_ADDRESSES</strong> = A comma-separated list of IP addresses allowed access as a forwarded address.</li><li><strong>BLACKLISTED_FORWARDED_ADDRESSES</strong> = A comma-separated list of IP addresses denied access as a forwarded address.</li><li><strong>MAX_FORWARDED_ADDRESSES</strong> = Number of IP addresses to inspect in the list of forwarded addresses. (Default: 1).</li></ul><p>It is not possible to specify both a white list and a black list at the same time for each of direct and forwarded addresses. One of each list (direct and forwarded) must be specified. When specifying a whitelist for forwarded addresses, requests without an X-Forwarded-For header will always be denied. When there are multiple addresses in the X-Forwarded-For header (in the case of using multiple proxies) the number of addresses specified in MAX_FORWARDED_ADDRESSES counting from the end of the list (or the entire list if it is shorter than this) is considered for white- and blacklisting. If specified, MAX_FORWARDED_ADDRESSES must have a value &gt;= 1. It is not allowed to set it 0 to disable checking forwarded addresses. RemoteAddressAuthorizer should be used in this case.</p><p>Examples:</p><p>1. To accept requests from all direct addresses except for 10.0.0.5 and for all forwarded addresses except 13.170.18.12 and 13.170.18.13 use:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p>An authorizer that supports white- and blacklisting direct and forwarded addresses (coming via a proxy).</p><p>AUTHTYPE=<strong>org.signserver.server.ListBasedAddressAuthorizer</strong></p><h2 id="ListBasedAddressAuthorizer-AvailableProperty" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Property<span class="confluence-anchor-link" id="src-371000233_ListBasedAddressAuthorizer-Available-Property"></span></span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="ae2b81e9-2bc9-4806-b07f-5a4f880dcf4e" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 26.2660%;"><col span="1" style="width: 73.7340%;"></colgroup><thead><tr><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>WHITELISTED_DIRECT_ADDRESSES</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>A comma-separated list of IP addresses allowed direct access.</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>BLACKLISTED_DIRECT_ADDRESSES</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>A comma-separated list of IP addresses denied direct access.</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>WHITELISTED_FORWARDED_ADDRESSES</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>A comma-separated list of IP addresses allowed access as a forwarded address.</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>BLACKLISTED_FORWARDED_ADDRESSES</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>A comma-separated list of IP addresses denied access as a forwarded address.</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>MAX_FORWARDED_ADDRESSES</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>Number of IP addresses to inspect in the list of forwarded addresses.</p><p>Default: 1</p></td></tr></tbody></table></div><p>It is not possible to specify both a white list and a black list at the same time for each of direct and forwarded addresses. One of each list (direct and forwarded) must be specified. When specifying a whitelist for forwarded addresses, requests without an X-Forwarded-For header will always be denied. When there are multiple addresses in the X-Forwarded-For header (in the case of using multiple proxies), the number of addresses specified in <code>MAX_FORWARDED_ADDRESSES</code> counting from the end of the list (or the entire list if it is shorter than this) is considered for white- and blacklisting. If specified, <code>MAX_FORWARDED_ADDRESSES</code> must have a value &gt;= 1. It is not allowed to set it 0 to disable checking forwarded addresses. <code>RemoteAddressAuthorizer</code> should be used in this case.</p><p>Examples:</p><p>1. To accept requests from all direct addresses except for 10.0.0.5 and for all forwarded addresses except 13.170.18.12 and 13.170.18.13 use:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">BLACKLISTED_DIRECT_ADDRESSES=</code><code class="value">10.0</code><code class="plain">.</code><code class="value">0.5</code></div>
 <div class="line"><code class="plain">BLACKLISTED_FORWARDED_ADDRESSES=</code><code class="value">13.170</code><code class="plain">.</code><code class="value">18.12</code><code class="plain">, </code><code class="value">13.170</code><code class="plain">.</code><code class="value">18.13</code></div>
 </div>
@@ -188,24 +188,24 @@
 <div class="line"><code class="plain">BLACKLISTED_FORWARDED_ADDRESSES=</code><code class="value">10.0</code><code class="plain">.</code><code class="value">1.1</code><code class="plain">,</code><code class="value">10.0</code><code class="plain">.</code><code class="value">2.2</code><code class="plain">,</code><code class="value">10.0</code><code class="plain">.</code><code class="value">3.3</code></div>
 <div class="line"><code class="plain">MAX_FORWARDED_ADDRESSES=</code><code class="value">10</code></div>
 </div>
-</div><p><strong><br clear="none"></strong></p><p><strong>Logging:</strong> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS and the proxied address (if it's available in the request) in the log field AUTHORIZED_FORWARDED_ADDRESS.</p>
+</div><h3 id="ListBasedAddressAuthorizer-Logging" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Logging<span class="confluence-anchor-link" id="src-371000233_ListBasedAddressAuthorizer-Logging"></span></span></h3><p>This authorizer will add the remote IP address to the log field <code>AUTHORIZED_ADDRESS</code> and the proxied address (if it is available in the request) in the log field <code>AUTHORIZED_FORWARDED_ADDRESS</code>.</p>
 <nav id="ht-post-nav">
-        <a href="Remote_Address_Authorizer.html" class="ht-post-nav-prev">
+        <a href="Client_Certificate_Authorizer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Remote Address Authorizer</span>
+            <span>Client Certificate Authorizer</span>
         </a>
 
-        <a href="Dispatched_Authorizer.html" class="ht-post-nav-next">
+        <a href="Cookie_Authorizer.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Dispatched Authorizer</span>
+            <span>Cookie Authorizer</span>
         </a>
 </nav>
                     </div>

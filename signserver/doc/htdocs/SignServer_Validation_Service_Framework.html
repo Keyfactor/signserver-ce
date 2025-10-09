@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:25.211+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:09.100+0000">
     <meta name="exp-page-id" content="371000038">
     <meta name="exp-page-title" content="SignServer Validation Service Framework">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="7b6c17f2ecec3cabf6894c05c809b13e">
     <meta name="exp-page-created" content="2017-03-08T12:18:49.000+0000">
-    <meta name="exp-page-last-modified" content="2017-05-11T10:46:19.000+0000">
+    <meta name="exp-page-last-modified" content="2025-08-28T11:18:09.805+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>SignServer Validation Service Framework</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="376ceff476ec849cea5e88965a69ee6be3668ea6a066a7b8984f4b5041e2e0bc"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="SignServerValidationServiceFramework-top" pageid="371000038" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="SignServerValidationServiceFramework-top" pageid="371000038" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,12 +155,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-172a2ae0c33cba1648dd0019c897a15a232ffb01f5bb917f44603cca84ef60da"><span class="js-hide-until-loaded">SignServer Validation Service Framework</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-463e629c688b94ebb4a3cd617ee575de358e745d2094406f4698ae1938244d7d"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">SignServer Validation Service Framework</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>The validation service framework is used to validate certificates from one or more issuers. It can be used to have one central point of performing revokation statuses to simplify the integration of external PKIs within an enterprise.</p><p>The validation service framework also provides a validation cache that can be used to increase performance for those cases an application does multiple lookups of the same certificate within a short period of time.<br clear="none">Out-of-the-Box, there exists a <strong>DefaultValidationService</strong> that should satisfy most use cases but it's possible to develop a custom <strong>ValidationService</strong>, if necessary.</p><p>All Validation Services is configured by specifying the <strong>org.signserver.validationservice.server.ValidationServiceWorker</strong> in the global configuration. Then is the actual ValidationService configured in the worker configuration setting the class path in the property <strong>TYPE</strong> (not necessary for the <strong>DefaultValidationService</strong>). The validation service framework is mostly used with X509v3 certificates but other kinds of certificates is supported as well by design.</p><p>Another concept in the Validation Service Framework is that the client also can ask the service to check the type of certificate that the certificate might be used for. A certificate type could be IDENTIFICATION or ELECTRONIC SIGNATURE.</p>
+                        <p>The Validation Service Framework is used to validate certificates from one or more issuers. The Validation Service Framework can be used to have one central point of performing revocation statuses to simplify the integration of external PKIs within an enterprise.</p><p>The Validation Service Framework also provides a validation cache that can be used to increase performance for those cases an application does multiple lookups of the same certificate within a short period of time.</p><p>Out-of-the-Box, there exists a <code>DefaultValidationService</code> that should satisfy most use cases. If necessary, you can develop a custom <code>ValidationService</code>.</p><p>Every <code>ValidationService</code> is configured by specifying the <code>org.signserver.validationservice.server.ValidationServiceWorker</code> in the global configuration. After specification, the actual <code>ValidationService</code> is configured in the worker configuration, setting the class path in the property <code>TYPE</code> (not necessary for the <code>DefaultValidationService</code>). The Validation Service Framework is mostly used with X509v3 certificates but other kinds of certificates are supported as well by design.</p><p>Another concept in the Validation Service Framework is that the client also can ask the service to check the type of certificate that the certificate might be used for. A certificate type could be <em>IDENTIFICATION</em> or <em>ELECTRONIC SIGNATURE</em>.</p>
 <nav id="ht-post-nav">
         <a href="UserMappedDispatcher.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

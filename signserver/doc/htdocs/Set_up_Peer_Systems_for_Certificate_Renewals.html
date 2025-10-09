@@ -1,0 +1,221 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999481">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:40.466+0000">
+    <meta name="exp-page-id" content="370999481">
+    <meta name="exp-page-title" content="Set up Peer Systems for Certificate Renewals">
+    <meta name="exp-page-version" content="10">
+    <meta name="exp-page-scroll-page-id" content="70ee6eb0aabbfad0bfe2559875072c91">
+    <meta name="exp-page-created" content="2019-10-22T12:10:35.000+0000">
+    <meta name="exp-page-last-modified" content="2025-10-02T13:28:39.607+0000">
+    <meta name="exp-page-labels" content="command,signserveree">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Set up Peer Systems for Certificate Renewals</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="c827c43fe90e277d73e072acad7872de8e93b24f74712aa7b3e891b320ded610"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SetupPeerSystemsforCertificateRenewals-top" pageid="370999481" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999481" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Operations.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Operations</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Set_up_Peer_Systems_for_Certificate_Renewals.html" target="_self" aria-current="page">Set up Peer Systems for Certificate Renewals</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b5a072869bfdc3be0ba0a7f2660946eb9f1a9d7280343a445ceb8be904ddf961"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Set up Peer Systems for Certificate Renewals</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p>This section provides instructions for how to set up and use peer systems for certificate renewals or rekeying.</p><p>For background and more information, see <a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a> in the SignServer Reference section.</p><h2 id="SetupPeerSystemsforCertificateRenewals-InitialSetup" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Initial Setup<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Initial-Setup"></span></span></h2><h3 id="SetupPeerSystemsforCertificateRenewals-ConfiguringEJBCAforOutgoingPeerConnections" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configuring EJBCA for Outgoing Peer Connections<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Configuring-EJBCA-for-Outgoing-Peer-Connections"></span></span></h3><p>For information on how to setup Peer Connectors for outgoing connections, refer to EJBCA documentation on <span data-linked-resource-id="372703596" data-linked-resource-version="3" data-linked-resource-type="page">Peer Systems Operations</span>.</p><p>The following is required on the EJBCA side:</p><ul><li><p>An AuthenticationKeyBinding with a TLS client certificate and key-pair to use for authentication towards SignServer.</p></li><li><p>Allowing outgoing connections checked.</p></li><li><p>An enabled Peer Connector configured to use the AuthenticationKeyBinding and the URL of the peers endpoint in SignServer, that is "https://example.com:8443/signserver/peer/v1".</p></li></ul><p>Test connecting to SignServer before configuring the SignServer side. On the EJBCA Peer Systems page, click <strong>Ping</strong>. An error message will likely appear, such as "Unable to connect to peer. Unauthorized.", because the SignServer side has not yet been configured to allow the connection. Proceed to configure the SignServer side before re-trying the Ping.</p><h3 id="SetupPeerSystemsforCertificateRenewals-ConfiguringSignServerforIncomingPeerConnections" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configuring SignServer for Incoming Peer Connections<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Configuring-SignServer-for-Incoming-Peer-Connections"></span></span></h3><p>Configure SignServer for incoming Per Connections either using the Admin Web or the Admin CLI:</p><h4 id="SetupPeerSystemsforCertificateRenewals-ConfiguringSignServerforIncomingPeerConnectionsusingAdminWeb" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configuring SignServer for Incoming Peer Connections using Admin Web<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Configuring-SignServer-for-Incoming-Peer-Connections-using-Admin-Web"></span></span></h4><p>To configure SignServer for incoming Peer Connections the Admin Web:</p><ol start="1"><li><p>In the <a href="Administration_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Administration+Web" data-scroll-link-target-source-id="371000514">SignServer Administration Web</a>, go to the <a href="Administrators_Page.html" data-linked-resource-id="371000707" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000707" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000707/Administrators+Page" data-scroll-link-target-source-id="371000707">Administrators page</a>.</p></li><li><p>Under <strong>Incoming Connections</strong>, a row should have been created when the ping request was sent from EJBCA. <br clear="none">If the client certificate of the incoming request does not already match an authorization rule, an <strong>Add Authorization</strong> link is available to for selection. <br clear="none">If a rule already exists, a <strong>Modify Authorization</strong> button is available.</p></li><li><p>Make sure the rule has the <strong>Peer System</strong> role selected, and save the rule.</p></li><li><p>Under <strong>Incoming Connections</strong>, the <strong>Authorized</strong> column should display <strong>Yes</strong> for the connection.</p></li></ol><p>You can now send another ping request from EJBCA that should not display an error message.</p><h4 id="SetupPeerSystemsforCertificateRenewals-ConfiguringSignServerforIncomingPeerConnectionsusingAdminCLI" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configuring SignServer for Incoming Peer Connections using Admin CLI<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Configuring-SignServer-for-Incoming-Peer-Connections-using-Admin-CLI"></span></span></h4><p>To configure SignServer for incoming Peer Connections the Admin CLI:</p><ol start="1"><li><p>Using the <a href="Administration_CLI.html" data-linked-resource-id="371000510" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Administration+CLI" data-scroll-link-target-source-id="371000510">SignServer Administration CLI</a>, set the global configuration property <code>PEERS_INCOMING_ENABLED</code>:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ bin/signserver setproperty global PEERS_INCOMING_ENABLED </code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">$ bin/signserver reload all</code></div>
+</div>
+</div></li><li><p>Check the server log for the error message created when the ping request from EJBCA was denied. It looks something like this:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">Denied peer access to 4fe9278255cba7b issuer: </code><code class="string">'C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11'</code></div>
+</div>
+</div><p>The error message contains the certificate serial number and issuer DN that should be added to the authorization rules.</p></li></ol><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>It is important to preserve the format of the serial number and issuer DN. Keyfactor recommends copying the values from the log.</p></div></div><ol start="3"><li><p>Using the certificate serial number and issue DN exactly as it is written in the log, run the follwoing command to add the authorization rule:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin/signserver wspeersystems -add -certserialno 4fe9278255cba7b -issuerdn </code><code class="string">"C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11"</code></div>
+</div>
+</div></li></ol><p>You can now send another ping request from EJBCA that should not display an error message.</p><h3 id="SetupPeerSystemsforCertificateRenewals-ExposingWorkersasKeyBindings" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Exposing Workers as Key Bindings<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Exposing-Workers-as-Key-Bindings"></span></span></h3><p>In EJBCA, click <strong>Manage</strong> on the configured <strong>Peer System</strong> and then select the <strong>Remote Key Bindings</strong> tag. For more information, refer to the EJBCA documentation on&nbsp;<span data-linked-resource-id="372703596" data-linked-resource-version="3" data-linked-resource-type="page">Peer Systems Operations</span>.</p><p>The list should display all remote key bindings found, or a message like "No authorized remote Internal Key Bindings found". Note that the list might at this stage be empty, or does not show any of the workers from SignServer. To display the worker listed as a key binding in EJBCA, edit the worker by adding the worker property <strong>PEERS_VISIBLE</strong> with the value <strong>true.</strong> Refresh the page in EJBCA to list the worker.</p><h3 id="SetupPeerSystemsforCertificateRenewals-IssuingtheFirstCertificate" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Issuing the First Certificate<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Issuing-the-First-Certificate"></span></span></h3><p>Prior to issuing a certificate, ensure that the worker has a key-pair configured. If the configured key alias (the DEFAULTKEY property value) does not yet exist, the&nbsp;<strong>Remote key pair</strong> might be&nbsp;disabled/grayed out in EJBCA. If this is the case, first generate the key-pair.</p><p>EJBCA requires an end entity to be configured, in order to issue a certificate. Then there will be a text field or some way of choosing to use this end entity for the remote key binding, before clicking the <strong>Issue signing certificate</strong> button (or similar).</p><p>After selecting <strong>Issue signing certificate</strong>, the following happens:</p><ol start="1"><li><p>EJBCA contacts SignServer over the Peer Connector and asks for a certificate signing request (CSR).</p></li><li><p>SignServer generates the CSR and returns it to EJBCA.</p></li><li><p>EJBCA processes the request, issues the certificate, and sends it to SignServer.</p></li><li><p>SignServer installs the certificate to the worker and also adds the worker property <code>PEERS_ISSUED=true</code> to indicate that the certificate was issued by a peer.</p></li><li><p>The new certificate(s) can now be seen when looking at the worker's status. In EJBCA, the remote key binding will now show the <strong>Bound</strong> <strong>certificate</strong> and the button will now instead be named <strong>Renew.</strong></p></li></ol><p>The algorithm used for signing the CSR as well as subject DN to include etc was using the default values. To choose other values, see information on available worker properties on the <a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a> page.</p><h2 id="SetupPeerSystemsforCertificateRenewals-SubsequentRenewals/Rekeyings" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Subsequent Renewals/Rekeyings<span class="confluence-anchor-link" id="src-370999481_SetupPeerSystemsforCertificateRenewals-Subsequent-Renewals/Rekeyings"></span></span></h2><p>The next time you want to renew or rekey a worker's certificate, everything should already be set-up as part of the previous steps, and in EJBCA the <strong>Renew</strong> button should be available.</p><p>In order to also generate a new key-pair (for example, to rekey), select the key pair in EJBCA to be rekeyed.</p>
+<nav id="ht-post-nav">
+        <a href="Set_up_Android_Signing.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Set up Android Signing</span>
+        </a>
+
+        <a href="Set_up_Key_Wrapping.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Set up Key Wrapping</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

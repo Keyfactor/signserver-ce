@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:25.879+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:09.966+0000">
     <meta name="exp-page-id" content="371000050">
     <meta name="exp-page-title" content="The Validation CLI interface">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="c526ae58aa1099326adc0f90174df8c7">
     <meta name="exp-page-created" content="2018-01-25T15:08:14.000+0000">
-    <meta name="exp-page-last-modified" content="2018-01-25T15:15:57.000+0000">
+    <meta name="exp-page-last-modified" content="2025-08-28T11:28:48.719+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>The Validation CLI interface</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="f3d5dde1a7e528864c10e81c05efc3a55d1617cca3d9002c85d074f1d5cb629b"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="TheValidationCLIinterface-top" pageid="371000050" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="TheValidationCLIinterface-top" pageid="371000050" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,27 +158,28 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b5944be80cfcd45f00d6f1ba63b9bdc9ff683aced9275d5b9b228f4cee6787ef"><span class="js-hide-until-loaded">The Validation CLI interface</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-beb12d028896a7c930b6a2e2a6f209d19480c63a497ecb75cc639c2967dfdf41"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">The Validation CLI interface</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>A Java CLI tool can be used to check the validity of a certificate from scripts. The tool supports a clustered SignServer installation using the "Use first host that response OK" policy.</p><p>When compiling, make sure that the setting <strong>validationclient.enabled</strong> is set to <strong>true</strong> in the build properties. The client is <code>lib/SignServer-Client-ValidationCLI.jar.</code></p><p>Use the client with:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p>A Java CLI tool can be used to check the validity of a certificate from scripts. The tool supports a clustered SignServer installation using the "Use first host that response OK" policy.</p><p>When compiling, make sure that the setting <code>validationclient.enabled</code> is set to <em>true</em> in the build properties. The client is <code>lib/SignServer-Client-ValidationCLI.jar.</code></p><p>Use the client with:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">bin/signclient validatecertificate &lt;options&gt;</code></div>
 </div>
-</div><div class="section"><div class="section"><p><br clear="none"></p><p>The following options are available: </p><div class="table-wrap"><table class="wrapped confluenceTable scroll-table-layout"><colgroup><col style="width: 30%"><col style="width: 70%"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p>Option</p></th><th colspan="1" rowspan="1" class="confluenceTh"><p>Description</p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-cert &lt;cert-file&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Path to certificate file (DER or PEM). (Required).</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-certpurposes &lt;certpurposes&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>A comma-separated string containing requested certificate purposes.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-der</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Certificate is in DER format.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-help</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Displays this information.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-hosts &lt;hosts&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>A comma-separated string containing the hostnames of the validation service nodes. For example,&nbsp; 'host1.someorg.org,host2.someorg.org'. (Required).</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-pem</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Certificate is in PEM format. (Default).</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-port &lt;port&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Remote port of service .(Default is 8080 or 8442 for SSL).</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-service &lt;service-name&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>The name or ID of the validation service to process request. (Required).</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-silent</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Do not produce any output, only return value.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-truststore &lt;jks-file&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-truststorepwd &lt;password&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)</p></td></tr></tbody></table></div><p>The following return values are used:</p><div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
-<pre>-2 : Error happened during execution
--1 : Bad arguments
-0 : Certificate is valid
-1 : Certificate is revoked
-2 : Certificate is not yet valid
-3 : Certificate has expired
-4 : Certificate does not verify
-5 : CA Certificate has been revoked
-6 : CA Certificate is not yet valid
-7 : CA Certificate has expired
-8 : Certificate has no valid certificate purpose</pre>
-</div></div><p>&nbsp;</p></div></div>
+</div><p>The following options are available: </p><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="bcf58e9d-5819-417d-83e6-6a6a3a5eb4f7" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 23.2351%;"><col span="1" style="width: 76.7649%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Option</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-cert &lt;cert-file&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Path to certificate file (DER or PEM). (Required)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-certpurposes &lt;certpurposes&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>A comma-separated string containing requested certificate purposes.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-der</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Certificate is in DER format.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-help</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Displays this information.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-hosts &lt;hosts&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>A comma-separated string containing the hostnames of the validation service nodes. For example,&nbsp; 'host1.someorg.org,host2.someorg.org'. (Required)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-pem</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Certificate is in PEM format. (Default)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-port &lt;port&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Remote port of service. (Default is 8080 or 8442 for SSL)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-service &lt;service-name&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>The name or ID of the validation service to process request. (Required)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-silent</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Does not produce any output. Only returns a value.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-truststore &lt;jks-file&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>-truststorepwd &lt;password&gt;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)</p></td></tr></tbody></table></div><p>The following return values are used:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">-</code><code class="value">2</code><code class="plain"> : Error happened during execution</code></div>
+<div class="line"><code class="plain">-</code><code class="value">1</code><code class="plain"> : Bad arguments</code></div>
+<div class="line"><code class="value">0</code><code class="plain"> : Certificate is valid</code></div>
+<div class="line"><code class="value">1</code><code class="plain"> : Certificate is revoked</code></div>
+<div class="line"><code class="value">2</code><code class="plain"> : Certificate is not yet valid</code></div>
+<div class="line"><code class="value">3</code><code class="plain"> : Certificate has expired</code></div>
+<div class="line"><code class="value">4</code><code class="plain"> : Certificate does not verify</code></div>
+<div class="line"><code class="value">5</code><code class="plain"> : CA Certificate has been revoked</code></div>
+<div class="line"><code class="value">6</code><code class="plain"> : CA Certificate is not yet valid</code></div>
+<div class="line"><code class="value">7</code><code class="plain"> : CA Certificate has expired</code></div>
+<div class="line"><code class="value">8</code><code class="plain"> : Certificate has no valid certificate purpose</code></div>
+</div>
+</div>
 <nav id="ht-post-nav">
         <a href="Certificate_Validators.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

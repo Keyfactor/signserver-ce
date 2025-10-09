@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html class="no-js" lang="en" data-vp-page-id="370999665">
+<html class="no-js" lang="en" data-vp-page-id="1499103741">
 
 
     
@@ -12,14 +12,14 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:09.092+0000">
-    <meta name="exp-page-id" content="370999665">
-    <meta name="exp-page-title" content="Admin WS Interface">
-    <meta name="exp-page-version" content="1">
-    <meta name="exp-page-scroll-page-id" content="5cf3a9ed2cfae67c819318c6ce964029">
-    <meta name="exp-page-created" content="2018-01-12T16:42:54.000+0000">
-    <meta name="exp-page-last-modified" content="2018-01-12T16:52:58.000+0000">
-    <meta name="exp-page-labels" content="command">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:43.840+0000">
+    <meta name="exp-page-id" content="1499103741">
+    <meta name="exp-page-title" content="Generate the OpenAPI Document">
+    <meta name="exp-page-version" content="6">
+    <meta name="exp-page-scroll-page-id" content="86f0ff5cfcad1675fc5facfc7b97610c">
+    <meta name="exp-page-created" content="2025-05-12T09:39:03.325+0000">
+    <meta name="exp-page-last-modified" content="2025-09-26T08:00:08.955+0000">
+    <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
     <meta name="exp-space-title" content="SignServer Documentation">
@@ -81,11 +81,11 @@
         postMessage({ type: 'search-results', results: results, query: query });
     }
 </script>
-    <title>Admin WS Interface</title>
+    <title>Generate the OpenAPI Document</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="4c1771505cba03b6251755599007de8ad2dd763be9606d9a89d2fd2db87e8561"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="AdminWSInterface-top" pageid="370999665" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="GeneratetheOpenAPIDocument-top" pageid="1499103741" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -128,7 +128,7 @@
     <div class="flex">
 
         <div id="exp-navigation-wrapper" class="hidden lg:block">
-            <iframe src="toc.html?pageId=370999665" class="border-0"></iframe>
+            <iframe src="toc.html?pageId=1499103741" class="border-0"></iframe>
         </div>
 
 
@@ -142,58 +142,51 @@
                     <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="SignServer_Integration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Integration</a>
+                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_User_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer User Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="REST_Interface.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">REST Interface</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
-                <a href="Admin_WS_Interface.html" target="_self" aria-current="page">Admin WS Interface</a>
+                <a href="Generate_the_OpenAPI_Document.html" target="_self" aria-current="page">Generate the OpenAPI Document</a>
             </li>
         </ol>
         <div class="breadcrumbs-wrapper__scroll-mask"></div>
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0bc521eddf6f7cc9983a626830e1e23fad5251f805ac90ac2500fba81a9d8a88"><span class="js-hide-until-loaded">Admin WS Interface</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-bc5bf619d99f3b9f59fffe03e9254d565c18d9742cc08f9a232c96a9bdeaf07d"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Generate the OpenAPI Document</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>The SignServer Administration Web Services can be used for remote administration of SignServer over client authenticated HTTPS.</p><p>Access is granted based on a list of certificate serial number and issuer distinguished name pairs. Currently there is only one access level and all administrators granted access will be able to perform all operations.</p><p>The WSDL file is located at the following URL: http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl.</p><p>To authorize administrators using the Admin CLI, use the <code>wsadmins</code> command:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
-<div class="line"><code class="plain">bin</code><code class="plain">/signserver</code><code class="plain"> wsadmins</code></div>
+                        <p>You can generate the OpenAPI document directly from a server running SignServer, as long as the application server supports this feature. This page provides configuration examples for enabling and retrieving the OpenAPI document.</p><h2 id="GeneratetheOpenAPIDocument-EnableMicroProfileOpenAPIinWildFly" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Enable MicroProfile OpenAPI in WildFly<span class="confluence-anchor-link" id="src-1499103741_GeneratetheOpenAPIDocument-Enable-MicroProfile-OpenAPI-in-WildFly"></span></span></h2><p>Using JBoss CLI, enable the extension and subsystem, and then restart the application server:</p><div class="table-wrap"><table data-table-width="760" data-layout="default" data-local-id="8c89d763-bb51-46df-8bad-a016c007de38" class="confluenceTable" style=" width: 100%;"><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">/extension=org.wildfly.extension.microprofile.openapi-smallrye:add()</code></div>
+<div class="line"><code class="plain">/subsystem=microprofile-config-smallrye:add()</code></div>
+<div class="line"><code class="plain">/subsystem=microprofile-openapi-smallrye:add()</code></div>
+<div class="line"><code class="plain">reload</code></div>
 </div>
-</div><p>Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
-<div class="line"><code class="plain">Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (</code><code class="keyword">in</code><code class="plain"> hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -add -cert &lt;PEM or DER </code><code class="functions">file</code><code class="plain">&gt;</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (</code><code class="keyword">in</code><code class="plain"> hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -list</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -allowany [</code><code class="functions">true</code><code class="plain">|</code><code class="functions">false</code><code class="plain">]</code></div>
-<div class="line"><code class="plain">Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
-<div class="line"><code class="plain">Example 2: signserver wsadmins -add -cert wsadmin.pem</code></div>
-<div class="line"><code class="plain">Example 3: signserver wsadmins -remove -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
-<div class="line"><code class="plain">Example 4: signserver wsadmins -list</code></div>
-<div class="line"><code class="plain">Example 5: signserver wsadmins -allowany</code></div>
-<div class="line"><code class="plain">Example 6: signserver wsadmins -allowany </code><code class="functions">false</code></div>
-</div>
-</div><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The certificate serial number should be entered as the hexadecimal representation (leading zeros and upper/lowercase is not significant).</p><p>The issuer DN currently should be entered in the reversed order and with spaces after each component. In the example above, the issuer DN from the certificate actually is "CN=Neo Morpheus, C=SE".</p></div></div><p>An administrator can also be added by supplying a client certificate as an argument. The serial number and issuer DN is then taken from that certificate.</p><p>To troubleshoot an "Administrator not authorized to resource", refer to the logs for how SignServer interprets the serialnumber and subject DN. Example:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
-<div class="line"><code class="value">19</code><code class="plain">:</code><code class="value">00</code><code class="plain">:</code><code class="value">33</code><code class="plain">,</code><code class="value">946</code><code class="plain"> INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing </code><code class="value">1</code><code class="plain">, CN=External RA Admin </code><code class="value">1</code><code class="plain">; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing </code><code class="value">1</code><code class="plain">, CN=MarkusAdminCA1; authorized=</code><code class="keyword">false</code><code class="plain">; operation=getWorkers; arguments=                 </code></div>
-</div>
-</div>
+</div></td></tr></tbody></table></div><p>After restarting the application server and deploying SignServer, the OpenAPI document can be obtained from <strong>/signserver/openapi</strong> (for YAML format) or <strong>/signserver/openapi?format=JSON</strong> (for JSON format).</p>
 <nav id="ht-post-nav">
-        <a href="signdatagroups.html" class="ht-post-nav-prev">
+        <a href="REST_Interface.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>signdatagroups</span>
+            <span>REST Interface</span>
         </a>
 
-        <a href="Legacy_Interfaces.html" class="ht-post-nav-next">
+        <a href="SignServer_REST_endpoints_using_Postman.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Legacy Interfaces</span>
+            <span>SignServer REST endpoints using Postman</span>
         </a>
 </nav>
                     </div>

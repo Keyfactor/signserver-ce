@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:07.778+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:34.705+0000">
     <meta name="exp-page-id" content="370999633">
     <meta name="exp-page-title" content="validatedocument">
-    <meta name="exp-page-version" content="2">
+    <meta name="exp-page-version" content="9">
     <meta name="exp-page-scroll-page-id" content="b863284870760c0ee0b21e115809f744">
     <meta name="exp-page-created" content="2020-09-21T08:34:20.000+0000">
-    <meta name="exp-page-last-modified" content="2024-02-17T15:37:08.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-08T08:50:48.265+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>validatedocument</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="02539f297d4c34f771f16995530618d5d9976edfef1d3389001d92fcd3925b1e"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="validatedocument-top" pageid="370999633" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="validatedocument-top" pageid="370999633" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -145,7 +145,7 @@
                     <a href="SignServer_Integration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Integration</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="Client_CLI.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Client CLI</a>
+                    <a href="SignClient.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignClient</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
                 <a href="validatedocument.html" target="_self" aria-current="page">validatedocument</a>
@@ -155,55 +155,65 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b45d825ac6334100b506ae1b16c99d5e9f39a10b7630a7fff9466627c315aaf7"><span class="js-hide-until-loaded">validatedocument</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0447fa6e9720d37618c2442710cb963d90e20798473e829047e1d7c91587c663"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">validatedocument</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Request a document to be validated.</p><pre class="prettyprint">usage: validatedocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;
-                        [options]
-Request a document to be validated by SignServer<br clear="none"> -accesstoken      Access token to use for JWT authentication.<br clear="none">                   Can not be specified at the same time as -username.<br clear="none">                   Can only be used with protocol HTTP.
- -data             Data to send to the worker.
- -host             Server name or IP address. Default: localhost
- -infile           File to read data to send to the worker from.
- -keyalias         Alias of the key in the keystore to use for
-                   authentication.
- -keystore         Keystore with private key and certificate for
-                   client certificate authentication.
- -keystorepwd      Password for reading the keystore.  If keystore is
-                   specified but not this keystore password option,
-                   the CLI will instead prompt for the password.
- -metadata         Additional meta data to send to the signer. The
-                   parameters should be given in the form KEY=VALUE.
-                   This option can be given multiple times.
- -password         Password for authentication.
- -port             Server port. Default: 8080 (for HTTP), 8442 for
-                   HTTPS and 8443 for HTTPS with client
-                   authentication.
- -protocol         Method of interaction with SignServer.
-                   WEBSERVICES, or HTTP. Default: WEBSERVICES.
- -servlet          URL to the webservice servlet. Default:
-                   /signserver/signserverws/signserverws?wsdl
- -truststore       Keystore with trusted certificates to use with
-                   HTTPS.
- -truststorepwd    Password for the keystore with trusted
-                   certificates. If truststore is specified but not
-                   this truststore password option, the CLI will
-                   instead prompt for the password.
- -username         Username for authentication.
- -workerid         ID of worker which should perform the operation.
- -workername       Name of worker which should perform the operation.
-
-Sample usages:
-a) validatedocument -workername XMLValidator -data "&lt;root&gt;&lt;Signature...
-b) validatedocument -workername XMLValidator -infile /tmp/signed.xml
-c) validatedocument -workerid 2 -infile /tmp/signed.xml -truststore
-truststore.jks -truststorepwd changeit
-d) validatedocument -workerid 2 -infile /tmp/signed.xml -keystore
-superadmin.jks -truststorepwd foo123
-e) validatedocument -workername XMLValidator -protocol HTTP -infile
-/tmp/signed.xml
-f) validatedocument -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2<br clear="none">g) validatedocument -data "&lt;root&gt;&lt;Signature..." -servlet /signserver/worker/XMLValidator -protocol HTTP</pre>
+                        <p>Use the SignClient <code>validatedocument</code> command to request a document to be validated.</p><h2 id="SignClientvalidatedocumentCommand-Usage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Usage<span class="confluence-anchor-link" id="src-370999633_SignClientvalidatedocumentCommand-Usage"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">validatedocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;</code></div>
+<div class="line"><code class="plain">                        [options]</code></div>
+<div class="line"><code class="plain">Request a document to be validated by SignServer</code></div>
+<div class="line"><code class="plain"> -accesstoken      Access token to use </code><code class="keyword">for</code><code class="plain"> JWT authentication.</code></div>
+<div class="line"><code class="plain">                   Can not be specified at the same time as -username.</code></div>
+<div class="line"><code class="plain">                   Can only be used with protocol HTTP.</code></div>
+<div class="line"><code class="plain"> -data             Data to send to the worker.</code></div>
+<div class="line"><code class="plain"> -host             Server name or IP address. Default: localhost</code></div>
+<div class="line"><code class="plain"> -infile           File to read data to send to the worker from.</code></div>
+<div class="line"><code class="plain"> -keyalias         Alias of the key in the keystore to use </code><code class="keyword">for</code></div>
+<div class="line"><code class="plain">                   authentication.</code></div>
+<div class="line"><code class="plain"> -keystore         Keystore with </code><code class="keyword">private</code><code class="plain"> key and certificate </code><code class="keyword">for</code></div>
+<div class="line"><code class="plain">                   client certificate authentication.</code></div>
+<div class="line"><code class="plain"> -keystorepwd      Password </code><code class="keyword">for</code><code class="plain"> reading the keystore.  If keystore is</code></div>
+<div class="line"><code class="plain">                   specified but not </code><code class="keyword">this</code><code class="plain"> keystore password option,</code></div>
+<div class="line"><code class="plain">                   the CLI will instead prompt </code><code class="keyword">for</code><code class="plain"> the password.</code></div>
+<div class="line"><code class="plain"> -metadata         Additional meta data to send to the signer. The</code></div>
+<div class="line"><code class="plain">                   parameters should be given in the form KEY=VALUE.</code></div>
+<div class="line"><code class="plain">                   This option can be given multiple times.</code></div>
+<div class="line"><code class="plain"> -password         Password </code><code class="keyword">for</code><code class="plain"> authentication.</code></div>
+<div class="line"><code class="plain"> -port             Server port. Default: </code><code class="value">8080</code><code class="plain"> (</code><code class="keyword">for</code><code class="plain"> HTTP), </code><code class="value">8442</code><code class="plain"> </code><code class="keyword">for</code></div>
+<div class="line"><code class="plain">                   HTTPS and </code><code class="value">8443</code><code class="plain"> </code><code class="keyword">for</code><code class="plain"> HTTPS with client</code></div>
+<div class="line"><code class="plain">                   authentication.</code></div>
+<div class="line"><code class="plain"> -protocol         Method of interaction with SignServer.</code></div>
+<div class="line"><code class="plain">                   WEBSERVICES, or HTTP. Default: WEBSERVICES.</code></div>
+<div class="line"><code class="plain"> -servlet          URL to the webservice servlet. Default:</code></div>
+<div class="line"><code class="plain">                   /signserver/signserverws/signserverws?wsdl</code></div>
+<div class="line"><code class="plain"> -truststore       Keystore with trusted certificates to use with</code></div>
+<div class="line"><code class="plain">                   HTTPS.</code></div>
+<div class="line"><code class="plain"> -truststorepwd    Password </code><code class="keyword">for</code><code class="plain"> the keystore with trusted</code></div>
+<div class="line"><code class="plain">                   certificates. If truststore is specified but not</code></div>
+<div class="line"><code class="plain">                   </code><code class="keyword">this</code><code class="plain"> truststore password option, the CLI will</code></div>
+<div class="line"><code class="plain">                   instead prompt </code><code class="keyword">for</code><code class="plain"> the password.</code></div>
+<div class="line"><code class="plain"> -username         Username </code><code class="keyword">for</code><code class="plain"> authentication.</code></div>
+<div class="line"><code class="plain"> -workerid         ID of worker which should perform the operation.</code></div>
+<div class="line"><code class="plain"> -workername       Name of worker which should perform the operation.</code></div>
+</div>
+</div><h2 id="SignClientvalidatedocumentCommand-SampleUsages" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sample Usages<span class="confluence-anchor-link" id="src-370999633_SignClientvalidatedocumentCommand-Sample-Usages"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">a) validatedocument -workername XMLValidator -data "&lt;root&gt;&lt;Signature...</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">b) validatedocument -workername XMLValidator -infile /tmp/signed.xml</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">c) validatedocument -workerid </code><code class="value">2</code><code class="plain"> -infile /tmp/signed.xml -truststore truststore.jks -truststorepwd changeit</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">d) validatedocument -workerid </code><code class="value">2</code><code class="plain"> -infile /tmp/signed.xml -keystore superadmin.jks -truststorepwd foo123</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">e) validatedocument -workername XMLValidator -protocol HTTP -infile /tmp/signed.xml</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">f) validatedocument -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">g) validatedocument -data </code><code class="string">"&lt;root&gt;&lt;Signature..."</code><code class="plain"> -servlet /signserver/worker/XMLValidator -protocol HTTP</code></div>
+</div>
+</div>
 <nav id="ht-post-nav">
         <a href="signdocument.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

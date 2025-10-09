@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:59.480+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:30.741+0000">
     <meta name="exp-page-id" content="371000827">
     <meta name="exp-page-title" content="IDEs">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="0a09b55ada3ab3b993247bb7e461f1d1">
     <meta name="exp-page-created" content="2023-04-04T17:51:05.000+0000">
-    <meta name="exp-page-last-modified" content="2023-04-04T17:52:41.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-02T12:22:44.084+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>IDEs</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="0eac523f954c14a695d068ba5d3db123ce30c51b74d2730659e565b1427222ee"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="IDEs-top" pageid="371000827" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="IDEs-top" pageid="371000827" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,12 +155,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-c5f799c56dbae6e965cfad3486cbc3030a010af7e0bef00893c2566d92aa53e0"><span class="js-hide-until-loaded">IDEs</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-2449c90a8be028f31a42e9404af7e6b690150303b49680b6a9110f82888aa1a3"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">IDEs</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>The following covers how to open SignServer in different IDEs.</p><p></p><h2 id="IDEs-ApacheNetBeansIDE" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Apache NetBeans IDE</h2><p>Open the Maven projects directly in the IDE.</p><p>The latest <a shape="rect" href="https://netbeans.apache.org/" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://netbeans.apache.org/" data-scroll-link-local="false">Apache NetBeans IDE</a> (currently 17) is recommended.</p><div class="confluence-information-macro confluence-information-macro-tip"><span class="aui-icon aui-icon-small aui-iconfont-approve confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>Define the top-level project, <em>SignServer</em>, as the main project open in the IDE by right-clicking it and selecting&nbsp;<strong>Set as Main Project</strong>. This way hitting F6 will be the same as running <code>ant deploy</code>.</p><p>The downside is that F11 now maps to&nbsp;<strong>Build Main project</strong> and it's not convenient to rebuild everything if only working on a small number of modules. To only build the selected project (or the project belonging to the currently open file), the shortcut can be redefined to&nbsp;<strong>Build project</strong>.</p><p>When deploying from within the IDE, specify the environment variable <code>APPSRV_HOME</code> to let the script know where to deploy to.</p></div></div><div class="confluence-information-macro confluence-information-macro-tip"><span class="aui-icon aui-icon-small aui-iconfont-approve confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>When working with multiple branches or versions of the projects open in the IDE at the same time, it is useful to configure the IDE to display the version number after each open project:</p><p>Click <strong>Tools</strong> → <strong>Options</strong> → <strong>Java</strong> → <strong>Maven</strong> → <strong>Appearance</strong> and change <strong>Project node name</strong> to "${project.artifactId}-${project.version}".</p></div></div><h2 id="IDEs-EclipseIDE" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Eclipse IDE</h2><p>Since each SignServer sub-project is a Maven project, it should be possible to import them into Eclipse like any other Maven project.</p><h2 id="IDEs-IntelliJIDEA" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">IntelliJ IDEA</h2><p>Since each SignServer sub-project is a Maven project, it should be possible to open the projects directly in IntelliJ IDEA like any other Maven project.</p>
+                        <p>The following covers how to open SignServer in different IDEs.</p><h2 id="IDEs-ApacheNetBeansIDE" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Apache NetBeans IDE<span class="confluence-anchor-link" id="src-371000827_IDEs-Apache-NetBeans-IDE"></span></span></h2><p>Open the Maven projects directly in the IDE.</p><p>The latest <a class="external-link scroll-external-link" href="https://netbeans.apache.org/" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://netbeans.apache.org/" data-scroll-link-local="false">Apache NetBeans IDE</a> (currently 17) is recommended.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>Define the top-level project, <em>SignServer</em>, as the main project open in the IDE by right-clicking it and selecting&nbsp;<strong>Set as Main Project</strong>. This way hitting F6 will be the same as running <code>ant deploy</code>.</p><p>The downside is that F11 now maps to&nbsp;<strong>Build Main project</strong>, and it is not convenient to rebuild everything if only working on a small number of modules. To only build the selected project (or the project belonging to the currently open file), the shortcut can be redefined to&nbsp;<strong>Build project</strong>.</p><p>When deploying from within the IDE, specify the environment variable <code>APPSRV_HOME</code> to let the script know where to deploy to.</p></div></div><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>When working with multiple branches or versions of the projects open in the IDE at the same time, it is useful to configure the IDE to display the version number after each open project:</p><p>Click <strong>Tools</strong> → <strong>Options</strong> → <strong>Java</strong> → <strong>Maven</strong> → <strong>Appearance</strong> and change <strong>Project node name</strong> to <code>${project.artifactId}-${project.version}</code>.</p></div></div><h2 id="IDEs-EclipseIDE" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Eclipse IDE<span class="confluence-anchor-link" id="src-371000827_IDEs-Eclipse-IDE"></span></span></h2><p>Since each SignServer sub-project is a Maven project, it should be possible to import them into Eclipse like any other Maven project.</p><h2 id="IDEs-IntelliJIDEA" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="471d3f59-5235-4f92-94fd-d7387a4216e6">IntelliJ IDEA</span><span class="confluence-anchor-link" id="src-371000827_IDEs-IntelliJ-IDEA"></span></span></h2><p>Since each SignServer sub-project is a Maven project, it should be possible to open the projects directly in IntelliJ IDEA like any other Maven project.</p>
 <nav id="ht-post-nav">
         <a href="Building_SignServer_with_Maven.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
@@ -171,13 +171,13 @@
             <span>Building SignServer with Maven</span>
         </a>
 
-        <a href="Automated_Tests.html" class="ht-post-nav-next">
+        <a href="SignServer_TimeMonitor_Application.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Automated Tests</span>
+            <span>SignServer TimeMonitor Application</span>
         </a>
 </nav>
                     </div>

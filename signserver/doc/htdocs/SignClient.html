@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html class="no-js" lang="en" data-vp-page-id="370999437">
+<html class="no-js" lang="en" data-vp-page-id="370999625">
 
 
     
@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:53:59.373+0000">
-    <meta name="exp-page-id" content="370999437">
-    <meta name="exp-page-title" content="Worker Setup">
-    <meta name="exp-page-version" content="1">
-    <meta name="exp-page-scroll-page-id" content="ee1d103b7a9cfe1e5d50af45573629eb">
-    <meta name="exp-page-created" content="2017-04-13T13:05:57.000+0000">
-    <meta name="exp-page-last-modified" content="2017-05-09T14:54:12.000+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:33.746+0000">
+    <meta name="exp-page-id" content="370999625">
+    <meta name="exp-page-title" content="SignClient">
+    <meta name="exp-page-version" content="7">
+    <meta name="exp-page-scroll-page-id" content="14c169657ad676e745625952d7923102">
+    <meta name="exp-page-created" content="2018-11-07T09:38:43.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-26T13:02:02.183+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -81,11 +81,11 @@
         postMessage({ type: 'search-results', results: results, query: query });
     }
 </script>
-    <title>Worker Setup</title>
+    <title>SignClient</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="0fbec7b0e5b3f38f71a4413e64620dc071e958cc872056cf0c8d337d9a254a53"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="WorkerSetup-top" pageid="370999437" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="SignClient-top" pageid="370999625" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -128,7 +128,7 @@
     <div class="flex">
 
         <div id="exp-navigation-wrapper" class="hidden lg:block">
-            <iframe src="toc.html?pageId=370999437" class="border-0"></iframe>
+            <iframe src="toc.html?pageId=370999625" class="border-0"></iframe>
         </div>
 
 
@@ -142,39 +142,46 @@
                     <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="SignServer_Operations.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Operations</a>
+                    <a href="SignServer_Integration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Integration</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
-                <a href="Worker_Setup.html" target="_self" aria-current="page">Worker Setup</a>
+                <a href="SignClient.html" target="_self" aria-current="page">SignClient</a>
             </li>
         </ol>
         <div class="breadcrumbs-wrapper__scroll-mask"></div>
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0d2c50fca886c70fa1291e11d0bf3ef91cd16efc555730c52d1055e4ee195e7a"><span class="js-hide-until-loaded">Worker Setup</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-965bbb1851e26643d18dd79b97b35d3616a04f22f1814bcd86904006316f8ae8"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">SignClient</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>After successful <a href="SignServer_Installation.html" data-linked-resource-id="370999380" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="370999380" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999380/SignServer+Installation" data-scroll-link-target-source-id="370999380">server installation</a> the different workers can be configured.</p><p>In SignServer operations are performed by workers. There can be many workers and each worker has its own configuration. Each worker is identified by an unique ID. A worker can also be configured with a name by setting the worker property <em>NAME</em>. After the configuration has been activated (by issuing reload with the worker ID) that name can also be used to address the worker.</p>
+                        <p>The SignServer Client CLI SignClient is used for sending requests to the workers.</p><h2 id="SignClient-Prerequisites" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="7347e735-5bc8-464d-a390-a2e2b6a737a6">Prerequisites</span><span class="confluence-anchor-link" id="src-370999625_SignClient-Prerequisites"></span></span></h2><p><span class="inline-comment-marker" data-ref="7347e735-5bc8-464d-a390-a2e2b6a737a6">Install Java OpenJDK 17.</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">sudo yum install -y java-</code><code class="value">17</code><code class="plain">-openjdk</code></div>
+</div>
+</div><h2 id="SignClient-SignClientSetup" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignClient Setup<span class="confluence-anchor-link" id="src-370999625_SignClient-SignClient-Setup"></span></span></h2><p>Run SignClient from <code>SIGNSERVER_HOME</code> or <code>SIGNSERVER_HOME\bin</code> or specify the home directory using one of the following parameters to allow running SignClient from any directory:</p><ul><li><p>SIGNCLIENT_HOME: SignClient specific environment variable for specifying the home directory. Takes precedence over the SIGNSERVER_HOME variable.</p></li><li><p>SIGNSERVER_HOME: General SignServer environment variable also valid for SignClient if the SIGNCLIENT_HOME variable is not set.</p></li></ul><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ bin/signclient</code></div>
+<div class="line"><code class="plain">usage: signclient &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;</code></div>
+</div>
+</div><p>The following sections cover options and sample usages of the following SignClient commands:</p><ul class="childpages-macro"><li><a href="signdocument.html" data-linked-resource-id="370999629" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999629" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999629/SignClient+signdocument+Command" data-scroll-link-target-source-id="370999629">signdocument</a></li><li><a href="validatedocument.html" data-linked-resource-id="370999633" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="370999633" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999633/SignClient+validatedocument+Command" data-scroll-link-target-source-id="370999633">validatedocument</a></li><li><a href="timestamp.html" data-linked-resource-id="370999637" data-linked-resource-version="8" data-linked-resource-type="page" data-scroll-target-source-id="370999637" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999637/SignClient+timestamp+Command" data-scroll-link-target-source-id="370999637">timestamp</a></li><li><a href="validatecertificate.html" data-linked-resource-id="370999641" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="370999641" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999641/SignClient+validatecertificate+Command" data-scroll-link-target-source-id="370999641">validatecertificate</a></li><li><a href="signdatagroups.html" data-linked-resource-id="370999645" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="370999645" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999645/SignClient+signdatagroups+Command" data-scroll-link-target-source-id="370999645">signdatagroups</a></li></ul><p>For information on logging, see <a href="Client_Logging.html" data-linked-resource-id="371000330" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000330" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000330/Client+Logging" data-scroll-link-target-source-id="371000330">Client Logging</a>.</p>
 <nav id="ht-post-nav">
-        <a href="SignServer_Operations.html" class="ht-post-nav-prev">
+        <a href="SignServer_Integration.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Operations</span>
+            <span>SignServer Integration</span>
         </a>
 
-        <a href="Quick_Start_Demo_Setup_using_Administration_CLI.html" class="ht-post-nav-next">
+        <a href="signdocument.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Quick Start Demo Setup using Administration CLI</span>
+            <span>signdocument</span>
         </a>
 </nav>
                     </div>

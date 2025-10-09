@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:26.430+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:11.117+0000">
     <meta name="exp-page-id" content="371000058">
     <meta name="exp-page-title" content="SignerStatusReportTimedService">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="069de99d9950a29c5b8730b1c4e29ca6">
     <meta name="exp-page-created" content="2018-01-19T16:23:26.000+0000">
-    <meta name="exp-page-last-modified" content="2018-04-10T13:15:25.000+0000">
+    <meta name="exp-page-last-modified" content="2025-08-28T13:43:07.200+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>SignerStatusReportTimedService</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="18b0482cd5f5c4ede36c79f1e01b3355bb8a840899a89d502c66b8e52c7bdfae"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="SignerStatusReportTimedService-top" pageid="371000058" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="SignerStatusReportTimedService-top" pageid="371000058" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,29 +158,29 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-a133536c3e60eec2e418a1adc4d3720f21331dba91c2117d4e71739f0af07d70"><span class="js-hide-until-loaded">SignerStatusReportTimedService</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-bf950a436b3d0d1e2955a063e9a40c55d0ffc7019ea6beb607791999a2ff0db1"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">SignerStatusReportTimedService</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Fully qualified class name: <strong>org.signserver.module.signerstatusreport.SignerStatusReportTimedService</strong>.</p><h2 id="SignerStatusReportTimedService-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Overview</h2><p>The SignerStatusReportTimedService is a timed service that outputs status for a set of workers to a file.</p><p>The information includes each workers crypto token status ACTIVE/OFFLINE, and if available also the number of signatures that has been performed with the key currently associated with the worker. If the worker has a configured limit of number of signatures, this value is also included.</p><p>For information on the preferred way of offering these reports, see the <a href="SignerStatusReportWorker.html" data-linked-resource-id="371000094" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="371000094" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000094/SignerStatusReportWorker" data-scroll-link-target-source-id="371000094">SignerStatusReportWorker</a>. This worker returns the report in the same format as defined for the <a href="SignerStatusReportWorker.html" data-linked-resource-id="371000094" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="371000094" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000094/SignerStatusReportWorker" data-scroll-link-target-source-id="371000094">SignerStatusReportWorker</a>.</p><h2 id="SignerStatusReportTimedService-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Available Properties</h2><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p>Property</p></th><th colspan="1" rowspan="1" class="confluenceTh"><p>Description</p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>WORKERS&nbsp;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Comma-separated list of worker names (signers) that should be monitored.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>OUTPUTFILE&nbsp;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>File that the information will be written to. If the file exists the content will be overwritten. The application server needs to have write access to this file when the service is executed.</p></td></tr></tbody></table></div>
+                        <p>Fully qualified class name: <strong>org.signserver.module.signerstatusreport.SignerStatusReportTimedService</strong>.</p><h2 id="SignerStatusReportTimedService-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview<span class="confluence-anchor-link" id="src-371000058_SignerStatusReportTimedService-Overview"></span></span></h2><p>The SignerStatusReportTimedService is a timed service that outputs status for a set of workers to a file.</p><p>The information includes each workers crypto token status ACTIVE/OFFLINE, and if available also the number of signatures that has been performed with the key currently associated with the worker. If the worker has a configured limit of number of signatures, this value is also included.</p><p>For information on the preferred way of offering these reports, see the <a href="SignerStatusReportWorker.html" data-linked-resource-id="371000094" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000094" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000094/SignerStatusReportWorker" data-scroll-link-target-source-id="371000094">SignerStatusReportWorker</a>. This worker returns the report in the same format as defined for the <a href="SignerStatusReportWorker.html" data-linked-resource-id="371000094" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000094" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000094/SignerStatusReportWorker" data-scroll-link-target-source-id="371000094">SignerStatusReportWorker</a>.</p><h2 id="SignerStatusReportTimedService-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties<span class="confluence-anchor-link" id="src-371000058_SignerStatusReportTimedService-Available-Properties"></span></span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="95acf377-27f5-42ea-971d-ee56cb965745" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 11.3952%;"><col span="1" style="width: 88.6048%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Property</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>OUTPUTFILE&nbsp;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the file that the information is written to. If the file exists, the content will be overwritten. The application server must have write access to this file when the service is executed.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>WORKERS&nbsp;</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies worker names (signers) that should be monitored in a comma-separated list.</p></td></tr></tbody></table></div>
 <nav id="ht-post-nav">
-        <a href="SignServer_Timed_Services.html" class="ht-post-nav-prev">
+        <a href="RenewalTimedService.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Timed Services</span>
+            <span>RenewalTimedService</span>
         </a>
 
-        <a href="HSMKeepAliveTimedService.html" class="ht-post-nav-next">
+        <a href="Other_Workers.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>HSMKeepAliveTimedService</span>
+            <span>Other Workers</span>
         </a>
 </nav>
                     </div>

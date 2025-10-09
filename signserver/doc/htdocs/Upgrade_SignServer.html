@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:53:57.856+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:29.188+0000">
     <meta name="exp-page-id" content="370999421">
     <meta name="exp-page-title" content="Upgrade SignServer">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="268cf35c325166a2bf86562fad2c4d78">
     <meta name="exp-page-created" content="2023-05-24T14:16:50.000+0000">
-    <meta name="exp-page-last-modified" content="2023-05-29T09:26:49.000+0000">
+    <meta name="exp-page-last-modified" content="2025-08-21T13:29:29.931+0000">
     <meta name="exp-page-labels" content="signserver-software-only">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>Upgrade SignServer</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="4c27d57c4d9e63ab5a01bfbc3f0803a71ac37268b0a1c346a5258c15a9ba4d29"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="UpgradeSignServer-top" pageid="370999421" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="UpgradeSignServer-top" pageid="370999421" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -152,12 +152,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b47c56e6b9a10dbecbecc2f757681627f812ba864a223c56e9bd94273b227c9b"><span class="js-hide-until-loaded">Upgrade SignServer</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-bde5844c7d7e42bf40d54d583509456d47d49740572302c5d9563fb1d676d76e"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Upgrade SignServer</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>This section provides information on upgrading from your current version to a later version of SignServer.</p><p>Also see the&nbsp;<a href="Upgrade_Notes.html" data-linked-resource-id="370999429" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="370999429" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999429/Upgrade+Notes" data-scroll-link-target-source-id="370999429">SignServer Upgrade Notes</a> for&nbsp;important notes on upgrading to the planned version.</p><h2 id="UpgradeSignServer-UpgradeInstructions" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Upgrade Instructions</h2><p>Follow the steps below to upgrade SignServer to a new version.</p><ol><li>Make a database backup before upgrading, to ensure you can roll back to the previous version if something goes seriously wrong.</li><li>Unpack the SignServer release package.</li><li>Copy the <code><span class="s1">conf</span>/*.properties</code> file(s) from your earlier installation.<br clear="none">This step is not required if you are using an&nbsp;<code>signserver-custom</code> directory, see <a href="Install_SignServer.html" data-linked-resource-id="370999413" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="370999413" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999413/Install+SignServer" data-scroll-link-target-source-id="370999413">Custom Configuration Outside of Installation Directory</a>.</li><li>Review the <a href="Upgrade_Notes.html" data-linked-resource-id="370999429" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="370999429" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999429/Upgrade+Notes" data-scroll-link-target-source-id="370999429">SignServer Upgrade Notes</a> for information to be aware of when upgrading SignServer.</li><li>Upgrade Java and the application server if required by the new SignServer version. For more information, see <a href="Prerequisites.html" data-linked-resource-id="370999384" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999384" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999384/Prerequisites" data-scroll-link-target-source-id="370999384">Prerequisites</a>.</li><li>Deploy SignServer:&nbsp; <br clear="none"><ol><li><p>Run <code>bin/ant deploy</code> to build the configuration and deploy it to the selected application server:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p>This section provides information on upgrading from your current version to a later version of SignServer.</p><p>Also see the&nbsp;<a href="Upgrade_Notes.html" data-linked-resource-id="370999429" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="370999429" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999429/Upgrade+Notes" data-scroll-link-target-source-id="370999429">SignServer Upgrade Notes</a> for&nbsp;important notes on upgrading to the planned version.</p><h2 id="UpgradeSignServer-UpgradeInstructions" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Upgrade Instructions<span class="confluence-anchor-link" id="src-370999421_UpgradeSignServer-Upgrade-Instructions"></span></span></h2><p>To upgrade SignServer to a new version:</p><ol start="1"><li><p>Make a database backup before upgrading, to ensure you can roll back to the previous version if something goes seriously wrong.</p></li><li><p>Unpack the SignServer release package.</p></li><li><p>Copy the <code>conf/*.properties</code> file(s) from your earlier installation.<br clear="none">This step is not required if you are using an&nbsp;<code>signserver-custom</code> directory, see <a href="Install_SignServer.html" data-linked-resource-id="370999413" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999413" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999413/Install+SignServer" data-scroll-link-target-source-id="370999413">Custom Configuration Outside of Installation Directory</a>.</p></li><li><p>Review the <a href="Upgrade_Notes.html" data-linked-resource-id="370999429" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="370999429" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999429/Upgrade+Notes" data-scroll-link-target-source-id="370999429">SignServer Upgrade Notes</a> for information to be aware of when upgrading SignServer.</p></li><li><p>Upgrade Java and the application server if required by the new SignServer version. For more information, see <a href="Prerequisites.html" data-linked-resource-id="370999384" data-linked-resource-version="12" data-linked-resource-type="page" data-scroll-target-source-id="370999384" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999384/Prerequisites" data-scroll-link-target-source-id="370999384">Prerequisites</a>.</p></li><li><p>Deploy SignServer:&nbsp; </p><ol start="1"><li><p>Run <code>bin/ant deploy</code> to build the configuration and deploy it to the selected application server:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">bin/ant deploy</code></div>
 </div>
 </div></li><li><p>Make sure the application server is running and verify that SignServer was deployed correctly.<br clear="none">For example, look at the server log or for WildFly, run:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
@@ -165,22 +165,22 @@
 </div>
 </div></li></ol></li></ol>
 <nav id="ht-post-nav">
-        <a href="SignServer_without_Database.html" class="ht-post-nav-prev">
+        <a href="SignServer_Installation.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer without Database</span>
+            <span>SignServer Installation</span>
         </a>
 
-        <a href="Upgrade_Notes.html" class="ht-post-nav-next">
+        <a href="Migrate_from_SunPKCS11_to_P11NG.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Upgrade Notes</span>
+            <span>Migrate from SunPKCS11 to P11NG</span>
         </a>
 </nav>
                     </div>

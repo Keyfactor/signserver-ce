@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:08.447+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:35.111+0000">
     <meta name="exp-page-id" content="370999641">
     <meta name="exp-page-title" content="validatecertificate">
-    <meta name="exp-page-version" content="2">
+    <meta name="exp-page-version" content="9">
     <meta name="exp-page-scroll-page-id" content="9844985b0c3f9e8650978538164c6710">
     <meta name="exp-page-created" content="2018-04-12T08:51:45.000+0000">
-    <meta name="exp-page-last-modified" content="2024-02-17T15:37:12.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-08T08:54:42.746+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>validatecertificate</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="84f1b6d4b075804fb7e2dfb06adaa9be4c6269dcd3767859861f3671b8055c65"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="validatecertificate-top" pageid="370999641" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="validatecertificate-top" pageid="370999641" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -145,7 +145,7 @@
                     <a href="SignServer_Integration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Integration</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="Client_CLI.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Client CLI</a>
+                    <a href="SignClient.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignClient</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
                 <a href="validatecertificate.html" target="_self" aria-current="page">validatecertificate</a>
@@ -155,57 +155,49 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-bc44ef42b33fee8f6e339518afe608fdf20b2be00471d9d09962e81fd97ae9fe"><span class="js-hide-until-loaded">validatecertificate</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-fc6f3287400efb35e71e5157e9b40ad54ab88fa8ad1e4f6a7b1c8f8aefa36369"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">validatecertificate</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Request a certificate to be validated by the specified service.</p><pre class="prettyprint">usage: Usage: signclient validatecertificate &lt;options&gt;
-
- -cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)
-                                (Required).
- -certpurposes &lt;certpurposes&gt;   A ',' separated string containing
-                                requested certificate purposes.
- -der                           Certificate is in DER format.
- -help                          Display this info
- -hosts &lt;hosts&gt;           A ',' separated string containing the
-                                hostnames of the validation service nodes.
-                                Ex 'host1.someorg.org,host2.someorg.org'.
-                                When using the HTTP protocol, only one
-                                host name can be specified. (Required).
- -pem                           Certificate is in PEM format (Default).
- -port &lt;port&gt;                   Remote port of service (Default is 8080 or
-                                8442 for SSL).
- -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or
-                                HTTP. Default: WEBSERVICES.
- -service &lt;service-name&gt;        The name or ID of the validation service
-                                to process request. (Required)
- -silent                        Don't produce any output, only return
-                                value.
- -truststore &lt;jks-file&gt;         Path to JKS truststore containing trusted
-                                CA for SSL Server certificates.
- -truststorepwd &lt;password&gt;      Password to unlock the truststore.
-
-The following values is returned by the program that can be used when scripting.
-  -2   : Error happened during execution
-  -1   : Bad arguments
-   0   : Certificate is valid
-   1   : Certificate is revoked
-   2   : Certificate is not yet valid
-   3   : Certificate have expired
-   4   : Certificate doesn't verify
-   5   : CA Certificate have been revoked
-   6   : CA Certificate is not yet valid
-   7   : CA Certificate have expired
-   8   : Certificate have no valid certificate purpose
-
-Sample usages:
-a) validatecertificate -service CertValidationWorker -hosts localhost -cert
-    certificate.pem
-b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem
-    -truststore p12/truststore.jks -truststorepwd changeit
-c) validatecertificate -service CertValidationWorker -hosts localhost
-    -cert certificate.pem -protocol HTTP</pre>
+                        <p>Use the SignClient <code>validatecertificate</code> command to request a certificate to be validated by the specified service.</p><h2 id="SignClientvalidatecertificateCommand-Usage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Usage<span class="confluence-anchor-link" id="src-370999641_SignClientvalidatecertificateCommand-Usage"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">usage: signclient validatecertificate &lt;options&gt;</code></div>
+<div class="line"><code class="plain">-cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)(Required).</code></div>
+<div class="line"><code class="plain">-certpurposes &lt;certpurposes&gt;   A </code><code class="string">','</code><code class="plain"> separated string containing requested certificate purposes.</code></div>
+<div class="line"><code class="plain">-der                           Certificate is in DER format.</code></div>
+<div class="line"><code class="plain">-help                          Display </code><code class="keyword">this</code><code class="plain"> info.</code></div>
+<div class="line"><code class="plain">-hosts &lt;hosts&gt;                 A </code><code class="string">','</code><code class="plain"> separated string containing the hostnames of the validation service nodes.</code></div>
+<div class="line"><code class="plain">                               Ex </code><code class="string">'host1.someorg.org,host2.someorg.org'</code><code class="plain">.</code></div>
+<div class="line"><code class="plain">                               When using the HTTP protocol, only one host name can be specified. (Required).</code></div>
+<div class="line"><code class="plain">-pem                           Certificate is in PEM format (Default).</code></div>
+<div class="line"><code class="plain">-port &lt;port&gt;                   Remote port of service (Default is </code><code class="value">8080</code><code class="plain"> or </code><code class="value">8442</code><code class="plain"> </code><code class="keyword">for</code><code class="plain"> SSL).</code></div>
+<div class="line"><code class="plain">-protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or HTTP. Default: WEBSERVICES.</code></div>
+<div class="line"><code class="plain">-service &lt;service-name&gt;        The name or ID of the validation service to process request. (Required)</code></div>
+<div class="line"><code class="plain">-silent                        Don't produce any output, only </code><code class="keyword">return</code><code class="plain"> value.</code></div>
+<div class="line"><code class="plain">-truststore &lt;jks-file&gt;         Path to JKS truststore containing trusted CA </code><code class="keyword">for</code><code class="plain"> SSL Server certificates.</code></div>
+<div class="line"><code class="plain">-truststorepwd &lt;password&gt;      Password to unlock the truststore. </code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">The following values are returned by the program that can be used when scripting:   </code></div>
+<div class="line"><code class="plain">-</code><code class="value">2</code><code class="plain">   : Error happened during execution</code></div>
+<div class="line"><code class="plain">-</code><code class="value">1</code><code class="plain">   : Bad arguments</code></div>
+<div class="line"><code class="plain"> </code><code class="value">0</code><code class="plain">   : Certificate is valid</code></div>
+<div class="line"><code class="plain"> </code><code class="value">1</code><code class="plain">   : Certificate is revoked</code></div>
+<div class="line"><code class="plain"> </code><code class="value">2</code><code class="plain">   : Certificate is not yet valid</code></div>
+<div class="line"><code class="plain"> </code><code class="value">3</code><code class="plain">   : Certificate have expired</code></div>
+<div class="line"><code class="plain"> </code><code class="value">4</code><code class="plain">   : Certificate doesn't verify</code></div>
+<div class="line"><code class="plain"> </code><code class="value">5</code><code class="plain">   : CA Certificate have been revoked</code></div>
+<div class="line"><code class="plain"> </code><code class="value">6</code><code class="plain">   : CA Certificate is not yet valid</code></div>
+<div class="line"><code class="plain"> </code><code class="value">7</code><code class="plain">   : CA Certificate have expired</code></div>
+<div class="line"><code class="plain"> </code><code class="value">8</code><code class="plain">   : Certificate have no valid certificate purpose  </code></div>
+</div>
+</div><h2 id="SignClientvalidatecertificateCommand-SampleUsages" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sample Usages<span class="confluence-anchor-link" id="src-370999641_SignClientvalidatecertificateCommand-Sample-Usages"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">a) validatecertificate -service CertValidationWorker -hosts localhost -cert certificate.pem</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">b) validatecertificate -service </code><code class="value">5806</code><code class="plain"> -hosts localhost -cert certificate.pem -truststore p12/truststore.jks -truststorepwd changeit</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">c) validatecertificate -service CertValidationWorker -hosts localhost -cert certificate.pem -protocol HTTP</code></div>
+</div>
+</div>
 <nav id="ht-post-nav">
         <a href="timestamp.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

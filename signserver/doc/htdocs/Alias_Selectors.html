@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:36.669+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:22:16.214+0000">
     <meta name="exp-page-id" content="371000193">
     <meta name="exp-page-title" content="Alias Selectors">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="4">
     <meta name="exp-page-scroll-page-id" content="2d5299b150a7693b05646ce018be5a98">
     <meta name="exp-page-created" content="2019-11-08T15:03:02.000+0000">
-    <meta name="exp-page-last-modified" content="2019-11-08T15:03:28.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-01T12:56:31.316+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>Alias Selectors</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="578e18e4f5078495d7968a233b5a4e8cf749f880a034202cebaa59f8528af92c"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="AliasSelectors-top" pageid="371000193" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="AliasSelectors-top" pageid="371000193" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,12 +155,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-ac0ada855507588e8573b5f39db0df671d12bad237d1734c3d0153d75fa2a59f"><span class="js-hide-until-loaded">Alias Selectors</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0b7c6b2bd6ff7aecc99389b7f2c978c9ac7effea4eb3e715fa6ff1204a8ed1f3"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Alias Selectors</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>By using an Alias Selector it is possible to control how the key used for signing are selected at run-time based the signing request. For example, it is possible to have keys selected based on the authenticated user for a signing request.</p><p>The default, if no alias selector is explicitly configured, is to use a default selector behaving in a backwards-compatible way, using the DEFAULTKEY property of the crypto worker being used.</p><p>To configure an alternative alias selector, set the <strong>ALIASSELECTOR</strong> worker property of the worker pointing to the class name of an implementation for an alias selector to use.</p><p>Available Alias Selectors:</p><p></p><ul class="childpages-macro"><li><a href="DefaultAliasSelector.html" data-linked-resource-id="371000197" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="371000197" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000197/DefaultAliasSelector" data-scroll-link-target-source-id="371000197">DefaultAliasSelector</a></li><li><a href="AuthorizedUsernameAliasSelector.html" data-linked-resource-id="371000201" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="371000201" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000201/AuthorizedUsernameAliasSelector" data-scroll-link-target-source-id="371000201">AuthorizedUsernameAliasSelector</a></li><li><a href="RequestMetadataAliasSelector.html" data-linked-resource-id="371000205" data-linked-resource-version="1" data-linked-resource-type="page" data-scroll-target-source-id="371000205" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000205/RequestMetadataAliasSelector" data-scroll-link-target-source-id="371000205">RequestMetadataAliasSelector</a></li></ul>
+                        <p>By using an Alias Selector, it is possible to control how the key used for signing is selected at run-time based the signing request. For example, it is possible to have keys selected based on the authenticated user for a signing request.</p><p>The default, if no alias selector is explicitly configured, it uses a default selector behaving in a backwards-compatible way, using the <code>DEFAULTKEY</code> property of the crypto worker being used.</p><p>To configure an alternative alias selector, set the <code>ALIASSELECTOR</code> worker property of the worker pointing to the class name of an implementation for an alias selector to use.</p><p>Available Alias Selectors:</p><ul class="childpages-macro"><li><a href="DefaultAliasSelector.html" data-linked-resource-id="371000197" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000197" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000197/DefaultAliasSelector" data-scroll-link-target-source-id="371000197">DefaultAliasSelector</a></li><li><a href="AuthorizedUsernameAliasSelector.html" data-linked-resource-id="371000201" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000201" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000201/AuthorizedUsernameAliasSelector" data-scroll-link-target-source-id="371000201">AuthorizedUsernameAliasSelector</a></li><li><a href="RequestMetadataAliasSelector.html" data-linked-resource-id="371000205" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000205" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000205/RequestMetadataAliasSelector" data-scroll-link-target-source-id="371000205">RequestMetadataAliasSelector</a></li></ul>
 <nav id="ht-post-nav">
         <a href="GlobalConfigSampleAccounter.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

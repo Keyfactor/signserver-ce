@@ -1,0 +1,247 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1834156240">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:45.964+0000">
+    <meta name="exp-page-id" content="1834156240">
+    <meta name="exp-page-title" content="Set up OpenID Connect (OIDC) using Auth0">
+    <meta name="exp-page-version" content="19">
+    <meta name="exp-page-scroll-page-id" content="faca1ee65d296081313c2e90b95bcc2f">
+    <meta name="exp-page-created" content="2025-09-30T09:54:58.621+0000">
+    <meta name="exp-page-last-modified" content="2025-10-09T07:24:19.808+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Set up OpenID Connect (OIDC) using Auth0</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="2917d4ea3c82cda43b0db77107253b5a1701448f85764356813a2adba88ba682"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SetupOpenIDConnect(OIDC)usingAuth0-top" pageid="1834156240" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1834156240" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_User_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer User Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Administration_Web.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Administration Web</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Login_and_Logout.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Login and Logout</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Set_up_OpenID_Connect_(OIDC)_using_Auth0.html" target="_self" aria-current="page">Set up OpenID Connect (OIDC) using Auth0</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-7d01877a523ab6a012a12f5240b77f1a2eb2a06e693e87d265bb03ef387422a5"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Set up OpenID Connect (OIDC) using Auth0</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p>You can set up OpenID Connect (OIDC) as an authentication method <span class="inline-comment-marker" data-ref="92663243-5d2e-408b-b537-3603da131225">for SignServer</span> AdminWeb login using Auth0.</p><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p><span class="inline-comment-marker" data-ref="2bf97af8-1ffd-4cf5-99b6-8a43bb98f068">If using the default HTTPS port 443, do not specify the port in the URLs. This causes a known issue when trying to log in. </span>Instead use:</p><ul><li><p>Allowed Callback URLs: <em>https://&lt;YourDomain&gt;/signserver/adminweb/callback</em></p></li><li><p>Allowed Logout URLs: <em>https://&lt;YourDomain&gt;/signserver</em></p></li></ul></div></div><h2 id="SetupOpenIDConnect(OIDC)usingAuth0-Prerequisites" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Prerequisites<span class="confluence-anchor-link" id="src-1834156240_SetupOpenIDConnect(OIDC)usingAuth0-Prerequisites"></span></span></h2><p>An Auth0 account and the Auth0 application.</p><h2 id="SetupOpenIDConnect(OIDC)usingAuth0-Step1-ConfigureyourAuth0Application" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 1 - Configure your Auth0 Application<span class="confluence-anchor-link" id="src-1834156240_SetupOpenIDConnect(OIDC)usingAuth0-Step-1---Configure-your-Auth0-Application"></span></span></h2><p>To set up the SignServer authentication, configure the Auth0 application settings.</p><ol start="1"><li><p>Navigate to the <strong>Application Settings</strong> in your Auth0 application.</p></li><li><p>Set the following:</p><ul><li><p>Allowed Callback URLs: <em>https://&lt;YourDomain&gt;:8443/signserver/adminweb/callback</em></p></li><li><p>Allowed Logout URLs: <em>https://&lt;YourDomain&gt;:8443/signserver</em></p></li></ul></li></ol><p style="margin-left: 30.0px;">For more information, see the Auth0 Documentation <a class="external-link scroll-external-link" data-card-appearance="inline" href="https://auth0.com/docs/get-started/applications/application-settings" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://auth0.com/docs/get-started/applications/application-settings" data-scroll-link-local="false">https://auth0.com/docs/get-started/applications/application-settings</a>.</p><ol start="2"><li><p>Click <strong>Save</strong>.</p></li><li><p>Navigate to the <strong>Tenant Settings</strong>. </p></li><li><p>In the <strong>Login and Logout</strong> section under <strong>Advanced</strong>, set the following:</p><ul><li><p>Allowed Logout URLs: <em>https://&lt;YourDomain&gt;:8443/signserver </em></p></li></ul></li></ol><p style="margin-left: 30.0px;">For more information, see <a class="external-link scroll-external-link" data-card-appearance="inline" href="https://auth0.com/docs/authenticate/login/logout/redirect-users-after-logout" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://auth0.com/docs/authenticate/login/logout/redirect-users-after-logout" data-scroll-link-local="false">https://auth0.com/docs/authenticate/login/logout/redirect-users-after-logout</a>.</p><ol start="5"><li><p>Click <strong>Save</strong>.</p></li><li><p>Create an Action <span class="inline-comment-marker" data-ref="f9780bda-9c88-42e9-968d-0a8b94bd78a5">which triggers</span> after a user is authenticated but before a token is issued. To create a <code>post-login</code> trigger, follow the steps in <a class="external-link scroll-external-link" data-card-appearance="inline" href="https://auth0.com/docs/customize/actions/write-your-first-action" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://auth0.com/docs/customize/actions/write-your-first-action" data-scroll-link-local="false">https://auth0.com/docs/customize/actions/write-your-first-action</a>.</p></li><li><p><span class="inline-comment-marker" data-ref="b0fc0bbc-986a-497c-9b40-f3a0787d3622">Replace the code in the trigger with the following:</span></p></li></ol><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">exports.onExecutePostLogin = async (event, api) =&gt; {</code></div>
+<div class="line"><code class="plain">  </code><code class="keyword">const</code><code class="plain"> namespace = </code><code class="string">'kf.roles'</code><code class="plain">;</code></div>
+<div class="line"><code class="plain">  </code><code class="keyword">if</code><code class="plain"> (event.authorization) {</code></div>
+<div class="line"><code class="plain">    api.idToken.setCustomClaim(</code><code class="string">'preferred_username'</code><code class="plain">, event.user.email);</code></div>
+<div class="line"><code class="plain">    api.idToken.setCustomClaim(`${namespace}`, event.authorization.roles);</code></div>
+<div class="line"><code class="plain">  }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><ol start="8"><li><p>Click <strong>Deploy</strong>.</p></li><li><p>Follow the steps to attach the Action to a flow, and click <strong>Apply</strong>.</p></li></ol><h2 id="SetupOpenIDConnect(OIDC)usingAuth0-Step2-ManageAuth0UserRoles" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 2 - Manage Auth0 User Roles<span class="confluence-anchor-link" id="src-1834156240_SetupOpenIDConnect(OIDC)usingAuth0-Step-2---Manage-Auth0-User-Roles"></span></span></h2><p>To complete the setup of your user profile in the Auth0 application, create and assign roles.</p><p>For more information and detailed steps, see <a class="external-link scroll-external-link" data-card-appearance="inline" href="https://auth0.com/docs/manage-users/user-accounts" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://auth0.com/docs/manage-users/user-accounts" data-scroll-link-local="false">https://auth0.com/docs/manage-users/user-accounts</a>. </p><ol start="1"><li><p>Create a new user.</p></li><li><p>Under <strong>Roles</strong>, create the following three roles:</p><ul><li><p>admin</p></li><li><p>auditor</p></li><li><p>archive_auditor</p></li></ul></li><li><p>In the User Configuration section, click <strong>Assign Roles</strong> and assign the roles you want to your user.</p></li></ol><h2 id="SetupOpenIDConnect(OIDC)usingAuth0-Step3-ConfigureSignServerforOIDC" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 3 - Configure SignServer for OIDC<span class="confluence-anchor-link" id="src-1834156240_SetupOpenIDConnect(OIDC)usingAuth0-Step-3---Configure-SignServer-for-OIDC"></span></span></h2><p>To complete the OIDC setup, configure SignServer with the Auth0 values.</p><p>For more information, see <a class="external-link scroll-external-link" data-card-appearance="inline" href="https://auth0.com/docs/get-started/applications/application-settings" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://auth0.com/docs/get-started/applications/application-settings" data-scroll-link-local="false">https://auth0.com/docs/get-started/applications/application-settings</a>. </p><ol start="1"><li><p>In the Auth0 application, find the following values under Application Settings:</p><ul><li><p><strong>Client ID</strong></p></li><li><p><strong>Client Secret</strong></p></li><li><p><strong>Domain </strong>(used in <strong>providerUri</strong> and <strong>providerLogOutUri</strong>)</p></li></ul></li><li><p>Copy these values and paste them into SignServer, under the  <code>conf/oidc.properties</code> section. </p></li></ol><p style="margin-left: 30.0px;">For example, for <code><span class="inline-comment-marker" data-ref="b40607b0-2a5c-4c0c-b5cd-1576951f74b7">oidc.providerUr</span>i</code>, the value is similar to:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain"> https:</code><code class="comments">//&lt;domain&gt;/</code></div>
+</div>
+</div><p style="margin-left: 30.0px;">For <code>oidc.providerLogOutUri</code>, the value is similar to:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">https:</code><code class="comments">//&lt;domain&gt;/v2/logout</code></div>
+</div>
+</div><p style="margin-left: 30.0px;">Here<span class="inline-comment-marker" data-ref="d3037639-a6f6-4ab5-a1bd-fad65e6d1051"> is an example snippet of</span> the <code><span class="inline-comment-marker" data-ref="9b34f8ee-d8f9-4440-8d72-16e21adbf03e">oidc.properties</span></code><span class="inline-comment-marker" data-ref="9b34f8ee-d8f9-4440-8d72-16e21adbf03e">:</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">#Sample </code><code class="keyword">for</code><code class="plain"> Auth0</code></div>
+<div class="line"><code class="plain">oidc.clientId=xxxxxxclient-idxxxxxxxxxxxxxx</code></div>
+<div class="line"><code class="plain">oidc.clientSecret=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code></div>
+<div class="line"><code class="plain">oidc.providerUri=https:</code><code class="comments">//dev-xxxxxxxxxxxxxxxx.us.auth0.com/</code></div>
+<div class="line"><code class="plain">oidc.providerLogOutUri=https:</code><code class="comments">//dev-xxxxxxxxxxxxxxxx.us.auth0.com/v2/logout</code></div>
+<div class="line"><code class="plain">oidc.logoutUri=https:</code><code class="comments">//localhost:8443/signserver</code></div>
+<div class="line"><code class="plain">oidc.redirectUri=https:</code><code class="comments">//localhost:8443/signserver/adminweb/workers.xhtml</code></div>
+<div class="line"><code class="plain">oidc.loginUri=https:</code><code class="comments">//localhost:8443/signserver/adminweb/callback</code></div>
+<div class="line"><code class="plain">oidc.callerGroupsClaim=kf.roles</code></div>
+<div class="line"><code class="plain">oidc.audience=xxxxxxclient-idxxxxxxxxxxxxxx</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Login_and_Logout.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Login and Logout</span>
+        </a>
+
+        <a href="Main_Page.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Main Page</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

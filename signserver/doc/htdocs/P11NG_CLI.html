@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:10.139+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:36.640+0000">
     <meta name="exp-page-id" content="370999681">
     <meta name="exp-page-title" content="P11NG CLI">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="6">
     <meta name="exp-page-scroll-page-id" content="de55c0a8ee5fceb85485f6715b7d0389">
     <meta name="exp-page-created" content="2022-09-22T08:52:15.000+0000">
-    <meta name="exp-page-last-modified" content="2022-09-23T07:59:46.000+0000">
+    <meta name="exp-page-last-modified" content="2025-09-03T08:26:59.934+0000">
     <meta name="exp-page-labels" content="p11ng-signserver">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>P11NG CLI</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b2f17953b9a0350060fc7eceab8409e2c5b958e16e4dc212f9c4b2593740a660"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="P11NGCLI-top" pageid="370999681" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="P11NGCLI-top" pageid="370999681" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -152,7 +152,7 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-2648fb79cb0f2a130e3dfad3dbfc239b57aa6a68fa07d0d9e1cd36c30c2d8feb"><span class="js-hide-until-loaded">P11NG CLI</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-39621a7ed71420fbc898a49f7c63a27f3c7edf90a322516d76dd666f414f498a"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">P11NG CLI</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
@@ -160,7 +160,7 @@
                         <p>The CLI tool p11ng-tool provides actions for querying, removing, and creating objects(keys) in an HSM slot in addition to signing sample text with existing wrapped key.</p><p>The tool is provided for troubleshooting purposes and the API is likely to change in future versions.</p><p>Run&nbsp;p11ng-tool from <strong>SIGNSERVER_HOME </strong>using the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain"> bin/p11ng-tool</code></div>
 </div>
-</div><p><br clear="none"></p><div class="scroll-code scroll-highlighted-code-block" data-title="Usage" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="title">Usage</div><div class="defaultnew content" data-title="Usage">
+</div><h2 id="P11NGCLI-Usage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>Usage</strong><span class="confluence-anchor-link" id="src-370999681_P11NGCLI-Usage"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">p11ng-tool [options]</code></div>
 <div class="line"><code class="plain">P11NG commands</code></div>
 <div class="line"><code class="plain"> -action &lt;arg&gt;               Operation to perform. Any of: [listSlots,</code></div>
@@ -205,48 +205,43 @@
 <div class="line"><code class="plain">                             </code><code class="keyword">this</code><code class="plain"> time (in milliseconds). Default=</code><code class="value">0</code><code class="plain"> (no</code></div>
 <div class="line"><code class="plain">                             warmup time).</code></div>
 <div class="line"><code class="plain"> -wrapkey &lt;arg&gt;              Label of key to wrap with</code></div>
+</div>
+</div><h2 id="P11NGCLI-SampleUsages" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sample Usages<span class="confluence-anchor-link" id="src-370999681_P11NGCLI-Sample-Usages"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">a) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action listSlots</code></div>
 <div class="line">&nbsp;</div>
-<div class="line"><code class="plain">Sample usages:</code></div>
-<div class="line"><code class="plain">a) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">listSlots</code></div>
-<div class="line"><code class="plain">b) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">showInfo</code></div>
-<div class="line"><code class="plain">c) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">listObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123</code></div>
-<div class="line"><code class="plain">d) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">generateKey -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias wrapkey1</code></div>
-<div class="line"><code class="plain">e) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">generateKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias myprivkey</code></div>
-<div class="line"><code class="plain">f) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">generateKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias myprivkey -attributes_file</code></div>
-<div class="line"><code class="plain">/home/user/attribute_file.properties</code></div>
-<div class="line"><code class="plain">g) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">deleteObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code></div>
-<div class="line"><code class="plain">h) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">deleteObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code><code class="plain"> -object </code><code class="value">5</code></div>
-<div class="line"><code class="plain">i) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">deleteKeyStoreEntryByAlias -slot </code><code class="value">0</code><code class="plain"> -alias mykey1</code></div>
-<div class="line"><code class="plain">j) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">listKeyStoreEntries -slot </code><code class="value">0</code><code class="plain"> -pin foo123</code></div>
-<div class="line"><code class="plain">k) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">generateAndWrapKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -wrapkey wrapkey1 -selfcert</code></div>
-<div class="line"><code class="plain">-alias wrappedprivkey</code></div>
-<div class="line"><code class="plain">l) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">signPerformanceTest -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias mykey1 -warmuptime </code><code class="value">10000</code></div>
-<div class="line"><code class="plain">-timelimit </code><code class="value">100000</code><code class="plain"> -threads </code><code class="value">10</code></div>
-<div class="line"><code class="plain">m) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">unwrapPerformanceTest -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -wrapkey wrapkey1 -warmuptime</code></div>
-<div class="line"><code class="value">10000</code><code class="plain"> -timelimit </code><code class="value">100000</code><code class="plain"> -threads </code><code class="value">10</code></div>
+<div class="line"><code class="plain">b) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action showInfo</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">c) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action listObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">d) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action generateKey -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias wrapkey1</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">e) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action generateKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias myprivkey</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">f) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action generateKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias myprivkey -attributes_file/home/user/attribute_file.properties</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">g) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action deleteObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">h) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action deleteObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code><code class="plain"> -object </code><code class="value">5</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">i) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action deleteKeyStoreEntryByAlias -slot </code><code class="value">0</code><code class="plain"> -alias mykey1</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">j) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action listKeyStoreEntries -slot </code><code class="value">0</code><code class="plain"> -pin foo123</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">k) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action generateAndWrapKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -wrapkey wrapkey1 -selfcert-alias wrappedprivkey</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">l) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action signPerformanceTest -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias mykey1 -warmuptime </code><code class="value">10000</code><code class="plain"> -timelimit </code><code class="value">100000</code><code class="plain"> -threads </code><code class="value">10</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">m) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action unwrapPerformanceTest -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -wrapkey wrapkey1 -warmuptime </code><code class="value">10000</code><code class="plain"> -timelimit </code><code class="value">100000</code><code class="plain"> -threads </code><code class="value">10</code></div>
 </div>
 </div>
 <nav id="ht-post-nav">
-        <a href="Stresstest_CLI.html" class="ht-post-nav-prev">
+        <a href="Client_HTTP_Interface.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Stresstest CLI</span>
+            <span>Client HTTP Interface</span>
         </a>
 
         <a href="SNTP_Tool.html" class="ht-post-nav-next">

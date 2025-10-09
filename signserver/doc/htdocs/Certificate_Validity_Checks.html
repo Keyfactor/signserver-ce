@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:12.698+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:56.632+0000">
     <meta name="exp-page-id" content="370999747">
     <meta name="exp-page-title" content="Certificate Validity Checks">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-version" content="5">
     <meta name="exp-page-scroll-page-id" content="bd083c4ac3e79a2b24813516910a631d">
     <meta name="exp-page-created" content="2017-03-08T08:30:02.000+0000">
-    <meta name="exp-page-last-modified" content="2017-05-11T09:56:13.000+0000">
+    <meta name="exp-page-last-modified" content="2025-10-08T08:09:26.500+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -83,9 +83,9 @@
 </script>
     <title>Certificate Validity Checks</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="62b266d4d6628544595dec097e035fd2c0c0ce592c159119b2b35279ff1f6657"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="CertificateValidityChecks-top" pageid="370999747" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="CertificateValidityChecks-top" pageid="370999747" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,12 +158,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-860a64ae1ca2476a728c7d7eb19d64978a1c6cb54244862d26a849bab3b3b15c"><span class="js-hide-until-loaded">Certificate Validity Checks</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-cfe6d9806cd7f86557488bceff886b3285aa2a2403b99779381b8fe7bdbceec6"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Certificate Validity Checks</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <div class="section"><h2 id="CertificateValidityChecks-Checkingvalidityofsignercertificates" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading">Checking validity of signer certificates</h2><p>By default the SignServer checks if the signer certificate of a signer is valid before letting the signer process a request. If the signers certificate is not valid an error message is returned.</p><p>There are two properties that can be set to disable this check:</p><div class="table-wrap"><table class="wrapped confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p>Property</p></th><th colspan="1" rowspan="1" class="confluenceTh"><p>Description</p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>CHECKCERTVALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Default value is <em>true</em>, meaning that the validity period of the certificate will be verified before processing. Set to false to ignore if the certificate is expired or not yet valid.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>CHECKCERTPRIVATEKEYVALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Default value is <em>true</em>, meaning that the validity period in the <strong>PrivateKeyUsagePeriod</strong> of the certificate will be verified before processing. This is only done if this extension exists (it is optional in a certificate). Set to <em>false</em> to ignore the <strong>PrivateKeyUsagePeriod</strong>.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>MINREMAININGCERTVALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Default value is <em>0</em>. This property defines a minimum remaining validity time required of the signing certificate. If the signing certificate expires within the number of days specified an error occurs. Set to <em>0</em> (default) to disable this check.</p></td></tr></tbody></table></div></div>
+                        <p>By default, the SignServer checks if the signer certificate of a signer is valid before letting the signer process a request. If the signers certificate is not valid, an error message is returned.</p><p>There are two properties that can be set to disable checking the validity of signer certificates:</p><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="c6f7ce2a-ec2a-4a20-aaa0-16ccc592b572" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 28.2379%;"><col span="1" style="width: 71.7621%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Property</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>CHECKCERTVALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Default value is <em>true</em>, meaning that the validity period of the certificate will be verified before processing. Set to false to ignore if the certificate is expired or not yet valid.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>CHECKCERTPRIVATEKEYVALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Default value is <em>true</em>, meaning that the validity period in the <strong>PrivateKeyUsagePeriod</strong> of the certificate will be verified before processing. This is only done if this extension exists (it is optional in a certificate). Set to <em>false</em> to ignore the <strong>PrivateKeyUsagePeriod</strong>.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>MINREMAININGCERTVALIDITY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Default value is <em>0</em>. This property defines a minimum remaining validity time required of the signing certificate. If the signing certificate expires within the number of days specified an error occurs. Set to <em>0</em> (default) to disable this check.</p></td></tr></tbody></table></div>
 <nav id="ht-post-nav">
         <a href="Accounter.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
@@ -174,13 +174,13 @@
             <span>Accounter</span>
         </a>
 
-        <a href="Limiting_the_number_of_signatures.html" class="ht-post-nav-next">
+        <a href="Archiving.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Limiting the number of signatures</span>
+            <span>Archiving</span>
         </a>
 </nav>
                     </div>

@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-05-15T08:54:12.900+0000">
+    <meta name="exp-export-timestamp" content="2025-10-09T08:21:57.269+0000">
     <meta name="exp-page-id" content="370999751">
-    <meta name="exp-page-title" content="Limiting the number of signatures">
-    <meta name="exp-page-version" content="1">
+    <meta name="exp-page-title" content="Limiting Number of Signatures">
+    <meta name="exp-page-version" content="5">
     <meta name="exp-page-scroll-page-id" content="d6015e0b3bfcfe87a1a1e09fb66edcd6">
     <meta name="exp-page-created" content="2017-12-05T14:05:13.000+0000">
-    <meta name="exp-page-last-modified" content="2017-12-05T14:10:31.000+0000">
+    <meta name="exp-page-last-modified" content="2025-08-27T12:34:12.365+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -81,11 +81,11 @@
         postMessage({ type: 'search-results', results: results, query: query });
     }
 </script>
-    <title>Limiting the number of signatures</title>
+    <title>Limiting Number of Signatures</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="5ebb61c7f16ea8d4d37fe8722570e8deb79422119cd979ffe5b199ffc9506889"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="Limitingthenumberofsignatures-top" pageid="370999751" class="flex flex-col" data-confluence-editor-version="unknown">
+    <body id="LimitingNumberofSignatures-top" pageid="370999751" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -151,27 +151,27 @@
                     <a href="Common_Configuration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Common Configuration</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
-                <a href="Limiting_the_number_of_signatures.html" target="_self" aria-current="page">Limiting the number of signatures</a>
+                <a href="Limiting_Number_of_Signatures.html" target="_self" aria-current="page">Limiting Number of Signatures</a>
             </li>
         </ol>
         <div class="breadcrumbs-wrapper__scroll-mask"></div>
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-8e2c5da8737928fce135f8e9dc03611f8ee6565bb198cae7fe13474cf073ec90"><span class="js-hide-until-loaded">Limiting the number of signatures</span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b174fd7f087df0ea02a49ab159a6f2f09eef7c281e285a1f33da011757c36cb2"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Limiting Number of Signatures</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <div class="section"><p>By default SignServer keeps track of the number of signings performed with each key, by holding counters in the database that are updated for each signing. The following worker properties control the key usage counter:</p><div class="table-wrap"><table class="confluenceTable"><colgroup span="1"><col span="1"><col span="1"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p>Property</p></th><th colspan="1" rowspan="1" class="confluenceTh"><p>Description</p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>KEYUSAGELIMIT</p></td><td colspan="1" rowspan="1" class="confluenceTd"><div class="content-wrapper"><p>Specifies the number of signatures allowed to be created with the same key by this worker. Default is <strong>-1</strong> = no limit.</p><p>After the limit has been reached, the worker is considered offline.</p><p><img class="emoticon emoticon-warning scroll-document-image" src="_scroll_external/icons/7bb080c29b97/warning.png" width="16" height="16" alt="(varning)"> Note that the counter is per key and not per worker. Thus, if multiple workers share the same key they will all increment the counter. This also means that the worker will be active again after it has gotten a new certificate/key.</p></div></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>DISABLEKEYUSAGECOUNTER</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>By default, all key usages are counted, but by specifying this as <strong>TRUE,</strong> key usages performed by this worker will not be counted. Disabling the key usage counter can improve performance, as it means less database transaction. However, if you have requirements on the number of allowed signings for one worker, ensure not to use the same key with another worker for which the counter is disabled, as those uses will then be missed.</p><p><img class="emoticon emoticon-warning scroll-document-image" src="_scroll_external/icons/7bb080c29b97/warning.png" width="16" height="16" alt="(varning)">&nbsp;The key usage counter cannot be disabled for a worker if KEYUSAGELIMIT is also specified.</p></td></tr></tbody></table></div><p><br clear="none"></p></div>
+                        <p>By default, SignServer keeps track of the number of signings performed with each key by holding counters in the database that are updated for each signing. The following worker properties control the key usage counter:</p><div class="table-wrap"><table data-table-width="1800" data-layout="center" data-local-id="634a48cb-c6ca-49f1-aa99-258552cb19bc" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 24.3469%;"><col span="1" style="width: 75.6531%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Property</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>DISABLEKEYUSAGECOUNTER</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>By default, all key usages are counted, but by specifying this as <em>true</em>, key usages performed by this worker will not be counted. Disabling the key usage counter can improve performance, as it means less database transaction. However, if you have requirements on the number of allowed signings for one worker, ensure not to use the same key with another worker for which the counter is disabled, as those uses will then be missed.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The key usage counter cannot be disabled for a worker if KEYUSAGELIMIT is also specified.</p></div></div></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>KEYUSAGELIMIT</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies the number of signatures allowed to be created with the same key by this worker. After the limit has been reached, the worker is considered offline.</p><p>Default: <code>-1 </code>= no limit.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The counter is per key and not per worker. Thus, if multiple workers share the same key, they will all increment the counter. This also means that the worker will be active again after it has gotten a new certificate/key.</p></div></div></td></tr></tbody></table></div>
 <nav id="ht-post-nav">
-        <a href="Certificate_Validity_Checks.html" class="ht-post-nav-prev">
+        <a href="Archiving.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Certificate Validity Checks</span>
+            <span>Archiving</span>
         </a>
 
         <a href="Other_Properties.html" class="ht-post-nav-next">

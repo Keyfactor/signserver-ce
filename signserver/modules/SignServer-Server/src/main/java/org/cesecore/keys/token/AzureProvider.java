@@ -451,6 +451,9 @@ public class AzureProvider extends Provider {
             if (this.opmode != Cipher.DECRYPT_MODE && this.opmode != Cipher.UNWRAP_MODE) {
                 throw new IllegalArgumentException("Only DECRYPT_MODE (2) or UNWRAP_MODE (4) can be used: " + opmode);
             }
+            if (!(key instanceof KeyVaultPrivateKey)) {
+                throw new InvalidKeyException("Not a KeyVaultPrivateKey: " + key.getClass().getName());
+            }
             this.privateKey = (KeyVaultPrivateKey)key;            
         }
 

@@ -17,10 +17,10 @@
         <bouncycastle.bcutil.artifact>bcutil-jdk18on</bouncycastle.bcutil.artifact>
 
         <!-- Bouncy Castle artifacts version -->
-        <bouncycastle.bcpg.artifact.version>1.80</bouncycastle.bcpg.artifact.version>
-        <bouncycastle.bcpkix.artifact.version>1.80</bouncycastle.bcpkix.artifact.version>
-        <bouncycastle.bcprov.artifact.version>1.80</bouncycastle.bcprov.artifact.version>
-        <bouncycastle.bcutil.artifact.version>1.80</bouncycastle.bcutil.artifact.version>
+        <bouncycastle.bcpg.artifact.version>1.82</bouncycastle.bcpg.artifact.version>
+        <bouncycastle.bcpkix.artifact.version>1.82</bouncycastle.bcpkix.artifact.version>
+        <bouncycastle.bcprov.artifact.version>1.82</bouncycastle.bcprov.artifact.version>
+        <bouncycastle.bcutil.artifact.version>1.82</bouncycastle.bcutil.artifact.version>
 
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -236,17 +236,17 @@
             <dependency>
                 <groupId>com.keyfactor</groupId>
                 <artifactId>x509-common-util</artifactId>
-                <version>5.3.7</version>
+                <version>5.4.2</version>
             </dependency>
             <dependency>
                 <groupId>com.keyfactor</groupId>
                 <artifactId>cryptotokens-api</artifactId>
-                <version>2.4.4</version>
+                <version>3.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.keyfactor.common</groupId>
                 <artifactId>p11ng</artifactId>
-                <version>0.25.12</version>
+                <version>0.26.0</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

@@ -50,7 +50,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
@@ -1047,11 +1046,11 @@ public class AzureCryptoToken extends BaseCryptoToken {
             try {
                 if (privateKey == null) {
                     final int keyBindingId = getKeyVaultKeyBinding();
-                    final Pair<X509Certificate, PrivateKey> keyAndCert = this.authKeyProvider.find(keyBindingId)
+                    final KeyAndCertificateInfo keyAndCert = this.authKeyProvider.find(keyBindingId)
                             .orElseThrow(() -> new CryptoTokenAuthenticationFailedException(
                                     "Azure Key Vault authentication key binding id = " + keyBindingId + " not found."));
-                    privateKey = keyAndCert.getRight();
-                    certificate = keyAndCert.getLeft();
+                    privateKey = keyAndCert.getPrivateKey();
+                    certificate = keyAndCert.getX509Certificate();
                 }
 
                 // key pair authentication

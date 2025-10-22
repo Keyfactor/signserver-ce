@@ -125,7 +125,7 @@ bb806aa583bafce595a780f9fe8876e583a24067758688022027840f21b2723b  ./ext/jjwt-api
 01269a421e89c611a5a91103f5e7c8d4d014fc8974214f083a247642020807a5  ./ext/jjwt-impl-0.11.5.jar;                             "Java JWT"
 96d5cf507e6640d354aa926222c99f80a1e11fde0405f62cb18f588c001f43da  ./ext/jjwt-jackson-0.11.5.jar;                          "Java JWT"
 74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    "OpenLDAP"
-5557e235a8aa2f9766d5dc609d67948f2a8832c2d796cea9ef1d6cbe0b3b7eaf  ./ext/jna-5.6.0.jar;                                    "JNA"
+b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0  ./ext/jna-5.17.0.jar;                                   "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
 6353bff935a23bdfe5b1f81742f0d55aead532d2930d5c32399f19fb33ff6fcd  ./ext/jsign-core-5.0.jar;                               "Jsign"
 1c1597e4d42a0b45ee6e0010f0e2375d16031b3828b03353839ef73783659898  ./ext/json-path-5.5.0.jar;                              "REST-Assured"

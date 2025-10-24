@@ -58,6 +58,7 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
+import org.cesecore.util.query.QueryCriteria;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,8 +79,8 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -122,12 +123,15 @@ public class AzureKeyVaultCryptoTokenSignTest {
     private final String keyVaultType;
     private final String pin;
     private final String existingKey1;
+    private final String existingECKey256;
+    private final String existingECKey384;
+    private final String existingECKey512;
 
     private final File pdfSampleFile;
 
     private final ModulesTestCase testCase = new ModulesTestCase();
 
-    private final WorkerSession workerSession = testCase.getWorkerSession();
+    private final WorkerSessionRemote workerSession = testCase.getWorkerSession();
     private final ProcessSessionRemote processSession = testCase.getProcessSession();
 
     public AzureKeyVaultCryptoTokenSignTest() throws FileNotFoundException {
@@ -138,6 +142,9 @@ public class AzureKeyVaultCryptoTokenSignTest {
         keyVaultType = testCase.getConfig().getProperty("test.azurekeyvault.type");
         pin = testCase.getConfig().getProperty("test.azurekeyvault.pin");
         existingKey1 = testCase.getConfig().getProperty("test.azurekeyvault.existingkey1");
+        existingECKey256 = testCase.getConfig().getProperty("test.azurekeyvault.existingECkey1");
+        existingECKey384 = testCase.getConfig().getProperty("test.azurekeyvault.existingECkey2");
+        existingECKey512 = testCase.getConfig().getProperty("test.azurekeyvault.existingECkey3");
     }
 
     @Before
@@ -145,7 +152,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         final boolean enabled =
                 Boolean.TRUE.toString().equalsIgnoreCase(testCase.getConfig().getProperty("test.azurekeyvault.enabled"));
         Assume.assumeTrue("Assumes test.azurekeyvault.enabled in test-config.properties",
-                          enabled);
+                enabled);
         SignServerUtil.installBCProvider();
     }
 
@@ -157,7 +164,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(tokenId, "KEY_VAULT_NAME", keyVaultName);
         workerSession.setWorkerProperty(tokenId, "KEY_VAULT_CLIENT_ID",
-                                        keyVaultClientId);
+                keyVaultClientId);
         workerSession.setWorkerProperty(tokenId, "KEY_VAULT_TYPE", keyVaultType);
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
@@ -366,7 +373,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.PlainSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, AzureKeyVaultCryptoToken.class.getName());
-        workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerAzure");
+        workerSession.setWorkerProperty(workerId, "NAME", "PlainSignerAzure");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "KEY_VAULT_NAME", keyVaultName);
         workerSession.setWorkerProperty(workerId, "KEY_VAULT_CLIENT_ID", keyVaultClientId);
@@ -424,7 +431,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         workerSession.setWorkerProperty(20007, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(20007, "KEY_VAULT_NAME", keyVaultName);
         workerSession.setWorkerProperty(20007, "KEY_VAULT_CLIENT_ID",
-                                        keyVaultClientId);
+                keyVaultClientId);
         workerSession.setWorkerProperty(20007, "KEY_VAULT_TYPE", keyVaultType);
         workerSession.setWorkerProperty(20007, "PIN", pin);
         workerSession.setWorkerProperty(20007, "DEFAULTKEY", existingKey1);
@@ -495,10 +502,15 @@ public class AzureKeyVaultCryptoTokenSignTest {
     }
 
     private Set<String> getKeyAliases(final int workerId) throws Exception {
-        Collection<KeyTestResult> testResults = workerSession.testKey(new WorkerIdentifier(workerId), "all", pin.toCharArray());
+        QueryCriteria qc = QueryCriteria.create(); //lists all entries
+        int startIndex = 0;
+        final int max = Integer.MAX_VALUE;
+        final boolean includeData = false;
+
+        TokenSearchResults searchResults = workerSession.searchTokenEntries(new WorkerIdentifier(workerId), startIndex, max, qc, includeData, Collections.emptyMap());
         final HashSet<String> results = new HashSet<>();
-        for (KeyTestResult testResult : testResults) {
-            results.add(testResult.getAlias());
+        for (TokenEntry searchResult : searchResults.getEntries()) {
+            results.add(searchResult.getAlias());
         }
         return results;
     }
@@ -780,7 +792,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         }
     }
 
-    private void cryptoTokenPropertiesHelper(final String signatureAlgorithm) {
+    private void cryptoTokenPropertiesHelper(final String signatureAlgorithm, final String key) {
         // Setup token
         workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
@@ -790,16 +802,32 @@ public class AzureKeyVaultCryptoTokenSignTest {
         workerSession.setWorkerProperty(CRYPTO_TOKEN, "KEY_VAULT_CLIENT_ID", keyVaultClientId);
         workerSession.setWorkerProperty(CRYPTO_TOKEN, "KEY_VAULT_TYPE", keyVaultType);
         workerSession.setWorkerProperty(CRYPTO_TOKEN, "PIN", pin);
-        workerSession.setWorkerProperty(CRYPTO_TOKEN, "DEFAULTKEY", existingKey1); // Test key
+        workerSession.setWorkerProperty(CRYPTO_TOKEN, "DEFAULTKEY", key); // Test key
         workerSession.setWorkerProperty(CRYPTO_TOKEN, "SIGNATUREALGORITHM", signatureAlgorithm);
     }
 
     private void testSigningWithProvidedSigAlgo(final String signatureAlgorithm) throws Exception {
         LOG.info(">testSigningWithProvidedSigAlgo(" + signatureAlgorithm + ")");
         try {
-            cryptoTokenPropertiesHelper(signatureAlgorithm);
+            final String key;
+
+            switch (signatureAlgorithm){
+                case "SHA256withECDSA":
+                    key = existingECKey256;
+                    break;
+                case "SHA384withECDSA":
+                    key = existingECKey384;
+                    break;
+                case "SHA512withECDSA":
+                    key = existingECKey512;
+                    break;
+                default:
+                    key = existingKey1;
+            }
+
+            cryptoTokenPropertiesHelper(signatureAlgorithm, key);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
-            Collection<KeyTestResult> results = workerSession.testKey(new WorkerIdentifier(CRYPTO_TOKEN), existingKey1, pin.toCharArray());
+            Collection<KeyTestResult> results = workerSession.testKey(new WorkerIdentifier(CRYPTO_TOKEN), key, pin.toCharArray());
             assertEquals("Results size: " + results, 1, results.size());
             for (KeyTestResult result : results) {
                 assertTrue("Success for " + result, result.isSuccess());
@@ -819,12 +847,48 @@ public class AzureKeyVaultCryptoTokenSignTest {
     }
 
     /**
+     * Test signing by AzureKeyVaultCryptoToken key with SHA384withRSA signature algorithm.
+     */
+    @Test
+    public void testSign_SHA384withRSA_AzureKeyVaultCryptoToken() throws Exception {
+        LOG.info("testSign_SHA384withRSA_AzureKeyVaultCryptoToken");
+        testSigningWithProvidedSigAlgo("SHA384withRSA");
+    }
+
+    /**
      * Test signing by AzureKeyVaultCryptoToken key with SHA512withRSA signature algorithm.
      */
     @Test
     public void testSign_SHA512withRSA_AzureKeyVaultCryptoToken() throws Exception {
         LOG.info("testSign_SHA512withRSA_AzureKeyVaultCryptoToken");
         testSigningWithProvidedSigAlgo("SHA512withRSA");
+    }
+
+    /**
+     * Test signing with SHA256withECDSA signature algorithm.
+     */
+    @Test
+    public void testSign_SHA256withECDSA_AzureKeyVaultCryptoToken() throws Exception {
+        LOG.info("testSign_SHA256withECDSA_AzureKeyVaultCryptoToken");
+        testSigningWithProvidedSigAlgo("SHA256withECDSA");
+    }
+
+    /**
+     * Test signing with SHA384withECDSA signature algorithm.
+     */
+    @Test
+    public void testSign_SHA384withECDSA_AzureKeyVaultCryptoToken() throws Exception {
+        LOG.info("testSign_SHA384withECDSA_AzureKeyVaultCryptoToken");
+        testSigningWithProvidedSigAlgo("SHA384withECDSA");
+    }
+
+    /**
+     * Test signing with SHA512withECDSA signature algorithm.
+     */
+    @Test
+    public void testSign_SHA512withECDSA_AzureKeyVaultCryptoToken() throws Exception {
+        LOG.info("testSign_SHA512withECDSA_AzureKeyVaultCryptoToken");
+        testSigningWithProvidedSigAlgo("SHA512withECDSA");
     }
 
     /**

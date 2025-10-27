@@ -237,6 +237,12 @@
                 <groupId>com.keyfactor</groupId>
                 <artifactId>x509-common-util</artifactId>
                 <version>5.4.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.keyfactor</groupId>
+                        <artifactId>service-manifest-builder</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.keyfactor</groupId>

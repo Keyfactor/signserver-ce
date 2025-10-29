@@ -319,40 +319,40 @@ public class ClientCertAuthorizerRdnTest {
         // Certificates that should work
         final Collection<File> goodKeyStores = Arrays.asList(
                 // Simplest case
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName)), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName)), null),
                 
                 // One more RDN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName), new RDN(otherType, "Organization One")), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName), new RDN(otherType, "Organization One")), null),
                 
                 // Second CN should match
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Name 1"), new RDN(otherType, "Organization One"), new RDN(typeOid, simpleName)), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Name 1"), new RDN(otherType, "Organization One"), new RDN(typeOid, simpleName)), null),
                 
                 // Should also be okay with the complicated name
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, complicatedName), new RDN(otherType, "Testing")), Collections.emptyList())
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, complicatedName), new RDN(otherType, "Testing")), null)
         );
         
         // Certificates that should not work
         Collection<File> badKeyStores = Arrays.asList(
                 // No CN at all
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherType, simpleName)), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherType, simpleName)), null),
 
                 // No DN
                 ca.issueKeyStoreFile(Arrays.asList(new RDN[0]), null),
 
                 // Space only
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, " ")), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, " ")), null),
 
                 // Different CN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Two")), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Two")), null),
 
                 // Different case
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE")), Collections.emptyList()), 
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE")), null),
 
                 // Different case and other RDN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"), new RDN(otherType, simpleName)), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"), new RDN(otherType, simpleName)), null),
 
                 // Starting with "Admin One" but incorrect and multiple
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin One2"), new RDN(typeOid, "Admin One3"), new RDN(otherType, simpleName)), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin One2"), new RDN(typeOid, "Admin One3"), new RDN(otherType, simpleName)), null),
                 
                 // Starting with "Admin Four " but incorrect + altname
                 ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Four ")), Arrays.asList(createGeneralName(GeneralName.rfc822Name, simpleName)))
@@ -400,7 +400,7 @@ public class ClientCertAuthorizerRdnTest {
                 ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), null),
 
                 // Empty alt name
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), Collections.emptyList()),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), null),
 
                 // Space only
                 ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), Arrays.asList(createGeneralName(typeTag, " "))),

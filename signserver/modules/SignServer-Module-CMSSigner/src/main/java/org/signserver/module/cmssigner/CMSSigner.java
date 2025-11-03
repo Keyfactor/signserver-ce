@@ -19,11 +19,9 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.ECPublicKey;
 import java.util.*;
 
 import jakarta.persistence.EntityManager;
@@ -341,7 +339,6 @@ public class CMSSigner extends BaseSigner {
         final CMSSignedDataStreamGenerator generator
                     = new CMSSignedDataStreamGenerator();
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
-        
         final DigestCalculatorProvider calc =
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
         JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder =
@@ -429,34 +426,13 @@ public class CMSSigner extends BaseSigner {
             throw new IllegalRequestException("Client-side hashing data length must match with the length of client specified digest algorithm");
         }
         
-        final DigestCalculator digestCalculator = new DigestCalculator() {
-            @Override
-            public AlgorithmIdentifier getAlgorithmIdentifier() {
-                return alg;
-            }
-
-            @Override
-            public OutputStream getOutputStream() {
-                return new OutputStream() {
-                    @Override
-                    public void write(int b) throws IOException {
-                        // do nothing
-                    }
-                };
-            }
-
-            @Override
-            public byte[] getDigest() {
-                return digestData;
-            }
-            
-        };
+        final DigestCalculator digestCalculator = getDigestCalculatorForClientSideHashing(alg, digestData);
         
         final DigestCalculatorProvider calcProv = new DigestCalculatorProvider() {
             @Override
-            public DigestCalculator get(AlgorithmIdentifier digestAlgorithmIdentifier) throws OperatorCreationException {
+            public DigestCalculator get(AlgorithmIdentifier digestAlgorithmIdentifier) {
                 return digestCalculator;
-            }  
+            }
         };
 
         final JcaSignerInfoGeneratorBuilder siBuilder =
@@ -483,6 +459,30 @@ public class CMSSigner extends BaseSigner {
                 responseOutputStream.write(signedData.getEncoded());
             }
         }
+    }
+
+    protected DigestCalculator getDigestCalculatorForClientSideHashing(AlgorithmIdentifier alg, byte[] digestData) {
+        return new DigestCalculator() {
+            @Override
+            public AlgorithmIdentifier getAlgorithmIdentifier() {
+                return alg;
+            }
+
+            @Override
+            public OutputStream getOutputStream() {
+                return new OutputStream() {
+                    @Override
+                    public void write(int b) {
+                        // do nothing
+                    }
+                };
+            }
+
+            @Override
+            public byte[] getDigest() {
+                return digestData;
+            }
+        };
     }
 
     @Override
@@ -603,7 +603,6 @@ public class CMSSigner extends BaseSigner {
             
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
-            
             return new SignatureResponse(sReq.getRequestID(), responseData, cert == null ? null : cert.getPublicKey(), cert, archiveId, archivables, CONTENT_TYPE);
         } catch (OperatorCreationException ex) {
             LOG.error("Error initializing signer", ex);

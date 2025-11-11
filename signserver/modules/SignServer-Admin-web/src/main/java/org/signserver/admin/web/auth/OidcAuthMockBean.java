@@ -10,28 +10,55 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.web;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+package org.signserver.admin.web.auth;
 
-import java.io.IOException;
+import jakarta.enterprise.inject.Alternative;
+import org.signserver.admin.common.auth.AdminPrincipal;
 
 /**
- * Servlet for triggering OIDC flows and handle the callbacks.
+ * Alternative implementation when OIDC is not enabled.
  */
-@WebServlet("/callback")
-public class CallbackServlet extends HttpServlet {
-
-    @Inject
-    CallbackInterface callbackInterface;
+@Alternative
+public class OidcAuthMockBean implements OidcAuth {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        callbackInterface.doGet(request, response);
+    public OidcTokens getClientTokens() {
+        return null;
+    }
+
+    @Override
+    public boolean isAudienceValidOrNotUsed() {
+        return false;
+    }
+
+    @Override
+    public boolean isOidcAuthenticated() {
+        return false;
+    }
+
+    @Override
+    public String getOidcLogoutRedirect() {
+        return "";
+    }
+
+    @Override
+    public String getOidcLoginLink() {
+        return "";
+    }
+
+    @Override
+    public String getOidcProviderLogoutUri() {
+        return "";
+    }
+
+    @Override
+    public String getOidcProviderUri() {
+        return "";
+    }
+
+    @Override
+    public AdminPrincipal getAdminPrincipal() {
+        return null;
     }
 }

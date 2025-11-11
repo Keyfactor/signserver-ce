@@ -24,10 +24,14 @@
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
         <module.web.context>/adminweb</module.web.context>
 
-        <postprocess.files>postprocess.file1</postprocess.files>
+        <postprocess.files>postprocess.file1,postprocess.file2</postprocess.files>
         <postprocess.file1.src>SignServer-Admin-Common-${project.version}.jar</postprocess.file1.src>
         <postprocess.file1.includes>oidc.properties</postprocess.file1.includes>
         <postprocess.file1.dest>lib/</postprocess.file1.dest>
+
+        <postprocess.file2.src>SignServer-Admin-web-${project.version}.war</postprocess.file2.src>
+        <postprocess.file2.includes>WEB-INF/beans.xml</postprocess.file2.includes>
+        <postprocess.file2.dest>/</postprocess.file2.dest>
     </properties>
 
     <dependencies>

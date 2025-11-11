@@ -3,4 +3,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"
        bean-discovery-mode="all">
+    <!--COMMENT-REPLACEMENT(oidcavailableheader)-->
+    <alternatives>
+        <class>org.signserver.admin.web.auth.OidcAuthMockBean</class>
+        <class>org.signserver.admin.web.CallbackMockBean</class>
+    </alternatives>
+    <!--COMMENT-REPLACEMENT(oidcavailablefooter)-->
+
+
 </beans>

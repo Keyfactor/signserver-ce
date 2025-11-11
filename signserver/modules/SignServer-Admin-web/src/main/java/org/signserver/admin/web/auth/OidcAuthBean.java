@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.admin.web.auth;
 
-import jakarta.inject.Named;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.identitystore.openid.OpenIdContext;
@@ -31,7 +31,7 @@ import org.signserver.server.log.AdminInfo;
  */
 @Named(value = "oidcAuthBean")
 @RequestScoped
-public class OidcAuthBean {
+public class OidcAuthBean implements OidcAuth {
     
     private OidcTokens tokens;
     

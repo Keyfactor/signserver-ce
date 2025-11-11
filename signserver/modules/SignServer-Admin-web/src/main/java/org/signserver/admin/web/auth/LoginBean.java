@@ -39,7 +39,7 @@ public class LoginBean implements Serializable {
     private ClientCertAuthBean clientCertAuth;
 
     @Inject
-    private OidcAuthBean oidcAuth;
+    private OidcAuth oidcAuth;
 
     private String errorCode;
 

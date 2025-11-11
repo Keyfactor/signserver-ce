@@ -10,28 +10,22 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
+
 package org.signserver.admin.web;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.enterprise.inject.Alternative;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
 /**
- * Servlet for triggering OIDC flows and handle the callbacks.
+ * Alternative implementation when OIDC is not enabled.
  */
-@WebServlet("/callback")
-public class CallbackServlet extends HttpServlet {
-
-    @Inject
-    CallbackInterface callbackInterface;
-
+@Alternative
+public class CallbackMockBean implements CallbackInterface {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        callbackInterface.doGet(request, response);
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     }
 }

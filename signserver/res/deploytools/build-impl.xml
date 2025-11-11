@@ -144,7 +144,7 @@ database.nodb.location              = ${database.nodb.location}
     </target>
 
     <!-- Target doing the actual packaging of the EAR file -->
-    <target name="-do-configure-ear" depends="display-properties,-check-appsrv,-check-built, -init-tasks, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, -set-hibernate-database-caching, j2ee:check">
+    <target name="-do-configure-ear" depends="display-properties,-check-appsrv,-check-built, -init-tasks, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, -set-oidc-header, -set-hibernate-database-caching, j2ee:check">
         <echo/>
 
         <!-- Use Hibernate Persistence Provider by default -->
@@ -245,6 +245,10 @@ database.nodb.location              = ${database.nodb.location}
             <equals arg1="${database.name}" arg2="nodb"/>
         </condition>
 
+        <condition property="noOidc">
+            <equals arg1="${oidc.providerUri}" arg2=""/>
+        </condition>
+
         <condition property="hibernate.database.caching">
             <equals arg1="${database.hibernate.disable.cache}" arg2="true"/>
         </condition>
@@ -304,6 +308,21 @@ database.nodb.location              = ${database.nodb.location}
         </property>
         <property name="hibernatedatabasecachingfooter">
             <![CDATA[
+    		]]>
+        </property>
+    </target>
+
+    <target name="-set-oidc-header" unless="noOidc">
+        <!-- generate starting and closing comment marks short-circuiting the
+        enterprise-beans tag in the beans.xml file -->
+        <property name="oidcavailableheader">
+            <![CDATA[
+    			<!--
+    		]]>
+        </property>
+        <property name="oidcavailablefooter">
+            <![CDATA[
+    			-->
     		]]>
         </property>
     </target>

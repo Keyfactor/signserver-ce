@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-10-09T08:21:54.714+0000">
+    <meta name="exp-export-timestamp" content="2025-11-12T12:31:57.811+0000">
     <meta name="exp-page-id" content="371000719">
     <meta name="exp-page-title" content="Database CLI">
     <meta name="exp-page-version" content="6">
@@ -83,7 +83,7 @@
 </script>
     <title>Database CLI</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="45b79e23b805fe7ba105c60252057068d6f3350ae1a50369167367c35f568685"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="d6f2dd4feecb8135813fa4a8d10e56e598a45a4b5ccd5990e8987f560e29f765"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
     <body id="DatabaseCLI-top" pageid="371000719" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
@@ -155,7 +155,7 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-13568f8013f23be4bc8c4ad6f826df7d96f45dbce9c58e838f3cdace62aa4375"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Database CLI</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-da017d283445b701f615d1f532fb3bdb8eb703937a21ec7cd1c68210794042db"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Database CLI</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
@@ -163,7 +163,7 @@
                         <p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The SignServer Database CLI uses Java Persistence API (JPA) to connect to the SignServer database. The CLI is configured by the dbcli.* properties in signserver_cli.properties.</p></div></div><p>The CLI needs to have the JDBC driver of the selected database available on the classpath. This can be achieved by setting the OPTIONAL_CLASSPATH environment variable when calling the bin/signserver-db script or by putting the JAR under <code>lib/ext/jdbc/</code> and calling it jdbc.jar. The last method is required to be able to run the JUnit tests.</p><p>Sample usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">bin/signserver-db audit</code></div>
 </div>
-</div><h2 id="DatabaseCLI-VerifyAuditlogCommand" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify Auditlog Command<span class="confluence-anchor-link" id="src-371000719_DatabaseCLI-Verify-Auditlog-Command"></span></span></h2><p>The command verifies logs from all nodes starting at sequence number 0, or only from the specified nodes and optional sequence number offsets.</p><p>Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h2 id="DatabaseCLI-VerifyAuditlogCommand" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000719_DatabaseCLI-Verify-Auditlog-Command"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify Auditlog Command</span></h2><p>The command verifies logs from all nodes starting at sequence number 0, or only from the specified nodes and optional sequence number offsets.</p><p>Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">verifylog -all verifylog [-node NODENAME[:OFFSET] ...]</code></div>
 </div>
 </div><p>If the nodename is suffixed with a colon and a number, then the verification for that node is started from that sequence number. The JDBC connector of the database might have to be put on the classpath, see the following example.</p><p>Examples:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
@@ -184,7 +184,7 @@
 <div class="line"><code class="value">2017</code><code class="plain">-</code><code class="value">07</code><code class="plain">-</code><code class="value">04</code><code class="plain"> </code><code class="value">15</code><code class="plain">:</code><code class="value">29</code><code class="plain">:</code><code class="value">10</code><code class="plain">,</code><code class="value">747</code><code class="plain"> INFO  [VerifyLogCommand] Verification finished with success</code></div>
 <div class="line"><code class="value">2017</code><code class="plain">-</code><code class="value">07</code><code class="plain">-</code><code class="value">04</code><code class="plain"> </code><code class="value">15</code><code class="plain">:</code><code class="value">29</code><code class="plain">:</code><code class="value">10</code><code class="plain">,</code><code class="value">747</code><code class="plain"> INFO  [VerifyLogCommand] Last sequences: {server1=</code><code class="value">2</code><code class="plain">, server2=</code><code class="value">7</code><code class="plain">}</code></div>
 </div>
-</div><h3 id="DatabaseCLI-Archivingoftheauditlog" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Archiving of the audit log<span class="confluence-anchor-link" id="src-371000719_DatabaseCLI-Archiving-of-the-audit-log"></span></span></h3><p>As the Database CLI audit verifylog command checks for gaps in the sequence numbering, entries from the audit log cannot be archived/moved to other storage without special care. However, since the command now supports the option to specify from which sequence number to start the verification, the following scheme for archiving is proposed:</p><ol start="1"><li><p>Run the command to verify the complete log audit log:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h3 id="DatabaseCLI-Archivingoftheauditlog" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000719_DatabaseCLI-Archiving-of-the-audit-log"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Archiving of the audit log</span></h3><p>As the Database CLI audit verifylog command checks for gaps in the sequence numbering, entries from the audit log cannot be archived/moved to other storage without special care. However, since the command now supports the option to specify from which sequence number to start the verification, the following scheme for archiving is proposed:</p><ol start="1"><li><p>Run the command to verify the complete log audit log:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">audit verifylog -all</code></div>
 </div>
 </div><p>Note down the last sequence number for each node, for example:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
@@ -204,13 +204,13 @@
             <span>Client WS Interface</span>
         </a>
 
-        <a href="Administration_WS_Interface.html" class="ht-post-nav-next">
+        <a href="SignServer_Workers.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Administration WS Interface</span>
+            <span>SignServer Workers</span>
         </a>
 </nav>
                     </div>

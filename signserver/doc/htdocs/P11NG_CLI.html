@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-10-09T08:21:36.640+0000">
+    <meta name="exp-export-timestamp" content="2025-11-12T12:31:43.879+0000">
     <meta name="exp-page-id" content="370999681">
     <meta name="exp-page-title" content="P11NG CLI">
     <meta name="exp-page-version" content="6">
@@ -83,7 +83,7 @@
 </script>
     <title>P11NG CLI</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b2f17953b9a0350060fc7eceab8409e2c5b958e16e4dc212f9c4b2593740a660"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="a3fbe46453ed2677da7eb26b9087c9bc4b6935f29ea26de43d00aefa9f120e33"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
     <body id="P11NGCLI-top" pageid="370999681" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
@@ -142,6 +142,9 @@
                     <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
                 </li>
                 <li class="js-hide-until-loaded">
+                    <a href="SignServer_Operations.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Operations</a>
+                </li>
+                <li class="js-hide-until-loaded">
                     <a href="SignServer_Integration.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Integration</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
@@ -152,7 +155,7 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-39621a7ed71420fbc898a49f7c63a27f3c7edf90a322516d76dd666f414f498a"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">P11NG CLI</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-6a1649d4da107004efb02299476a0b97adc54c4cd5a6a75736fbfc03d1b41028"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">P11NG CLI</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
@@ -160,7 +163,7 @@
                         <p>The CLI tool p11ng-tool provides actions for querying, removing, and creating objects(keys) in an HSM slot in addition to signing sample text with existing wrapped key.</p><p>The tool is provided for troubleshooting purposes and the API is likely to change in future versions.</p><p>Run&nbsp;p11ng-tool from <strong>SIGNSERVER_HOME </strong>using the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain"> bin/p11ng-tool</code></div>
 </div>
-</div><h2 id="P11NGCLI-Usage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>Usage</strong><span class="confluence-anchor-link" id="src-370999681_P11NGCLI-Usage"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h2 id="P11NGCLI-Usage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999681_P11NGCLI-Usage"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>Usage</strong></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">p11ng-tool [options]</code></div>
 <div class="line"><code class="plain">P11NG commands</code></div>
 <div class="line"><code class="plain"> -action &lt;arg&gt;               Operation to perform. Any of: [listSlots,</code></div>
@@ -206,7 +209,7 @@
 <div class="line"><code class="plain">                             warmup time).</code></div>
 <div class="line"><code class="plain"> -wrapkey &lt;arg&gt;              Label of key to wrap with</code></div>
 </div>
-</div><h2 id="P11NGCLI-SampleUsages" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sample Usages<span class="confluence-anchor-link" id="src-370999681_P11NGCLI-Sample-Usages"></span></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><h2 id="P11NGCLI-SampleUsages" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999681_P11NGCLI-Sample-Usages"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sample Usages</span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">a) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action listSlots</code></div>
 <div class="line">&nbsp;</div>
 <div class="line"><code class="plain">b) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action showInfo</code></div>

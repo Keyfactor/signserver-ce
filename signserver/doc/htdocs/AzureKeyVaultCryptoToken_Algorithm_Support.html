@@ -1,0 +1,220 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1832189962">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2025-11-12T12:32:37.631+0000">
+    <meta name="exp-page-id" content="1832189962">
+    <meta name="exp-page-title" content="AzureKeyVaultCryptoToken Algorithm Support">
+    <meta name="exp-page-version" content="19">
+    <meta name="exp-page-scroll-page-id" content="25a97e23b0281b3777b40e20b292e89c">
+    <meta name="exp-page-created" content="2025-09-29T07:18:43.900+0000">
+    <meta name="exp-page-last-modified" content="2025-10-20T11:27:22.654+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>AzureKeyVaultCryptoToken Algorithm Support</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="1c30c4a6fa90f02dff250e4963715fb591a332115690eb35fda40518578a82e3"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="AzureKeyVaultCryptoTokenAlgorithmSupport-top" pageid="1832189962" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1832189962" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="CryptoTokens.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">CryptoTokens</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="AzureKeyVaultCryptoToken.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">AzureKeyVaultCryptoToken</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="AzureKeyVaultCryptoToken_Algorithm_Support.html" target="_self" aria-current="page">AzureKeyVaultCryptoToken Algorithm Support</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-f932103c034ed618d93442f21270cb7c70c814ea67b6189cdf82c37b089727b7"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">AzureKeyVaultCryptoToken Algorithm Support</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p>This page lists algorithms that are known to work or not work with the current implementation. Also, see the specific <a href="SignServer_Signers.html" data-linked-resource-id="370999759" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="370999759" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999759/SignServer+Signers" data-scroll-link-target-source-id="370999759"><u>SignServer Signer</u></a> for algorithms that signers can work with and review signer-specific algorithm support pages.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The following lists supported algorithms that are known to work with most workers and therefore the list may not be complete.</p></div></div><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>For algorithms supporting <em>withECDSA</em>, a signature algorithm matching the ECDSA curve must be specified in the <code>SIGNATUREALGORITHM</code> property. For example, use SHA384withECDSA for a key using secp384r1/P-384.</p></div></div><h2 id="AzureKeyVaultCryptoTokenAlgorithmSupport-SignatureAlgorithms" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1832189962_AzureKeyVaultCryptoTokenAlgorithmSupport-Signature-Algorithms"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="4895f6ba-9dca-470b-80db-57cc673800a5">Signature Algorithms</span></span></h2><div class="table-wrap"><table data-table-width="1123.4124" data-layout="full-width" data-local-id="633b8f20-414e-4d1f-a111-6c31974c01a8" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 7.5825%;"><col span="1" style="width: 42.4621%;"><col span="1" style="width: 24.9777%;"><col span="1" style="width: 24.9777%;"></colgroup><thead><tr><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><span class="inline-comment-marker" data-ref="4895f6ba-9dca-470b-80db-57cc673800a5">&nbsp;</span></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong><span class="inline-comment-marker" data-ref="4895f6ba-9dca-470b-80db-57cc673800a5">Algorithm Name</span></strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong><span class="inline-comment-marker" data-ref="4895f6ba-9dca-470b-80db-57cc673800a5">Also Known As</span></strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong><span class="inline-comment-marker" data-ref="4895f6ba-9dca-470b-80db-57cc673800a5">Comment</span></strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA1withRSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSASSA-PKCS_v1.5 using SHA1</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA256withRSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSASSA-PKCS_v1.5 using SHA256</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA384withRSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSASSA-PKCS_v1.5 using SHA384</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA512withRSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSASSA-PKCS_v1.5 using SHA512</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>NONEwithRSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSASSA-PKCS_v1.5</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="a9771550-9cc6-4cfc-a635-87dd453b214a">SHA256withRSAandMGF1</span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="a9771550-9cc6-4cfc-a635-87dd453b214a">RSASSA-PSS using SHA256</span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p><span class="inline-comment-marker" data-ref="a9771550-9cc6-4cfc-a635-87dd453b214a">SHA384withRSAandMGF1</span></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p><span class="inline-comment-marker" data-ref="a9771550-9cc6-4cfc-a635-87dd453b214a">RSASSA-PSS using SHA384</span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="a9771550-9cc6-4cfc-a635-87dd453b214a">SHA512withRSAandMGF1</span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="a9771550-9cc6-4cfc-a635-87dd453b214a">RSASSA-PSS using SHA512</span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>NONEwithRSAandMGF1</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSASSA-PSS</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185"><img class="emoticon emoticon-warning scroll-document-image" src="_scroll_external/icons/6dc5d2e5be19/warning.png" width="16" height="16" alt="(warning)"></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="e57b79db-c709-43a5-b552-7d8558b8ad7c">SHA256withECDSA</span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>ECDSA using SHA256</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185">Azure Key Vault requires the Signature Algorithm to be specified. See warning above.</span></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185"><img class="emoticon emoticon-warning scroll-document-image" src="_scroll_external/icons/6dc5d2e5be19/warning.png" width="16" height="16" alt="(warning)"></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="4382582d-82b4-47be-892b-f30ab2a58ed4"><span class="inline-comment-marker" data-ref="59c8e571-98a4-483d-b99e-ef1b211b78ec"><span class="inline-comment-marker" data-ref="c50e4711-fd1c-4ad8-b9a6-e382f5bee4df"><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185"><span class="inline-comment-marker" data-ref="f7dd93f2-87f0-4291-a088-e622a8b11bfe">SHA384withECDSA</span></span></span></span></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="4382582d-82b4-47be-892b-f30ab2a58ed4"><span class="inline-comment-marker" data-ref="59c8e571-98a4-483d-b99e-ef1b211b78ec"><span class="inline-comment-marker" data-ref="c50e4711-fd1c-4ad8-b9a6-e382f5bee4df"><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185">ECDSA using SHA384</span></span></span></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185">Azure Key Vault requires the Signature Algorithm to be specified. See warning above.</span></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185"><img class="emoticon emoticon-warning scroll-document-image" src="_scroll_external/icons/6dc5d2e5be19/warning.png" width="16" height="16" alt="(warning)"></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="4382582d-82b4-47be-892b-f30ab2a58ed4"><span class="inline-comment-marker" data-ref="59c8e571-98a4-483d-b99e-ef1b211b78ec"><span class="inline-comment-marker" data-ref="c50e4711-fd1c-4ad8-b9a6-e382f5bee4df"><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185">SHA512withECDSA</span></span></span></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="4382582d-82b4-47be-892b-f30ab2a58ed4"><span class="inline-comment-marker" data-ref="59c8e571-98a4-483d-b99e-ef1b211b78ec"><span class="inline-comment-marker" data-ref="c50e4711-fd1c-4ad8-b9a6-e382f5bee4df"><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185">ECDSA using SHA512</span></span></span></span></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><span class="inline-comment-marker" data-ref="dc4ba2bf-b58f-4fd9-a1b8-66a69224d185">Azure Key Vault requires the Signature Algorithm to be specified. See warning above.</span></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-cross scroll-document-image" src="_scroll_external/icons/494c4072ce7b/error.png" width="16" height="16" alt="(error)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>NONEwithECDSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>ECDSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr></tbody></table></div><h2 id="AzureKeyVaultCryptoTokenAlgorithmSupport-KeyAlgorithms" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1832189962_AzureKeyVaultCryptoTokenAlgorithmSupport-Key-Algorithms"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Key Algorithms</span></h2><div class="table-wrap"><table data-table-width="1100.9466" data-layout="full-width" data-local-id="775e3831-c87d-4867-9b9f-27bd04be9422" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 7.8253%;"><col span="1" style="width: 42.1292%;"><col span="1" style="width: 25.0227%;"><col span="1" style="width: 25.0227%;"></colgroup><thead><tr><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p>&nbsp;</p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Algorithm Name</strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Key Specification</strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Comment</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>RSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><ul><li><p>2048</p></li><li><p>3072</p></li><li><p>4096</p></li></ul></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>ECDSA</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>Named curves:</p><ul><li><p>secp256r1 / prime256v1 / P-256</p></li><li><p>secp384r1 / P-384</p></li><li><p>secp521r1 / P-521</p></li></ul></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr></tbody></table></div><p>&nbsp;</p><p>Add a comment</p>
+<nav id="ht-post-nav">
+        <a href="AzureKeyVaultCryptoToken.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>AzureKeyVaultCryptoToken</span>
+        </a>
+
+        <a href="PKCS11CryptoToken.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>PKCS11CryptoToken</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

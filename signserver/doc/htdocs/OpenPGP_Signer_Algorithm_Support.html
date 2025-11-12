@@ -1,0 +1,220 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1832255539">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2025-11-12T12:32:14.523+0000">
+    <meta name="exp-page-id" content="1832255539">
+    <meta name="exp-page-title" content="OpenPGP Signer Algorithm Support">
+    <meta name="exp-page-version" content="11">
+    <meta name="exp-page-scroll-page-id" content="3f67760d989ff4a1bedc903bd3d85ea6">
+    <meta name="exp-page-created" content="2025-09-29T09:02:16.401+0000">
+    <meta name="exp-page-last-modified" content="2025-10-24T12:50:36.550+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>OpenPGP Signer Algorithm Support</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="9b873fe36fa122b38c68a11eb9093b3e09edbb3148dc38053900e50fa715f371"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="OpenPGPSignerAlgorithmSupport-top" pageid="1832255539" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1832255539" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Workers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Workers</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Signers</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="OpenPGP_Signer.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">OpenPGP Signer</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="OpenPGP_Signer_Algorithm_Support.html" target="_self" aria-current="page">OpenPGP Signer Algorithm Support</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-779f3ed9c4b0d2efa093e4fbfa039f66f91168b76cd437c8c41a14778db1563a"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">OpenPGP Signer Algorithm Support</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p>The following lists algorithm support for the OpenPGP Signer.</p><h2 id="OpenPGPSignerAlgorithmSupport-SignatureAlgorithms" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1832255539_OpenPGPSignerAlgorithmSupport-Signature-Algorithms"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="164a47a2-5f17-47ca-b902-1b24277be1a5">Signature Algorithms</span></span></h2><p><span class="inline-comment-marker" data-ref="164a47a2-5f17-47ca-b902-1b24277be1a5"><span class="inline-comment-marker" data-ref="7a9515a3-b87c-4e06-bfd7-2420ff2d0653">The signer also relies on support for the algorithm in the </span><a href="CryptoTokens.html" data-linked-resource-id="371000119" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000119" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000119/CryptoTokens" data-scroll-link-target-source-id="371000119"><u><ac:inline-comment-marker ac:ref="7a9515a3-b87c-4e06-bfd7-2420ff2d0653">Crypto Token</ac:inline-comment-marker></u></a><span class="inline-comment-marker" data-ref="7a9515a3-b87c-4e06-bfd7-2420ff2d0653"> used, so also review that the desired algorithm is supported by the configured crypto token.&nbsp;</span></span></p><div class="table-wrap"><table data-table-width="1337.6808" data-layout="full-width" data-local-id="192e8ecd-0811-4b12-a0e3-0bf11b56d281" class="confluenceTable" style=" width: 100%;"><thead><tr><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p>&nbsp;</p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Algorithm Name</strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Also Known As</strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Comment</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA1withRSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>RSASSA-PKCS_v1.5 using SHA1</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA256withRSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>RSASSA-PKCS_v1.5 using SHA256</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><span class="inline-comment-marker" data-ref="60bbcee2-055c-4016-9a53-315e588d1a52"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></span></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p><span class="inline-comment-marker" data-ref="60bbcee2-055c-4016-9a53-315e588d1a52">SHA224withRSA</span></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>RSASSA-PKCS_v1.5 using SHA224</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA384withRSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>RSASSA-PKCS_v1.5 using SHA384</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA512withRSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>RSASSA-PKCS_v1.5 using SHA512</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA256withECDSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>ECDSA using SHA256</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA384withECDSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>ECDSA using SHA384</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>SHA512withECDSA</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>ECDSA using SHA512</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p></p></td></tr></tbody></table></div><h2 id="OpenPGPSignerAlgorithmSupport-DigestAlgorithms" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1832255539_OpenPGPSignerAlgorithmSupport-Digest-Algorithms"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Digest Algorithms</span></h2><div class="table-wrap"><table data-table-width="659" data-layout="align-start" data-local-id="9e4caf0d-eb04-4704-8796-3ea7bfa7957e" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 7.8907%;"><col span="1" style="width: 28.2246%;"><col span="1" style="width: 63.8847%;"></colgroup><thead><tr><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p>&nbsp;</p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Algorithm Name</strong></p></th><th colspan="1" rowspan="1" data-highlight-colour="#f0f1f2" class="confluenceTh" style="background-color:#f0f1f2;"><p><strong>Comment</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA1</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA224</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA256</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p></p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA384</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr><tr><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/d190e77bf5d2/check.png" width="16" height="16" alt="(tick)"></p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>SHA512</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" class="confluenceTd" style="background-color:#ffffff;"><p>&nbsp;</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="OpenPGP_Signer.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>OpenPGP Signer</span>
+        </a>
+
+        <a href="Signers_Algorithm_Support.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Signers Algorithm Support</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

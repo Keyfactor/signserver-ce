@@ -136,7 +136,7 @@ b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0  ./ext/jna-5.17
 8fcf4a978bbee7548e8dee6e0528bc85b0ffa84c0f8517c94dd29e590e459449  ./ext/nimbus-jose-jwt-9.37.4.jar;                       "Nimbus Jose"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
 b017f7f24fc2550d720f98f9eda5736023eb6f06514fa7c722c43b067e7713c0  ./ext/openpdf-1.3.34.jar;                               "OpenPDF"
-321c1920eca401b4a764751033e49be2b31810591155ed53317d0e8fa0e75342  ./ext/p11ng-0.26.0.jar;                                 "Keyfactor Commons"
+fb591ee1dd05b7616b2b66dd5423fef160c0c654eabfa9e73efdea12e8ac0049  ./ext/p11ng-0.27.0.jar;                                 "Keyfactor Commons"
 da5abf42da4604c5a7bca38956af6e9d6f196d9b6d4cb7eabee4f480b580d505  ./ext/poi-5.4.1.jar;                                    "Apache POI"
 639c6a675bc472e1568df9d8c954ff702da6f83ed27da0ff9a7bd12ed73b8bf0  ./ext/quartz-2.3.2.jar;                                 "Quartz Scheduler"
 78e7efe14e7f021f0ccc064c6c4538b225ef657199dc21e80fb79f6e28a92a53  ./ext/rest-assured-5.5.0.jar;                           "REST-Assured"

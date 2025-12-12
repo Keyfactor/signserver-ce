@@ -49,10 +49,10 @@ public class ClientCertAuthorizerTest {
     private final ModulesTestCase test = new ModulesTestCase();
     private final CLITestHelper cli = test.getAdminCLI();
     private final CLITestHelper client = test.getClientCLI();
-    
-    private final String SUBJECT_SERIALNUMBER = "723507815f93333";
-    private final String SUBJECT_SERIALNUMBER_WITH_LEADING_ZERO = "0723507815f93333";
-    private final String SUBJECT_SERIALNUMBER_UPPERCASE = "723507815F93333";
+
+    private final String SUBJECT_SERIALNUMBER = "26fabff8dca558a515a792701fb3f3628b6c94b7";
+    private final String SUBJECT_SERIALNUMBER_WITH_LEADING_ZERO = "026FABFF8DCA558A515A792701FB3F3628B6C94B7";
+    private final String SUBJECT_SERIALNUMBER_UPPERCASE = "26FABFF8DCA558A515A792701FB3F3628B6C94B7";
     private final String SUBJECT_RDN_CN = "Admin One";
     private final String SUBJECT_SERIALNUMBER_OTHER = "123456789ab";
     private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";

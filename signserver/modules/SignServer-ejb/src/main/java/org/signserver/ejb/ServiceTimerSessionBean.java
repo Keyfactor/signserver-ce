@@ -236,9 +236,18 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                             
                         }
                     } catch (ServiceExecutionFailedException | SystemException | HeuristicRollbackException | NotSupportedException |
-                             HeuristicMixedException | RollbackException e) {
+                             HeuristicMixedException | RollbackException | RuntimeException e) {
                         // always log to error log, regardless of log types
                         // setup for service run logging
+                        /*
+                         * DSS-377:
+                         * If the service worker fails with a RuntimeException we need to
+                         * swallow this here. If we allow it to propagate outside the
+                         * ejbTimeout method it is up to the application server config how it
+                         * should be retried, but we have already scheduled a new try
+                         * previously in this method. We still want to log this as an ERROR
+                         * since it is some kind of catastrophic failure..
+                         */
                         LOG.error("Service" + timerInfo + " execution failed. ", e);
                         
                         if (timedService.getLogTypes().contains(ITimedService.LogType.SECURE_AUDITLOGGING)) {
@@ -251,26 +260,12 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                                     timerInfo.toString(),
                                     Collections.<String, Object>singletonMap("Message", e.getMessage()));
                         }
-                        try {
-                            ut.rollback();
-                        } catch (SystemException ex) {
-                            LOG.error("Rollback failed.", e);
-                        }
-                    } catch (RuntimeException e) {
-                        /*
-                         * DSS-377:
-                         * If the service worker fails with a RuntimeException we need to
-                         * swallow this here. If we allow it to propagate outside the
-                         * ejbTimeout method it is up to the application server config how it
-                         * should be retried, but we have already scheduled a new try
-                         * previously in this method. We still want to log this as an ERROR
-                         * since it is some kind of catastrophic failure..
-                         */
-                        LOG.error("Service worker execution failed.", e);
-                        try {
-                            ut.rollback();
-                        } catch (SystemException ex) {
-                            throw new RuntimeException("Rollback failed", ex);
+                        if (requiresTransaction) {
+                            try {
+                                ut.rollback();
+                            } catch (SystemException ex) {
+                                LOG.error("Rollback failed.", e);
+                            }
                         }
                     }
                 } else {

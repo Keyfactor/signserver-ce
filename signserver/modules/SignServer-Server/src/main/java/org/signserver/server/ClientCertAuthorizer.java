@@ -130,7 +130,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
         return (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
     }
 
-    private boolean authorizedToRequestSignature(final X509Certificate clientCert) {
+    public boolean authorizedToRequestSignature(final X509Certificate clientCert) {
         boolean ruleMatched = false;
         String matchSubjectwithValue;
         AuthorizedClientEntry client;

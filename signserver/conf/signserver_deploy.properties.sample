@@ -409,6 +409,23 @@
 #pdfsigner.archive.path.allowed.1=
 #pdfsigner.archive.path.allowed.2=
 
+# ------------- Managed Role Members ------------------------
+#
+# These properties can be used to specify what members should have a Managed Role before SignServer is deployed.
+# To configure these properties, certificate entries that should be matched against an authorizer to determine if a request to the Managed REST API is permitted by the user or not.
+# A total of 10 certificate detail entries can be configured. Listed below are 2 examples, with values, of how this can be configured.
+
+#managed.admincert.issuer.type.0=ISSUER_DN_BCSTYLE
+#managed.admincert.issuer.value.0=CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE
+#managed.admincert.subject.type.0=SUBJECT_ALTNAME_RFC822NAME
+#managed.admincert.subject.value.0=<email@example.org>
+#managed.admincert.description=RFC822Name Subject Alternative Name
+#managed.admincert.issuer.type.1=ISSUER_DN_BCSTYLE
+#managed.admincert.issuer.value.1=CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE
+#managed.admincert.subject.type.1=CERTIFICATE_SERIALNO
+#managed.admincert.subject.value.1=26fabff8dca558a515a792701fb3f3628b6c94b7
+#managed.admincert.description.1=Certificate serial number
+
 # ------------ Peer Connector settings (Enterprise Edition only) --------------
 #
 # These settings are never expected to be used and should be considered deprecated. If you do need

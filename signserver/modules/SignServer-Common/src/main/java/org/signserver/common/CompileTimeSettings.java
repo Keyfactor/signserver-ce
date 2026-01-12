@@ -79,6 +79,14 @@ public class CompileTimeSettings {
     public static final String ARCHIVE_ALLOWLIST = "pdfsigner.archive.path.allowed";
     public static final int MAX_ARCHIVE_PATHS = 256;
 
+    public static final String ADMINCERT_PREFIX = "managed.admincert";
+    public static final String CERT_ISSUER = ".issuer.";
+    public static final String CERT_SUBJECT = ".subject.";
+    public static final String CERT_TYPE = "type.";
+    public static final String CERT_VALUE = "value.";
+    public static final String CERT_DESCRIPTION = ".description.";
+    public static final int MAX_CERT_ENTRIES = 10;
+
     public static final String WEB_THEME = "web.theme";
 
     public static final String CUSTOM_IMAGE_PATH_ALLOWLIST = "pdfsigner.image.path.allowed";
@@ -202,6 +210,30 @@ public class CompileTimeSettings {
             }
         }
         return tmp;
+    }
+
+    /**
+     * Retrieves certificate details from the deploy properties and creates a Properties object
+     * that will be used later for setting up certificate based authentication.
+     *
+     * @return Properties object with certificate details and a description of the rule
+     */
+    public Properties getManagedAuthProperties() {
+        final Properties prop = new Properties();
+        for (int i = 0; i < MAX_CERT_ENTRIES; i++ ) {
+            final String issuerValue = getProperty(ADMINCERT_PREFIX + CERT_ISSUER + CERT_VALUE + i);
+            final String subjectValue = getProperty(ADMINCERT_PREFIX + CERT_SUBJECT + CERT_VALUE + i);
+            final String issuerType = getProperty(ADMINCERT_PREFIX + CERT_ISSUER + CERT_TYPE + i);
+            final String subjectType = getProperty(ADMINCERT_PREFIX + CERT_SUBJECT + CERT_TYPE + i);
+            final String description = getProperty(ADMINCERT_PREFIX + CERT_DESCRIPTION + i);
+
+            prop.put(ADMINCERT_PREFIX + CERT_ISSUER + CERT_VALUE + i, issuerValue);
+            prop.put(ADMINCERT_PREFIX + CERT_ISSUER + CERT_TYPE + i, issuerType);
+            prop.put(ADMINCERT_PREFIX + CERT_SUBJECT + CERT_VALUE + i, subjectValue);
+            prop.put(ADMINCERT_PREFIX + CERT_SUBJECT + CERT_TYPE + i, subjectType);
+            prop.put(ADMINCERT_PREFIX + CERT_DESCRIPTION + i,  description);
+        }
+        return prop;
     }
 
 }

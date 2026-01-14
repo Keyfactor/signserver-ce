@@ -417,9 +417,9 @@
 
 #managed.admincert.issuer.type.0=ISSUER_DN_BCSTYLE
 #managed.admincert.issuer.value.0=CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE
-#managed.admincert.subject.type.0=SUBJECT_ALTNAME_RFC822NAME
-#managed.admincert.subject.value.0=<email@example.org>
-#managed.admincert.description=RFC822Name Subject Alternative Name
+#managed.admincert.subject.type.0=SUBJECT_ALTNAME_DNSNAME
+#managed.admincert.subject.value.0=www.signserver.org
+#managed.admincert.description.0=DNS Name Subject Alternative Name
 #managed.admincert.issuer.type.1=ISSUER_DN_BCSTYLE
 #managed.admincert.issuer.value.1=CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE
 #managed.admincert.subject.type.1=CERTIFICATE_SERIALNO

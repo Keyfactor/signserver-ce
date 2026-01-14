@@ -203,6 +203,10 @@ public class ClientCertAuthorizer implements IAuthorizer {
                         parameter = DNFieldExtractor.UPN;
                         usedExtractor = anExtractor;
                         break;
+                    case SUBJECT_ALTNAME_DNSNAME:
+                        parameter = DNFieldExtractor.DNSNAME;
+                        usedExtractor = anExtractor;
+                        break;
                     default:
                         // Do not match on supported match types
                         LOG.warn("Unsupported " + MatchSubjectWithType.class.getSimpleName() + " : " + matchSubjectWithType);

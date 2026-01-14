@@ -341,6 +341,10 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     parameter = DNFieldExtractor.UPN;
                     usedExtractor = anExtractor;
                     break;
+                case SUBJECT_ALTNAME_DNSNAME:
+                    parameter = DNFieldExtractor.DNSNAME;
+                    usedExtractor = anExtractor;
+                    break;
                 default: // It should not happen though
                     throw new AssertionError(matchSubjectWithType.name());
             }

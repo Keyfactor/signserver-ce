@@ -94,4 +94,9 @@ public enum MatchSubjectWithType {
      * MS UPN Subject Alternative Name.
      */
     SUBJECT_ALTNAME_MSUPN,
+
+    /**
+     * DNS NAME Subject Alternative Name.
+     */
+    SUBJECT_ALTNAME_DNSNAME,
 }

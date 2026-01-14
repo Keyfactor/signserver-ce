@@ -566,7 +566,7 @@ public class ClientCertAuthorizerRdnTest {
     }
 
     /**
-     * Tests authorization with RFC822Name Subject Alternative Name.
+     * Tests authorization with MS UPN Subject Alternative Name.
      *
      * @throws Exception 
      */
@@ -574,6 +574,17 @@ public class ClientCertAuthorizerRdnTest {
     public void testSUBJECT_ALTNAME_MSUPN() throws Exception {
         LOG.info("testSUBJECT_ALTNAME_MSUPN");
         standardTestOfAltName(MatchSubjectWithType.SUBJECT_ALTNAME_MSUPN, DNFieldExtractor.UPN, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN, GeneralName.dNSName);
+    }
+
+    /**
+     * Tests authorization with DNS Name Subject Alternative Name.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSUBJECT_ALTNAME_DNSNAME() throws Exception {
+        LOG.info("testSUBJECT_ALTNAME_DNSNAME");
+        standardTestOfAltName(MatchSubjectWithType.SUBJECT_ALTNAME_DNSNAME, GeneralName.dNSName, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN, GeneralName.rfc822Name);
     }
 
 }

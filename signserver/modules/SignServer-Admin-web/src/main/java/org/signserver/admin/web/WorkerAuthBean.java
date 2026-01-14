@@ -479,6 +479,10 @@ public class WorkerAuthBean implements Serializable {
                     parameter = DNFieldExtractor.UPN;
                     usedExtractor = anExtractor;
                     break;
+                case SUBJECT_ALTNAME_DNSNAME:
+                    parameter = DNFieldExtractor.DNSNAME;
+                    usedExtractor = anExtractor;
+                    break;
                 default: // It should not happen though
                     throw new AssertionError(type.name());
             }
@@ -596,6 +600,10 @@ public class WorkerAuthBean implements Serializable {
                     break;
                 case SUBJECT_ALTNAME_MSUPN:
                     parameter = DNFieldExtractor.UPN;
+                    usedExtractor = anExtractor;
+                    break;
+                case SUBJECT_ALTNAME_DNSNAME:
+                    parameter = DNFieldExtractor.DNSNAME;
                     usedExtractor = anExtractor;
                     break;
                 default: // It should not happen though

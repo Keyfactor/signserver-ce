@@ -146,6 +146,14 @@
                                 </h:column>
                             </h:dataTable>
                         </h:panelGroup>
+
+                        <h:panelGroup rendered="#{administratorsBean.managedRoleConfigured}">
+                            <h2><h:outputText value="#{text['Managed_Role']}"/></h2>
+                            <p>
+                                <h:outputText id="managedRole" value="#{text.MANAGED_ROLE_CONFIGURED}"/>
+                            </p>
+                        </h:panelGroup>
+
                     </h:form>
                 </h:panelGroup>
 

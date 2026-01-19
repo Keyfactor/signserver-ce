@@ -26,5 +26,10 @@ public interface DeployTimeRolesSingletonLocal {
      * @return Parsed deploy-time configuration properties for managed role rules
      */
     WorkerConfig getManagedRulesAsWorkerConfig();
+
+    /**
+     * @return if there is any managed rule configured
+     */
+    boolean isManagedRulesConfigured();
     
 }

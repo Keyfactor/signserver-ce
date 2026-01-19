@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.faces.annotation.ManagedProperty;
 import jakarta.faces.model.ListDataModel;
 import jakarta.faces.view.ViewScoped;
@@ -45,6 +44,7 @@ import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
 import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.common.SignServerUtil;
+import org.signserver.ejb.interfaces.DeployTimeRolesSingletonLocal;
 import org.signserver.serviceprovider.PeersInInfo;
 import org.signserver.serviceprovider.PeersProvider;
 
@@ -69,6 +69,9 @@ public class AdministratorsBean implements Serializable {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
+
+    @EJB
+    private DeployTimeRolesSingletonLocal deployTimeRoles;
 
     @Inject
     private LoginBean loginBean;
@@ -563,5 +566,15 @@ public class AdministratorsBean implements Serializable {
         }
 
         return cachedPeersProvider;
+    }
+
+    public boolean isManagedRoleConfigured() {
+        final boolean result = deployTimeRoles.isManagedRulesConfigured();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Managed role configured: " + result);
+        }
+
+        return result;
     }
 }

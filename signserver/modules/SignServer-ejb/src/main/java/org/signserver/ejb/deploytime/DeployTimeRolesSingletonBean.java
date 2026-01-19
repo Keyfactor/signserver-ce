@@ -31,10 +31,12 @@ import org.signserver.ejb.interfaces.DeployTimeRolesSingletonLocal;
 @Startup
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@Lock(LockType.READ)
 public class DeployTimeRolesSingletonBean implements DeployTimeRolesSingletonLocal {
     private static final Logger LOG = Logger.getLogger(DeployTimeRolesSingletonBean.class);
 
     private WorkerConfig managedRulesAsWorkerConfig;
+    private boolean managedRulesConfigured;
 
     @PostConstruct
     protected void startup() {
@@ -46,15 +48,20 @@ public class DeployTimeRolesSingletonBean implements DeployTimeRolesSingletonLoc
             if (LOG.isInfoEnabled()) {
                 LOG.info("Loaded " + managedRulesAsWorkerConfig.getProperties().size() + " managed admin properties");
             }
+            managedRulesConfigured = !managedRulesAsWorkerConfig.getProperties().isEmpty();
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Failed to parse managed admin rules. Please check your managed.admincert.* deploy-time properties.", ex);
         }
     }
 
-    @Lock(LockType.READ)
     @Override
     public WorkerConfig getManagedRulesAsWorkerConfig() {
         return managedRulesAsWorkerConfig;
+    }
+
+    @Override
+    public boolean isManagedRulesConfigured() {
+        return managedRulesConfigured;
     }
 
 }

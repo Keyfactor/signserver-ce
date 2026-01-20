@@ -291,6 +291,16 @@
 #dist.sampleconfigs.replacewithmanaged=false
 #dist.sampleconfigs.replacewithmanaged=
 
+# ------------- Generated worker IDs starting definition ------------------------
+# A property to define the starting number for auto-generated worker IDs.
+# When adding a new worker without specifying a fixed ID (e.g. using GENID
+# placeholders in the CLI or the "Apply" button in the Admin Web), the system
+# will not choose an ID less than this value.
+#
+# Default: 1
+#workerids.genid.start=
+#workerids.genid.start=1001
+
 # ------------- PKCS11 library definitions -------------------------------------
 #
 # PKCS11 library definitions, each library is defined by a "friendly" name (the one

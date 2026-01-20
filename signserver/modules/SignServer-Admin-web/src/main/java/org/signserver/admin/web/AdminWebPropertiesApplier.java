@@ -26,6 +26,8 @@ import org.signserver.admin.common.auth.AdminPrincipal;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.CompileTimeSettings;
+import org.apache.log4j.Logger;
 
 /**
  * Implementation of the properties applier using WS.
@@ -35,6 +37,7 @@ import org.signserver.common.InvalidWorkerIdException;
  *
  */
 public class AdminWebPropertiesApplier extends PropertiesApplier {
+    private static final Logger LOG = Logger.getLogger(AdminWebPropertiesApplier.class);
 
     private final AdminWebSessionBean sessionBean;
     private final AdminPrincipal principal;
@@ -107,7 +110,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected int genFreeWorkerId() throws PropertiesApplierException {
         try {
             final List<Integer> workerIds = sessionBean.getAllWorkers(principal);
-            int max = 0;
+            int max = CompileTimeSettings.getInstance().getAutoGenWorkerIdStartNumber() - 1;
 
             for (final int workerId : workerIds) {
                 if (workerId > max) {

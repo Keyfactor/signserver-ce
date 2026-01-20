@@ -76,6 +76,8 @@ public class CompileTimeSettings {
     
     public static final String STATUSREPOSITORY_LOG = "statusrepository.log";
 
+    public static final String WORKER_ID_GENID_START = "workerids.genid.start";
+
     public static final String ARCHIVE_ALLOWLIST = "pdfsigner.archive.path.allowed";
     public static final int MAX_ARCHIVE_PATHS = 256;
 
@@ -234,6 +236,24 @@ public class CompileTimeSettings {
             prop.put(ADMINCERT_PREFIX + CERT_DESCRIPTION + i,  description);
         }
         return prop;
+    }
+
+    /**
+     * Get the configured start number for auto-generated worker IDs.
+     *
+     * @return The starting ID to be used in auto-generated ID or 1 if not set.
+     */
+    public int getAutoGenWorkerIdStartNumber() {
+        int startNumber = 1;
+        final String startIdProp = getProperty(WORKER_ID_GENID_START);
+        if (startIdProp != null && !startIdProp.isEmpty()) {
+            try {
+                startNumber = Integer.parseInt(startIdProp.trim());
+            } catch (NumberFormatException e) {
+                LOG.error("Invalid value for " + WORKER_ID_GENID_START + ": " + startIdProp);
+            }
+        }
+        return startNumber;
     }
 
 }

@@ -1348,7 +1348,8 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public int genFreeWorkerId() {
         Collection<Integer> ids = getAllWorkers();
-        int max = 0;
+        int max = CompileTimeSettings.getInstance().getAutoGenWorkerIdStartNumber() - 1;
+
         Iterator<Integer> iter = ids.iterator();
         while (iter.hasNext()) {
             Integer id = iter.next();

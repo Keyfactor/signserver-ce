@@ -469,6 +469,32 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Verifies that auto-generated worker IDs respect the configured value in the deploy properties.
+     * NOTE: This test assumes signserver_deploy.properties configured with workerids.genid.start=100000
+     */
+    @Test
+    public void test22GenFreeWorkerIdWithStartProperty() {
+        // Get the current generated ID
+        int firstId = workerSession.genFreeWorkerId();
+
+        assertTrue("Generated ID should be >= start property", firstId >= 100000);
+
+        try {
+            // Create a worker with generated ID
+            workerSession.setWorkerProperty(firstId, "NAME", "TempWorkerForTest");
+            workerSession.reloadConfiguration(firstId);
+
+            // Generate another ID
+            int secondId = workerSession.genFreeWorkerId();
+
+            // Verify it is greater than the previous one
+            assertTrue("Subsequent generated ID should be greater", secondId > firstId);
+        } finally {
+            removeWorker(firstId);
+        }
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);

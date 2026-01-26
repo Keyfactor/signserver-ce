@@ -419,6 +419,15 @@
 #pdfsigner.archive.path.allowed.1=
 #pdfsigner.archive.path.allowed.2=
 
+# --------------- SignerStatusReportWorker Outputfile paths --------------------
+#
+# To configure a list of allowed paths that SignerStatusReportWorker can write to, enter the desired paths in the outputfile.path.allowed below.
+# Each property correspond to an entry in the outputfile allowlist for that file directory. Up to 256 different allowlist entries are allowed.
+# These properties are applicable to the SignerStatusReportWorker.
+#outputfile.path.allowed.0=
+#outputfile.path.allowed.1=
+#outputfile.path.allowed.2=
+
 # ------------- Managed Role Members ------------------------
 #
 # These properties can be used to specify what members should have a Managed Role before SignServer is deployed.

@@ -16,13 +16,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
 import jakarta.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.ServiceContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.AllowlistUtils;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
@@ -52,6 +57,9 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     private File outputFile;
 
     private List<String> workers;
+
+    private String outputFileError;
+    private Set<Path> allowedOutputFilePaths;
     
 
     /**
@@ -66,15 +74,25 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             final WorkerContext workerContext,
             final EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
-        
+
+        allowedOutputFilePaths = getAllowedOutputFilePaths();
+
         final String outputfileValue = config.getProperties()
                 .getProperty(PROPERTY_OUTPUTFILE);
-        if (outputfileValue != null) {
-            outputFile = new File(outputfileValue);
-        
+
+        if (outputfileValue != null && !outputfileValue.isEmpty()) {
+            validateOutputFileAgainstAllowList(outputfileValue);
+
+            if (outputFileError == null) {
+            outputFile = Path.of(outputfileValue).normalize().toFile();
             LOG.info("Output file: " + outputFile.getAbsolutePath());
-        } else {
-            LOG.error("Property OUTPUTFILE missing!");
+            } else {
+            outputFile = null;
+        }
+    } else {
+            outputFileError = "Property OUTPUTFILE missing!";
+            LOG.error(outputFileError);
+            outputFile = null;
         }
 
         workers = new LinkedList<>();
@@ -134,10 +152,42 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             fatalErrors.add("Property WORKERS missing");
         }
         
-        if (outputFile == null) {
-            fatalErrors.add("Property OUTPUTFILE missing");
+        if (outputFileError != null) {
+            fatalErrors.add(outputFileError);
+        } else if (outputFile == null) {
+            fatalErrors.add("Property OUTPUTFILE missing!");
         }
-        
+
         return fatalErrors;
+    }
+
+    /**
+     * Method for retrieving the entire collection of allowed outputfile paths.
+     *
+     * @return
+     */
+    protected Set<Path> getAllowedOutputFilePaths() {
+        if(allowedOutputFilePaths == null) {
+            return CompileTimeSettings.getInstance().getOutputfilePathProperties();
+        }
+        return allowedOutputFilePaths;
+    }
+
+    private void validateOutputFileAgainstAllowList(final String outputfileValue) {
+
+        final Set<Path> allowedOutputFilePaths = getAllowedOutputFilePaths();
+
+        Path outputFilePath = null;
+        if (outputfileValue != null && !outputfileValue.isEmpty()) {
+            outputFilePath = Path.of(outputfileValue).normalize();
+        }
+
+        if (!AllowlistUtils.isPathAllowed(outputFilePath, allowedOutputFilePaths)) {
+            outputFileError = "Unable to use the provided file path to the outputfile " + outputFilePath;
+                LOG.error(outputFileError);
+            }
+            else if (outputFilePath != null && LOG.isDebugEnabled()) {
+                LOG.debug("OUTPUTFILE allowed: " + outputFilePath.toAbsolutePath());
+         }
     }
 }

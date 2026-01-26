@@ -89,6 +89,27 @@ public class AllowlistUtils {
      *     </tr>
      * </table>
      *
+     * <br>SignerStatusReporter<br>
+     * The OUTPUTFILE (SignerStatusReporter) property can be set to any directory that is a
+     * child of the allowed paths configured in the outputfile allowlist. If the final normalized path
+     * is outside any of the outputfile.path.allowed.x paths, the signer will be deemed misconfigured.
+     * <br>Examples:<br>
+     * <table border="solid">
+     *     <tr>
+     *         <td>SignerStatusReporter</td>
+     *     </tr>
+     *     <tr>
+     *         <td>OUTPUTFILE = /home/user/subdirectory/</td>
+     *         <td>outputfile.path.allowed.x = /home/user/subdirectory/</td>
+     *         <td>ALLOWED</td>
+     *     </tr>
+     *     <tr>
+     *         <td>OUTPUTFILE = /home/user/subdirectory/../other/</td>
+     *         <td>outputfile.path.allowed.x = /home/user/subdirectory/</td>
+     *         <td>NOT ALLOWED</td>
+     *     </tr>
+     * </table>
+     *
      * @param path The path to check. It will be normalized and verified to see if it starts with any path in the provided allowList.
      * @param allowList Collection of paths that should be normalized before being passed in.
      * @return True if the provided path starts with any of the entries in the allowList, otherwise false.

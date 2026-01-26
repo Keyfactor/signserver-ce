@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -89,7 +90,10 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
-        outputFile = new File(getSignServerHome() + File.separator
+        final String allowList = this.getConfig().getProperty("test.outputfile.existingAllowedPath");
+        Assume.assumeTrue("Test requires test.outputfile.existingAllowedPath to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
+
+        outputFile = new File(allowList + File.separator
                 + "~test-outputfile.dat");
         if (outputFile.exists()) {
             if (!outputFile.delete()) {
@@ -199,7 +203,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
         errors = workerStatus.getFatalErrors();
         assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing"));
-        assertTrue("Should mention missing OUTPUTFILE property", errors.contains("Property OUTPUTFILE missing"));
+        assertTrue("Should mention missing OUTPUTFILE property", errors.contains("Property OUTPUTFILE missing!"));
 
         // restore
         workerSession.setWorkerProperty(WORKERID_SERVICE, "WORKERS",
@@ -207,6 +211,63 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE",
                 outputFile.getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID_SERVICE);
+    }
+
+    @Test
+    public void test02OutputFileAllowedPath() throws Exception {
+        try {
+            if (outputFile.exists()) {
+                assertTrue("Removed old expected file", outputFile.delete());
+            }
+
+            workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE", outputFile.getAbsolutePath());
+            workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "TRUE");
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+
+            final WorkerStatus workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
+            assertTrue("No fatal errors", workerStatus.getFatalErrors().isEmpty());
+
+            waitForServiceRun();
+
+            assertTrue("File: " + outputFile, outputFile.exists());
+
+        } finally {
+            if (outputFile != null && outputFile.exists() ) {
+                outputFile.delete();
+            }
+            workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE", outputFile.getAbsolutePath());
+            workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "FALSE");
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+        }
+
+    }
+
+    @Test
+    public void test03OutputFilePathNotAllowed() throws Exception {
+        try {
+
+            workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE", "/not/a/allowed/path/");
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+
+            final WorkerStatus workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
+            final List<String> errors = workerStatus.getFatalErrors();
+
+            boolean hasAllowlistError = false;
+            for (String err : errors) {
+                if (err != null && err.contains("Unable to use the provided file path to the outputfile ")){
+                    hasAllowlistError = true;
+                    break;
+                }
+            }
+            assertTrue("Should mention OUTPUTFILE allowlist violation. Errors: "  + errors, hasAllowlistError);
+
+        } finally {
+            if (outputFile != null && outputFile.exists() ) {
+                outputFile.delete();
+            }
+            workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE", outputFile.getAbsolutePath());
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+        }
     }
 
     /**

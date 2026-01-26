@@ -94,6 +94,9 @@ public class CompileTimeSettings {
     public static final String CUSTOM_IMAGE_PATH_ALLOWLIST = "pdfsigner.image.path.allowed";
     public static final int MAX_CUSTOM_IMAGE_PATHS = 256;
 
+    public static final String OUTPUTFILE_PATH_ALLOWLIST = "outputfile.path.allowed";
+    public static final int MAX_OUTPUTFILE_PATHS = 256;
+
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 
@@ -180,18 +183,7 @@ public class CompileTimeSettings {
      * @return Collection of normalized allowed paths for PDF archiving
      */
      public Set<Path> getArchiveAllowlistPaths() {
-            Set<Path> tmp = new HashSet<>();
-            for (int i = 0; i < MAX_ARCHIVE_PATHS; i++) {
-                final String prop = getProperty(CompileTimeSettings.ARCHIVE_ALLOWLIST + "." + i);
-                if (prop != null && !prop.isEmpty()) {
-                    // if prop starts with ${ and ends with }, treat it as a placeholder
-                    if (prop.startsWith("${") && prop.endsWith("}")) {
-                        continue;
-                    }
-                    tmp.add(Path.of(prop).normalize());
-                }
-            }
-            return tmp;
+         return getNormalizedPaths(CompileTimeSettings.ARCHIVE_ALLOWLIST, MAX_ARCHIVE_PATHS);
      }
 
     /**
@@ -200,9 +192,29 @@ public class CompileTimeSettings {
      * @return Collection of normalized allowed paths for visible signature custom images
      */
     public Set<Path> getCustomImagePathProperties() {
+        return getNormalizedPaths(CompileTimeSettings.CUSTOM_IMAGE_PATH_ALLOWLIST, MAX_CUSTOM_IMAGE_PATHS);
+    }
+
+    /**
+     * Retrieves all outputfile.path.allowed.x deploy properties.
+     *
+     * @return Collection of normalized allowed paths for OUTPUTFILE
+     */
+    public Set<Path> getOutputfilePathProperties() {
+        return getNormalizedPaths(CompileTimeSettings.OUTPUTFILE_PATH_ALLOWLIST, MAX_OUTPUTFILE_PATHS);
+    }
+
+    /**
+     * Reads allowlist path properties used for file access checks and returns
+     * the normalized paths.
+     * @param propertyPrefix base name of the indexed allowlist properties
+     * @param maxPaths maximum number of indexed properties to read
+     * @return set of normalized path values
+     */
+    private Set<Path> getNormalizedPaths(final String propertyPrefix, final int maxPaths) {
         Set<Path> tmp = new HashSet<>();
-        for (int i = 0; i < MAX_CUSTOM_IMAGE_PATHS; i++) {
-            final String prop = getProperty(CompileTimeSettings.CUSTOM_IMAGE_PATH_ALLOWLIST + "." + i);
+        for (int i = 0; i < maxPaths; i++) {
+            final String prop = getProperty(propertyPrefix + "." + i);
             if (prop != null && !prop.isEmpty()) {
                 // if prop starts with ${ and ends with }, treat it as a placeholder
                 if (prop.startsWith("${") && prop.endsWith("}")) {

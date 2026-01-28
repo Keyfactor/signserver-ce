@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.common.IllegalRequestException;
 import org.signserver.testutils.WebTestCase;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws IllegalRequestException {
 		// remove dummy signer
 		removeWorker(getSignerIdDummy1());
 	}

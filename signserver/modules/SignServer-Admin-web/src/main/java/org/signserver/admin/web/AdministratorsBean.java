@@ -38,11 +38,13 @@ import org.cesecore.util.CertTools;
 import org.signserver.admin.common.roles.AdminEntry;
 import org.signserver.admin.common.roles.AdminsUtil;
 import org.signserver.common.ClientEntry;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.common.auth.ClientCertAdminPrincipal;
 import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.DeployTimeRolesSingletonLocal;
 import org.signserver.serviceprovider.PeersInInfo;
@@ -86,6 +88,7 @@ public class AdministratorsBean implements Serializable {
 
     private Boolean allowAny;
     private Boolean allowIncomingPeerSystems;
+    private Boolean allowAnyEnabled;
 
     private String certSN;
     private String issuerDN;
@@ -150,6 +153,13 @@ public class AdministratorsBean implements Serializable {
             allowAny = property != null && Boolean.TRUE.toString().equalsIgnoreCase(property);
         }
         return allowAny;
+    }
+
+    public boolean isAllowAnyEnabled() {
+        if (allowAnyEnabled == null) {
+            allowAnyEnabled = CompileTimeSettings.getInstance().getAdminAllowAnyEnabled();
+        }
+        return allowAnyEnabled;
     }
 
     public Boolean getAllowIncomingPeerSystems() throws AdminNotAuthorizedException {
@@ -259,19 +269,19 @@ public class AdministratorsBean implements Serializable {
         this.cert = cert;
     }
 
-    public String allowAnyAction(boolean allowAny) throws AdminNotAuthorizedException {
+    public String allowAnyAction(boolean allowAny) throws AdminNotAuthorizedException, IllegalRequestException {
         workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN, String.valueOf(allowAny));
         this.allowAny = null;
         return "administrators?faces-redirect=true";
     }
     
-    public String saveAllowIncomingAction() throws AdminNotAuthorizedException {
+    public String saveAllowIncomingAction() throws AdminNotAuthorizedException, IllegalRequestException {
         workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncomingPeerSystems));
         this.allowIncomingPeerSystems = null;
         return "administrators?faces-redirect=true";
     }
 
-    public String allowIncomingAction(boolean allowIncoming) throws AdminNotAuthorizedException {
+    public String allowIncomingAction(boolean allowIncoming) throws AdminNotAuthorizedException, IllegalRequestException {
         workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncoming));
         this.allowIncomingPeerSystems = null;
         return "administrators?faces-redirect=true";
@@ -297,7 +307,7 @@ public class AdministratorsBean implements Serializable {
         this.rolePeerSystem = entry.isPeerSystem();
     }
 
-    public String removeSubmitAction() throws AdminNotAuthorizedException {
+    public String removeSubmitAction() throws AdminNotAuthorizedException, IllegalRequestException {
         final ClientEntry oldEntry = new ClientEntry(new BigInteger(certSN, 16), issuerDN);
 
         getAdmins().remove(oldEntry);
@@ -321,7 +331,7 @@ public class AdministratorsBean implements Serializable {
         return "administrators?faces-redirect=true";
     }
 
-    public String editSubmitAction() throws AdminNotAuthorizedException {
+    public String editSubmitAction() throws AdminNotAuthorizedException, IllegalRequestException {
 
         final ClientEntry newCred = new ClientEntry(new BigInteger(certSN, 16), issuerDN);
         final ClientEntry oldEntry = new ClientEntry(new BigInteger(oldCertSN, 16), oldIssuerDN);
@@ -356,7 +366,7 @@ public class AdministratorsBean implements Serializable {
         return "administrators?faces-redirect=true";
     }
 
-    public String addSubmitAction() throws AdminNotAuthorizedException {
+    public String addSubmitAction() throws AdminNotAuthorizedException, IllegalRequestException {
 
         final ClientEntry newCred = new ClientEntry(new BigInteger(certSN, 16), issuerDN);
 

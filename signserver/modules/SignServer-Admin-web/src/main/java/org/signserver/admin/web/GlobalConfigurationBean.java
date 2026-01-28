@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,10 +32,12 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.apache.log4j.Logger;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
+import org.signserver.common.IllegalRequestException;
 
 /**
  * @author Markus Kilås
@@ -65,6 +68,8 @@ public class GlobalConfigurationBean implements Serializable {
     private String oldProperty;
     private String property;
     private String propertyValue;
+
+    private final Boolean isAdminAllowedEnabled = CompileTimeSettings.getInstance().getAdminAllowAnyEnabled();
 
     /**
      * Creates a new instance of GlobalConfigurationBean.
@@ -144,50 +149,48 @@ public class GlobalConfigurationBean implements Serializable {
         return toDelete;
     }
 
-    public String editPropertyAction() throws AdminNotAuthorizedException {
+    public String editPropertyAction() throws AdminNotAuthorizedException, IllegalRequestException {
         String oldPropertyName = getOldProperty();
-
         // Remove scope part
         String key;
         if (property.contains(".")) {
             key = property.substring(
-                    property.indexOf(".") + 1);
+                    property.indexOf(".") + 1).toUpperCase(Locale.ENGLISH);
         } else {
-            key = property;
+            key = property.toUpperCase(Locale.ENGLISH);
         }
-
-        if (!oldPropertyName.equals(property)) {
-            // Remove scope part
-            String oldKey;
-            if (oldPropertyName.contains(".")) {
-                oldKey = oldPropertyName.substring(
-                        oldPropertyName.indexOf(".") + 1);
+        // If Allow any is the property to change and admin.allowany.enabled is false
+        if (key.equals("ALLOWANYWSADMIN") && !isAdminAllowedEnabled) {
+            // Changing to false is always allowed.
+            if (propertyValue.equalsIgnoreCase("false")) {
+                performEdit(oldPropertyName, key);
             } else {
-                oldKey = oldPropertyName;
+                // Changing to anything but false is not allowed
+                throw new IllegalRequestException("Allow any is disabled and can not be enabled after deployment.");
             }
 
-            workerSessionBean.removeGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, oldKey);
+        } else {
+            performEdit(oldPropertyName, key);
         }
-
-        // Remove illegal characters
-        key = key.replaceAll(",", "").replaceAll("%", "");
-
-        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, key, propertyValue);
         return "global-configuration?faces-redirect=true";
     }
 
-    public String removePropertyAction() throws AdminNotAuthorizedException {
+    public String removePropertyAction() throws AdminNotAuthorizedException, IllegalRequestException {
         for (String prop : getToDelete()) {
             // Remove scope part
             if (prop.contains(".")) {
                 prop = prop.substring(prop.indexOf(".") + 1);
             }
-            workerSessionBean.removeGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, prop);
+            if (!prop.equals("ALLOWANYWSADMIN") || isAdminAllowedEnabled) {
+                workerSessionBean.removeGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, prop);
+            } else {
+                throw new IllegalRequestException("Allow any is disabled can't be removed after deployment.");
+            }
         }
         return "global-configuration?faces-redirect=true";
     }
 
-    public String addPropertyAction() throws AdminNotAuthorizedException {
+    public String addPropertyAction() throws AdminNotAuthorizedException, IllegalRequestException {
         // Remove scope part
         String oldKey;
         if (property.contains(".")) {
@@ -199,7 +202,9 @@ public class GlobalConfigurationBean implements Serializable {
 
         // Remove illegal characters
         oldKey = oldKey.replaceAll(",", "").replaceAll("%", "");
-
+        if (oldKey.equals("ALLOWANYWSADMIN") && !isAdminAllowedEnabled) {
+            throw new IllegalRequestException("Allow any is disabled and can not be added after deployment.");
+        }
         workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, oldKey, propertyValue);
         return "global-configuration?faces-redirect=true";
     }
@@ -225,5 +230,32 @@ public class GlobalConfigurationBean implements Serializable {
         config = null;
         config = getConfig();
         return "global-configuration?faces-redirect=true;";
+    }
+
+
+    /**
+     * A method that performs the edit of a global configuration property.
+     * @param oldPropertyName
+     * @param key
+     * @return A redirect in the GUI when the edit has been performed
+     * @throws AdminNotAuthorizedException
+     */
+    private void performEdit(String oldPropertyName, String key) throws AdminNotAuthorizedException, IllegalRequestException {
+        if (!oldPropertyName.equals(property)) {
+            // Remove scope part
+            String oldKey;
+            if (oldPropertyName.contains(".")) {
+                oldKey = oldPropertyName.substring(
+                        oldPropertyName.indexOf(".") + 1);
+            } else {
+                oldKey = oldPropertyName;
+            }
+            workerSessionBean.removeGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, oldKey);
+        }
+
+        // Remove illegal characters
+        key = key.replaceAll(",", "").replaceAll("%", "");
+
+        workerSessionBean.setGlobalProperty(loginBean.getAdminPrincipal(), GlobalConfiguration.SCOPE_GLOBAL, key, propertyValue);
     }
 }

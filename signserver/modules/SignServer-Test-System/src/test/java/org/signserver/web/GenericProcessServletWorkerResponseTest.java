@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.common.IllegalRequestException;
 import org.signserver.testutils.WebTestCase;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws IllegalRequestException {
 		removeWorker(getSignerIdDummy1());
 	}
 

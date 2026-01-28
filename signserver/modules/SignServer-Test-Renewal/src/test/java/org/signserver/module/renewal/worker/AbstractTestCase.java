@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
@@ -213,7 +214,7 @@ public abstract class AbstractTestCase extends TestCase {
         addSigner(signerId, signerName, endEntity, false);
     }
 
-    private void removeGlobalProperties(int workerid) {
+    private void removeGlobalProperties(int workerid) throws IllegalRequestException {
         GlobalConfiguration gc = globalSession.getGlobalConfiguration();
         Enumeration<String> en = gc.getKeyEnumeration();
         while (en.hasMoreElements()) {

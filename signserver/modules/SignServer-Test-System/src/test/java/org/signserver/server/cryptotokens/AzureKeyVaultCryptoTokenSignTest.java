@@ -67,6 +67,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -735,7 +736,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
      * Test that setting a default key is not required for an Azure Key Vault Crypto Worker to be active
      */
     @Test
-    public void testNoDefaultKeyNeededForCryptoWorker() throws InvalidWorkerIdException {
+    public void testNoDefaultKeyNeededForCryptoWorker() throws InvalidWorkerIdException, IllegalRequestException {
         LOG.info("testNoDefaultKeyNeededForCryptoWorker");
 
         final int tokenId = CRYPTO_TOKEN;
@@ -765,7 +766,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
      * due to not being able to establish connection to the HSM.
      */
     @Test
-    public void testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection() throws InvalidWorkerIdException{
+    public void testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection() throws InvalidWorkerIdException, IllegalRequestException {
         LOG.info("testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection");
 
         final int tokenId = CRYPTO_TOKEN;

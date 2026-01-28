@@ -474,7 +474,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * NOTE: This test assumes signserver_deploy.properties configured with workerids.genid.start=100000
      */
     @Test
-    public void test22GenFreeWorkerIdWithStartProperty() {
+    public void test22GenFreeWorkerIdWithStartProperty() throws IllegalRequestException {
         // Get the current generated ID
         int firstId = workerSession.genFreeWorkerId();
 

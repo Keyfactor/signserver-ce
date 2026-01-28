@@ -14,6 +14,7 @@ package org.signserver.ejb.interfaces;
 
 import jakarta.ejb.Local;
 
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ResyncException;
 import org.signserver.server.log.AdminInfo;
 
@@ -34,7 +35,7 @@ public interface GlobalConfigurationSessionLocal extends GlobalConfigurationSess
      * @param key of the property should not have any scope prefix, never null
      * @param value the value, never null.
      */
-    void setProperty(final AdminInfo adminInfo, String scope, String key, String value);
+    void setProperty(final AdminInfo adminInfo, String scope, String key, String value) throws IllegalRequestException;
 
     /**
      * Method used to remove a property from the global configuration.
@@ -44,7 +45,7 @@ public interface GlobalConfigurationSessionLocal extends GlobalConfigurationSess
      * never null
      * @return true if removal was successful, othervise false.
      */
-    boolean removeProperty(final AdminInfo adminInfo, String scope, String key);
+    boolean removeProperty(final AdminInfo adminInfo, String scope, String key) throws IllegalRequestException;
 
     /**
      * Method that is used after a database crash to restore all cached data to
@@ -52,7 +53,7 @@ public interface GlobalConfigurationSessionLocal extends GlobalConfigurationSess
      * @param adminInfo Administrator information
      * @throws ResyncException if resync was unsuccessfull
      */
-    void resync(final AdminInfo adminInfo) throws ResyncException;
+    void resync(final AdminInfo adminInfo) throws ResyncException, IllegalRequestException;
 
     /**
      * Method that is used after a database crash to restore all cached data to

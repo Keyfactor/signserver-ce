@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
@@ -284,7 +285,7 @@ public class ValidationWSServiceTest extends ModulesTestCase {
     }
 
     @Test
-    public void test99RemoveDatabase() {
+    public void test99RemoveDatabase() throws IllegalRequestException {
         removeWorker(7101);
     }
 

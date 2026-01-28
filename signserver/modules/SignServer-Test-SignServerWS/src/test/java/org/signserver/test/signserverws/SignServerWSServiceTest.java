@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.protocol.ws.gen.IllegalRequestException_Exception;
 import org.signserver.protocol.ws.gen.InvalidWorkerIdException_Exception;
@@ -122,7 +123,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IllegalRequestException {
         removeWorker(WORKER_ID_INT);
     }
 

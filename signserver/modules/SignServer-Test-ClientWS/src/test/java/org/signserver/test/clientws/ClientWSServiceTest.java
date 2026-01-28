@@ -35,6 +35,7 @@ import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
 import org.signserver.client.clientws.DataResponse;
 import org.signserver.client.clientws.RequestFailedException_Exception;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.test.conf.SignerConfigurationBuilder;
 import org.signserver.test.util.WSTestUtil;
 import org.signserver.testutils.ModulesTestCase;
@@ -111,7 +112,7 @@ public class ClientWSServiceTest extends ModulesTestCase {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IllegalRequestException {
         removeWorker(WORKER_ID_INT);
     }
 

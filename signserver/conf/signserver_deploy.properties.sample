@@ -478,3 +478,19 @@
 # list.
 #maskedworkerproperties=PIN,KEYSTOREPASSWORD,KEYDATA
 #maskedworkerproperties=
+
+# -------------------- Configure Authorization ------------------------------
+# This property enables or disables using ALLOW ANY as an authorization mode for administrators.
+#
+# Setting this property to true, or unconfigured, permits ALLOW ANY usage in the SignServer deployment.
+# When the use of ALLOW ANY is enabled, users can perform admin actions without being listed as an administrator
+# and switch between the ALLOW ANY mode and ONLY LISTED mode as admin authorization options.
+#
+# Setting this property to false disables ALLOW ANY and any associated functionality with its configuration.
+# This includes editing or adding the Global Configuration value of ALLOW ANY to true, switching from ONLY LISTED to
+# ALLOW ANY on the Administrators Page, or removing the ALLOW ANY configuration.
+# Additionally, users of the deployment are required to be listed as an administrator in order to perform admin actions,
+# which means that a potential value of ALLOW ANY in a database will be disregarded.
+#admin.allowany.enabled=
+#admin.allowany.enabled=true
+#admin.allowany.enabled=false

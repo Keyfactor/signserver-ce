@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.GlobalConfiguration;
@@ -187,8 +188,8 @@ private void log(final OidcAdminPrincipal user,
         LOG.info(line.toString());
     }
 
-    public boolean isAdminAuthorized(final X509Certificate cert) { 
-        final String allowAnyWSAdminProp = global.getGlobalConfiguration().getProperty(
+    public boolean isAdminAuthorized(final X509Certificate cert) {
+        String allowAnyWSAdminProp = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
         final boolean allowAnyWSAdmin = allowAnyWSAdminProp != null ?
                 Boolean.parseBoolean(allowAnyWSAdminProp) : false;

@@ -68,7 +68,9 @@ public class CompileTimeSettings {
             = "signserver.edition";
     public static final String CRYPTOTOKEN_DISABLEKEYGENERATION 
             = "cryptotoken.disablekeygeneration";
-    
+    public static final String ADMIN_ALLOWANY_ENABLED =
+            "admin.allowany.enabled";
+
     public static final String FILEBASED_DB_FOLDER = "database.nodb.location";
     public static final String DATABASE_NAME = "database.name";
 
@@ -268,4 +270,20 @@ public class CompileTimeSettings {
         return startNumber;
     }
 
+    /**
+     * Checks if allow any is enabled or not. If false, the state of allow any can't be configured after deployment
+     * and the deployment will be treated as only listed.
+     *
+     * @return boolean if allow any is enabled or not
+     */
+    public boolean getAdminAllowAnyEnabled() {
+        final boolean result;
+        final String isAllowAnyEnabled = getProperty(ADMIN_ALLOWANY_ENABLED);
+        if (isAllowAnyEnabled.isBlank()) {
+            result = true;
+        } else {
+            result = Boolean.parseBoolean(isAllowAnyEnabled);
+        }
+        return result;
+    }
 }

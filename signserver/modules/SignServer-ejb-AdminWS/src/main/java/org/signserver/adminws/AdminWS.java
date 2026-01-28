@@ -855,7 +855,11 @@ public class AdminWS {
             throws AdminNotAuthorizedException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "setGlobalProperty", key);
 
-        global.setProperty(adminInfo, scope, key, value);
+        try {
+            global.setProperty(adminInfo, scope, key, value);
+        } catch (IllegalRequestException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
     }
 
     /**
@@ -874,7 +878,11 @@ public class AdminWS {
             throws AdminNotAuthorizedException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "removeGlobalProperty", key);
 
-        return global.removeProperty(adminInfo, scope, key);
+        try {
+            return global.removeProperty(adminInfo, scope, key);
+        } catch (IllegalRequestException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
     }
 
     /**
@@ -948,8 +956,11 @@ public class AdminWS {
     @WebMethod(operationName = "globalResync")
     public void globalResync() throws ResyncException, AdminNotAuthorizedException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "globalResync");
-
-        global.resync(adminInfo);
+        try {
+            global.resync(adminInfo);
+        } catch (IllegalRequestException e) {
+            throw new AdminNotAuthorizedException(e.getMessage());
+        }
     }
 
     /**

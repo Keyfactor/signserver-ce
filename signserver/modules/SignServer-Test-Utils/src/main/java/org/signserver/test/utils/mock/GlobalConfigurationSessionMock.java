@@ -13,6 +13,7 @@
 package org.signserver.test.utils.mock;
 
 import java.util.Properties;
+
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
@@ -31,6 +32,7 @@ public class GlobalConfigurationSessionMock implements
 
     private GlobalConfiguration globalConfiguration;
     private final Properties config;
+    private boolean isConfigurableAuthorizationEnabled;
 
     public GlobalConfigurationSessionMock() {
          this(new Properties());
@@ -42,6 +44,11 @@ public class GlobalConfigurationSessionMock implements
                  GlobalConfiguration.STATE_INSYNC, "SignServer 4.7.11alpha0");
     }
 
+    public GlobalConfigurationSessionMock(boolean isConfigurableAuthorizationEnabled) {
+        this(new Properties());
+        this.isConfigurableAuthorizationEnabled = isConfigurableAuthorizationEnabled;
+    }
+
     @Override
     public void setProperty(String scope, String key, String value) {
         config.setProperty(scope + key, value);
@@ -49,9 +56,12 @@ public class GlobalConfigurationSessionMock implements
     
     @Override
     public void setProperty(AdminInfo adminInfo, String scope, String key, String value) {
+        if (!isConfigurableAuthorizationEnabled && (scope + key).equals("GLOB.ALLOWANYWSADMIN")
+                && value.equals("true") && !adminInfo.getSubject().equals("CLI user")) {
+            throw new IllegalArgumentException("Allow any is disabled.");
+        }
         config.setProperty(scope + key, value);
     }
-
 
     @Override
     public boolean removeProperty(String scope, String key) {
@@ -88,5 +98,8 @@ public class GlobalConfigurationSessionMock implements
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public Properties getConfig() {
+        return config;
+    }
     
 }

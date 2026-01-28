@@ -33,6 +33,7 @@ import org.junit.rules.ExpectedException;
 import org.signserver.cli.spi.*;
 import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.test.conf.SignerConfigurationBuilder;
 import org.signserver.test.conf.WorkerPropertiesBuilder;
@@ -105,7 +106,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
 
     @AfterClass
-    public static void afterClass() {
+    public static void afterClass() throws IllegalRequestException {
         for (int workerId : WORKERS) {
             removeWorkerById(workerId);
         }

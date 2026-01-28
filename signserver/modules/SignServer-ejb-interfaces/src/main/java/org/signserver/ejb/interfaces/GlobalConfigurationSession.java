@@ -16,6 +16,7 @@ import jakarta.ejb.Local;
 import jakarta.ejb.Remote;
 import org.signserver.common.GlobalConfiguration;
 
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ResyncException;
 import org.signserver.server.log.AdminInfo;
 
@@ -37,7 +38,7 @@ public interface GlobalConfigurationSession {
      * @param key of the property should not have any scope prefix, never null
      * @param value the value, never null.
      */
-    void setProperty(String scope, String key, String value);
+    void setProperty(String scope, String key, String value) throws IllegalRequestException;
 
     /**
      * Method used to remove a property from the global configuration.
@@ -46,7 +47,7 @@ public interface GlobalConfigurationSession {
      * never null
      * @return true if removal was successful, othervise false.
      */
-    boolean removeProperty(String scope, String key);
+    boolean removeProperty(String scope, String key) throws IllegalRequestException;
 
     /**
      * Method that returns all the global properties with Global Scope and Node
@@ -60,7 +61,7 @@ public interface GlobalConfigurationSession {
      * database.
      * @throws ResyncException if resync was unsuccessfull
      */
-    void resync() throws ResyncException;
+    void resync() throws ResyncException, IllegalRequestException;
 
     /**
      * Method to reload all data from database.

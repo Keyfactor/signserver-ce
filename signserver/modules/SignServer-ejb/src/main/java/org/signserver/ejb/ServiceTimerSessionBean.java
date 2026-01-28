@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceContext;
@@ -187,8 +188,8 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 }
             } catch (NotSupportedException | SystemException | SecurityException | IllegalStateException e) {
                 LOG.error(e);
-            } catch (NoSuchWorkerException ex) {
-                LOG.error(ex.getMessage());
+            } catch (IllegalRequestException e) {
+                LOG.error(e.getMessage());
             } finally {
                 try {
                     ut.commit();

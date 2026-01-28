@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
@@ -148,11 +149,16 @@ public class GlobalConfigSampleAccounter implements IAccounter {
             return false;
         }
 
-        // Store the new balance
-        getGlobalConfigurationSession(context).setProperty(
-                GlobalConfiguration.SCOPE_GLOBAL,
-                GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS,
-                storeAccountMapping(accountsTable));
+        try {
+            // Store the new balance
+            getGlobalConfigurationSession(context).setProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS,
+                    storeAccountMapping(accountsTable));
+        } catch (IllegalRequestException e) {
+            throw new AccounterException(e.getMessage());
+        }
+
 
         // Purchase granted
         return true;

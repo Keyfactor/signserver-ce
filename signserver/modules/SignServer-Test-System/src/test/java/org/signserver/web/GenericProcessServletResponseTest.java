@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.common.IllegalRequestException;
 import org.signserver.testutils.WebTestCase;
 import java.io.IOException;
 import java.io.StringReader;
@@ -608,7 +609,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws InterruptedException
      */
     @Test
-    public void test23MaxUploadFieldCount() throws IOException, InterruptedException {
+    public void test23MaxUploadFieldCount() throws IOException, InterruptedException, IllegalRequestException {
 
         try {
             getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_FIELD_COUNT", "5");
@@ -648,6 +649,8 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
             con.disconnect();
 
+        } catch (IllegalRequestException e) {
+            throw new RuntimeException(e);
         } finally {
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_FIELD_COUNT");
             getGlobalSession().reload();

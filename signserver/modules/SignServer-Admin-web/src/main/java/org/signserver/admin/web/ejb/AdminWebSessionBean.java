@@ -505,7 +505,7 @@ public class AdminWebSessionBean {
             final AdminPrincipal principal,
             final String scope,
             final String key)
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, IllegalRequestException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeGlobalProperty", key);
 
         return global.removeProperty(adminInfo, scope, key);
@@ -588,7 +588,7 @@ public class AdminWebSessionBean {
             final String scope,
             final String key,
             final String value)
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, IllegalRequestException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "setGlobalProperty", key);
         
         global.setProperty(adminInfo, scope, key, value);

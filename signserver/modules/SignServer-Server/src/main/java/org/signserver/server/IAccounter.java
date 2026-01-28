@@ -13,6 +13,7 @@
 package org.signserver.server;
 
 import java.util.Properties;
+
 import org.signserver.common.RequestContext;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
@@ -49,6 +50,6 @@ public interface IAccounter {
      */
     boolean purchase(IClientCredential credential, Request request,
             Response response, RequestContext context)
-                throws AccounterException;
+            throws AccounterException;
 
 }

@@ -17,6 +17,7 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 
 /**
  * Sets a property for a given workerid
@@ -82,7 +83,7 @@ public class SetPropertyCommand extends AbstractAdminCommand {
         }
     }
 
-    private void setGlobalProperty(String scope, String key, String value) throws RemoteException {
+    private void setGlobalProperty(String scope, String key, String value) throws RemoteException, IllegalRequestException {
         this.getOutputStream().println("Setting the global property " + key + " to " + value + " with scope " + scope + "\n");
         this.getOutputStream().println("See current configuration with the getconfig command, activate it with the reload command");
 

@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.cmssigner.CMSSigner;
 import org.signserver.module.cmssigner.PlainSigner;
@@ -933,7 +934,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST POST to create a worker with provided properties and worker ID.
      */
     @Test
-    public void testRestPostAddWorkerWithID() {
+    public void testRestPostAddWorkerWithID() throws IllegalRequestException {
         LOG.debug("testRestPostAddWorkerWithID");
 
         try {
@@ -960,7 +961,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST POST to create a worker with an empty body. Should return status code 400
      */
     @Test
-    public void testRestPostAddWorkerIllegalRequestExceptionStatusCode() {
+    public void testRestPostAddWorkerIllegalRequestExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPostAddWorkerIllegalRequestExceptionStatusCode");
         JSONObject body = new JSONObject();
 
@@ -990,7 +991,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST POST to create a worker with worker ID already exists. Should return status code 409
      */
     @Test
-    public void testRestPostWorkerExistsExceptionStatusCode() {
+    public void testRestPostWorkerExistsExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPostWorkerExistsExceptionStatusCode");
 
         try {
@@ -1033,7 +1034,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST POST to create a worker with a wrong request body. Should return status code 500
      */
     @Test
-    public void testRestPostAddWorkerInternalServerExceptionStatusCode() {
+    public void testRestPostAddWorkerInternalServerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPostAddWorkerInternalServerExceptionStatusCode");
         String dummyMessageBody = "Text";
 
@@ -1063,7 +1064,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST POST to create a worker with provided properties.
      */
     @Test
-    public void testRestPostAddWorkerWithoutID() throws InvalidWorkerIdException {
+    public void testRestPostAddWorkerWithoutID() throws InvalidWorkerIdException, IllegalRequestException {
         LOG.debug("testRestPostAddWorkerWithoutID");
         int workerID = 0;
         try {
@@ -1091,7 +1092,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PATCH worker to update the properties.
      */
     @Test
-    public void testRestPatchWorker() {
+    public void testRestPatchWorker() throws IllegalRequestException {
         LOG.debug("testRestPatchWorker");
 
         try {
@@ -1137,7 +1138,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PATCH worker to update worker properties with a wrong message body. Should return status code 400.
      */
     @Test
-    public void testRestPatchWorkerIllegalRequestExceptionStatusCode() {
+    public void testRestPatchWorkerIllegalRequestExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPatchWorkerIllegalRequestExceptionStatusCode");
         JSONObject body = new JSONObject();
 
@@ -1181,7 +1182,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PATCH worker to update worker properties with a wrong worker ID. Should return status code 404.
      */
     @Test
-    public void testRestPatchWorkerNoSuchWorkerExceptionStatusCode() {
+    public void testRestPatchWorkerNoSuchWorkerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPatchWorkerNoSuchWorkerExceptionStatusCode");
         int dummyWorkerID = 8787878;
 
@@ -1211,7 +1212,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PATCH worker to update worker properties with a wrong message body. Should return status code 500.
      */
     @Test
-    public void testRestPatchWorkerInternalServerExceptionStatusCode() {
+    public void testRestPatchWorkerInternalServerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPatchWorkerInternalServerExceptionStatusCode");
         String dummyMessageBody = "Text";
 
@@ -1241,7 +1242,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PUT worker to replace all worker properties.
      */
     @Test
-    public void testRestPutWorker() {
+    public void testRestPutWorker() throws IllegalRequestException {
         LOG.debug("testRestPutWorker");
 
         try {
@@ -1291,7 +1292,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PUT worker to replace all worker properties with a wrong message body. Should return status code 400.
      */
     @Test
-    public void testRestPutWorkerIllegalRequestExceptionStatusCode() {
+    public void testRestPutWorkerIllegalRequestExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPutWorkerIllegalRequestExceptionStatusCode");
         JSONObject body = new JSONObject();
 
@@ -1335,7 +1336,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PUT worker to replace all worker properties with a wrong worker ID. Should return status code 404.
      */
     @Test
-    public void testRestPutWorkerNoSuchWorkerExceptionStatusCode() {
+    public void testRestPutWorkerNoSuchWorkerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPutWorkerNoSuchWorkerExceptionStatusCode");
         int dummyWorkerID = 8787878;
 
@@ -1365,7 +1366,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST PUT worker to replace all worker properties with a wrong message body. Should return status code 500.
      */
     @Test
-    public void testRestPutWorkerInternalServerExceptionStatusCode() {
+    public void testRestPutWorkerInternalServerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestPutWorkerInternalServerExceptionStatusCode");
         String dummyMessageBody = "Text";
 
@@ -1395,7 +1396,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST DELETE worker.
      */
     @Test
-    public void testRestDeleteWorker() throws InvalidWorkerIdException {
+    public void testRestDeleteWorker() throws InvalidWorkerIdException, IllegalRequestException {
         LOG.debug("testRestDeleteWorker");
 
         try {
@@ -1438,7 +1439,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST get worker configuration operation.
      */
     @Test
-    public void testRestGetWorkerConfig() throws InvalidWorkerIdException {
+    public void testRestGetWorkerConfig() throws InvalidWorkerIdException, IllegalRequestException {
         LOG.debug("testRestGetWorkerConfig");
 
         try {
@@ -1514,7 +1515,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test the list workers operation.
      */
     @Test
-    public void testRestListWorkers() {
+    public void testRestListWorkers() throws IllegalRequestException {
         LOG.debug("testRestListWorkers");
 
         try {
@@ -1636,7 +1637,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST get worker configuration operation when no custom header is set.
      */
     @Test
-    public void testRestGetWorkerConfigNoHeader() throws InvalidWorkerIdException {
+    public void testRestGetWorkerConfigNoHeader() throws InvalidWorkerIdException, IllegalRequestException {
         LOG.debug("testRestGetWorkerConfigNoHeader");
 
         try {
@@ -1708,7 +1709,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST DELETE worker with a wrong worker ID. Should return status code 404.
      */
     @Test
-    public void testRestDeleteWorkerNoSuchWorkerExceptionStatusCode() {
+    public void testRestDeleteWorkerNoSuchWorkerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestDeleteWorkerNoSuchWorkerExceptionStatusCode");
         int dummyWorkerID = 8787878;
 
@@ -1737,7 +1738,7 @@ public class RestWorkersTest extends ModulesTestCase {
      * Test REST DELETE worker with an invalid worker ID (Not an integer value). Should return status code 500.
      */
     @Test
-    public void testRestDeleteWorkerInternalServerExceptionStatusCode() {
+    public void testRestDeleteWorkerInternalServerExceptionStatusCode() throws IllegalRequestException {
         LOG.debug("testRestDeleteWorkerInternalServerExceptionStatusCode");
         String dummyWorkerID = "NotAnInteger";
 

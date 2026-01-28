@@ -57,7 +57,9 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
-    
+
+    private final Boolean isAdminAllowAnyEnabled = CompileTimeSettings.getInstance().getAdminAllowAnyEnabled();
+
     EntityManager em;
 
     private static final long serialVersionUID = 1L;
@@ -92,7 +94,7 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
      * @see org.signserver.ejb.interfaces.GlobalConfigurationSession#setProperty(String, String, String)
      */
     @Override
-    public void setProperty(String scope, String key, String value) {
+    public void setProperty(String scope, String key, String value) throws IllegalRequestException {
         setProperty(new AdminInfo("CLI user", null, null), scope, key, value);
     }
 
@@ -101,7 +103,12 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
      */    
     @Override
     public void setProperty(AdminInfo adminInfo, String scope, String key,
-            String value) {
+            String value) throws IllegalRequestException {
+
+        if (!isAdminAllowAnyEnabled && (scope + key).equals("GLOB.ALLOWANYWSADMIN")
+                && value.equalsIgnoreCase("true") && !adminInfo.getSubject().equals("CLI user")) {
+            throw new IllegalRequestException("Allow any is disabled.");
+        }
         auditLog(adminInfo, SignServerEventTypes.SET_GLOBAL_PROPERTY, scope + key, value);
 
         if (cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
@@ -132,9 +139,13 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
      * @see org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal#removeProperty(AdminInfo, String, String)
      */
     @Override
-    public boolean removeProperty(final AdminInfo adminInfo, String scope, String key) {
+    public boolean removeProperty(final AdminInfo adminInfo, String scope, String key) throws IllegalRequestException {
         boolean retval = false;
 
+        if (!isAdminAllowAnyEnabled && (scope + key).equals("GLOB.ALLOWANYWSADMIN")
+                && !adminInfo.getSubject().equals("CLI user")) {
+            throw new IllegalRequestException("Allow any is disabled.");
+        }
         auditLog(adminInfo, SignServerEventTypes.REMOVE_GLOBAL_PROPERTY, scope + key, null);
 
         if (cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
@@ -156,7 +167,7 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
      * @see org.signserver.ejb.interfaces.GlobalConfigurationSession#removeProperty(String, String)
      */    
     @Override
-    public boolean removeProperty(String scope, String key) {
+    public boolean removeProperty(String scope, String key) throws IllegalRequestException {
         return removeProperty(new AdminInfo("CLI user", null, null), scope, key);
     }
     
@@ -207,7 +218,7 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
      * @see org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal#resync()
      */
     @Override
-    public void resync(final AdminInfo adminInfo) throws ResyncException {
+    public void resync(final AdminInfo adminInfo) throws ResyncException, IllegalRequestException {
 
         auditLog(adminInfo, SignServerEventTypes.GLOBAL_CONFIG_RESYNC, null, null); // TODO Should handle errors
 
@@ -268,7 +279,7 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
     }
 
     @Override
-    public void resync() throws ResyncException {
+    public void resync() throws ResyncException, IllegalRequestException {
         resync(new AdminInfo("CLI user", null, null));
     }
     

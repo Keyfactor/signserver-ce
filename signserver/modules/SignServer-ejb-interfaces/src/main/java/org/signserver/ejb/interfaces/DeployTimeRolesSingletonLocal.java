@@ -31,5 +31,5 @@ public interface DeployTimeRolesSingletonLocal {
      * @return if there is any managed rule configured
      */
     boolean isManagedRulesConfigured();
-    
+
 }

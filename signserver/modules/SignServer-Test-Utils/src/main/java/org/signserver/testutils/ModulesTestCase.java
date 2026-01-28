@@ -570,6 +570,8 @@ public class ModulesTestCase {
             Properties properties = new Properties();
             properties.load(in);
             setProperties(properties);
+        } catch (IllegalRequestException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -582,7 +584,7 @@ public class ModulesTestCase {
      * @throws IOException IO Exception
      * @throws CertificateException in case a certificate could not be decoded
      */
-    public void setProperties(final InputStream in) throws IOException, CertificateException {
+    public void setProperties(final InputStream in) throws IOException, CertificateException, IllegalRequestException {
         try {
             Properties properties = new Properties();
             properties.load(in);
@@ -602,7 +604,7 @@ public class ModulesTestCase {
      * @param properties The properties file to load
      * @throws CertificateException in case a certificate could not be decoded
      */
-    public void setProperties(final Properties properties) throws CertificateException {
+    public void setProperties(final Properties properties) throws CertificateException, IllegalRequestException {
         for (Object o : properties.keySet()) {
             if (o instanceof String) {
                 String key = (String) o;
@@ -918,7 +920,7 @@ public class ModulesTestCase {
         return VALIDATION_SERVICE_WORKER_ID;
     }
 
-    private void removeGlobalProperties(int workerid) {
+    private void removeGlobalProperties(int workerid) throws IllegalRequestException {
         final GlobalConfiguration gc = getGlobalSession().getGlobalConfiguration();
         final Enumeration<String> en = gc.getKeyEnumeration();
         while (en.hasMoreElements()) {
@@ -931,7 +933,7 @@ public class ModulesTestCase {
         }
     }
 
-    public void removeWorker(final int workerId) {
+    public void removeWorker(final int workerId) throws IllegalRequestException {
         Properties config = getWorkerSession().exportWorkerConfig(workerId);
         
         if (useRestWorkerSession) {
@@ -1302,7 +1304,7 @@ public class ModulesTestCase {
         getCurrentWorkerSession().reloadConfiguration(workerId);
     }
 
-    private static void resetGlobalProperties(final int workerId) {
+    private static void resetGlobalProperties(final int workerId) throws IllegalRequestException {
         final GlobalConfigurationSessionRemote globalConfigSession = getCurrentGlobalSession();
         final GlobalConfiguration gc = globalConfigSession.getGlobalConfiguration();
         final Enumeration<String> en = gc.getKeyEnumeration();
@@ -1319,7 +1321,7 @@ public class ModulesTestCase {
      * Removes the worker by resetting all of its properties.
      * @param workerId worker's identifier.
      */
-    public static void removeWorkerById(final int workerId) {
+    public static void removeWorkerById(final int workerId) throws IllegalRequestException {
         resetGlobalProperties(workerId);
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
         final Properties config = workerSession.exportWorkerConfig(workerId);

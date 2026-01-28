@@ -51,7 +51,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void setGlobalProperty(String scope, String key, String value) throws PropertiesApplierException {
         try {
             sessionBean.setGlobalProperty(principal, scope, key, value);
-        } catch (AdminNotAuthorizedException e) {
+        } catch (AdminNotAuthorizedException | IllegalRequestException e) {
             throw new PropertiesApplierException(e);
         }
     }
@@ -60,7 +60,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void removeGlobalProperty(String scope, String key) throws PropertiesApplierException {
         try {
             sessionBean.removeGlobalProperty(principal, scope, key);
-        } catch (AdminNotAuthorizedException e) {
+        } catch (AdminNotAuthorizedException | IllegalRequestException e) {
             throw new PropertiesApplierException(e);
         }
     }

@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CertificateMatchingRule;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 import org.signserver.testutils.CLITestHelper;
@@ -96,7 +97,7 @@ public class SetPropertiesCommandTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IllegalRequestException {
         FileUtils.deleteQuietly(propertiesFile);
         for (int id : WORKER_ID) {
             test.removeWorker(id);

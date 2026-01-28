@@ -23,6 +23,7 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 
@@ -92,7 +93,7 @@ public class RemoveBulkBean extends BulkBean {
                 worker.setSuccess("Removed");
                 worker.setRemoved(true);
                 getSelectedIds().remove(worker.getId());
-            } catch (AdminNotAuthorizedException ex) {
+            } catch (AdminNotAuthorizedException | IllegalRequestException ex) {
                 worker.setError(ex.getMessage());
                 worker.setSuccess(null);
                 worker.setRemoved(false);
@@ -106,7 +107,7 @@ public class RemoveBulkBean extends BulkBean {
         }
     }
 
-    private void removeWorker(MyWorker worker, GlobalConfiguration gc) throws AdminNotAuthorizedException {
+    private void removeWorker(MyWorker worker, GlobalConfiguration gc) throws AdminNotAuthorizedException, IllegalRequestException {
         // Remove global properties
         for (Map.Entry<Object, Object> entry : gc.getConfig().entrySet()) {
             if (entry.getKey() instanceof String) {

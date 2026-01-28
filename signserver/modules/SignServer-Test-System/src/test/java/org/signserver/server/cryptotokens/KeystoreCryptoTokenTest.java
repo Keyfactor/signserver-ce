@@ -51,6 +51,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.OperationUnsupportedException;
@@ -1066,7 +1067,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
      * Test that unsetting DEFAULTKEY results in a CryptoTokenOfflineException.
      */
     @Test
-    public void testNoDefaultKey() {
+    public void testNoDefaultKey() throws IllegalRequestException {
         LOG.info("testNoDefaultKey");
 
         final int workerId = WORKER_CMS;

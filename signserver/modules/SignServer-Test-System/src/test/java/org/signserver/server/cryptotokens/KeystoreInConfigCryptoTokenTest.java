@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -50,7 +51,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         SignServerUtil.installBCProvider();
     }
 
-    private void setCMSSignerPropertiesSeparateToken() {
+    private void setCMSSignerPropertiesSeparateToken() throws ReadOnlyWorkerException {
         // Setup crypto token
         workerSession.setWorkerProperty(30103, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(30103, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");

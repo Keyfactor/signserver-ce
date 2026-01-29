@@ -72,6 +72,7 @@ import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -714,7 +715,7 @@ public class SignClientP11AuthTest {
     }
 
 
-    private void setPlainSignerProperties(final int workerId, final boolean cached) throws IOException {
+    private void setPlainSignerProperties(final int workerId, final boolean cached) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.PlainSigner");
@@ -759,11 +760,11 @@ public class SignClientP11AuthTest {
 
     private void createP11AuthKey()
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
-                   IOException, FileNotFoundException, KeyStoreException,
-                   CertificateParsingException, NoSuchProviderException,
-                   NoSuchAlgorithmException, CertificateException,
-                   UnrecoverableKeyException, OperatorCreationException,
-                   OperationUnsupportedException {
+            IOException, FileNotFoundException, KeyStoreException,
+            CertificateParsingException, NoSuchProviderException,
+            NoSuchAlgorithmException, CertificateException,
+            UnrecoverableKeyException, OperatorCreationException,
+            OperationUnsupportedException, ReadOnlyWorkerException {
         createP11Key(TEST_AUTH_KEY, AUTH_KEY_CERT_CN,
                      new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth,
                                           KeyPurposeId.id_kp_codeSigning });
@@ -771,21 +772,21 @@ public class SignClientP11AuthTest {
 
     private void createP11AltAuthKey()
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
-                   IOException, FileNotFoundException, KeyStoreException,
-                   NoSuchProviderException, NoSuchAlgorithmException,
-                   CertificateException, CertificateParsingException,
-                   UnrecoverableKeyException, OperatorCreationException,
-                   OperationUnsupportedException {
+            IOException, FileNotFoundException, KeyStoreException,
+            NoSuchProviderException, NoSuchAlgorithmException,
+            CertificateException, CertificateParsingException,
+            UnrecoverableKeyException, OperatorCreationException,
+            OperationUnsupportedException, ReadOnlyWorkerException {
         createP11Key(TEST_AUTH_ALT_KEY, AUTH_KEY_ALT_CERT_CN, null);
     }
 
     private void createP11SignKey()
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
-                   IOException, FileNotFoundException, KeyStoreException,
-                   CertificateParsingException, NoSuchProviderException,
-                   NoSuchAlgorithmException, CertificateException,
-                   UnrecoverableKeyException, OperatorCreationException,
-                   OperationUnsupportedException {
+            IOException, FileNotFoundException, KeyStoreException,
+            CertificateParsingException, NoSuchProviderException,
+            NoSuchAlgorithmException, CertificateException,
+            UnrecoverableKeyException, OperatorCreationException,
+            OperationUnsupportedException, ReadOnlyWorkerException {
         createP11Key(TEST_SIGN_KEY, SIGN_KEY_CERT_CN,
                      new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth,
                                           KeyPurposeId.id_kp_codeSigning });
@@ -794,11 +795,11 @@ public class SignClientP11AuthTest {
     private void createP11Key(final String keyAlias, final String CN,
                               final KeyPurposeId[] ekus)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
-                   IOException, FileNotFoundException, KeyStoreException,
-                   CertificateParsingException, NoSuchProviderException,
-                   NoSuchAlgorithmException, CertificateException,
-                   UnrecoverableKeyException, OperatorCreationException,
-                   OperationUnsupportedException {
+            IOException, FileNotFoundException, KeyStoreException,
+            CertificateParsingException, NoSuchProviderException,
+            NoSuchAlgorithmException, CertificateException,
+            UnrecoverableKeyException, OperatorCreationException,
+            OperationUnsupportedException, ReadOnlyWorkerException {
         workerSession.generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), "RSA", "2048", keyAlias, pin.toCharArray());
 
         // Generate CSR

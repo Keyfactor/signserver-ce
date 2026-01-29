@@ -34,6 +34,15 @@
           }
         }
       },
+      "ErrorMessage405" : {
+        "type" : "object",
+        "properties" : {
+          "error" : {
+            "type" : "string",
+            "examples" : [ "Method not allowed." ]
+          }
+        }
+      },
       "ErrorMessage409" : {
         "type" : "object",
         "properties" : {
@@ -201,7 +210,7 @@
   },
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.3.1"
+    "version" : "1.3.2"
   },
   "paths" : {
     "/workers" : {
@@ -212,10 +221,7 @@
           "description" : "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.",
           "in" : "header",
           "name" : "X-Keyfactor-Requested-With",
-          "required" : true,
-          "schema" : {
-            "type" : "object"
-          }
+          "required" : true
         } ],
         "responses" : {
           "200" : {
@@ -322,6 +328,16 @@
               }
             }
           },
+          "405" : {
+            "description" : "Method not allowed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
           "409" : {
             "description" : "Worker already exists.",
             "content" : {
@@ -351,10 +367,7 @@
           "description" : "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.",
           "in" : "header",
           "name" : "X-Keyfactor-Requested-With",
-          "required" : true,
-          "schema" : {
-            "type" : "object"
-          }
+          "required" : true
         } ],
         "responses" : {
           "200" : {
@@ -612,6 +625,16 @@
               }
             }
           },
+          "405" : {
+            "description" : "Method not allowed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "The server were unable to process the request. See server-side logs for more details.",
             "content" : {
@@ -719,6 +742,16 @@
               }
             }
           },
+          "405" : {
+            "description" : "Method not allowed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "The server were unable to process the request. See server-side logs for more details.",
             "content" : {
@@ -783,6 +816,16 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "405" : {
+            "description" : "Method not allowed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage405"
                 }
               }
             }
@@ -950,6 +993,16 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "405" : {
+            "description" : "Method not allowed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage405"
                 }
               }
             }

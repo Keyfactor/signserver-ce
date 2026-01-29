@@ -27,6 +27,7 @@
     <f:metadata>
         <f:viewParam name="workers" value="#{certificatesBulkBean.workerIds}"/>
         <f:viewParam name="previous" value="#{certificatesBulkBean.previous}"/>
+        <ui:param name="readOnlyWorkers" value="#{adminWebBean.readOnlyWorkers}"/>
     </f:metadata>
     
     <body>
@@ -61,6 +62,7 @@
                             var index = 0;
                         </script>
                         <h:dataTable id="table1" value="#{certificatesBulkBean.certificatesWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1 centered,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <ui:param name="isReadOnly" value="#{adminWebBean.readOnlyWorkers.contains(item.id)}"/>
                             <h:column>
                                 <f:facet name="header">
                                     <h:selectBooleanCheckbox class="jsHidden" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
@@ -151,7 +153,17 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{text['Install_in_Token']}" />
                                 </f:facet>
-                                <h:selectBooleanCheckbox id="inToken" value="#{item.inToken}" disabled="#{!item.existing}"/> 
+
+                                <h:panelGroup>
+                                    <ul class="install-in-token">
+                                        <li>
+                                            <span class="errorMessage"><h:outputText value="#{text['Worker_Is_Read_Only']}" rendered="#{readOnlyWorkers.contains(item.id)}"/></span>
+                                        </li>
+                                        <li>
+                                            <h:selectBooleanCheckbox id="inToken" value="#{isReadOnly == 'true' ? item.setInTokenReadOnly() : item.inToken}" disabled="#{readOnlyWorkers.contains(item.id) or !item.existing}"/>
+                                        </li>
+                                    </ul>
+                                </h:panelGroup>
                                 <h:message for="inToken" id="inTokenMessage" />
                             </h:column>
 

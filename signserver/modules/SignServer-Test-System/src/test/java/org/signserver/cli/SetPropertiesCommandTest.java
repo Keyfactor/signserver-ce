@@ -24,6 +24,7 @@ import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -97,7 +98,7 @@ public class SetPropertiesCommandTest {
     }
 
     @After
-    public void tearDown() throws IllegalRequestException {
+    public void tearDown() throws ReadOnlyWorkerException, IllegalRequestException {
         FileUtils.deleteQuietly(propertiesFile);
         for (int id : WORKER_ID) {
             test.removeWorker(id);

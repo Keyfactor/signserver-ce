@@ -21,6 +21,7 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.*;
 import org.junit.Before;
@@ -152,7 +153,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     }
 
     @Test
-    public void test05RequestFromEJB() {
+    public void test05RequestFromEJB() throws ReadOnlyWorkerException {
         // No address is provided with EJB unless the requester fills it in
         // manually so add null to be an accepted address
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",

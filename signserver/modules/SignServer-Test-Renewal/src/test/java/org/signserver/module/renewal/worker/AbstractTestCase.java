@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
@@ -114,7 +115,7 @@ public abstract class AbstractTestCase extends TestCase {
     protected void addSigner(final int signerId, final String signerName,
             final String endEntity, final boolean useJKSToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-                CertificateException, NoSuchProviderException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
 
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
@@ -154,7 +155,7 @@ public abstract class AbstractTestCase extends TestCase {
     protected void addSignerReferencingToken(final int signerId, final String signerName,
             final String endEntity, final String cryptoToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-                CertificateException, NoSuchProviderException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
 
         workerSession.setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
@@ -180,7 +181,7 @@ public abstract class AbstractTestCase extends TestCase {
     
     protected void addCryptoWorker(final int signerId, final String signerName, final boolean useJKSToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-                CertificateException, NoSuchProviderException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
 
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
@@ -209,8 +210,8 @@ public abstract class AbstractTestCase extends TestCase {
 
     protected void addSigner(final int signerId, final String signerName,
             final String endEntity)
-                    throws IOException, KeyStoreException, NoSuchAlgorithmException,
-                    CertificateException, NoSuchProviderException {
+            throws IOException, KeyStoreException, NoSuchAlgorithmException,
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
         addSigner(signerId, signerName, endEntity, false);
     }
 

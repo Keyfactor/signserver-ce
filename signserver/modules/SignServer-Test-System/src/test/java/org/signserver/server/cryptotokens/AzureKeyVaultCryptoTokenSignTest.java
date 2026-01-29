@@ -71,6 +71,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
@@ -157,7 +158,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         SignServerUtil.installBCProvider();
     }
 
-    private void setupCryptoTokenProperties(final int tokenId) {
+    private void setupCryptoTokenProperties(final int tokenId) throws ReadOnlyWorkerException {
         // Setup token
         workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
@@ -172,7 +173,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         workerSession.setWorkerProperty(tokenId, "CACHE_PRIVATEKEY", String.valueOf(false));
     }
 
-    private void setPDFSignerOnlyProperties() {
+    private void setPDFSignerOnlyProperties() throws ReadOnlyWorkerException {
         // Setup worker
         workerSession.setWorkerProperty(WORKER_PDF, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(WORKER_PDF, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.pdfsigner.PDFSigner");
@@ -355,7 +356,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
     }
 
-    private void setCMSSignerProperties(final int workerId) {
+    private void setCMSSignerProperties(final int workerId) throws ReadOnlyWorkerException {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
@@ -369,7 +370,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
     }
 
-    private void setPlainSignerProperties(final int workerId) {
+    private void setPlainSignerProperties(final int workerId) throws ReadOnlyWorkerException {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.PlainSigner");
@@ -423,7 +424,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         testCase.signGenericDocument(20003, "Sample data".getBytes());
     }
 
-    private void setMSAuthTimeStampSignerProperties() {
+    private void setMSAuthTimeStampSignerProperties() throws ReadOnlyWorkerException {
         // Setup worker
         workerSession.setWorkerProperty(20007, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(20007, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.MSAuthCodeTimeStampSigner");
@@ -736,7 +737,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
      * Test that setting a default key is not required for an Azure Key Vault Crypto Worker to be active
      */
     @Test
-    public void testNoDefaultKeyNeededForCryptoWorker() throws InvalidWorkerIdException, IllegalRequestException {
+    public void testNoDefaultKeyNeededForCryptoWorker() throws InvalidWorkerIdException, ReadOnlyWorkerException, IllegalRequestException {
         LOG.info("testNoDefaultKeyNeededForCryptoWorker");
 
         final int tokenId = CRYPTO_TOKEN;
@@ -766,7 +767,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
      * due to not being able to establish connection to the HSM.
      */
     @Test
-    public void testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection() throws InvalidWorkerIdException, IllegalRequestException {
+    public void testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection() throws InvalidWorkerIdException, ReadOnlyWorkerException, IllegalRequestException {
         LOG.info("testNoDefaultKeyNeededForCryptoWorkerNoHSMConnection");
 
         final int tokenId = CRYPTO_TOKEN;
@@ -793,7 +794,7 @@ public class AzureKeyVaultCryptoTokenSignTest {
         }
     }
 
-    private void cryptoTokenPropertiesHelper(final String signatureAlgorithm, final String key) {
+    private void cryptoTokenPropertiesHelper(final String signatureAlgorithm, final String key) throws ReadOnlyWorkerException {
         // Setup token
         workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");

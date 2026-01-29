@@ -79,6 +79,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
@@ -424,7 +425,7 @@ public class ModulesTestCase {
         return statusSession;
     }
 
-    public void addDummySigner1(boolean autoActivation) throws FileNotFoundException {
+    public void addDummySigner1(boolean autoActivation) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivation ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
@@ -452,17 +453,17 @@ public class ModulesTestCase {
         return SODSIGNER1_SIGNER_NAME;
     }
 
-    public void addCMSSigner1() throws FileNotFoundException {
+    public void addCMSSigner1() throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.cmssigner.CMSSigner",
                 getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
 
-    public void addPDFSigner1() throws FileNotFoundException {
+    public void addPDFSigner1() throws FileNotFoundException, ReadOnlyWorkerException {
     	addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
 
-    public void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 workerId, workerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
@@ -484,15 +485,15 @@ public class ModulesTestCase {
     }
 
     public void addSigner(final String className, boolean autoActivate)
-            throws FileNotFoundException {
+            throws FileNotFoundException, ReadOnlyWorkerException {
         addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME, autoActivate);
     }
 
-    public void addSigner(final String className) throws FileNotFoundException {
+    public void addSigner(final String className) throws FileNotFoundException, ReadOnlyWorkerException {
         addSigner(className, true);
     }
 
-    public void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, autoActivate);
     }
 
@@ -503,7 +504,7 @@ public class ModulesTestCase {
      */
     public static void addTestXMLSigner(
             final SignerConfigurationBuilder signerConfigurationBuilder
-    ) throws FileNotFoundException {
+    ) throws FileNotFoundException, ReadOnlyWorkerException {
         addTestSignerWithDefaultP12Keystore(
                 signerConfigurationBuilder.withClassName("org.signserver.module.xmlsigner.XMLSigner")
         );
@@ -516,7 +517,7 @@ public class ModulesTestCase {
      */
     public static void addTestSleepWorker(
             final SignerConfigurationBuilder signerConfigurationBuilder
-    ) throws FileNotFoundException {
+    ) throws FileNotFoundException, ReadOnlyWorkerException {
         addTestSignerWithDefaultP12Keystore(
                 signerConfigurationBuilder.withClassName("org.signserver.server.signers.SleepWorker")
         );
@@ -524,7 +525,7 @@ public class ModulesTestCase {
 
     public void addSigner(final String className,
             final int signerId, final String signerName, final boolean autoActivate)
-        throws FileNotFoundException {
+            throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner(className, signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
@@ -543,7 +544,7 @@ public class ModulesTestCase {
      */
     public static void addTestSignerWithDefaultP12Keystore(
             final SignerConfigurationBuilder signerConfigurationBuilder
-    ) throws FileNotFoundException {
+    ) throws FileNotFoundException, ReadOnlyWorkerException {
         addTestSigner(
                 signerConfigurationBuilder
                         .withCryptoTokenClassName("org.signserver.server.cryptotokens.P12CryptoToken")
@@ -565,7 +566,7 @@ public class ModulesTestCase {
      * @throws IOException IO Exception
      * @throws CertificateException in case a certificate could not be decoded
      */
-    public void setProperties(final File file) throws IOException, CertificateException {
+    public void setProperties(final File file) throws IOException, CertificateException, ReadOnlyWorkerException {
         try (InputStream in = new FileInputStream(file)) {
             Properties properties = new Properties();
             properties.load(in);
@@ -584,7 +585,7 @@ public class ModulesTestCase {
      * @throws IOException IO Exception
      * @throws CertificateException in case a certificate could not be decoded
      */
-    public void setProperties(final InputStream in) throws IOException, CertificateException, IllegalRequestException {
+    public void setProperties(final InputStream in) throws IOException, CertificateException, ReadOnlyWorkerException, IllegalRequestException {
         try {
             Properties properties = new Properties();
             properties.load(in);
@@ -604,7 +605,7 @@ public class ModulesTestCase {
      * @param properties The properties file to load
      * @throws CertificateException in case a certificate could not be decoded
      */
-    public void setProperties(final Properties properties) throws CertificateException, IllegalRequestException {
+    public void setProperties(final Properties properties) throws CertificateException, ReadOnlyWorkerException, IllegalRequestException {
         for (Object o : properties.keySet()) {
             if (o instanceof String) {
                 String key = (String) o;
@@ -638,7 +639,7 @@ public class ModulesTestCase {
     public void addP12DummySigner(
             final int signerId, final String signerName,
             final File keystore, final String password, final String alias
-    ) {
+    ) throws ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, keystore, password, alias);
     }
 
@@ -646,14 +647,14 @@ public class ModulesTestCase {
             final String className,
             final int signerId, final String signerName,
             final File keystore, final String password, final String alias
-    ) {
+    ) throws ReadOnlyWorkerException {
         addDummySigner(
                 className, "org.signserver.server.cryptotokens.P12CryptoToken",
                 signerId, signerName, keystore, password, alias
         );
     }
 
-    public void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+    public void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) throws ReadOnlyWorkerException {
         addDummySigner(className, "org.signserver.server.cryptotokens.JKSCryptoToken", signerId, signerName, keystore, password, alias);
     }
 
@@ -661,7 +662,7 @@ public class ModulesTestCase {
             final String className, final String cryptoTokenClassName,
             final int signerId, final String signerName,
             final File keystore, final String password, final String alias
-    ) {
+    ) throws ReadOnlyWorkerException {
         HashMap<String, String> properties = new HashMap<>();
         properties.put(WorkerConfig.TYPE,WorkerType.PROCESSABLE.name());
         properties.put(KEY_IMPL_CLASS,className);
@@ -713,7 +714,7 @@ public class ModulesTestCase {
      * Adds a test signer using configuration of SignerConfigurationBuilder.
      * @param signerConf A builder instance containing configuration for the Signer.
      */
-    public static void addTestSigner(final SignerConfigurationBuilder signerConf) {
+    public static void addTestSigner(final SignerConfigurationBuilder signerConf) throws ReadOnlyWorkerException {
         final int signerId = signerConf.getSignerId();
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
         // Set properties if any
@@ -748,77 +749,77 @@ public class ModulesTestCase {
 
     public void addTimeStampSigner(final int signerId, final String signerName,
                                    final String alias, final boolean autoActivate)
-            throws FileNotFoundException {
+            throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, alias);
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
         getWorkerSession().setWorkerProperty(signerId, "ACCEPTANYPOLICY", "true");
         getWorkerSession().reloadConfiguration(signerId);
     }
 
-    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addTimeStampSigner(signerId, signerName, KEYSTORE_TSSIGNER1_ALIAS, autoActivate);
     }
 
-    public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }
 
-    public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
 
-    public void addMSAuthCodeCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addMSAuthCodeCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
 
-    public void addAppxSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addAppxSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.AppxSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
 
-    public void addAppxCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addAppxCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.AppxCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
 
-    public void addJArchiveSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addJArchiveSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
 
-    public void addJArchiveSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addJArchiveSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
     }
 
-    public void addJArchiveCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addJArchiveCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
 
-    public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
     }
 
-    public void addApkSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addApkSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
-    public void addApkSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addApkSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00002_ECDSA_ALIAS);
     }
 
-    public void addApkRotateSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addApkRotateSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkRotateSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
-    public void addApkLineageSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addApkLineageSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkLineageSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
-    public void addApkHashSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addApkHashSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkHashSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
 
     public void addExtendedCMSSigner(final int signerId, final String signerName,
                                      final boolean autoActivate)
-            throws FileNotFoundException {
+            throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.extendedcmssigner.ExtendedCMSSigner",
                           signerId, signerName,
                           new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
@@ -827,7 +828,7 @@ public class ModulesTestCase {
     }
 
     public void addZoneZipFileServerSideSigner(final int signerId, final String signerName,
-            final boolean autoActivate) throws FileNotFoundException {
+            final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.dnssec.signer.ZoneZipFileServerSideSigner",
                 signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
@@ -836,7 +837,7 @@ public class ModulesTestCase {
     }
 
     public void addZoneFileServerSideSigner(final int signerId, final String signerName,
-            final boolean autoActivate) throws FileNotFoundException {
+            final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.dnssec.signer.ZoneFileServerSideSigner",
                 signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
@@ -845,7 +846,7 @@ public class ModulesTestCase {
     }
 
     public void addSignerWithDummyKeystore(final String implementationClass, final int signerId, final String signerName,
-            final boolean autoActivate) throws FileNotFoundException {
+            final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner(implementationClass,
                 signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
@@ -933,7 +934,7 @@ public class ModulesTestCase {
         }
     }
 
-    public void removeWorker(final int workerId) throws IllegalRequestException {
+    public void removeWorker(final int workerId) throws ReadOnlyWorkerException, IllegalRequestException {
         Properties config = getWorkerSession().exportWorkerConfig(workerId);
         
         if (useRestWorkerSession) {
@@ -1281,7 +1282,7 @@ public class ModulesTestCase {
      * Updates properties of the worker using properties of WorkerPropertiesBuilder.
      * @param workerProps A builder instance containing properties for the Worker.
      */
-    public static void applyWorkerPropertiesAndReload(final WorkerPropertiesBuilder workerProps) {
+    public static void applyWorkerPropertiesAndReload(final WorkerPropertiesBuilder workerProps) throws ReadOnlyWorkerException {
         final int workerId = workerProps.getWorkerId();
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
         // Apply properties if any
@@ -1321,7 +1322,7 @@ public class ModulesTestCase {
      * Removes the worker by resetting all of its properties.
      * @param workerId worker's identifier.
      */
-    public static void removeWorkerById(final int workerId) throws IllegalRequestException {
+    public static void removeWorkerById(final int workerId) throws ReadOnlyWorkerException, IllegalRequestException {
         resetGlobalProperties(workerId);
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
         final Properties config = workerSession.exportWorkerConfig(workerId);

@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.GENID;
 import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
@@ -70,7 +71,7 @@ public abstract class PropertiesApplier {
      * 
      * @param parser
      */
-    public void apply(final PropertiesParser parser) {       
+    public void apply(final PropertiesParser parser) throws ReadOnlyWorkerException {
         try {
             checkWorkerNamesAlreadyExists(parser.getWorkerNames(), parser.getWorkerIds());
             // prepare ID for the first generated worker ID, if needed later on
@@ -303,7 +304,7 @@ public abstract class PropertiesApplier {
      * @param value Value of property to set
      * @throws PropertiesApplierException
      */
-    protected abstract void setWorkerProperty(final int workerId, final String key, final String value) throws PropertiesApplierException;
+    protected abstract void setWorkerProperty(final int workerId, final String key, final String value) throws PropertiesApplierException, ReadOnlyWorkerException;
     
     /**
      * Remove a worker property.
@@ -312,7 +313,7 @@ public abstract class PropertiesApplier {
      * @param key Key of property to remove
      * @throws PropertiesApplierException
      */
-    protected abstract void removeWorkerProperty(final int workerId, final String key) throws PropertiesApplierException;
+    protected abstract void removeWorkerProperty(final int workerId, final String key) throws PropertiesApplierException, ReadOnlyWorkerException;
     
     /**
      * Upload a signer certificate.
@@ -321,7 +322,7 @@ public abstract class PropertiesApplier {
      * @param signerCert Signer certificate to upload
      * @throws PropertiesApplierException If there was a failure
      */
-    protected abstract void uploadSignerCertificate(final int workerId, final byte[] signerCert) throws PropertiesApplierException;
+    protected abstract void uploadSignerCertificate(final int workerId, final byte[] signerCert) throws PropertiesApplierException, ReadOnlyWorkerException;
     
     /**
      * Upload a signer certificate chain.
@@ -330,7 +331,7 @@ public abstract class PropertiesApplier {
      * @param signerCertChain Signer certificate chain to upload
      * @throws PropertiesApplierException
      */
-    protected abstract void uploadSignerCertificateChain(final int workerId, final List<byte[]> signerCertChain) throws PropertiesApplierException;
+    protected abstract void uploadSignerCertificateChain(final int workerId, final List<byte[]> signerCertChain) throws PropertiesApplierException, ReadOnlyWorkerException;
     
     /**
      * Add an authorized client for a worker.

@@ -29,6 +29,13 @@ components:
           type: string
           examples:
           - No such worker
+    ErrorMessage405:
+      type: object
+      properties:
+        error:
+          type: string
+          examples:
+          - Method not allowed.
     ErrorMessage409:
       type: object
       properties:
@@ -163,7 +170,7 @@ components:
           type: string
 info:
   title: SignServer REST Interface
-  version: 1.3.1
+  version: 1.3.2
 paths:
   /workers:
     get:
@@ -175,8 +182,6 @@ paths:
         in: header
         name: X-Keyfactor-Requested-With
         required: true
-        schema:
-          type: object
       responses:
         "200":
           description: OK
@@ -250,6 +255,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage403"
+        "405":
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage405"
         "409":
           description: Worker already exists.
           content:
@@ -271,8 +282,6 @@ paths:
         in: header
         name: X-Keyfactor-Requested-With
         required: true
-        schema:
-          type: object
       responses:
         "200":
           description: Workers successfully reloaded
@@ -449,6 +458,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage403"
+        "405":
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage405"
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
@@ -525,6 +540,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage404"
+        "405":
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage405"
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
@@ -572,6 +593,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage403"
+        "405":
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage405"
         "500":
           description: The server were unable to process the request. See server-side
             logs for more details.
@@ -692,6 +719,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage403"
+        "405":
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage405"
         "409":
           description: Worker already exists.
           content:

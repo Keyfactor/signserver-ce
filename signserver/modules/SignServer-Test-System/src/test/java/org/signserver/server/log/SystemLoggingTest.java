@@ -60,6 +60,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -1235,7 +1236,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         removeWorker(WORKERID_DEBUGSIGNER);
     }
 
-    private void setLoggingFields(final String includeFields, final String excludeFields) {
+    private void setLoggingFields(final String includeFields, final String excludeFields) throws ReadOnlyWorkerException {
         if (includeFields != null) {
             workerSession.setWorkerProperty(signerId, "LOGINCLUDEFIELDS", includeFields);
         } else {

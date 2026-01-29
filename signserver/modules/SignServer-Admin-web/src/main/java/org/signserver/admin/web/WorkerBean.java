@@ -38,6 +38,7 @@ import jakarta.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.lang3.StringUtils;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -353,7 +354,7 @@ public class WorkerBean implements Serializable {
         this.oldProperty = StringUtils.trim(oldProperty);
     }
 
-    public String editPropertyAction() throws AdminNotAuthorizedException {
+    public String editPropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         String oldPropertyName = getOldProperty();
         String key = property;
         final String oldValue = workerConfig.getProperty(oldPropertyName);
@@ -388,7 +389,7 @@ public class WorkerBean implements Serializable {
         return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
-    public String addPropertyAction() throws AdminNotAuthorizedException {
+    public String addPropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         String key = property;
 
         // Remove illegal characters
@@ -399,7 +400,7 @@ public class WorkerBean implements Serializable {
         return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
-    public String removePropertyAction() throws AdminNotAuthorizedException {
+    public String removePropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         for (String prop : getToDelete()) {
             workerSessionBean.removeWorkerProperty(loginBean.getAdminPrincipal(), getId(), prop);
             workerSessionBean.reloadConfiguration(loginBean.getAdminPrincipal(), getId());

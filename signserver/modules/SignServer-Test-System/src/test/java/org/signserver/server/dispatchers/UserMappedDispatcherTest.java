@@ -43,6 +43,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
@@ -116,7 +117,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     /**
      * Sets the DispatchedAuthorizer for the dispatchees.
      */
-    private void setDispatchedAuthorizerForAllWorkers() {
+    private void setDispatchedAuthorizerForAllWorkers() throws ReadOnlyWorkerException {
         workerSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
         workerSession.setWorkerProperty(WORKERID_1, "AUTHORIZEALLDISPATCHERS", "true");
         workerSession.setWorkerProperty(WORKERID_2, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
@@ -131,7 +132,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     /**
      * Resets authorization for the dispatchees to be able to call them directly.
      */
-    private void resetDispatchedAuthorizerForAllWorkers() {
+    private void resetDispatchedAuthorizerForAllWorkers() throws ReadOnlyWorkerException {
         workerSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "NOAUTH");
         workerSession.removeWorkerProperty(WORKERID_1, "AUTHORIZEALLDISPATCHERS");
         workerSession.setWorkerProperty(WORKERID_2, "AUTHTYPE", "NOAUTH");
@@ -263,7 +264,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
         }
     }
 
-    private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException {
+    private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException, ReadOnlyWorkerException {
         AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerPrivateKey));

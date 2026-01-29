@@ -20,6 +20,7 @@ import jakarta.ejb.EJBException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.common.auth.AdminPrincipal;
@@ -66,7 +67,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     }
 
     @Override
-    protected void setWorkerProperty(int workerId, String key, String value) throws PropertiesApplierException {
+    protected void setWorkerProperty(int workerId, String key, String value) throws PropertiesApplierException, ReadOnlyWorkerException {
         try {
             sessionBean.setWorkerProperty(principal, workerId, key, value);
         } catch (AdminNotAuthorizedException | EJBException e) {
@@ -75,7 +76,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     }
 
     @Override
-    protected void removeWorkerProperty(int workerId, String key) throws PropertiesApplierException {
+    protected void removeWorkerProperty(int workerId, String key) throws PropertiesApplierException, ReadOnlyWorkerException {
         try {
             sessionBean.removeWorkerProperty(principal, workerId, key);
         } catch (AdminNotAuthorizedException e) {
@@ -84,7 +85,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     }
 
     @Override
-    protected void uploadSignerCertificate(int workerId, byte[] signerCert) throws PropertiesApplierException {
+    protected void uploadSignerCertificate(int workerId, byte[] signerCert) throws PropertiesApplierException, ReadOnlyWorkerException {
         try {
             sessionBean.uploadSignerCertificate(principal, workerId, signerCert, GlobalConfiguration.SCOPE_GLOBAL);
         } catch (AdminNotAuthorizedException e) {
@@ -96,7 +97,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
 
     @Override
     protected void uploadSignerCertificateChain(int workerId,
-            List<byte[]> signerCertChain) throws PropertiesApplierException {
+            List<byte[]> signerCertChain) throws PropertiesApplierException, ReadOnlyWorkerException {
         try {
             sessionBean.uploadSignerCertificateChain(principal, workerId, signerCertChain, GlobalConfiguration.SCOPE_GLOBAL);
         } catch (AdminNotAuthorizedException e) {
@@ -145,7 +146,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void addAuthorizedClient(int workerId, AuthorizedClient authClient) throws PropertiesApplierException {
         try {
             sessionBean.addAuthorizedClient(principal, workerId, authClient);
-        } catch (AdminNotAuthorizedException e) {
+        } catch (AdminNotAuthorizedException | ReadOnlyWorkerException e) {
             throw new PropertiesApplierException(e);
         }
     }
@@ -154,7 +155,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void addAuthorizedClientGen2(int workerId, CertificateMatchingRule authClient) throws PropertiesApplierException {
         try {
             sessionBean.addAuthorizedClientGen2(principal, workerId, authClient);
-        } catch (AdminNotAuthorizedException e) {
+        } catch (AdminNotAuthorizedException | ReadOnlyWorkerException e) {
             throw new PropertiesApplierException(e);
         }
     }
@@ -163,7 +164,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void removeAuthorizedClient(int workerId, AuthorizedClient authClient) throws PropertiesApplierException {
         try {
             sessionBean.removeAuthorizedClient(principal, workerId, authClient);
-        } catch (AdminNotAuthorizedException e) {
+        } catch (AdminNotAuthorizedException | ReadOnlyWorkerException e) {
             throw new PropertiesApplierException(e);
         }
     }
@@ -172,7 +173,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void removeAuthorizedClientGen2(int workerId, CertificateMatchingRule authClient) throws PropertiesApplierException {
         try {
             sessionBean.removeAuthorizedClientGen2(principal, workerId, authClient);
-        } catch (AdminNotAuthorizedException e) {
+        } catch (AdminNotAuthorizedException | ReadOnlyWorkerException e) {
             throw new PropertiesApplierException(e);
         }
     }

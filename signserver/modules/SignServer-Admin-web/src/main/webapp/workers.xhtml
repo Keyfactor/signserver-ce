@@ -63,6 +63,7 @@
                     </h:panelGroup>
                     <h:panelGroup rendered="#{workersBean.workers.size() > 0}">
                         <h:dataTable id="table1" value="#{workersBean.workers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1 centered,dss1" rowClasses="dss1,dss1_odd">
+                            <ui:param name="isReadOnly" value="#{adminWebBean.readOnlyWorkers.contains(item.id)}"/>
                             <h:column>
                                 <f:facet name="header">
                                     <h:selectBooleanCheckbox class="jsHidden" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
@@ -76,7 +77,7 @@
                                 <h:panelGrid columns="2" class="notable" columnClasses="notable,notable">
                                     <h:outputLink value="worker.xhtml">
                                         <f:param name="id" value="#{item.id}"/>
-                                        <h:graphicImage library="#{adminWebBean.theme}" name="images/#{item.imageName}" title="#{item.imageAlt}"/>
+                                        <h:graphicImage library="#{adminWebBean.theme}" name="images/#{item.getImageName(isReadOnly)}" title="#{item.getImageAlt(isReadOnly)}"/>
                                     </h:outputLink>
                                     <h:panelGrid columns="1" class="notable" columnClasses="notable,notable">
                                         <h:link outcome="worker" value="#{item.name} (#{item.id})">

@@ -35,6 +35,7 @@ import java.util.TreeMap;
 import jakarta.ejb.EJB;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesConstants;
@@ -287,7 +288,7 @@ public class AddWorkerBean implements Serializable {
         step = Step.STEP0;
     }
 
-    public String applyAction() throws NotLoggedInException {
+    public String applyAction() throws NotLoggedInException, ReadOnlyWorkerException {
         List<Integer> modifiedWorkers = null;
         final Properties props = new Properties();
         try {

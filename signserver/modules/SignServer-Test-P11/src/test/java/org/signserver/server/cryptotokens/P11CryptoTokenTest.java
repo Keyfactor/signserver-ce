@@ -36,6 +36,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
@@ -79,7 +80,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         SignServerUtil.installBCProvider();
     }
 
-    private void setupCryptoTokenProperties() {
+    private void setupCryptoTokenProperties() throws Exception {
         // Setup token
         workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
         workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());

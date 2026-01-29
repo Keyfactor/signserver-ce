@@ -23,6 +23,7 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
@@ -80,7 +81,7 @@ public class RemoveBulkBean extends BulkBean {
         return results;
     }
 
-    public String removeAction() throws AdminNotAuthorizedException {
+    public String removeAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         //FacesMessage errorMessage = new FacesMessage("Test error");
         //errorMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
@@ -93,7 +94,7 @@ public class RemoveBulkBean extends BulkBean {
                 worker.setSuccess("Removed");
                 worker.setRemoved(true);
                 getSelectedIds().remove(worker.getId());
-            } catch (AdminNotAuthorizedException | IllegalRequestException ex) {
+            } catch (AdminNotAuthorizedException | ReadOnlyWorkerException | IllegalRequestException ex) {
                 worker.setError(ex.getMessage());
                 worker.setSuccess(null);
                 worker.setRemoved(false);
@@ -107,7 +108,7 @@ public class RemoveBulkBean extends BulkBean {
         }
     }
 
-    private void removeWorker(MyWorker worker, GlobalConfiguration gc) throws AdminNotAuthorizedException, IllegalRequestException {
+    private void removeWorker(MyWorker worker, GlobalConfiguration gc) throws AdminNotAuthorizedException, ReadOnlyWorkerException, IllegalRequestException {
         // Remove global properties
         for (Map.Entry<Object, Object> entry : gc.getConfig().entrySet()) {
             if (entry.getKey() instanceof String) {

@@ -17,6 +17,7 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
@@ -100,7 +101,7 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts a correct user/password.
      */
     @Test
-    public void test02AcceptUsernames() {
+    public void test02AcceptUsernames() throws ReadOnlyWorkerException {
         // Add users
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ACCEPT_USERNAMES", "user1;user2;user3");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -202,7 +203,7 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts any username.
      */
     @Test
-    public void test03AcceptAll() {
+    public void test03AcceptAll() throws ReadOnlyWorkerException {
         // Add users
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ACCEPT_ALL_USERNAMES", "true");
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "ACCEPT_USERNAMES");

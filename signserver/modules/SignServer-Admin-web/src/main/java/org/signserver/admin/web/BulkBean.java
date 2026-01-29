@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
@@ -243,7 +244,7 @@ public class BulkBean implements Serializable {
         }
     }
     
-    public String enableAction() throws AdminNotAuthorizedException {
+    public String enableAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         for (Worker worker : getSelectedWorkers()) {
             try {
                workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), DISABLED, "FALSE");
@@ -264,7 +265,7 @@ public class BulkBean implements Serializable {
         
     }
     
-     public String disableAction() throws AdminNotAuthorizedException {
+     public String disableAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         for (Worker worker : getSelectedWorkers()) {
             try {
                workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), DISABLED, "TRUE");

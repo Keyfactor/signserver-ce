@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceLocator;
@@ -424,7 +425,7 @@ public class CRLValidatorTest extends ModulesTestCase {
 
     // TODO: Add more tests for the CRLValidator here
     @Test
-    public void test99RemoveDatabase() throws IllegalRequestException {
+    public void test99RemoveDatabase() throws ReadOnlyWorkerException, IllegalRequestException {
         removeWorker(15);
     }
 }

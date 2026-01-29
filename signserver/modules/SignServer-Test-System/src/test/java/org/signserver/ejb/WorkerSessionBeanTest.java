@@ -31,6 +31,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
@@ -220,7 +221,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.SetProperty(int, String, String)'
      */
     @Test
-    public void test05SetProperty() {
+    public void test05SetProperty() throws ReadOnlyWorkerException {
         workerSession.setWorkerProperty(3, "test", "Hello World");
 
         Properties props = workerSession.exportWorkerConfig(3);
@@ -231,7 +232,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.RemoveProperty(int, String)'
      */
     @Test
-    public void test06RemoveProperty() {
+    public void test06RemoveProperty() throws ReadOnlyWorkerException {
         workerSession.removeWorkerProperty(3, "test");
 
         Properties props = workerSession.exportWorkerConfig(3);
@@ -242,7 +243,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.AddAuthorizedClient(int, AuthorizedClient)'
      */
     @Test
-    public void test07AddAuthorizedClient() {
+    public void test07AddAuthorizedClient() throws ReadOnlyWorkerException {
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         workerSession.addAuthorizedClient(3, authClient);
 
@@ -260,7 +261,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
      */
     @Test
-    public void test08RemoveAuthorizedClient() {
+    public void test08RemoveAuthorizedClient() throws ReadOnlyWorkerException {
         int initialsize = workerSession.getAuthorizedClients(3).size();
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         assertTrue(workerSession.removeAuthorizedClient(3, authClient));
@@ -474,7 +475,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * NOTE: This test assumes signserver_deploy.properties configured with workerids.genid.start=100000
      */
     @Test
-    public void test22GenFreeWorkerIdWithStartProperty() throws IllegalRequestException {
+    public void test22GenFreeWorkerIdWithStartProperty() throws ReadOnlyWorkerException, IllegalRequestException {
         // Get the current generated ID
         int firstId = workerSession.genFreeWorkerId();
 

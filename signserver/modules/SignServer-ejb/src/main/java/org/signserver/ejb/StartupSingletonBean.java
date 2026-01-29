@@ -37,6 +37,7 @@ import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.PKCS11Settings;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
@@ -315,6 +316,9 @@ public class StartupSingletonBean {
                 workerSession.reloadConfiguration(admin, id);
             } catch (NoSuchWorkerException ex) {
                 LOG.error("Worker no longer exists: " + ex.getMessage());
+            } catch (ReadOnlyWorkerException e) {
+                // This should never happen
+                LOG.error("Worker is read-only: ", e);
             }
         }
     }

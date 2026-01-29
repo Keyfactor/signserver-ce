@@ -69,6 +69,10 @@
     </servlet-mapping>
     <!-- Special page for authorization denied -->
     <error-page>
+        <exception-type>org.signserver.common.ReadOnlyWorkerException</exception-type>
+        <location>/error-auth.xhtml</location>
+    </error-page>
+    <error-page>
         <exception-type>org.signserver.admin.common.auth.AdminNotAuthorizedException</exception-type>
         <location>/error-auth.xhtml</location>
     </error-page>

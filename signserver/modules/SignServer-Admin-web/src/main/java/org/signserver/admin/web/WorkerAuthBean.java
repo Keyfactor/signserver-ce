@@ -45,6 +45,7 @@ import org.cesecore.certificates.util.DNFieldExtractor;
 import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -287,7 +288,7 @@ public class WorkerAuthBean implements Serializable {
         this.errorMessage = errorMessage;
     }
     
-    public String editAction() throws AdminNotAuthorizedException {
+    public String editAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
 
         final CertificateMatchingRule oldAuthorizedClient = new CertificateMatchingRule();
         oldAuthorizedClient.setMatchIssuerWithValue(oldMatchIssuerWithValue);
@@ -336,7 +337,7 @@ public class WorkerAuthBean implements Serializable {
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
     }
 
-    public String addAction() throws AdminNotAuthorizedException {
+    public String addAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         String matchSubjectwithValueToBeUsed;
 
         if (MatchSubjectWithType.valueOf(matchSubjectWithType) == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
@@ -519,7 +520,7 @@ public class WorkerAuthBean implements Serializable {
         return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
     }
 
-    public String removePropertyAction() throws AdminNotAuthorizedException {
+    public String removePropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         CertificateMatchingRule certMatchingRule = new CertificateMatchingRule();
         certMatchingRule.setMatchIssuerWithValue(matchIssuerWithValue);
         certMatchingRule.setMatchSubjectWithValue(matchSubjectWithValue);

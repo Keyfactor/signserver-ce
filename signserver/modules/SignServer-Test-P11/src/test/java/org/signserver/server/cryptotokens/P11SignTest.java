@@ -164,7 +164,7 @@ public class P11SignTest {
         SignServerUtil.installBCProvider();
     }
 
-    private void setupCryptoTokenProperties(final int tokenId, final boolean cache) {
+    private void setupCryptoTokenProperties(final int tokenId, final boolean cache) throws Exception {
         // Setup token
         workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
@@ -177,7 +177,7 @@ public class P11SignTest {
         workerSession.setWorkerProperty(tokenId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
 
-    private void setPDFSignerOnlyProperties() {
+    private void setPDFSignerOnlyProperties() throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(WORKER_PDF, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(WORKER_PDF, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.pdfsigner.PDFSigner");
@@ -187,7 +187,7 @@ public class P11SignTest {
         workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", existingKey1);
     }
 
-    private void setPDFSignerWithCryptoProperties(final boolean cache) {
+    private void setPDFSignerWithCryptoProperties(final boolean cache) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(WORKER_PDF, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(WORKER_PDF, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.pdfsigner.PDFSigner");
@@ -314,7 +314,7 @@ public class P11SignTest {
         }
     }
 
-    private void setPlainSignerProperties() {
+    private void setPlainSignerProperties() throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(20020, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(20020, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.PlainSigner");
@@ -697,7 +697,7 @@ public class P11SignTest {
         assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
     }
 
-    private void setMRTDSODSignerProperties(final boolean cache) {
+    private void setMRTDSODSignerProperties(final boolean cache) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(20002, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(20002, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.mrtdsodsigner.MRTDSODSigner");
@@ -771,7 +771,7 @@ public class P11SignTest {
         assertNotNull(signercert);
     }
 
-    private void setCMSSignerProperties(final int workerId, final boolean cached) {
+    private void setCMSSignerProperties(final int workerId, final boolean cached) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
@@ -901,7 +901,7 @@ public class P11SignTest {
     }
 
 
-    private void setXMLSignerProperties(final boolean cache) {
+    private void setXMLSignerProperties(final boolean cache) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(20004, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(20004, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
@@ -915,7 +915,7 @@ public class P11SignTest {
         workerSession.setWorkerProperty(20004, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
 
-    private void setXMLSignerPropertiesReferingToken() {
+    private void setXMLSignerPropertiesReferingToken() throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(20014, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(20014, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
@@ -1009,7 +1009,7 @@ public class P11SignTest {
         }
     }
 
-    private void setMSAuthTimeStampSignerProperties(final boolean cache) {
+    private void setMSAuthTimeStampSignerProperties(final boolean cache) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(20007, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(20007, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.MSAuthCodeTimeStampSigner");
@@ -1692,7 +1692,7 @@ public class P11SignTest {
         }
     }
     
-    private void setXAdESSignerPropertiesReferingToken(int workerId) {
+    private void setXAdESSignerPropertiesReferingToken(int workerId) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xades.signer.XAdESSigner");

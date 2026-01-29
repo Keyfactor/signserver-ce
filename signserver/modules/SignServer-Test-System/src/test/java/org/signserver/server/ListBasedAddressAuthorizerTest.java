@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerStatus;
@@ -596,7 +597,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,
-            final String whitelistedForwarded, final String blacklistedForwarded) {
+            final String whitelistedForwarded, final String blacklistedForwarded) throws ReadOnlyWorkerException {
         setOrRemoveProperty("WHITELISTED_DIRECT_ADDRESSES", whitelistedDirect);
         setOrRemoveProperty("BLACKLISTED_DIRECT_ADDRESSES", blacklistedDirect);
         setOrRemoveProperty("WHITELISTED_FORWARDED_ADDRESSES", whitelistedForwarded);
@@ -604,7 +605,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdDummy1());
     }
 
-    private void setOrRemoveProperty(final String property, final String value) {
+    private void setOrRemoveProperty(final String property, final String value) throws ReadOnlyWorkerException {
         if (value == null) {
             workerSession.removeWorkerProperty(getSignerIdDummy1(), property);
         } else {

@@ -14,6 +14,7 @@ package org.signserver.test.random.impl;
 
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
@@ -44,7 +45,11 @@ public class IncrementProperty implements Runnable {
         String stringValue = currentWorkerConfig.getProperty(propertyName, "0");
         long value = Long.parseLong(stringValue);
         LOG.info("Old WORKER" + signerId + "." + propertyName + "=" + value);
-        workerSession.setWorkerProperty(signerId, propertyName, String.valueOf(value + 1));
+        try {
+            workerSession.setWorkerProperty(signerId, propertyName, String.valueOf(value + 1));
+        } catch (ReadOnlyWorkerException e) {
+            throw new RuntimeException(e);
+        }
         workerSession.reloadConfiguration(signerId);
         LOG.debug("<run");
     }

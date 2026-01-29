@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Properties;
+import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -84,6 +85,10 @@ public class AdminWebBean implements Serializable {
 
     public String getTheme() {
         return ThemeHelper.getInstance().getTheme();
+    }
+
+    public Set<Integer> getReadOnlyWorkers() {
+        return CompileTimeSettings.getInstance().getReadOnlyWorkers();
     }
 
     /**

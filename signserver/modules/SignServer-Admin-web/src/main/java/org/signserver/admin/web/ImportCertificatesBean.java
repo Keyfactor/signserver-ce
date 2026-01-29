@@ -28,7 +28,6 @@ import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJB;
 import jakarta.ejb.EJBException;
 import jakarta.faces.view.ViewScoped;

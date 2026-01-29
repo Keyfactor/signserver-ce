@@ -116,7 +116,7 @@ public interface WorkerSession {
      * @param key
      * @param value
      */
-    void setWorkerProperty(int workerId, String key, String value);
+    void setWorkerProperty(int workerId, String key, String value) throws ReadOnlyWorkerException;
 
     /**
      * Removes a given worker's property.
@@ -125,7 +125,7 @@ public interface WorkerSession {
      * @param key
      * @return true if the property did exist and was removed othervise false
      */
-    boolean removeWorkerProperty(int workerId, String key);
+    boolean removeWorkerProperty(int workerId, String key) throws ReadOnlyWorkerException;
 
     /**
      * Sets several parameters in a workers configuration, additions, deletions and edits.
@@ -139,7 +139,7 @@ public interface WorkerSession {
      */
     void updateWorkerProperties(int workerId,
                                 Map<String, String> propertiesAndValues,
-                                List<String> propertiesToRemove);
+                                List<String> propertiesToRemove) throws ReadOnlyWorkerException;
 
     /**
      * Sets several parameters in a workers configuration, additions, deletions and edits.
@@ -154,7 +154,7 @@ public interface WorkerSession {
      */
     void addUpdateDeleteWorkerProperties(int workerId,
                                          Map<String, String> propertiesAndValues,
-                                         List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException;
+                                         List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException, ReadOnlyWorkerException;
     
     /**
      * Method that returns a collection of AuthorizedClient of
@@ -180,7 +180,7 @@ public interface WorkerSession {
      * @param signerId
      * @param authClient
      */
-    void addAuthorizedClient(int signerId, AuthorizedClient authClient);
+    void addAuthorizedClient(int signerId, AuthorizedClient authClient) throws ReadOnlyWorkerException;
     
     /**
      * Method adding an authorized client to a signer.
@@ -188,7 +188,7 @@ public interface WorkerSession {
      * @param signerId
      * @param authClient
      */
-    void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient);
+    void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) throws ReadOnlyWorkerException;
 
     /**
      * Removes an authorized client from a signer.
@@ -197,7 +197,7 @@ public interface WorkerSession {
      * @param authClient
      * @return true if the client was found and removed
      */
-    boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient);
+    boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) throws ReadOnlyWorkerException;
     
     /**
      * Removes an authorized client from a signer.
@@ -206,7 +206,7 @@ public interface WorkerSession {
      * @param authClient
      * @return true if the client was found and removed
      */
-    boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient);
+    boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) throws ReadOnlyWorkerException;
 
     /**
      * Method used to let a signer generate a certificate request
@@ -411,7 +411,7 @@ public interface WorkerSession {
      * @throws CertificateException
      */
     void uploadSignerCertificate(int signerId, byte[] signerCert,
-            String scope) throws CertificateException;
+            String scope) throws CertificateException, ReadOnlyWorkerException;
 
     /**
      * Method used to upload a complete certificate chain to a configuration
@@ -422,7 +422,7 @@ public interface WorkerSession {
      * @throws CertificateException
      */
     void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope)
-             throws CertificateException;
+            throws CertificateException, ReadOnlyWorkerException;
 
     /**
      * Method used to import a complete certificate chain to a crypto token.
@@ -440,7 +440,7 @@ public interface WorkerSession {
     void importCertificateChain(WorkerIdentifier signerId, List<byte[]> signerCerts,
                                 String alias,char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
-                   OperationUnsupportedException;
+            OperationUnsupportedException;
     
     /**
      * Methods that generates a free worker id that can be used for new signers.

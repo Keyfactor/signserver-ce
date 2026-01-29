@@ -154,7 +154,8 @@ public class WorkerResource {
      * @return The operation result in a JSON format.
      * @throws WorkerExistsException In case the given new worker ID already exists.
      * @throws ForbiddenException In case access is forbidden for the request.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
+     * @throws ReadOnlyWorkerException In case the worker ID is listed as read-only.
      */
     @POST
     @Path("{id}")
@@ -184,6 +185,14 @@ public class WorkerResource {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "405",
+            description = "Method not allowed.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage405.class)
             )
     )
     @APIResponse(
@@ -243,7 +252,7 @@ public class WorkerResource {
                                     }
                                 }""" 
                         
-            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "addWorker", String.valueOf(id));
 
@@ -262,6 +271,7 @@ public class WorkerResource {
                 throw new WorkerExistsException(workerName);
             }
         }
+
         workerSession.addWorker(adminInfo, id, properties);
         return Response.ok().status(201).build();
     }
@@ -275,7 +285,8 @@ public class WorkerResource {
      * @return The operation result in a JSON format.
      * @throws WorkerExistsException In case the given new worker ID already exists.
      * @throws ForbiddenException In case access is forbidden for the request.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
+     * @throws ReadOnlyWorkerException In case the worker ID is listed as read-only.
      */
     @POST
     @Path("/")
@@ -305,6 +316,14 @@ public class WorkerResource {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "405",
+            description = "Method not allowed.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage405.class)
             )
     )
     @APIResponse(
@@ -362,7 +381,7 @@ public class WorkerResource {
                                     }
                                 }""" 
                         
-            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "addWorkerWithoutID");
 
@@ -396,8 +415,9 @@ public class WorkerResource {
      * @param request            Request data
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
      * @throws ForbiddenException In case access is forbidden for the request.
+     * @throws ReadOnlyWorkerException In case the worker ID is listed as read-only.
      */
     @PATCH
     @Path("{id}")
@@ -429,6 +449,14 @@ public class WorkerResource {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "405",
+            description = "Method not allowed.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage405.class)
             )
     )
     @APIResponse(
@@ -468,7 +496,7 @@ public class WorkerResource {
                                     }
                                 }""" 
                         
-            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "updateAndDeleteWorkerProperties",
                 String.valueOf(id));
@@ -509,7 +537,8 @@ public class WorkerResource {
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
      * @throws ForbiddenException In case access is forbidden for the request.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
+     * @throws ReadOnlyWorkerException In case the worker ID is listed as read-only.
      */
     @PUT
     @Path("{id}")
@@ -549,6 +578,14 @@ public class WorkerResource {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "405",
+            description = "Method not allowed.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage405.class)
             )
     )
     @APIResponse(
@@ -600,7 +637,7 @@ public class WorkerResource {
                                     }
                                 }""" 
                         
-            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException {
+            )})) final WorkerRequest request) throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "replaceAllWorkerProperties",
                 String.valueOf(id));
@@ -610,6 +647,7 @@ public class WorkerResource {
             LOG.error("Properties in the request is not valid!");
             throw new IllegalRequestException("Properties in the request body is not valid!");
         }
+
         workerSession.replaceWorkerProperties(adminInfo, id, properties);
         return Response.ok(new WorkerResponse("Worker properties successfully replaced"))
                 .header("Content-Type", MediaType.APPLICATION_JSON).build();
@@ -623,7 +661,8 @@ public class WorkerResource {
      * @return The operation result in a JSON format.
      * @throws NoSuchWorkerException In case the given worker ID not exists.
      * @throws ForbiddenException In case access is forbidden for the request.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
+     * @throws ReadOnlyWorkerException In case the worker ID is listed as read-only.
      */
     @DELETE
     @Path("{id}")
@@ -665,6 +704,14 @@ public class WorkerResource {
             )
     )
     @APIResponse(
+            responseCode = "405",
+            description = "Method not allowed.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage405.class)
+            )
+    )
+    @APIResponse(
             responseCode = "500",
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
@@ -681,7 +728,7 @@ public class WorkerResource {
             @Context final HttpServletRequest httpServletRequest,
             @PathParam("id") 
             @Parameter(name = "id", description = "Worker id", example = "1") final int id
-    ) throws IllegalRequestException, AdminNotAuthorizedException {
+    ) throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         // The following check must be the first line in all the REST public methods
         final AdminInfo adminInfo = auth.restCallAuthorizer(httpServletRequest, "removeWorker",
                 String.valueOf(id));
@@ -699,7 +746,7 @@ public class WorkerResource {
      * @throws InternalServerException In case the request could not be processed by some error at the server side.
      * @throws NoSuchWorkerException   In case any of the given worker IDs do not exist.
      * @throws ForbiddenException In case access is forbidden for the request.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
      */
     @POST
     @Path("reload")
@@ -800,7 +847,7 @@ public class WorkerResource {
      *
      * @return The operation result in a JSON format.
      * @throws ForbiddenException In case access is forbidden for the request.
-     * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @throws AdminNotAuthorizedException If the admin is not authorized.
      */
     @POST
     @Path("reload")

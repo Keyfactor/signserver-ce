@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.util.ReadOnlyUtils;
 
 /**
  * Settings loaded from built-in properties-file signservercompile.properties
@@ -96,6 +97,8 @@ public class CompileTimeSettings {
     public static final String CUSTOM_IMAGE_PATH_ALLOWLIST = "pdfsigner.image.path.allowed";
     public static final int MAX_CUSTOM_IMAGE_PATHS = 256;
 
+    public static final String READ_ONLY_WORKERS = "workerids.readonly";
+
     public static final String OUTPUTFILE_PATH_ALLOWLIST = "outputfile.path.allowed";
     public static final int MAX_OUTPUTFILE_PATHS = 256;
 
@@ -105,6 +108,8 @@ public class CompileTimeSettings {
     private static CompileTimeSettings instance;
     
     private static Set<String> maskedWorkerPropertyNames;
+
+    private static Set<Integer> readOnlyWorkers;
 
     /** Properties put together at compile-time. */
     private Properties properties = new Properties(DEFAULT_PROPERTIES);
@@ -177,6 +182,20 @@ public class CompileTimeSettings {
         }
         
         return maskedWorkerPropertyNames;
+    }
+
+    /**
+     * Get a set of worker ids that should be listed as
+     * read-only when configured in signserver_deploy.properties.
+     *
+     * @return set of worker ids listed as read-only
+     */
+    public Set<Integer> getReadOnlyWorkers() {
+        if(readOnlyWorkers == null) {
+            final String readOnlyWorkerList = getProperty(READ_ONLY_WORKERS);
+            readOnlyWorkers = ReadOnlyUtils.parseReadOnlyWorkersRange(readOnlyWorkerList);
+        }
+        return readOnlyWorkers;
     }
 
     /**

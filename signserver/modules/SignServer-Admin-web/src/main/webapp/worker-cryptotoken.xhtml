@@ -28,6 +28,7 @@
         <f:viewParam name="id" value="#{workerBean.id}"/>
         <f:viewParam name="id" value="#{cryptoTokenBean.id}"/>
         <f:event type="preRenderView" listener="#{cryptoTokenBean.init()}"/>
+        <ui:param name="isReadOnly" value="#{adminWebBean.readOnlyWorkers.contains(workerBean.id)}"/>
     </f:metadata>
     
     <body>
@@ -44,7 +45,6 @@
             </ui:define>
 
             <ui:define name="content">
-                <!--<h1><h:graphicImage library="default" name="images/#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/></h1>-->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
@@ -52,7 +52,8 @@
                 
                 <h:form id="workerMenu">
                     <p>
-                        <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
+                        <h:commandButton disabled="#{isReadOnly}" class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/>
+                        <h:commandButton disabled="#{isReadOnly}" class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp;
                     </p>
                 </h:form>
 

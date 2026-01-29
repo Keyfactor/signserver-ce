@@ -38,6 +38,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.OperationUnsupportedException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.NotLoggedInException;
@@ -181,6 +182,9 @@ public class CertificatesBulkBean extends BulkBean {
             } catch (OperationUnsupportedException ex) {
                 worker.setError("Importing certificate chain is not supported by crypto token: " + ex.getMessage());
                 worker.setSuccess(null);
+            } catch (ReadOnlyWorkerException ex) {
+                worker.setError("Cannot install certificate chain to read-only worker: " + ex.getMessage());
+                worker.setSuccess(null);
             }
         }
 
@@ -301,6 +305,11 @@ public class CertificatesBulkBean extends BulkBean {
 
         public void setInToken(boolean inToken) {
             this.inToken = inToken;
+        }
+
+        public boolean setInTokenReadOnly() {
+            this.inToken = true;
+            return inToken;
         }
 
         public boolean isAliasDefaultKey() {

@@ -182,8 +182,8 @@ public class PDFSignerTest extends ModulesTestCase {
     protected void signGenericPDFWithHash(final byte[] data, final String digestAlgorithm,
                                           final boolean expectTimestamp,
                                           final String tsaDigestAlgorithm)
-                    throws IllegalRequestException, CryptoTokenOfflineException,
-                        SignServerException, IOException {
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException, IOException, ReadOnlyWorkerException {
         try {
             if (digestAlgorithm != null) {
                 workerSession.setWorkerProperty(WORKERID, PDFSigner.DIGESTALGORITHM,
@@ -532,7 +532,7 @@ public class PDFSignerTest extends ModulesTestCase {
      * Testing archiving where ARCHIVETODISK_PATH_BASE is not an allowed path.
      */
     @Test
-    public void test10ArchiveToDiskNoAllowedPath() throws CryptoTokenOfflineException, IllegalRequestException {
+    public void test10ArchiveToDiskNoAllowedPath() throws CryptoTokenOfflineException, IllegalRequestException, ReadOnlyWorkerException {
         try {
             final String allowList = this.getConfig().getProperty("test.archive.existingAllowedFolder");
             Assume.assumeTrue("Test requires test.archive.existingAllowedFolder to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
@@ -564,7 +564,7 @@ public class PDFSignerTest extends ModulesTestCase {
      * Testing archiving where ARCHIVETODISK_PATH_BASE path is allowed but the FINAL canonical path is not.
      */
     @Test
-    public void test10ArchiveToDiskFinalPathNotAllowed() throws CryptoTokenOfflineException, IllegalRequestException {
+    public void test10ArchiveToDiskFinalPathNotAllowed() throws CryptoTokenOfflineException, IllegalRequestException, ReadOnlyWorkerException {
         try {
             final String allowList = this.getConfig().getProperty("test.archive.existingAllowedFolder");
             Assume.assumeTrue("Test requires test.archive.existingAllowedFolder to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());

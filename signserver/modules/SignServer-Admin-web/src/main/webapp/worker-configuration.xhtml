@@ -26,6 +26,7 @@
 
     <f:metadata>
         <f:viewParam name="id" value="#{workerBean.id}"/>
+        <ui:param name="isReadOnly" value="#{adminWebBean.readOnlyWorkers.contains(workerBean.id)}"/>
     </f:metadata>
    
     <body>

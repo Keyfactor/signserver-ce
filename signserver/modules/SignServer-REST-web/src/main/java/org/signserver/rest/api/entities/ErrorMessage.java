@@ -43,6 +43,11 @@ public class ErrorMessage {
         @Schema(example = "No such worker")
         private String error;
     }
+
+    public static class ErrorMessage405 {
+        @Schema(example = "Method not allowed.")
+        private String error;
+    }
     
     public static class ErrorMessage409 {
         @Schema(example = "Worker already exists.")

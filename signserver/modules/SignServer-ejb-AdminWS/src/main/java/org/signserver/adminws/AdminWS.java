@@ -272,7 +272,11 @@ public class AdminWS {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "setWorkerProperty",
                 String.valueOf(workerId), key);
 
-        worker.setWorkerProperty(adminInfo, workerId, key, value);
+        try {
+            worker.setWorkerProperty(adminInfo, workerId, key, value);
+        } catch (ReadOnlyWorkerException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
     }
 
     /**
@@ -292,7 +296,11 @@ public class AdminWS {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "removeWorkerProperty",
                 String.valueOf(workerId), key);
 
-        return worker.removeWorkerProperty(adminInfo, workerId, key);
+        try {
+            return worker.removeWorkerProperty(adminInfo, workerId, key);
+        } catch (ReadOnlyWorkerException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
     }
 
     /**
@@ -326,7 +334,11 @@ public class AdminWS {
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
 
-        worker.addAuthorizedClient(adminInfo, workerId, authClient);
+        try {
+            worker.addAuthorizedClient(adminInfo, workerId, authClient);
+        } catch (ReadOnlyWorkerException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
     }
 
     /**
@@ -345,7 +357,11 @@ public class AdminWS {
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
 
-        return worker.removeAuthorizedClient(adminInfo, workerId, authClient);
+        try {
+            return worker.removeAuthorizedClient(adminInfo, workerId, authClient);
+        } catch (ReadOnlyWorkerException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
     }
 
     /**
@@ -809,6 +825,8 @@ public class AdminWS {
             // Log stacktrace and only pass on description to client
             LOG.error("Unable to parse certificate", ex);
             throw new IllegalRequestException("Unable to parse certificate");
+        } catch (ReadOnlyWorkerException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
         }
     }
 
@@ -836,6 +854,8 @@ public class AdminWS {
             // Log stacktrace and only pass on description to client
             LOG.error("Unable to parse certificate", ex);
             throw new IllegalRequestException("Unable to parse certificate");
+        } catch (ReadOnlyWorkerException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
         }
     }
 

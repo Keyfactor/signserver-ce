@@ -33,6 +33,7 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.util.PropertiesConstants;
 
@@ -254,7 +255,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
         } catch (IllegalArgumentException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
-        } catch (RemoteException e) {
+        } catch (RemoteException | ReadOnlyWorkerException e) {
             throw new UnexpectedCommandFailureException(e);
         }
     }

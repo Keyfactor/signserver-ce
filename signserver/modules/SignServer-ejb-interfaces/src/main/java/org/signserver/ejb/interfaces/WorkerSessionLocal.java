@@ -119,7 +119,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param key
      * @param value
      */
-    void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value);
+    void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) throws ReadOnlyWorkerException;
 
     /**
      * Removes a given worker's property.
@@ -129,7 +129,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param key
      * @return true if the property did exist and was removed otherwise false
      */
-    boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key);
+    boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key) throws ReadOnlyWorkerException;
 
     /**
      * Removes a given worker.
@@ -137,7 +137,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param adminInfo
      * @param workerId
      */
-    void removeWorker(final AdminInfo adminInfo, int workerId) throws NoSuchWorkerException;
+    void removeWorker(final AdminInfo adminInfo, int workerId) throws NoSuchWorkerException, ReadOnlyWorkerException;
 
     /**
      * Checks the given worker Id exists.
@@ -166,7 +166,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param propertiesAndValues new properties to be saved
      */
     void addWorker(AdminInfo adminInfo, int workerId,
-                                Map<String, String> propertiesAndValues) throws WorkerExistsException;
+                                Map<String, String> propertiesAndValues) throws WorkerExistsException, ReadOnlyWorkerException;
 
     /**
      * Sets several parameters in a workers configuration, additions, deletions and edits.
@@ -181,7 +181,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      */
     void updateWorkerProperties(AdminInfo adminInfo, int workerId,
                                 Map<String, String> propertiesAndValues,
-                                List<String> propertiesToRemove);
+                                List<String> propertiesToRemove) throws ReadOnlyWorkerException;
 
     /**
      * Sets several parameters in a workers configuration, additions, deletions and edits.
@@ -198,7 +198,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      */
     void addUpdateDeleteWorkerProperties(AdminInfo adminInfo, int workerId,
                                          Map<String, String> propertiesAndValues,
-                                         List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException;
+                                         List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException, ReadOnlyWorkerException;
 
     /**
      * Remove all the current parameters and add new properties in a workers configuration.
@@ -213,7 +213,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @throws WorkerExistsException if worker with the same name already exists
      */
     void replaceWorkerProperties(AdminInfo adminInfo, int workerId,
-                                 Map<String, String> propertiesAndValues) throws NoSuchWorkerException, WorkerExistsException;
+                                 Map<String, String> propertiesAndValues) throws NoSuchWorkerException, WorkerExistsException, ReadOnlyWorkerException;
 
     /**
      * Method adding an authorized client to a signer.
@@ -222,7 +222,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param signerId
      * @param authClient
      */
-    void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient);
+    void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient) throws ReadOnlyWorkerException;
     
     /**
      * Method adding an authorized client to a signer.
@@ -231,7 +231,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param signerId
      * @param authClient
      */
-    void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient);
+    void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) throws ReadOnlyWorkerException;
 
     /**
      * Method removing an authorized client to a signer.
@@ -242,7 +242,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @return true if the client was authorized to the signer
      */
     boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
-            AuthorizedClient authClient);
+            AuthorizedClient authClient) throws ReadOnlyWorkerException;
     
     /**
      * Method removing an authorized client to a signer.
@@ -253,7 +253,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @return true if the client was authorized to the signer
      */
     boolean removeAuthorizedClientGen2(final AdminInfo adminInfo, int signerId,
-            CertificateMatchingRule authClient);
+            CertificateMatchingRule authClient) throws ReadOnlyWorkerException;
 
     /**
      * Method used to let a signer generate a certificate request using the
@@ -360,7 +360,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @throws CertificateException
      */
     void uploadSignerCertificate(final AdminInfo adminInfo, int signerId, byte[] signerCert,
-            String scope) throws CertificateException;
+            String scope) throws CertificateException, ReadOnlyWorkerException;
 
     /**
      * Method used to upload a complete certificate chain to a configuration
@@ -371,7 +371,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param scope one of GlobalConfiguration.SCOPE_ constants
      * @throws CertificateException
      */
-    void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) throws CertificateException;
+    void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) throws CertificateException, ReadOnlyWorkerException;
 
     /**
      * Method used to import a complete certificate chain to a crypto token.

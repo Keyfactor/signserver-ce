@@ -29,6 +29,7 @@ import org.junit.runners.MethodSorters;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
@@ -167,7 +168,7 @@ public class ValidationCLITest extends ModulesTestCase {
     }
 
     @Test
-    public void test99RemoveDatabase() throws IllegalRequestException {
+    public void test99RemoveDatabase() throws ReadOnlyWorkerException, IllegalRequestException {
         removeWorker(16);
     }
 }

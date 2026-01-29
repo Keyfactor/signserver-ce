@@ -22,9 +22,11 @@ import java.util.HashMap;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
@@ -38,6 +40,7 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 @ViewScoped
 public class RenewKeyBulkBean extends BulkBean {
 
+    private static final Logger LOG = Logger.getLogger(RenewKeyBulkBean.class);
     private List<RenewKeyWorker> renewKeyWorkers;
 
     /**
@@ -85,6 +88,7 @@ public class RenewKeyBulkBean extends BulkBean {
         //FacesMessage errorMessage = new FacesMessage("Test error");
         //errorMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+        final List<Integer> readOnlyWorkers = new ArrayList<>();
 
         if (validateMultiKeyGeneration())
             for (RenewKeyWorker worker : getSelectedRenewKeyWorkers()) {
@@ -107,19 +111,30 @@ public class RenewKeyBulkBean extends BulkBean {
                     worker.setSuccess(null);
                 }
 
-                if (newAlias != null) {
-                    //LOG.debug("Created key " + newAlias + " for signer " + signerId);
+                try {
+                    if (newAlias != null) {
+                        //LOG.debug("Created key " + newAlias + " for signer " + signerId);
 
-                    // Update key label
-                    getWorkerSessionBean().setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(),
-                            "NEXTCERTSIGNKEY", newAlias);
+                        // Update key label
+                        getWorkerSessionBean().setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(),
+                                "NEXTCERTSIGNKEY", newAlias);
 
-                    // Reload configuration
-                    getWorkerSessionBean().reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
+                        // Reload configuration
+                        getWorkerSessionBean().reloadConfiguration(loginBean.getAdminPrincipal(), worker.getId());
 
-                    //LOG.debug("Configured new key " + newAlias + " for signer " + signerId);
-                    getSelectedIds().remove(worker.getId());
+                        //LOG.debug("Configured new key " + newAlias + " for signer " + signerId);
+                        getSelectedIds().remove(worker.getId());
+                    }
+                } catch (ReadOnlyWorkerException ex) {
+                    // If we reach here, adding the new key alias property has failed due to worker being read-only.
+                    // Since key generation operation has gone through, the worker has already had its status updated with:
+                    // worker.setError(null);
+                    // worker.setSuccess("Generated " + newAlias);
+                    // Meaning we do not have to take action in this catch clause.
+                    // For debugging purposes we collect all read-only IDs
+                    readOnlyWorkers.add(worker.getId());
                 }
+                LOG.warn("Key renewal was partially successful. The following workers: " + readOnlyWorkers + " are read-only and have not had their new key alias property updated.");
             }
 
         if (getSelectedIds().isEmpty()) {

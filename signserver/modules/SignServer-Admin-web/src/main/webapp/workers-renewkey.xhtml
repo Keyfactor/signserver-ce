@@ -64,6 +64,7 @@
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty renewKeyBulkBean.workers and not renewKeyBulkBean.keyGenerationDisabled}">
                         <h:dataTable id="table1" value="#{renewKeyBulkBean.renewKeyWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1 centered,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <ui:param name="isReadOnly" value="#{adminWebBean.readOnlyWorkers.contains(item.id)}"/>
                             <h:column>
                                 <f:facet name="header">
                                     <h:selectBooleanCheckbox class="jsHidden" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
@@ -166,7 +167,8 @@
                                 <f:facet name="header">
                                     <!-- Error -->
                                 </f:facet>
-                                <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
+                                <span class="errorMessage"> <h:outputText rendered="#{isReadOnly and item.error == null and item.success == null}" value="#{text['Read_Only_Worker_Renew_Keys_Notice']}" /> </span>
+                                <span class="errorMessage"><h:outputText value="#{item.error}"/></span>
                                 <span class="successMessage"><h:outputText value="#{item.success}"/></span>
                             </h:column>
                             <f:facet name="footer">

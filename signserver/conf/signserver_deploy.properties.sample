@@ -291,6 +291,16 @@
 #dist.sampleconfigs.replacewithmanaged=false
 #dist.sampleconfigs.replacewithmanaged=
 
+# ------------- Read-only workers definitions ----------------------------------
+# A property to enable workers to be read-only through the remote interfaces.
+# Setting this property means that the worker ids listed, can not be modified.
+# It is also not possible to add a new worker within the specified range.
+# Multiple ranges can be specified in ascending order using a comma as the delimiter.
+#
+# Default: Empty range
+#workerids.readonly=
+#workerids.readonly=1-10,12-20
+
 # ------------- Generated worker IDs starting definition ------------------------
 # A property to define the starting number for auto-generated worker IDs.
 # When adding a new worker without specifying a fixed ID (e.g. using GENID

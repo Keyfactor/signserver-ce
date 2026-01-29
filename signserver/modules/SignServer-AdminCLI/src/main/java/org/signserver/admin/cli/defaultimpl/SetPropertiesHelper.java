@@ -24,6 +24,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
 import static org.signserver.common.util.PropertiesConstants.*;
@@ -376,7 +377,7 @@ public class SetPropertiesHelper {
         }
     }
     
-    private void processGen2AuthClientRules() throws RemoteException {
+    private void processGen2AuthClientRules() throws RemoteException, ReadOnlyWorkerException {
         for (AuthClientEntry entry : addAuthClientGen2Entries) {
             helper.getWorkerSession().addAuthorizedClientGen2(entry.getWorkerId(), entry.getRule());
             out.println("Adding Authorized Client with rule " + entry.getRule().toString() + " for worker " + entry.getWorkerId());

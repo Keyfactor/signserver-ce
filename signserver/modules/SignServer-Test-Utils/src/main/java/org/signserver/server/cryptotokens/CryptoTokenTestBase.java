@@ -55,6 +55,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.QueryException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
@@ -83,8 +84,8 @@ public abstract class CryptoTokenTestBase {
     
     protected abstract void importCertificateChain(List<Certificate> chain, String alias)
             throws CryptoTokenOfflineException, IllegalArgumentException,
-                   CertificateException, CertificateEncodingException,
-                   OperationUnsupportedException;
+            CertificateException, CertificateEncodingException,
+            OperationUnsupportedException, ReadOnlyWorkerException;
     
     protected abstract ICertReqData genCertificateRequest(ISignerCertReqInfo req,
                                                                boolean explicitEccParameters,
@@ -312,14 +313,14 @@ public abstract class CryptoTokenTestBase {
         }
     }
     
-    protected void importCertificateChainHelper(final String existingKey) 
+    protected void importCertificateChainHelper(final String existingKey)
             throws NoSuchAlgorithmException, NoSuchProviderException,
-                   OperatorCreationException, IOException, CertificateException,
-                   CryptoTokenOfflineException, 
-                   IllegalArgumentException, 
-                   CertificateEncodingException, 
-                   OperationUnsupportedException, InvalidWorkerIdException, 
-                   SignServerException, AuthorizationDeniedException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+            OperatorCreationException, IOException, CertificateException,
+            CryptoTokenOfflineException,
+            IllegalArgumentException,
+            CertificateEncodingException,
+            OperationUnsupportedException, InvalidWorkerIdException,
+            SignServerException, AuthorizationDeniedException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, ReadOnlyWorkerException {
         final String additionalAlias = "additionalKey";
         
         try {
@@ -401,7 +402,7 @@ public abstract class CryptoTokenTestBase {
             IllegalArgumentException, CertificateException,
             CertificateEncodingException, OperationUnsupportedException,
             NoSuchAlgorithmException, NoSuchProviderException,
-            OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+            OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, ReadOnlyWorkerException {
         
         final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported, organizationIdentifier=12345, O=Test", null);
         final AbstractCertReqData reqData = (AbstractCertReqData) genCertificateRequest(req, false, existingKey);

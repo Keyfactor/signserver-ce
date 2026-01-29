@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
@@ -112,7 +113,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         }
     }
 
-    private void setServiceActive(final boolean active) {
+    private void setServiceActive(final boolean active) throws ReadOnlyWorkerException {
         workerSession.setWorkerProperty(WORKERID_SERVICE, ServiceConfig.ACTIVE,
                 Boolean.valueOf(active).toString());
         workerSession.reloadConfiguration(WORKERID_SERVICE);
@@ -127,7 +128,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         }
     }
 
-    private void resetStatus() {
+    private void resetStatus() throws ReadOnlyWorkerException {
         // stop service (will sleep a bit to avoid race)
         setServiceActive(false);
         // reset status repository
@@ -153,7 +154,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      * TESTKEY key alias property.
      */
     @Test
-    public void test01runServiceWithTwoWorkers() {
+    public void test01runServiceWithTwoWorkers() throws ReadOnlyWorkerException {
         try {
             setServiceActive(true);
             // make sure the service had time to run
@@ -179,7 +180,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      * Test that when setting DEFAULTKEY, TESTKEY is still used.
      */
     @Test
-    public void test02runServiceWithTestAndDefaultKey() {
+    public void test02runServiceWithTestAndDefaultKey() throws ReadOnlyWorkerException {
         try {
             workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
                     "DEFAULTKEY", "DefaultKey1");
@@ -217,7 +218,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      * Test that DEFAULTKEY is used if TESTKEY is missing.
      */
     @Test
-    public void test03runServiceWithOnlyDefaultKey() {
+    public void test03runServiceWithOnlyDefaultKey() throws ReadOnlyWorkerException {
         try {
             workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
                     "DEFAULTKEY", "DefaultKey1");
@@ -310,7 +311,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      * Test that specifying crypto workers using worker IDs is working.
      */
     @Test
-    public void test05runServiceWithWorkerIds() {
+    public void test05runServiceWithWorkerIds() throws ReadOnlyWorkerException {
         try {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     HSMKeepAliveTimedService.CRYPTOTOKENS, "5801,5802");
@@ -346,7 +347,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      * TESTKEY doesn't use DEFAULTKEY.
      */
     @Test
-    public void test06runServiceWithDisabledTestKey() {
+    public void test06runServiceWithDisabledTestKey() throws ReadOnlyWorkerException {
         try {
             workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
                     "TESTKEY", "TestKey1");
@@ -395,7 +396,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      * Should still test the other token.
      */
     @Test
-    public void test07runServiceOneCryptoTokenWithNoAlias() {
+    public void test07runServiceOneCryptoTokenWithNoAlias() throws ReadOnlyWorkerException {
         try {
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
                     HSMKeepAliveTimedService.TESTKEY);
@@ -473,7 +474,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     }
 
     @Test
-    public void test99tearDownDatabase() throws IllegalRequestException {
+    public void test99tearDownDatabase() throws ReadOnlyWorkerException, IllegalRequestException {
         removeWorker(WORKERID_SERVICE);
         removeWorker(WORKERID_CRYPTOWORKER1);
         removeWorker(WORKERID_CRYPTOWORKER2);

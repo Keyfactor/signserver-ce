@@ -100,19 +100,24 @@ public class Worker {
         this.hasCrypto = hasCrypto;
     }
 
-    public String getImageName() {
+    public String getImageName(boolean isReadOnly) {
         final String result;
         if (cryptoWorker) {
-            result = "cryptoworker-small.png";
+            result = "cryptoworker-small";
         } else if (hasCrypto) {
-            result = "workerwithcrypto-small.png";
+            result = "workerwithcrypto-small";
         } else {
-            result = "worker-small.png";
+            result = "worker-small";
         }
-        return result;
+
+        if (isReadOnly) {
+            return result + "-readonly.png";
+        }
+
+        return result + ".png";
     }
 
-    public String getImageAlt() {
+    public String getImageAlt(boolean isReadOnly) {
         final String result;
         if (cryptoWorker) {
             result = "Crypto Worker";
@@ -120,6 +125,10 @@ public class Worker {
             result = "Worker with Crypto Token";
         } else {
             result = "Worker";
+        }
+
+        if (isReadOnly) {
+            return "Readonly " + result;
         }
         return result;
     }

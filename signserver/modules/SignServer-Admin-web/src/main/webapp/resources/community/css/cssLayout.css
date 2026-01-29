@@ -736,3 +736,7 @@ tr.dss1_odd {
 .logoutLink {
     background: white;
 }
+
+.install-in-token li {
+    list-style-type: none;
+}

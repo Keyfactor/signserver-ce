@@ -68,6 +68,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.QueryException;
+import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
@@ -259,7 +260,7 @@ public class AdminWebSessionBean {
             final int signerId,
             final byte[] signerCert,
             final String scope)
-            throws IllegalRequestException, AdminNotAuthorizedException {
+            throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "uploadSignerCertificate", String.valueOf(signerId));
         
         try {
@@ -275,7 +276,7 @@ public class AdminWebSessionBean {
             final int signerId,
             final List<byte[]> signerCerts,
             final String scope)
-                throws IllegalRequestException, AdminNotAuthorizedException {
+            throws IllegalRequestException, AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "uploadSignerCertificateChain", String.valueOf(signerId));
         
         try {
@@ -294,7 +295,7 @@ public class AdminWebSessionBean {
             final String alias,
             final String authCode)
             throws CryptoTokenOfflineException, CertificateException,
-                   OperationUnsupportedException, AdminNotAuthorizedException {
+            OperationUnsupportedException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
                 auth.requireAdminAuthorization(principal, "importCertificateChain",
                                           String.valueOf(workerId), String.valueOf(alias));
@@ -543,7 +544,7 @@ public class AdminWebSessionBean {
             final AdminPrincipal principal,
             final int workerId,
             final AuthorizedClient authClient)
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "addAuthorizedClient", 
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
@@ -555,7 +556,7 @@ public class AdminWebSessionBean {
             final AdminPrincipal principal,
             final int workerId,
             final CertificateMatchingRule authClient)
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "addAuthorizedClientGen2", authClient.toString());
         
         worker.addAuthorizedClientGen2(adminInfo, workerId, authClient);
@@ -565,7 +566,7 @@ public class AdminWebSessionBean {
             final AdminPrincipal principal,
             final int workerId,
             final AuthorizedClient authClient) 
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeAuthorizedClient",
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
@@ -577,7 +578,7 @@ public class AdminWebSessionBean {
             final AdminPrincipal principal,
             final int workerId,
             final CertificateMatchingRule authClient) 
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeAuthorizedClientGen2",authClient.toString());
         
         return worker.removeAuthorizedClientGen2(adminInfo, workerId, authClient);
@@ -733,7 +734,7 @@ public class AdminWebSessionBean {
         return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
     }
 
-    public void setWorkerProperty(AdminPrincipal principal, Integer workerId, String key, String value) throws AdminNotAuthorizedException {
+    public void setWorkerProperty(AdminPrincipal principal, Integer workerId, String key, String value) throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "setWorkerProperty",
                 String.valueOf(workerId), key);
 
@@ -743,7 +744,7 @@ public class AdminWebSessionBean {
     public boolean removeWorkerProperty(AdminPrincipal principal,
             final int workerId,
             final String key)
-            throws AdminNotAuthorizedException {
+            throws AdminNotAuthorizedException, ReadOnlyWorkerException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "removeWorkerProperty",
                 String.valueOf(workerId), key);
         

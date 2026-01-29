@@ -47,6 +47,7 @@ import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.util.PropertiesConstants;
+import org.signserver.common.util.ReadOnlyUtils;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
@@ -119,6 +120,8 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     EntityManager em;
 
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
+
+    private final Set<Integer> readOnlyWorkers = CompileTimeSettings.getInstance().getReadOnlyWorkers();
 
     @PostConstruct
     public void create() {
@@ -636,7 +639,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public void updateWorkerProperties(int workerId,
                                        Map<String, String> propertiesAndValues,
-                                       List<String> propertiesToRemove) {
+                                       List<String> propertiesToRemove) throws ReadOnlyWorkerException {
         updateWorkerProperties(new AdminInfo("CLI user", null, null), workerId,
                                propertiesAndValues, propertiesToRemove);
     }
@@ -644,8 +647,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public void updateWorkerProperties(AdminInfo adminInfo, int workerId,
                                        Map<String, String> propertiesAndValues,
-                                       List<String> propertiesToRemove) {
-
+                                       List<String> propertiesToRemove) throws ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + workerId + " is read-only");
+        }
         WorkerConfig config = getWorkerConfig(workerId);
 
         
@@ -673,7 +678,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     @Override
     public void addUpdateDeleteWorkerProperties(int workerId, Map<String, String> propertiesAndValues,
-                                                List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException {
+                                                List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException, ReadOnlyWorkerException {
         addUpdateDeleteWorkerProperties(new AdminInfo("CLI user", null, null), workerId,
                 propertiesAndValues, propertiesToRemove);
     }
@@ -681,11 +686,16 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public void addUpdateDeleteWorkerProperties(AdminInfo adminInfo, int workerId,
                                                 final Map<String, String> propertiesAndValues,
-                                                final List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException {
+                                                final List<String> propertiesToRemove) throws NoSuchWorkerException, WorkerExistsException, ReadOnlyWorkerException {
         if (!isWorkerExists(workerId)) {
             LOG.debug("No such worker: " + workerId);
             throw new NoSuchWorkerException(String.valueOf(workerId));
         }
+
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + workerId + " is read-only");
+        }
+
         WorkerConfig config = getWorkerConfig(workerId);
 
         if (propertiesAndValues.containsKey("NAME")
@@ -723,11 +733,16 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
-    public void replaceWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws NoSuchWorkerException, WorkerExistsException {
+    public void replaceWorkerProperties(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws NoSuchWorkerException, WorkerExistsException, ReadOnlyWorkerException {
         if (!isWorkerExists(workerId)) {
             LOG.debug("No such worker: " + workerId);
             throw new NoSuchWorkerException(String.valueOf(workerId));
         }
+
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + workerId + " is read-only");
+        }
+
         WorkerConfig config = getWorkerConfig(workerId);
 
         if (propertiesAndValues.containsKey("NAME")
@@ -767,7 +782,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
-    public void setWorkerProperty(int workerId, String key, String value) {
+    public void setWorkerProperty(int workerId, String key, String value) throws ReadOnlyWorkerException {
     	setWorkerProperty(new AdminInfo("CLI user", null, null), workerId, key, value);
     }
 
@@ -775,7 +790,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      * @see org.signserver.ejb.interfaces.WorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
      */
     @Override
-    public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) {
+    public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) throws ReadOnlyWorkerException {
         // Special case for auto-detecting worker type
         if (WorkerConfig.TYPE.equalsIgnoreCase(key) && (value == null || value.trim().isEmpty())) {
             if (LOG.isDebugEnabled()) {
@@ -788,6 +803,11 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 LOG.error("Unable to auto-detect worker type as the worker can not be found: " + ex.getWorkerIdOrName());
             }
         }
+
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + workerId + " is read-only");
+        }
+
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(Locale.ENGLISH), value);
         setWorkerConfig(adminInfo, workerId, config, null, null);
@@ -826,7 +846,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
     
     @Override
-    public boolean removeWorkerProperty(int workerId, String key) {
+    public boolean removeWorkerProperty(int workerId, String key) throws ReadOnlyWorkerException {
     	return removeWorkerProperty(new AdminInfo("CLI user", null, null), workerId, key);
     }
 
@@ -834,7 +854,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      * @see org.signserver.ejb.interfaces.WorkerSession#removeWorkerProperty(int, java.lang.String)
      */
     @Override
-    public boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key) {
+    public boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key) throws ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + workerId + " is read-only");
+        }
         final boolean result;
         WorkerConfig config = getWorkerConfig(workerId);
 
@@ -845,11 +868,16 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
-    public void removeWorker(AdminInfo adminInfo, int workerId) throws NoSuchWorkerException {
+    public void removeWorker(AdminInfo adminInfo, int workerId) throws NoSuchWorkerException, ReadOnlyWorkerException {
         if (!isWorkerExists(workerId)) {
             LOG.debug("No such worker: " + workerId);
             throw new NoSuchWorkerException(String.valueOf(workerId));
         }
+
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + workerId + " is read-only");
+        }
+
         boolean result = workerConfigService.removeWorkerConfig(workerId);
 
         if (result) {
@@ -873,11 +901,16 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
 
     @Override
-    public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws WorkerExistsException {
+    public void addWorker(AdminInfo adminInfo, int workerId, Map<String, String> propertiesAndValues) throws WorkerExistsException, ReadOnlyWorkerException {
         if (isWorkerExists(workerId)) {
             LOG.debug("Worker already exists: " + workerId);
             throw new WorkerExistsException(String.valueOf(workerId));
         }
+
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, workerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker ID " + workerId + " is reserved");
+        }
+
         updateWorkerProperties(adminInfo, workerId, propertiesAndValues, Collections.emptyList());
     }
 
@@ -920,12 +953,12 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
-    public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
+    public void addAuthorizedClient(int signerId, AuthorizedClient authClient) throws ReadOnlyWorkerException {
     	addAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
     @Override
-    public void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
+    public void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) throws ReadOnlyWorkerException {
     	addAuthorizedClientGen2(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
@@ -933,7 +966,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      * @see org.signserver.ejb.interfaces.WorkerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
      */
     @Override
-    public void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient) {
+    public void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient) throws ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, signerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + signerId + " is read-only");
+        }
         WorkerConfig config = getWorkerConfig(signerId);
         config.addAuthorizedClient(authClient);
         setWorkerConfig(adminInfo, signerId, config, "added:authorized_client",
@@ -941,25 +977,31 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
     
     @Override
-    public void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) {
+    public void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) throws ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, signerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + signerId + " is read-only");
+        }
         WorkerConfig config = getWorkerConfig(signerId);
         config.addAuthorizedClientGen2(authClient);
         setWorkerConfig(adminInfo, signerId, config, "added:authorized_client_gen2", authClient.toString());
     }
 
     @Override
-    public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) {
+    public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) throws ReadOnlyWorkerException {
     	return removeAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
     @Override
-    public boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
+    public boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) throws ReadOnlyWorkerException {
     	return removeAuthorizedClientGen2(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
     @Override
     public boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
-            AuthorizedClient authClient) {
+            AuthorizedClient authClient) throws ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, signerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + signerId + " is read-only");
+        }
         boolean result;
         WorkerConfig config = getWorkerConfig(signerId);
 
@@ -972,7 +1014,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     
     @Override
     public boolean removeAuthorizedClientGen2(final AdminInfo adminInfo, int signerId,
-            CertificateMatchingRule authClient) {
+            CertificateMatchingRule authClient) throws ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, signerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + signerId + " is read-only");
+        }
         boolean result;
         WorkerConfig config = getWorkerConfig(signerId);
 
@@ -1242,7 +1287,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     @Override
     public void uploadSignerCertificate(int signerId, byte[] signerCert,
-            String scope) throws CertificateException {
+            String scope) throws CertificateException, ReadOnlyWorkerException {
     	uploadSignerCertificate(new AdminInfo("CLI user", null, null), signerId, signerCert, scope);
     }
 
@@ -1251,9 +1296,12 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      */
     @Override
     public void uploadSignerCertificate(final AdminInfo adminInfo, int signerId, byte[] signerCert,
-            String scope) throws CertificateException {
-        WorkerConfig config = getWorkerConfig(signerId);
+            String scope) throws CertificateException, ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, signerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + signerId + " is read-only");
+        }
 
+        WorkerConfig config = getWorkerConfig(signerId);
         final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
         config.setSignerCertificate((X509Certificate)cert,scope);
         setWorkerConfig(adminInfo, signerId, config, null, null);
@@ -1263,7 +1311,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     @Override
     public void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope)
-    	throws CertificateException {
+            throws CertificateException, ReadOnlyWorkerException {
     	uploadSignerCertificateChain(new AdminInfo("CLI user", null, null), signerId, signerCerts, scope);
     }
     
@@ -1271,8 +1319,11 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      * @see org.signserver.ejb.interfaces.WorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
      */
     @Override
-    public void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) 
-            throws CertificateException {
+    public void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope)
+            throws CertificateException, ReadOnlyWorkerException {
+        if (!ReadOnlyUtils.isModificationAllowed(adminInfo, signerId, readOnlyWorkers)) {
+            throw new ReadOnlyWorkerException("Worker " + signerId + " is read-only");
+        }
 
         WorkerConfig config = getWorkerConfig(signerId);
     	ArrayList<Certificate> certs = new ArrayList<>();
@@ -1296,7 +1347,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                                        final String alias,
                                        final char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
-                   OperationUnsupportedException {
+            OperationUnsupportedException {
         try {
             final List<Certificate> certs = new LinkedList<>();
             
@@ -1337,7 +1388,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                                        final String alias,
                                        final char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
-                   OperationUnsupportedException {
+            OperationUnsupportedException {
         importCertificateChain(new AdminInfo("CLI user", null, null), signerId,
                 signerCerts, alias, authenticationCode);
     }

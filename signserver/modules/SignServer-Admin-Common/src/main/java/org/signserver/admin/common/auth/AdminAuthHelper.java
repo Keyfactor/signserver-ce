@@ -189,10 +189,13 @@ private void log(final OidcAdminPrincipal user,
     }
 
     public boolean isAdminAuthorized(final X509Certificate cert) {
-        String allowAnyWSAdminProp = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
-        final boolean allowAnyWSAdmin = allowAnyWSAdminProp != null ?
-                Boolean.parseBoolean(allowAnyWSAdminProp) : false;
+        String allowAnyWSAdminProp = null;
+        if (CompileTimeSettings.getInstance().getAdminAllowAnyEnabled()) {
+            allowAnyWSAdminProp = global.getGlobalConfiguration().getProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+        }
+
+        final boolean allowAnyWSAdmin = Boolean.parseBoolean(allowAnyWSAdminProp);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("allow any admin: " + allowAnyWSAdmin);

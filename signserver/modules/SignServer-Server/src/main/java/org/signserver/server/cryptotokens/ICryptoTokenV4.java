@@ -48,7 +48,7 @@ import org.signserver.server.IServices;
  * @version $Id$
  */
 public interface ICryptoTokenV4 {
-    
+
     int PURPOSE_SIGN = 1;
     
     int PURPOSE_DECRYPT = 2;
@@ -74,6 +74,15 @@ public interface ICryptoTokenV4 {
     String PARAM_INCLUDE_DUMMYCERTIFICATE = "INCLUDE_DUMMYCERTIFICATE";
 
     String PARAM_REQUEST_SELF_RELEASEABLE_KEY = "REQUEST_SELF_RELEASEABLE_KEY";
+
+    /** Signature algorithm that will be used for signing with the requested key. */
+    String PARAM_SIGNATURE_ALGORITHM = "SIGNATURE_ALGORITHM";
+    
+    /** Boolean flag indicating that the default signature algorithm should be used instead taking from property or cert. */
+    String PARAM_USE_DEFAULT_SIGNATURE_ALGORITHM = "USE_DEFAULT_SIGNATURE_ALGORITHM";
+
+    /** X509Certificate from the configuration of the worker. */
+    String PARAM_SIGNER_CERTIFICATE = "SIGNER_CERTIFICATE";
 
     void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException;
 

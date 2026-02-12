@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import jakarta.persistence.EntityManager;
+import java.security.cert.X509Certificate;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;
@@ -874,7 +875,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     protected ICryptoInstance acquireCryptoInstance(final int purpose, final Request request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
         try {
-            return acquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
+            X509Certificate signerCertificate = config.getSignerCertificate();
+            String signatureAlgorithm = config.getSignatureAlgorithm();
+            HashMap<String, Object> params = new HashMap<>();
+            params.put(ICryptoTokenV4.PARAM_SIGNATURE_ALGORITHM, signatureAlgorithm);
+            params.put(ICryptoTokenV4.PARAM_SIGNER_CERTIFICATE, signerCertificate);
+                    
+            return acquireCryptoInstance(purpose, request, params, context);
         } catch (UnsupportedCryptoTokenParameter ex) {
             throw new SignServerException("Empty list of parameters not supported by crypto token", ex);
         } catch (InvalidAlgorithmParameterException ex) {
@@ -1067,7 +1074,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             throw new CryptoTokenOfflineException("Crypto token not available");
         }
         try {
-            result = token.acquireCryptoInstance(alias, params, context);
+            
+            X509Certificate signerCertificate = config.getSignerCertificate();
+            String signatureAlgorithm = config.getSignatureAlgorithm();
+            HashMap<String, Object> newParams = new HashMap<>(params);
+            if (!params.containsKey(ICryptoTokenV4.PARAM_SIGNATURE_ALGORITHM)) {
+                newParams.put(ICryptoTokenV4.PARAM_SIGNATURE_ALGORITHM, signatureAlgorithm);
+            }
+            if (!params.containsKey(ICryptoTokenV4.PARAM_SIGNER_CERTIFICATE)) {
+                newParams.put(ICryptoTokenV4.PARAM_SIGNER_CERTIFICATE, signerCertificate);
+            }
+
+            result = token.acquireCryptoInstance(alias, newParams, context);
         } catch (NoSuchAliasException ex) {
             throw new CryptoTokenOfflineException("Key not available: " + ex.getMessage());
         }
@@ -1158,7 +1176,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         boolean result = Arrays.equals(keyInToken.getEncoded(), certKeyEncoded);
 
         // It could be one with explicit ECC parameters
-        if (!result && keyInToken.getAlgorithm().contains("EC")) {
+        if (!result && (keyInToken.getAlgorithm().equals("EC") || keyInToken.getAlgorithm().equals("ECDSA"))) {
             if (log.isDebugEnabled()) {
                 log.debug("Trying to convert to key with explicit ECC parameters");
             }

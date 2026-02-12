@@ -153,6 +153,19 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_SLHDSA_SHAKE_256F,
             AlgorithmConstants.SIGALG_SLHDSA_SHAKE_256S
     ));
+    /** Composite signature algorithms supported by an ML-DSA and RSA/ECDSA key combination **/
+    public static List<String> SIG_ALGS_COMPOSITE = List.of(
+            AlgorithmConstants.SIGALG_MLDSA44_RSA2048_PSS_SHA256,
+            AlgorithmConstants.SIGALG_MLDSA65_RSA3072_PSS_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA65_RSA4096_PSS_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_RSA3072_PSS_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_RSA4096_PSS_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA44_ECDSA_P256_SHA256,
+            AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P256_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P384_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P384_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512
+    );
 
     /**
      * Gets the name of matching key algorithm from a public key as defined by
@@ -364,6 +377,8 @@ public abstract class AlgorithmTools {
                     result = "SLH-DSA";
                 } else if (keyAlg.startsWith("ML-DSA")) {
                     result = "ML-DSA";
+                } else if (keyAlg.startsWith("MLDSA")) {
+                    result = keyAlg;
                 } else {
                     result = "SHA256withRSA";
                 }

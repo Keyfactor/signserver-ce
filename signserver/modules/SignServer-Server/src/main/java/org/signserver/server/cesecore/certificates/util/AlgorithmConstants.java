@@ -63,6 +63,17 @@ public final class AlgorithmConstants {
     public static final String SIGALG_SLHDSA_SHAKE_192S        = "SLH-DSA-SHAKE-192S";
     public static final String SIGALG_SLHDSA_SHAKE_256F        = "SLH-DSA-SHAKE-256F";
     public static final String SIGALG_SLHDSA_SHAKE_256S        = "SLH-DSA-SHAKE-256S";
+    // Below are constants for composite certificates
+    public static final String SIGALG_MLDSA44_RSA2048_PSS_SHA256      = "MLDSA44-RSA2048-PSS-SHA256";
+    public static final String SIGALG_MLDSA65_RSA3072_PSS_SHA512      = "MLDSA65-RSA3072-PSS-SHA512";
+    public static final String SIGALG_MLDSA65_RSA4096_PSS_SHA512      = "MLDSA65-RSA4096-PSS-SHA512";
+    public static final String SIGALG_MLDSA87_RSA3072_PSS_SHA512      = "MLDSA87-RSA3072-PSS-SHA512";
+    public static final String SIGALG_MLDSA87_RSA4096_PSS_SHA512      = "MLDSA87-RSA4096-PSS-SHA512";
+    public static final String SIGALG_MLDSA44_ECDSA_P256_SHA256       = "MLDSA44-ECDSA-P256-SHA256";
+    public static final String SIGALG_MLDSA65_ECDSA_P256_SHA512       = "MLDSA65-ECDSA-P256-SHA512";
+    public static final String SIGALG_MLDSA65_ECDSA_P384_SHA512       = "MLDSA65-ECDSA-P384-SHA512";
+    public static final String SIGALG_MLDSA87_ECDSA_P384_SHA512       = "MLDSA87-ECDSA-P384-SHA512";
+    public static final String SIGALG_MLDSA87_ECDSA_P521_SHA512       = "MLDSA87-ECDSA-P521-SHA512";
 
 
     /**

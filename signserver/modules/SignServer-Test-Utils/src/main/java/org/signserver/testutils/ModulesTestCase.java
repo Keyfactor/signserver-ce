@@ -760,6 +760,30 @@ public class ModulesTestCase {
         addTimeStampSigner(signerId, signerName, KEYSTORE_TSSIGNER1_ALIAS, autoActivate);
     }
 
+    public void addTimeStampSignerNoToken(final int signerId, final String signerName) throws ReadOnlyWorkerException {
+        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
+        getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", "org.signserver.module.tsa.TimeStampSigner");
+        getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+        getWorkerSession().setWorkerProperty(signerId, "ACCEPTANYPOLICY", "true");
+        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(signerId, "TYPE", "PROCESSABLE");
+        getWorkerSession().setWorkerProperty(signerId, "VERIFY_TOKEN_SIGNATURE", "true");
+
+        getWorkerSession().reloadConfiguration(signerId);
+    }
+
+    public void addKeyStoreCrypto(final int workerId, final String workerName, final String keystorePath, final String authcode) throws ReadOnlyWorkerException {
+        getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystorePath);
+        getWorkerSession().setWorkerProperty(workerId, "IMPLEMENTATION_CLASS", "org.signserver.server.signers.CryptoWorker");
+        getWorkerSession().setWorkerProperty(workerId, "KEYSTORETYPE", "PKCS12");
+        getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPASSWORD", authcode);
+        getWorkerSession().setWorkerProperty(workerId, "TYPE", "CRYPTO_WORKER");
+        getWorkerSession().setWorkerProperty(workerId, "CRYPTOTOKEN_IMPLEMENTATION_CLASS", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        getWorkerSession().setWorkerProperty(workerId, "NAME", workerName);
+
+        getWorkerSession().reloadConfiguration(workerId);
+    }
+
     public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
         addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }

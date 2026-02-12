@@ -155,14 +155,14 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
                             rsaKey.getPublicExponent().toString(10));
                 }
                 info.put(INFO_KEY_SIGNINGS, String.valueOf(CryptoTokenHelper.getNoOfSignings(pubKey, services)));
-            }
-            try {
-                entry.setParsedChain(chain);
-            } catch (CertificateEncodingException ex) {
-                info.put("Error", ex.getMessage());
-                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
-            }
 
+                try {
+                    entry.setParsedChain(chain);
+                } catch (CertificateEncodingException ex) {
+                    info.put("Error", ex.getMessage());
+                    LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                }
+            }
         } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
             Certificate certificate = keystore.getCertificate(keyAlias);
             try {

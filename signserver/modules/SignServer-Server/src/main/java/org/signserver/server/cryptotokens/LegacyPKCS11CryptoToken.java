@@ -420,7 +420,7 @@ public class LegacyPKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
         final KeyStore keyStore = delegate.getActivatedKeyStore();
-        return CryptoTokenHelper.testKey(keystoreDelegator, alias, authCode, keyStore.getProvider().getName(), signatureAlgorithm);
+        return CryptoTokenHelper.testKey(keystoreDelegator, alias, authCode, keyStore.getProvider().getName(), signatureAlgorithm, null);
     }
 
     @Override
@@ -558,7 +558,7 @@ public class LegacyPKCS11CryptoToken extends BaseCryptoToken {
         if (keystoreDelegator == null) {
             throw new CryptoTokenOfflineException("Crypto token not activated");
         }
-        return CryptoTokenHelper.searchTokenEntries(keystoreDelegator, startIndex, max, qc, includeData, services, null);
+        return CryptoTokenHelper.searchTokenEntries(keystoreDelegator, startIndex, max, qc, includeData, services, null, null);
     }
 
     @Override

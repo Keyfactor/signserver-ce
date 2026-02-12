@@ -109,6 +109,8 @@ dist-*/
 /doc/sample-configs/ades.properties
 /doc/sample-configs/fortanix-*
 /doc/sample-configs/managed-*.properties
+/doc/sample-configs/simple-cert-signer*.properties
+/doc/sample-configs/composite-*.properties
 
 /res/test/test-zone-file-server-side-signer.properties
 

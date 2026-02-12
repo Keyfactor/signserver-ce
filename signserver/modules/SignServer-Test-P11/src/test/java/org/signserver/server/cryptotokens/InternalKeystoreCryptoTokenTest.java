@@ -149,7 +149,7 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
         try {
             crypto = instance.acquireCryptoInstance(alias, Collections.<String, Object>emptyMap(), context);
             return crypto.getCertificateChain();
-        } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | NoSuchAliasException ex) {
+        } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | NoSuchAliasException | SignServerException ex) {
             throw new CryptoTokenOfflineException(ex);
         } finally {
             if (crypto != null) {

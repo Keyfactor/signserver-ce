@@ -1278,4 +1278,26 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     private void destroyKey() throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         getWorkerSession().removeKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), "testsecretkey");
     }
+    
+    /**
+     * Tests generating CSR using a MLDSA87-RSA3072-PSS-SHA512 key.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateCSRContainingCompositeKey() throws Exception {
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            generateKey("COMPOSITE", "MLDSA87-RSA3072-PSS-SHA512", "key-COMPOSITE");
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("MLDSA87-RSA3072-PSS-SHA512",
+                    "CN=test01GenerateKey,C=SE", null);
+            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "key-COMPOSITE");
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+    
 }

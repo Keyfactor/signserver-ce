@@ -18,7 +18,6 @@ import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -90,6 +89,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     private Integer keygenerationLimit;
     
     private KeyStoreDelegator delegator;
+    private final CompositeHelper composites = new CompositeHelper(this);
 
     @Override
     public void init(int workerId, Properties properties, IServices services) throws CryptoTokenInitializationFailureException {
@@ -335,7 +335,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             final char[] authCode,
             final IServices services) throws CryptoTokenOfflineException,
             KeyStoreException {
-        return CryptoTokenHelper.testKey(this.delegator, alias, authenticationCode, "BC", signatureAlgorithm);
+        return CryptoTokenHelper.testKey(this.delegator, alias, authenticationCode, "BC", signatureAlgorithm, composites);
     }
 
     @Override
@@ -347,112 +347,117 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             throw new CryptoTokenOfflineException("PKCS#12 keystore invalid - wrong password or corrupted file?");
         }
 
-        return CryptoTokenHelper.searchTokenEntries(this.delegator, startIndex, max, qc, includeData, services, authenticationCode);
+        return CryptoTokenHelper.searchTokenEntries(this.delegator, startIndex, max, qc, includeData, services, authenticationCode, composites);
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
-            final KeyStore keystore = getKeyStore();
-
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
-
-            String sigAlgName = null;
-
-            if ("ECDSA".equals(keyAlgorithm)) {
-                kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
-            } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
-                try {
-                    AlgorithmParameterSpec algorithmParameterSpec = SLHDSAParameterSpec.fromName(keySpec);
-                    sigAlgName = keySpec;
-                    kpg.initialize(algorithmParameterSpec, new SecureRandom());
-                } catch (IllegalArgumentException ex) {
-                    throw new InvalidAlgorithmParameterException("Unsupported key specification for SLH-DSA: " + keySpec);
+            if (!composites.generateKey(keyAlgorithm, keySpec, alias, authCode, params, services)) {
+                if ("COMPOSITE".equalsIgnoreCase(keyAlgorithm)) {
+                    throw new InvalidAlgorithmParameterException("Native composites not supported by crypto token. Please use \"-COMPOSITE\" suffix.");
                 }
-            } else if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
-                AlgorithmParameterSpec algorithmParameterSpec;
-                switch (keySpec.toUpperCase(Locale.ENGLISH)) {
-                    case "ML-DSA-44":
-                        algorithmParameterSpec = MLDSAParameterSpec.ml_dsa_44;
-                        sigAlgName = "ML-DSA-44";
-                        break;
-                    case "ML-DSA-65":
-                        algorithmParameterSpec = MLDSAParameterSpec.ml_dsa_65;
-                        sigAlgName = "ML-DSA-65";
-                        break;
-                    case "ML-DSA-87":
-                        algorithmParameterSpec = MLDSAParameterSpec.ml_dsa_87;
-                        sigAlgName = "ML-DSA-87";
-                        break;
-                    default:
-                        throw new InvalidAlgorithmParameterException("Unsupported key specification for ML-DSA: " + keySpec);
-                }
-                    kpg.initialize(algorithmParameterSpec, new SecureRandom());
-            } else {
-                if ("RSA".equals(keyAlgorithm) && keySpec.contains("exp")) {
-                    final AlgorithmParameterSpec spec =
-                            CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec);
-                    kpg.initialize(spec);
-                } else {
-                    kpg.initialize(Integer.valueOf(keySpec));
-                }
-            }
 
-            if (sigAlgName == null) {
-                sigAlgName = "SHA1With" + keyAlgorithm;
-            }
-
-            LOG.debug("generating...");
-            final KeyPair keyPair = kpg.generateKeyPair();
-            Certificate[] chain = new Certificate[1];
-            chain[0] = CryptoTokenHelper.createDummyCertificate(alias, sigAlgName, keyPair, "BC");
-            LOG.debug("Creating certificate with entry "+alias+'.');
-
-            keystore.setKeyEntry(alias, keyPair.getPrivate(), authenticationCode, chain);
-
-            // TODO: Future optimization: we don't need to regenerate if we create it right from the beginning a few lines up!
-            if (params != null) {
-                if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
-                    CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BC");
-                } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
-                    CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BC");
-                } else {
-                    CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, keystore.getProvider().getName());
-                }
-            }
-            
-            final OutputStream os;
-            
-            if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
-                os = new ByteArrayOutputStream();
-            } else {
-                os = new FileOutputStream(new File(keystorepath));
-            }
-            
-            keystore.store(os, authenticationCode);
-            
-            if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
-                final ByteArrayOutputStream baos = (ByteArrayOutputStream) os;
+                final KeyStore keystore = getKeyStore();
                 
-                final WorkerSessionLocal workerSessionLocal = services.get(WorkerSessionLocal.class);
-                if (workerSessionLocal == null) {
-                    throw new IllegalStateException("No WorkerSession available");
+                final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
+
+                String sigAlgName = null;
+
+                if ("ECDSA".equals(keyAlgorithm)) {
+                    kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
+                } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
+                    try {
+                        AlgorithmParameterSpec algorithmParameterSpec = SLHDSAParameterSpec.fromName(keySpec);
+                        sigAlgName = keySpec;
+                        kpg.initialize(algorithmParameterSpec, new SecureRandom());
+                    } catch (IllegalArgumentException ex) {
+                        throw new InvalidAlgorithmParameterException("Unsupported key specification for SLH-DSA: " + keySpec);
+                    }
+                } else if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
+                    AlgorithmParameterSpec algorithmParameterSpec;
+                    switch (keySpec.toUpperCase(Locale.ENGLISH)) {
+                        case "ML-DSA-44":
+                            algorithmParameterSpec = MLDSAParameterSpec.ml_dsa_44;
+                            sigAlgName = "ML-DSA-44";
+                            break;
+                        case "ML-DSA-65":
+                            algorithmParameterSpec = MLDSAParameterSpec.ml_dsa_65;
+                            sigAlgName = "ML-DSA-65";
+                            break;
+                        case "ML-DSA-87":
+                            algorithmParameterSpec = MLDSAParameterSpec.ml_dsa_87;
+                            sigAlgName = "ML-DSA-87";
+                            break;
+                        default:
+                            throw new InvalidAlgorithmParameterException("Unsupported key specification for ML-DSA: " + keySpec);
+                    }
+                        kpg.initialize(algorithmParameterSpec, new SecureRandom());
+                } else {
+                    if ("RSA".equals(keyAlgorithm) && keySpec.contains("exp")) {
+                        final AlgorithmParameterSpec spec =
+                                CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec);
+                        kpg.initialize(spec);
+                    } else {
+                        kpg.initialize(Integer.valueOf(keySpec));
+                    }
                 }
-                workerSessionLocal.setKeystoreData(new AdminInfo("Internal", null, null),
-                        workerId, baos.toByteArray());
+
+                if (sigAlgName == null) {
+                    sigAlgName = "SHA1With" + keyAlgorithm;
+                }
+
+                LOG.debug("generating...");
+                final KeyPair keyPair = kpg.generateKeyPair();
+                Certificate[] chain = new Certificate[1];
+                chain[0] = CryptoTokenHelper.createDummyCertificate(alias, sigAlgName, keyPair, "BC");
+                LOG.debug("Creating certificate with entry "+alias+'.');
+
+                keystore.setKeyEntry(alias, keyPair.getPrivate(), authenticationCode, chain);
+
+                // TODO: Future optimization: we don't need to regenerate if we create it right from the beginning a few lines up!
+                if (params != null) {
+                    if ("ML-DSA".equalsIgnoreCase(keyAlgorithm)) {
+                        CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BC");
+                    } else if ("SLH-DSA".equalsIgnoreCase(keyAlgorithm)) {
+                        CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, "BC");
+                    } else {
+                        CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, keystore.getProvider().getName());
+                    }
+                }
+
+                final OutputStream os;
+
+                if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                    os = new ByteArrayOutputStream();
+                } else {
+                    os = new FileOutputStream(new File(keystorepath));
+                }
+
+                keystore.store(os, authenticationCode);
+
+                if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                    final ByteArrayOutputStream baos = (ByteArrayOutputStream) os;
+
+                    final WorkerSessionLocal workerSessionLocal = services.get(WorkerSessionLocal.class);
+                    if (workerSessionLocal == null) {
+                        throw new IllegalStateException("No WorkerSession available");
+                    }
+                    workerSessionLocal.setKeystoreData(new AdminInfo("Internal", null, null),
+                            workerId, baos.toByteArray());
+                }
+
+                final KeyEntry entry = new KeyEntry((PrivateKey) keyPair.getPrivate(), 
+                                    chain[0], Arrays.asList(chain));
+
+                // If this is the first entry
+                entries.put(alias, entry);
+                if (properties.getProperty(DEFAULTKEY) == null) {
+                    properties.setProperty(DEFAULTKEY, alias);
+                    entries.put(ICryptoTokenV4.PURPOSE_SIGN, entry);
+                    entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
+                }
             }
-
-            final KeyEntry entry = new KeyEntry((PrivateKey) keyPair.getPrivate(), 
-                                chain[0], Arrays.asList(chain));
-
-            // If this is the first entry
-            entries.put(alias, entry);
-            if (properties.getProperty(DEFAULTKEY) == null) {
-                properties.setProperty(DEFAULTKEY, alias);
-                entries.put(ICryptoTokenV4.PURPOSE_SIGN, entry);
-                entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
-            }
-
-        } catch (UnsupportedOperationException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | NumberFormatException | OperatorCreationException | CertificateException | IOException | IllegalStateException | UnrecoverableKeyException ex) {
+        } catch (UnsupportedOperationException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | NumberFormatException | OperatorCreationException | CertificateException | IOException | IllegalStateException | UnrecoverableKeyException | TokenOutOfSpaceException | DuplicateAliasException | UnsupportedCryptoTokenParameter ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -628,14 +633,18 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Alias: " + keyAlias);
         }
-        try {
-            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias, services), "BC", getPublicKey(keyAlias, services), explicitEccParameters);
-        } catch (IllegalArgumentException ex) {
-            if (LOG.isDebugEnabled()) {
-                LOG.error("Certificate request error", ex);
+        ICertReqData result = composites.genCertificateRequest(info, explicitEccParameters, keyAlias, services).orElse(null);
+        if (result == null) {
+            try {
+                result = CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias, services), "BC", getPublicKey(keyAlias, services), explicitEccParameters);
+            } catch (IllegalArgumentException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.error("Certificate request error", ex);
+                }
+                throw new CryptoTokenOfflineException(ex.getMessage(), ex);
             }
-            throw new CryptoTokenOfflineException(ex.getMessage(), ex);
         }
+        return result;
     }
 
     @Override
@@ -703,21 +712,28 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             NoSuchAliasException, 
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
-            IllegalRequestException {
-        final boolean includeDummyCertificate = params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE);
-        final KeyEntry entry = getKeyEntry(alias, context.getServices());
-        final Provider provider;
-            provider = ks.getProvider();
-        if ((entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) && !includeDummyCertificate) {
-            return new DefaultCryptoInstance(alias, context, provider, entry.getPrivateKey(), entry.getCertificateChain().get(0).getPublicKey());
-        } else {
-            return new DefaultCryptoInstance(alias, context, provider, entry.getPrivateKey(), entry.getCertificateChain());
+            IllegalRequestException,
+            SignServerException {
+        ICryptoInstance result = composites.acquireCryptoInstance(alias, params, context).orElse(null);
+        if (result == null) {
+            final boolean includeDummyCertificate = params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE);
+            final KeyEntry entry = getKeyEntry(alias, context.getServices());
+            final Provider provider;
+                provider = ks.getProvider();
+            if ((entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) && !includeDummyCertificate) {
+                result = new DefaultCryptoInstance(alias, context, provider, entry.getPrivateKey(), entry.getCertificateChain().get(0).getPublicKey());
+            } else {
+                result = new DefaultCryptoInstance(alias, context, provider, entry.getPrivateKey(), entry.getCertificateChain());
+            }
         }
+        return result;
     }
 
     @Override
     public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
-        // NOP
+        if (!composites.releaseCryptoInstance(instance, context)) {
+            // NOP
+        }
     }
 
     private static class KeyEntry {

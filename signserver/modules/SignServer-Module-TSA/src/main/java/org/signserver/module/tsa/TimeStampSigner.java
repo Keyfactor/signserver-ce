@@ -80,6 +80,7 @@ import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.common.data.SignatureRequest;
@@ -278,7 +279,6 @@ public class TimeStampSigner extends BaseSigner {
         }
     }
 
-    private static final String DEFAULT_SIGNATURE_ALGORITHM = "SHA256withRSA";
     private static final String DEFAULT_CERTIFICATE_DIGEST_ALGORITHM = "SHA256";
 
     private ITimeSource timeSource = null;
@@ -341,7 +341,7 @@ public class TimeStampSigner extends BaseSigner {
         }
 
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_SIGNATURE_ALGORITHM);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
 
         /* defaultDigestOID =
             config.getProperties().getProperty(DEFAULTDIGESTOID);
@@ -989,8 +989,9 @@ public class TimeStampSigner extends BaseSigner {
             DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();
             DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(certificateDigestAlgorithm));
 
+            final String sigAlg = signatureAlgorithm == null ? AlgorithmTools.getDefaultSignatureAlgorithm(crypto.getPublicKey()) : signatureAlgorithm;
             ContentSigner cs =
-            		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
+            		new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
             JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
             X509CertificateHolder certHolder = new X509CertificateHolder(signingCert.getEncoded());
 

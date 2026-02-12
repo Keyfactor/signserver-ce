@@ -32,7 +32,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
-import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.*;
 import javax.security.auth.x500.X500Principal;
@@ -42,7 +41,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.operator.BufferingContentSigner;
 import org.bouncycastle.operator.ContentSigner;
@@ -292,7 +290,7 @@ public class CryptoTokenHelper {
      * @return The results for each key found
      * @throws CryptoTokenOfflineException In case the key could not be used
      */
-    public static Collection<KeyTestResult> testKey(KeyStoreDelegator keyStore, String alias, char[] authCode, String signatureProvider, String signatureAlgorithm) throws CryptoTokenOfflineException {
+    public static Collection<KeyTestResult> testKey(KeyStoreDelegator keyStore, String alias, char[] authCode, String signatureProvider, String signatureAlgorithm, CompositeHelper compositeHelper) throws CryptoTokenOfflineException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("testKey for alias: " + alias);
         }
@@ -301,18 +299,24 @@ public class CryptoTokenHelper {
 
         try {
             if (alias.equalsIgnoreCase(ICryptoTokenV4.ALL_KEYS)) {
-            
-                for (final TokenEntry entry : keyStore.getEntries()) {
+                final List<TokenEntry> entries = compositeHelper == null ? keyStore.getEntries() : compositeHelper.addCompositeEntries(keyStore.getEntries(), false);
+
+                for (final TokenEntry entry : entries) {
                     final String keyAlias = entry.getAlias();
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("checking keyAlias: " + keyAlias);
                     }
 
-                    if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(entry.getType())) {
+                    if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(keyAlias)) {
                         result.add(new KeyTestResult(keyAlias, false, "Not testing keys with alias: " + keyAlias + ". Not a private key.", null));
                     } else if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(entry.getType())) {
-                        result.add(testPrivateKey(keyStore, keyAlias, authCode, signatureProvider, signatureAlgorithm));
+                        
+                        if (compositeHelper != null && compositeHelper.isCompositeAlias(entry.getAlias())) {
+                            result.add(compositeHelper.testKey(keyStore, keyAlias, authCode, signatureProvider, signatureAlgorithm));
+                        } else {
+                            result.add(testPrivateKey(keyStore, keyAlias, authCode, signatureProvider, signatureAlgorithm));
+                        }
                     } else {
                         result.add(new KeyTestResult(keyAlias, false, "No such key: " + keyAlias, null));
                     }
@@ -321,10 +325,14 @@ public class CryptoTokenHelper {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("checking keyAlias: " + alias);
                 }
-                if (!keyStore.containsAlias(alias)) {
-                    result.add(new KeyTestResult(alias, false, "No such key: " + alias, null));
+                if (compositeHelper != null && compositeHelper.isCompositeAlias(alias)) {
+                    result.add(compositeHelper.testKey(keyStore, alias, authCode, signatureProvider, signatureAlgorithm));
                 } else {
-                    result.add(testPrivateKey(keyStore, alias, authCode, signatureProvider, signatureAlgorithm));
+                    if (!keyStore.containsAlias(alias)) {
+                        result.add(new KeyTestResult(alias, false, "No such key: " + alias, null));
+                    } else {
+                        result.add(testPrivateKey(keyStore, alias, authCode, signatureProvider, signatureAlgorithm));
+                    }
                 }
             }
         } catch (KeyStoreException ex) {
@@ -647,12 +655,12 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().setProvider("BC").getCertificate(cg.build(new BufferingContentSigner(contentSigner)));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStoreDelegator keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {
+    public static TokenSearchResults searchTokenEntries(final KeyStoreDelegator keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode, CompositeHelper compositeHelper) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
 
-            final List<TokenEntry> entries = keyStore.getEntries();
+            final List<TokenEntry> entries = compositeHelper == null ? keyStore.getEntries() : compositeHelper.addCompositeEntries(keyStore.getEntries(), includeData);
             final List<TokenEntry> filteredEntries = new LinkedList<>();
             
             for (final TokenEntry entry : entries) {

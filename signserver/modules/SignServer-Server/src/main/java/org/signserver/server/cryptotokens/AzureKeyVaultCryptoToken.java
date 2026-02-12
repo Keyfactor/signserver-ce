@@ -285,7 +285,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
-        return CryptoTokenHelper.testKey(keystoreDelegator, alias, authCode, delegate.getSignProviderName(), signatureAlgorithm);
+        return CryptoTokenHelper.testKey(keystoreDelegator, alias, authCode, delegate.getSignProviderName(), signatureAlgorithm, null);
     }
 
     @Override
@@ -390,7 +390,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         if (keystoreDelegator == null) {
             throw new CryptoTokenOfflineException("Crypto token not activated");
         }
-        return CryptoTokenHelper.searchTokenEntries(keystoreDelegator, startIndex, max, qc, includeData, services, null);
+        return CryptoTokenHelper.searchTokenEntries(keystoreDelegator, startIndex, max, qc, includeData, services, null, null);
     }
 
     @Override

@@ -67,7 +67,10 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     // Constants that can be used to configure a Signer
     public static final String SIGNERPROPERTY_SIGNATUREALGORITHM = ".signaturealgorithm";
     public static final String PROPERTY_AUTHTYPE = "AUTHTYPE";
-    
+
+    /** Worker property for the signature algorithm. */
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+
     /**
      * Constants used to specify the authtype for a signer
      */
@@ -743,5 +746,12 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public void setKeystoreData(final byte[] keystoreData) {
         getData().put(KEYSTORE_DATA, new String(Base64.encode(keystoreData)));
+    }
+
+    /**
+     * @return The SIGNATUREALGORIHTM worker property
+     */
+    public String getSignatureAlgorithm() {
+        return getProperty(SIGNATUREALGORITHM);
     }
 }

@@ -21,16 +21,31 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathBuilder;
+import java.security.cert.CertPathValidator;
+import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.PKIXBuilderParameters;
+import java.security.cert.PKIXCertPathBuilderResult;
+import java.security.cert.PKIXCertPathValidatorResult;
+import java.security.cert.PKIXParameters;
+import java.security.cert.TrustAnchor;
+import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import org.apache.commons.cli.*;
@@ -44,7 +59,9 @@ import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.cert.AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -52,6 +69,7 @@ import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.util.CertTools;
 import org.signserver.cli.CommandLineInterface;
@@ -114,6 +132,8 @@ public class TimeStampCommand extends AbstractCommand {
 
     private String signerfilestring;
 
+    private String caFileString;
+
     private String digestalgorithm;
 
     private boolean base64;
@@ -175,6 +195,12 @@ public class TimeStampCommand extends AbstractCommand {
         final Option cafileopt = OptionBuilder.create("signerfile");
 
         OptionBuilder.hasArg();
+        OptionBuilder.withArgName("cafile");
+        OptionBuilder.withDescription("Input file containing one or multiple PEM encoded "
+                + "certificates that will be used as trustanchors for certificate chain validation.");
+        final Option cafile = OptionBuilder.create("cafile");
+
+        OptionBuilder.hasArg();
         OptionBuilder.withArgName("file");
         OptionBuilder.withDescription("Output file to store the sent TSA "
                 + "request, if not given the request is not stored.");
@@ -227,6 +253,7 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(outrep);
         options.addOption(inrep);
         options.addOption(cafileopt);
+        options.addOption(cafile);
         options.addOption(outreq);
         options.addOption(b64);
         options.addOption(infile);
@@ -293,6 +320,9 @@ public class TimeStampCommand extends AbstractCommand {
             }
             if (cmd.hasOption("signerfile")) {
                 signerfilestring = cmd.getOptionValue("signerfile");
+            }
+            if (cmd.hasOption("cafile")) {
+                caFileString = cmd.getOptionValue("cafile");
             }
             if (cmd.hasOption("outreq")) {
                 outreqstring = cmd.getOptionValue("outreq");
@@ -366,8 +396,7 @@ public class TimeStampCommand extends AbstractCommand {
                     }
                 }
 
-                run();
-                return CommandLineInterface.RETURN_SUCCESS;
+                return run();
             }
         } catch (ParseException e) {
             // oops, something went wrong
@@ -389,17 +418,18 @@ public class TimeStampCommand extends AbstractCommand {
         return new DefaultConsolePasswordReader();
     }
 
-    private void run() throws Exception {
+    private int run() throws Exception {
         // Take start time
         final long startTime = System.nanoTime();
+        final int statusCode;
 
         if (print) {
-            tsaPrint();
+            statusCode = tsaPrint();
         }
         else if (verify) {
-            tsaVerify();
+            statusCode = tsaVerify();
         } else {
-            tsaRequest();
+            statusCode = tsaRequest();
         }
 
         // Take stop time
@@ -407,18 +437,20 @@ public class TimeStampCommand extends AbstractCommand {
 
         LOG.info("Processing took "
                 + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+
+        return statusCode;
     }
 
-    private void tsaPrint() throws Exception {
+    private int tsaPrint() throws Exception {
 
         if (inrepstring == null) {
-            tsaPrintQuery();
+            return tsaPrintQuery();
         } else {
-            tsaPrintReply();
+            return tsaPrintReply();
         }
     }
 
-    private void tsaPrintReply() throws Exception {
+    private int tsaPrintReply() throws Exception {
         final byte[] bytes = readFiletoBuffer(inrepstring);
 
         TimeStampResponse response = null;
@@ -533,6 +565,8 @@ public class TimeStampCommand extends AbstractCommand {
             }
         }
         out.println("}");
+
+        return CommandLineInterface.RETURN_SUCCESS;
     }
 
     private void printQualifiedStatement(final Extension extension)
@@ -573,7 +607,7 @@ public class TimeStampCommand extends AbstractCommand {
         }
     }
 
-    private void tsaPrintQuery() throws Exception {
+    private int tsaPrintQuery() throws Exception {
         final byte[] bytes = readFiletoBuffer(inreqstring);
 
         final TimeStampRequest request;
@@ -613,6 +647,7 @@ public class TimeStampCommand extends AbstractCommand {
         }
 
         out.println("}");
+        return CommandLineInterface.RETURN_SUCCESS;
     }
 
     private static class InvertedSelector implements Selector {
@@ -636,44 +671,149 @@ public class TimeStampCommand extends AbstractCommand {
 
     }
 
-    private void tsaVerify() throws Exception {
+    private int tsaVerify() throws Exception {
         if (inrepstring == null) {
-            LOG.error("Needs an inrep!");
-        } else if (signerfilestring == null) {
-            LOG.error("Needs a signerfile!");
-        } else {
+            err.println("Needs an inrep!");
+            return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
+        }
+        if ( (signerfilestring == null && caFileString == null) || (signerfilestring != null && caFileString != null) ) {
+            err.println("Need to specify either -signerfile or -cafile");
+            return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
+        }
+
+        X509Certificate signerCertificate = null;
+        byte[] replyBytes = readFiletoBuffer(inrepstring);
+        if (base64) {
+            try {
+                replyBytes = Base64.decode(replyBytes);
+            } catch (DecoderException e) {
+                err.println(e.getMessage());
+                return CommandLineInterface.RETURN_ERROR;
+            }
+        }
+
+        final TimeStampResponse timeStampResponse =
+                new TimeStampResponse(replyBytes);
+        final TimeStampToken token = timeStampResponse.getTimeStampToken();
+
+        if (signerfilestring != null) {
             final Collection<X509Certificate> col =
                     getCertsFromPEM(signerfilestring);
-            final X509Certificate[] list = col.toArray(
-                    new X509Certificate[0]);
-            if (list.length == 0) {
-                LOG.error("No certificate found in file: " + signerfilestring);
-                return;
+            if (!col.isEmpty()) {
+                signerCertificate = col.iterator().next();
+            } else {
+                err.println("No certificate found in file: " + signerfilestring);
+                return CommandLineInterface.RETURN_ERROR;
             }
-
-            final byte[] b64Bytes = readFiletoBuffer(inrepstring);
-            final byte[] replyBytes = Base64.decode(b64Bytes);
-
-            final TimeStampResponse timeStampResponse =
-                    new TimeStampResponse(replyBytes);
-            final TimeStampToken token = timeStampResponse.getTimeStampToken();
-            final SignerInformationVerifier infoVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(list[0]);
-            token.validate(infoVerifier);
-            LOG.info("Token was validated successfully.");
-
-            final TimeStampTokenInfo info = token.getTimeStampInfo();
-            LOG.info("Token was generated on: " + info.getGenTime());
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
-            }
-            final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
-            LOG.info("MessageDigest=" + new String(hexDigest));
         }
+
+        if (caFileString != null) {
+            final Collection<X509Certificate> trustedCertificates =
+                    getCertsFromPEM(caFileString);
+            if (trustedCertificates.isEmpty()) {
+                err.println("No certificate found in file: " + signerfilestring);
+                return CommandLineInterface.RETURN_ERROR;
+            }
+
+            // Set the provided certificate(s) as trust anchor(s)
+            final Set<TrustAnchor> trustAnchors = new HashSet<>();
+            trustedCertificates.forEach((trustedCertificate) -> {
+                trustAnchors.add(new TrustAnchor(trustedCertificate, null));
+            });
+
+            // Store object containing all certificates from timestamp token
+            final Store<X509CertificateHolder> certificateHolderStore = token.getCertificates();
+
+            // Custom selector that matches on all objects that are of type X509CertificateHolder
+            // This selector will be used to fish out all the certificates from the timestamp token
+            final Collection<X509CertificateHolder> certificateHolderCollection = certificateHolderStore.getMatches(new Selector() {
+                @Override
+                public boolean match(Object obj) {
+                    return obj instanceof X509CertificateHolder;
+                }
+
+                @Override
+                public Object clone() {
+                    return null;
+                }
+            });
+
+            // Convert collection of all certificates from timestamp token to list,
+            // also convert from X509CertificateHolder into X509Certificate objects
+            final List<X509Certificate> certList = certificateHolderCollection.stream()
+                    .map(certificateHolder -> {
+                        try {
+                            return new JcaX509CertificateConverter().getCertificate(certificateHolder);
+                        } catch (CertificateException e) {
+                            LOG.error(e.getMessage());
+                        }
+                        return null;
+                    }).collect(Collectors.toList());
+
+            final CertStore certStore = CertStore.getInstance("Collection",
+                    new CollectionCertStoreParameters(certList));
+
+
+            // Extract signer certificate by finding a match of the SignerInformation provided by the timestamp token
+            final SignerInformation si = token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
+            final Collection<X509CertificateHolder> signerCertificateHolderCollection = certificateHolderStore.getMatches(si.getSID());
+
+            final Iterator<X509CertificateHolder> it = signerCertificateHolderCollection.iterator();
+            if (it.hasNext()) {
+                signerCertificate = new JcaX509CertificateConverter().getCertificate(it.next());
+            } else {
+                err.println("No signing certificate found in the timestamp token");
+                return CommandLineInterface.RETURN_ERROR;
+            }
+
+            final X509CertSelector certSelector = new X509CertSelector();
+            certSelector.setCertificate(signerCertificate);
+
+            final PKIXBuilderParameters builderParams =
+                    new PKIXBuilderParameters(trustAnchors, certSelector);
+
+            builderParams.addCertStore(certStore);
+            builderParams.setRevocationEnabled(false);
+            builderParams.setSigProvider("BC");
+
+            final CertPathBuilder builder = CertPathBuilder.getInstance("PKIX", "BC");
+            final PKIXCertPathBuilderResult builderRes = (PKIXCertPathBuilderResult) builder.build(builderParams);
+
+            // Do the validation
+            final CertPath certPath = builderRes.getCertPath();
+            final CertPathValidator validator = CertPathValidator.getInstance("PKIX", "BC");
+
+            final PKIXParameters validationParams = new PKIXParameters(trustAnchors);
+            validationParams.addCertStore(certStore);
+            validationParams.setRevocationEnabled(false);
+            validationParams.setSigProvider("BC");
+
+            PKIXCertPathValidatorResult validationResult =
+                    (PKIXCertPathValidatorResult) validator.validate(certPath, validationParams);
+
+            out.println("Successfully validated chain");
+            out.println(validationResult);
+        }
+
+        // Validate the timestamp token signature
+        final SignerInformationVerifier infoVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(signerCertificate);
+        token.validate(infoVerifier);
+        out.println("Token was validated successfully");
+
+        final TimeStampTokenInfo info = token.getTimeStampInfo();
+        out.println("Token was generated on: " + info.getGenTime());
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Token hash alg: " + info.getMessageImprintAlgOID());
+        }
+        final byte[] hexDigest = Hex.encode(info.getMessageImprintDigest());
+        out.println("MessageDigest=" + new String(hexDigest));
+
+        return CommandLineInterface.RETURN_SUCCESS;
     }
 
     @SuppressWarnings("SleepWhileInLoop") // We are just using the sleep for rate limiting
-    private void tsaRequest() throws Exception {
+    private int tsaRequest() throws Exception {
         final Random rand = new Random();
         final TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
@@ -857,6 +997,8 @@ public class TimeStampCommand extends AbstractCommand {
                 Thread.sleep(sleep);
             }
         } while (doRun);
+
+        return CommandLineInterface.RETURN_SUCCESS;
     }
 
     /**

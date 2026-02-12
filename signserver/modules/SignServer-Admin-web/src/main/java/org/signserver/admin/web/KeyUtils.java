@@ -12,13 +12,12 @@
  *************************************************************************/
 package org.signserver.admin.web;
 
-import java.security.spec.AlgorithmParameterSpec;
 import java.text.Collator;
 import java.util.*;
 
-import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.util.StringTools;
+import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;
 
 /**
  * Utility methods for selecting key algorithms and specifications.
@@ -40,6 +39,12 @@ public class KeyUtils {
             "SLH-DSA-SHAKE-128F", "SLH-DSA-SHAKE-128S",
             "SLH-DSA-SHAKE-192F", "SLH-DSA-SHAKE-192S",
             "SLH-DSA-SHAKE-256F", "SLH-DSA-SHAKE-256S"};
+    private static final String[] COMPOSITE_SPECS = {
+            AlgorithmConstants.SIGALG_MLDSA44_RSA2048_PSS_SHA256, AlgorithmConstants.SIGALG_MLDSA65_RSA3072_PSS_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA65_RSA4096_PSS_SHA512, AlgorithmConstants.SIGALG_MLDSA87_RSA3072_PSS_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_RSA4096_PSS_SHA512, AlgorithmConstants.SIGALG_MLDSA44_ECDSA_P256_SHA256,
+            AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P256_SHA512, AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P384_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P384_SHA512, AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512 };
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};
@@ -85,6 +90,7 @@ public class KeyUtils {
         algMenuValues.add(new SelectItem("ML-DSA", "ML-DSA"));
         algMenuValues.add(new SelectItem("LMS", "LMS"));
         algMenuValues.add(new SelectItem("SLH-DSA", "SLH-DSA"));
+        algMenuValues.add(new SelectItem("COMPOSITE", "COMPOSITE"));
 
         return algMenuValues;
     }
@@ -139,6 +145,12 @@ public class KeyUtils {
 
             case "SLH-DSA":
                 for (final String key : SLHDSA_SPECS) {
+                    keySpecMenuValues.add(new SelectItem(key, key));
+                }
+                break;
+                
+            case "COMPOSITE":
+                for (final String key : COMPOSITE_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;

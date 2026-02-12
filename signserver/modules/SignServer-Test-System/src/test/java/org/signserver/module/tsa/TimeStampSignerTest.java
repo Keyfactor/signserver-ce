@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +29,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Boolean;
@@ -42,6 +44,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.iana.IANAObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -49,12 +52,18 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.tsp.*;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -116,6 +125,9 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
     /** Worker ID for test worker. */
     private static final WorkerIdentifier WORKER20 = new WorkerIdentifier(8920);
+
+    /** Worker ID for test worker (using composite). */
+    private static final WorkerIdentifier WORKER25 = new WorkerIdentifier(8925);
 
     /**
      * Base64 encoded request with policy 1.2.3.5.
@@ -1056,6 +1068,110 @@ public class TimeStampSignerTest extends ModulesTestCase {
         // Ok certificate should not give any issues
         certificateIssues = workerSession.getCertificateIssues(WORKER2.getId(), chain);
         assertTrue("should be okey", certificateIssues.isEmpty());
+    }
+
+    /**
+     * Tests issuance of time-stamp token when an composite key is specified.
+     * @throws Exception
+     */
+    @Test
+    public void test19CompositeTimestampVerifyToken() throws Exception {
+        LOG.info("test19CompositeTimestampVerifyToken");
+        int workerId = WORKER25.getId();
+        try {
+            final File keystore = new File(getSignServerHome(), "tmp/TimeStampSignerTest.p12");
+            if (!keystore.exists()) {
+                throw new FileNotFoundException(keystore.getAbsolutePath());
+            }
+
+            // Add "hybrid" timestamp signer
+            addP12DummySigner(TimeStampSigner.class.getName(), workerId, "TestCompositeTimeStamp", keystore, "foo123", "not_existing_yet");
+
+            // Generate the composite key, will result in a RSA 3072 and an ML-DSA 87 key being present in the token.
+            // These keys will be referred to by the virtual "compositekey-COMPOSITE" key
+            workerSession.generateSignerKey(WORKER25, "COMPOSITE", "MLDSA87-RSA3072-PSS-SHA512", "compositekey-COMPOSITE", "foo123".toCharArray());
+
+            // Update the default key to point to the virtual key
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", "compositekey-COMPOSITE");
+
+            workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.setWorkerProperty(workerId, "ACCEPTANYPOLICY", "true");
+            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "MLDSA87-RSA3072-PSS-SHA512");
+            workerSession.reloadConfiguration(workerId);
+
+            // Variables for CA creation
+            final String caDN = "CN=Test CA";
+            final String sigAlg = "MLDSA87-RSA3072-PSS-SHA512";
+
+            // Chose OID for key-pair generation
+            final ASN1ObjectIdentifier compositeOID = IANAObjectIdentifiers.id_MLDSA87_RSA3072_PSS_SHA512;
+
+            // Generate key-pair for CA
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(compositeOID.getId(), "BC");
+            final KeyPair compKeyPair = kpg.generateKeyPair();
+
+            // Actual CA certificate creation
+            final long currentTime = System.currentTimeMillis();
+            final X509CertificateHolder caCertHolder = new CertBuilder()
+                .setSelfSignKeyPair(new KeyPair(compKeyPair.getPublic(), compKeyPair.getPrivate()))
+                .setNotBefore(new Date(currentTime - 120000))
+                .setSignatureAlgorithm(sigAlg)
+                .setIssuer(caDN)
+                .setSubject(caDN)
+                .build();
+
+            // Generate CSR
+            final ISignerCertReqInfo req
+                    = new PKCS10CertReqInfo("MLDSA87-RSA3072-PSS-SHA512", "CN=Composite Timestamp signer" + workerId, null);
+            final AbstractCertReqData reqData
+                    = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), req, false, "compositekey-COMPOSITE");
+
+            // Create signer certificate with timestamping key usage (critical). This signer certificate will be signed
+            // by the CA. In the end, we will include the entire chain for our timestamp signer.
+            final PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
+            final X509CertificateHolder signerCertHolder = new X509v3CertificateBuilder(
+                    new X500Name(caDN),
+                    BigInteger.ONE, new Date(),
+                    new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)),
+                    csr.getSubject(),
+                    csr.getSubjectPublicKeyInfo())
+                        .addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))
+                        .build(
+                                new JcaContentSignerBuilder("MLDSA87-RSA3072-PSS-SHA512")
+                                        .setProvider("BC")
+                                        .build(compKeyPair.getPrivate())
+                        );
+
+            // Whole certificate chain, signer certificate and CA certificate
+            final X509Certificate[] chain = { new JcaX509CertificateConverter().getCertificate(signerCertHolder), new JcaX509CertificateConverter().getCertificate(caCertHolder) };
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(workerId, chain[0].getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(workerId, List.of(chain[0].getEncoded(), chain[1].getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(workerId);
+
+            // Generate timestamp and verify
+            final TimeStampResponse response = assertSuccessfulTimestamp(new WorkerIdentifier(workerId), true);
+            final TimeStampToken token = response.getTimeStampToken();
+            final SignerInformation si = token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
+
+            // Assert that the encryption algorithm is what we expect ()
+            assertEquals("Expected 1.3.6.1.5.5.7.6.52 but was " + si.getEncryptionAlgOID(), "1.3.6.1.5.5.7.6.52", si.getEncryptionAlgOID());
+
+            // We use chain[0] when validating the timestamp token since we know for certain that this is the signer certificate
+            final SignerInformationVerifier infoVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(chain[0]);
+            try {
+                token.validate(infoVerifier);
+            } catch (TSPValidationException e) {
+                fail("Token validation failed: "  + e.getMessage());
+            } catch (TSPException e) {
+                fail("Token proccessing error: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                fail ("sigVerifierProvider has no associate certificate: " + e.getMessage());
+            }
+        } finally {
+            removeWorker(workerId);
+        }
     }
 
     /** Tests issuance of time-stamp token when an EC key is specified. */

@@ -1278,26 +1278,66 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     private void destroyKey() throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         getWorkerSession().removeKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), "testsecretkey");
     }
-    
+
     /**
-     * Tests generating CSR using a MLDSA87-RSA3072-PSS-SHA512 key.
+     * Tests generating CSRs for all Keystore Crypto Token supported composite key algorithms.
      * @throws Exception
      */
     @Test
-    public void testGenerateCSRContainingCompositeKey() throws Exception {
+    public void testGenerateCSRsContainingAllSupportedCompositeKeyCombinations() throws Exception {
+        LOG.info("testGenerateCSRsContainingAllSupportedCompositeKeyCombinations");
+
         try {
             setP12CryptoTokenProperties();
             workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+            // ML-DSA + RSA test suite
+            createCompositeKeyAndCSR("MLDSA44-RSA2048-PSS-SHA256", "q44c2048");
+            createCompositeKeyAndCSR("MLDSA65-RSA3072-PSS-SHA512", "q65c3072");
+            createCompositeKeyAndCSR("MLDSA65-RSA4096-PSS-SHA512", "q65c4096");
+            createCompositeKeyAndCSR("MLDSA87-RSA3072-PSS-SHA512", "q87c3072");
+            createCompositeKeyAndCSR("MLDSA87-RSA4096-PSS-SHA512", "q87c4096");
+            // ML-DSA + ECDSA test suite
+            createCompositeKeyAndCSR("MLDSA44-ECDSA-P256-SHA256", "q44cP256");
+            createCompositeKeyAndCSR("MLDSA65-ECDSA-P256-SHA512", "q65cP256");
+            createCompositeKeyAndCSR("MLDSA65-ECDSA-P384-SHA512", "q65cP384");
+            createCompositeKeyAndCSR("MLDSA87-ECDSA-P384-SHA512", "q87cP384");
+            createCompositeKeyAndCSR("MLDSA87-ECDSA-P521-SHA512", "q87cP521");
+            // ML-DSA + ECDSA brainpool test suite
+            createCompositeKeyAndCSR("MLDSA65-ECDSA-brainpoolP256r1-SHA512", "q87cBP256r1");
+            createCompositeKeyAndCSR("MLDSA87-ECDSA-brainpoolP384r1-SHA512", "q87cBP384r1");
 
-            generateKey("COMPOSITE", "MLDSA87-RSA3072-PSS-SHA512", "key-COMPOSITE");
-
-            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("MLDSA87-RSA3072-PSS-SHA512",
-                    "CN=test01GenerateKey,C=SE", null);
-            workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, "key-COMPOSITE");
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);
         }
     }
-    
+
+    /**
+     * Test that a composite with an incorrect suffix is not possible to create
+     * @throws Exception
+     */
+    @Test
+    public void testCreateCompositeWithIncorrectSuffix() throws Exception {
+        LOG.info("testCreateCompositeWithIncorrectSuffix");
+        setP12CryptoTokenProperties();
+        try {
+            generateKey("COMPOSITE", "MLDSA44-RSA2048-PSS-SHA256", "wrongSuffix" + "-COMPQ");
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex.getMessage().contains("Native composites not supported by crypto token."));
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+
+    private void createCompositeKeyAndCSR(String keySpec, String keyAlias) throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        generateKey("COMPOSITE", keySpec, keyAlias + "-COMPOSITE");
+        final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(keySpec,
+                "CN=testCSRComboGenerateKey,C=SE", null);
+        workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, keyAlias + "-COMPOSITE");
+    }
+
 }

@@ -26,25 +26,28 @@ import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;
  * @version $Id$
  */
 public class KeyUtils {
-    private static final int[] RSA_KEY_SIZES = {1024, 2048, 3072, 4096, 6144, 8192};
-    private static final int[] AES_KEY_SIZES = {128, 192, 256};
+    private static final int[] RSA_KEY_SIZES = { 1024, 2048, 3072, 4096, 6144, 8192 };
+    private static final int[] AES_KEY_SIZES = { 128, 192, 256 };
     private static final LinkedHashMap<String, String> ECDSA_CURVES;
-    private static final String[] EDDSA_CURVES = {"Ed25519", "Ed448"};
-    private static final String[] MLDSA_SPECS = {"ML-DSA-44", "ML-DSA-65", "ML-DSA-87"};
-    private static final String[] LMS_SPECS = {"LMS_SHA256_N32_H5"};
+    private static final String[] EDDSA_CURVES = { "Ed25519", "Ed448" };
+    private static final String[] MLDSA_SPECS = { "ML-DSA-44", "ML-DSA-65", "ML-DSA-87" };
+    private static final String[] LMS_SPECS = { "LMS_SHA256_N32_H5" };
     private static final String[] SLHDSA_SPECS = {
             "SLH-DSA-SHA2-128F", "SLH-DSA-SHA2-128S",
             "SLH-DSA-SHA2-192F", "SLH-DSA-SHA2-192S",
             "SLH-DSA-SHA2-256F", "SLH-DSA-SHA2-256S",
             "SLH-DSA-SHAKE-128F", "SLH-DSA-SHAKE-128S",
             "SLH-DSA-SHAKE-192F", "SLH-DSA-SHAKE-192S",
-            "SLH-DSA-SHAKE-256F", "SLH-DSA-SHAKE-256S"};
+            "SLH-DSA-SHAKE-256F", "SLH-DSA-SHAKE-256S" };
     private static final String[] COMPOSITE_SPECS = {
             AlgorithmConstants.SIGALG_MLDSA44_RSA2048_PSS_SHA256, AlgorithmConstants.SIGALG_MLDSA65_RSA3072_PSS_SHA512,
             AlgorithmConstants.SIGALG_MLDSA65_RSA4096_PSS_SHA512, AlgorithmConstants.SIGALG_MLDSA87_RSA3072_PSS_SHA512,
             AlgorithmConstants.SIGALG_MLDSA87_RSA4096_PSS_SHA512, AlgorithmConstants.SIGALG_MLDSA44_ECDSA_P256_SHA256,
             AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P256_SHA512, AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P384_SHA512,
-            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P384_SHA512, AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512 };
+            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P384_SHA512, AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA44_ED25519_SHA512, AlgorithmConstants.SIGALG_MLDSA65_ED25519_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA65_ECDSA_brainpoolP256r1_SHA512, AlgorithmConstants.SIGALG_MLDSA87_ECDSA_brainpoolP384r1_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_Ed448_SHAKE256 };
     // list of curves to prioritize to the top of the selectable list for convenience
     private static final String[] PRIO_CURVES =
         {"prime256v1", "secp384r1", "secp521r1"};
@@ -148,7 +151,7 @@ public class KeyUtils {
                     keySpecMenuValues.add(new SelectItem(key, key));
                 }
                 break;
-                
+
             case "COMPOSITE":
                 for (final String key : COMPOSITE_SPECS) {
                     keySpecMenuValues.add(new SelectItem(key, key));

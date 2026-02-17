@@ -74,6 +74,11 @@ public final class AlgorithmConstants {
     public static final String SIGALG_MLDSA65_ECDSA_P384_SHA512       = "MLDSA65-ECDSA-P384-SHA512";
     public static final String SIGALG_MLDSA87_ECDSA_P384_SHA512       = "MLDSA87-ECDSA-P384-SHA512";
     public static final String SIGALG_MLDSA87_ECDSA_P521_SHA512       = "MLDSA87-ECDSA-P521-SHA512";
+    public static final String SIGALG_MLDSA44_ED25519_SHA512          = "MLDSA44-ED25519-SHA512";
+    public static final String SIGALG_MLDSA65_ED25519_SHA512          = "MLDSA65-ED25519-SHA512";
+    public static final String SIGALG_MLDSA65_ECDSA_brainpoolP256r1_SHA512   = "MLDSA65-ECDSA-brainpoolP256r1-SHA512";
+    public static final String SIGALG_MLDSA87_ECDSA_brainpoolP384r1_SHA512   = "MLDSA87-ECDSA-brainpoolP384r1-SHA512";
+    public static final String SIGALG_MLDSA87_Ed448_SHAKE256          = "MLDSA87-Ed448-SHAKE256";
 
 
     /**

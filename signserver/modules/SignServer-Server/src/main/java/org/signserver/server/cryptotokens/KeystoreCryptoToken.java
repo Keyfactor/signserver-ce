@@ -358,7 +358,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 }
 
                 final KeyStore keystore = getKeyStore();
-                
+
                 final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
 
                 String sigAlgName = null;
@@ -446,7 +446,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                             workerId, baos.toByteArray());
                 }
 
-                final KeyEntry entry = new KeyEntry((PrivateKey) keyPair.getPrivate(), 
+                final KeyEntry entry = new KeyEntry((PrivateKey) keyPair.getPrivate(),
                                     chain[0], Arrays.asList(chain));
 
                 // If this is the first entry

@@ -97,7 +97,7 @@ public class CompositeHelper {
                                                   final String alias,
                                                   final IServices services)
                 throws CryptoTokenOfflineException {
-        
+
         if (alias == null || (!KEYALIAS_COMPOSITE_SUFFIX.equals(keyAliasSuffix) && !alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX))) {
             LOG.info("Key alias not for composite: " + alias);
             return Optional.empty();
@@ -124,8 +124,40 @@ public class CompositeHelper {
                     throw new CryptoTokenOfflineException("Unexpected PQC algorithm for composite: " + crypto1.getPublicKey().getAlgorithm());
                 }
 
-                if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2)) {
+                if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2) && !"Ed25519".equalsIgnoreCase(algComp2) && !"Ed448".equalsIgnoreCase(algComp2)) {
                     throw new CryptoTokenOfflineException("Unexpected classic algorithm for composite: " + crypto2.getPublicKey().getAlgorithm());
+                }
+
+                // Get OID for composites with ECDSA brainpool (To be removed with BC 1.84 upgrade)
+                if ("EC".equalsIgnoreCase(algComp2) && certReqInfo.getSignatureAlgorithm().contains("brainpool")) {
+                    String signatureAlgorithm = certReqInfo.getSignatureAlgorithm();
+                    ASN1ObjectIdentifier algOid;
+                    if (signatureAlgorithm.equalsIgnoreCase("MLDSA65-ECDSA-brainpoolP256r1-SHA512")) {
+                        algOid = IANAObjectIdentifiers.id_MLDSA65_ECDSA_brainpoolP256r1_SHA512;
+                    } else if (signatureAlgorithm.equalsIgnoreCase("MLDSA87-ECDSA-brainpoolP384r1-SHA512")) {
+                        algOid = IANAObjectIdentifiers.id_MLDSA87_ECDSA_brainpoolP384r1_SHA512;
+                    } else {
+                        throw new IllegalArgumentException("Unexpected classic algorithm for composite: " + algComp2);
+                    }
+
+                    return compositeBuilder(certReqInfo, algOid, crypto1, crypto2, explicitEccParameters);
+
+                    // Get OID for omposites with EdDSA (To be removed with BC 1.84 upgrade)
+                } else if ("Ed25519".equalsIgnoreCase(algComp2) || "Ed448".equalsIgnoreCase(algComp2)) {
+                    String signatureAlgorithm = certReqInfo.getSignatureAlgorithm();
+                    ASN1ObjectIdentifier algOid;
+                    if (signatureAlgorithm.equalsIgnoreCase("MLDSA44-Ed25519-SHA512")) {
+                        algOid = IANAObjectIdentifiers.id_MLDSA44_Ed25519_SHA512;
+                    } else if (signatureAlgorithm.equalsIgnoreCase("MLDSA65-Ed25519-SHA512")) {
+                        algOid = IANAObjectIdentifiers.id_MLDSA65_Ed25519_SHA512;
+                    } else if (signatureAlgorithm.equalsIgnoreCase("MLDSA87-Ed448-SHAKE256")) {
+                        algOid = IANAObjectIdentifiers.id_MLDSA87_Ed448_SHAKE256;
+                    } else {
+                        throw new IllegalArgumentException("Unexpected classic algorithm for composite: " + algComp2);
+                    }
+
+                    return compositeBuilder(certReqInfo, algOid, crypto1, crypto2, explicitEccParameters);
+
                 }
 
                 CompositePublicKey compPublicKey = CompositePublicKey.builder(certReqInfo.getSignatureAlgorithm())
@@ -156,6 +188,27 @@ public class CompositeHelper {
         }
     }
 
+    /**
+     * Method that creates a CSR for composites that are not mapped in Bouncy Castle 1.83.
+     * Should be removed when BC is upgraded and this is no longer needed.
+     * @param certReqInfo
+     * @param algorithmOid
+     * @param crypto1
+     * @param crypto2
+     * @param explicitEccParameters
+     * @return certificate request data
+     */
+    private Optional<ICertReqData> compositeBuilder(PKCS10CertReqInfo certReqInfo, ASN1ObjectIdentifier algorithmOid, ICryptoInstance crypto1, ICryptoInstance crypto2, boolean explicitEccParameters) {
+        CompositePublicKey compositePublicKey = CompositePublicKey.builder(algorithmOid)
+                .addPublicKey(crypto1.getPublicKey(), "BC")
+                .addPublicKey(crypto2.getPublicKey(), "BC").build();
+        CompositePrivateKey compositePrivateKey = CompositePrivateKey.builder(algorithmOid)
+                .addPrivateKey(crypto1.getPrivateKey(), crypto1.getProvider())
+                .addPrivateKey(crypto2.getPrivateKey(), crypto2.getProvider())
+                .build();
+
+        return Optional.ofNullable(CryptoTokenHelper.genCertificateRequest(certReqInfo, compositePrivateKey, "BC", compositePublicKey, explicitEccParameters));
+    }
     public Optional<ICryptoInstance> acquireCryptoInstance(final String alias,
                                                      final Map<String, Object> params,
                                                      final RequestContext context) throws
@@ -188,7 +241,7 @@ public class CompositeHelper {
                     throw new CryptoTokenOfflineException("Unexpected PQC algorithm for composite: " + crypto1.getPublicKey().getAlgorithm());
                 }
                 
-                if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2)) {
+                if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2) && !"Ed25519".equalsIgnoreCase(algComp2) && !"Ed448".equalsIgnoreCase(algComp2)) {
                     throw new CryptoTokenOfflineException("Unexpected classic algorithm for composite: " + crypto2.getPublicKey().getAlgorithm());
                 }
                 
@@ -351,11 +404,11 @@ public class CompositeHelper {
                 keySpec2 = "P-256";
                 break;
             }
-            case "MLDSA65-ECDSA-P521-SHA512": {
+            case "MLDSA65-ECDSA-P384-SHA512": {
                 keyAlgorithm1 = "ML-DSA";
                 keySpec1 = "ML-DSA-65";
                 keyAlgorithm2 = "ECDSA";
-                keySpec2 = "P-521";
+                keySpec2 = "P-384";
                 break;
             }
             case "MLDSA87-ECDSA-P384-SHA512": {
@@ -370,6 +423,41 @@ public class CompositeHelper {
                 keySpec1 = "ML-DSA-87";
                 keyAlgorithm2 = "ECDSA";
                 keySpec2 = "P-521";
+                break;
+            }
+            case "MLDSA44-ED25519-SHA512": {
+                keyAlgorithm1 = "ML-DSA";
+                keySpec1 = "ML-DSA-44";
+                keyAlgorithm2 = "EdDSA";
+                keySpec2 = "Ed25519";
+                break;
+            }
+            case "MLDSA65-ED25519-SHA512": {
+                keyAlgorithm1 = "ML-DSA";
+                keySpec1 = "ML-DSA-65";
+                keyAlgorithm2 = "EdDSA";
+                keySpec2 = "Ed25519";
+                break;
+            }
+            case "MLDSA65-ECDSA-brainpoolP256r1-SHA512": {
+                keyAlgorithm1 = "ML-DSA";
+                keySpec1 = "ML-DSA-65";
+                keyAlgorithm2 = "ECDSA";
+                keySpec2 = "brainpoolP256r1";
+                break;
+            }
+            case "MLDSA87-ECDSA-brainpoolP384r1-SHA512": {
+                keyAlgorithm1 = "ML-DSA";
+                keySpec1 = "ML-DSA-87";
+                keyAlgorithm2 = "ECDSA";
+                keySpec2 = "brainpoolP384r1";
+                break;
+            }
+            case "MLDSA87-Ed448-SHAKE256": {
+                keyAlgorithm1 = "ML-DSA";
+                keySpec1 = "ML-DSA-87";
+                keyAlgorithm2 = "EdDSA";
+                keySpec2 = "Ed448";
                 break;
             }
             default:
@@ -476,7 +564,7 @@ public class CompositeHelper {
             });
         return result;
     }
-    
+
     private String removeCompositeSuffix(String alias) {
         if (alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX)) {
             alias = alias.substring(0, alias.length() - KEYALIAS_COMPOSITE_SUFFIX.length());
@@ -520,7 +608,7 @@ public class CompositeHelper {
                 throw new CryptoTokenOfflineException("Unexpected PQC algorithm for composite: " + algComp1);
             }
 
-            if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2)) {
+            if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2) && !"Ed25519".equalsIgnoreCase(algComp2) && !"Ed448".equalsIgnoreCase(algComp2)) {
                 throw new CryptoTokenOfflineException("Unexpected classic algorithm for composite: " + algComp2);
             }
 

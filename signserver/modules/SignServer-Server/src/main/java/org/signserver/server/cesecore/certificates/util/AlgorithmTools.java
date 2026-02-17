@@ -164,7 +164,12 @@ public abstract class AlgorithmTools {
             AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P256_SHA512,
             AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P384_SHA512,
             AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P384_SHA512,
-            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512
+            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA44_ED25519_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA65_ED25519_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA65_ECDSA_brainpoolP256r1_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_ECDSA_brainpoolP384r1_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA87_Ed448_SHAKE256
     );
 
     /**

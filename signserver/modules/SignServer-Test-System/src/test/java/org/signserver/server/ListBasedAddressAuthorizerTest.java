@@ -24,6 +24,7 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
@@ -597,7 +598,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,
-            final String whitelistedForwarded, final String blacklistedForwarded) throws ReadOnlyWorkerException {
+            final String whitelistedForwarded, final String blacklistedForwarded) throws ReadOnlyWorkerException, WorkerExistsException {
         setOrRemoveProperty("WHITELISTED_DIRECT_ADDRESSES", whitelistedDirect);
         setOrRemoveProperty("BLACKLISTED_DIRECT_ADDRESSES", blacklistedDirect);
         setOrRemoveProperty("WHITELISTED_FORWARDED_ADDRESSES", whitelistedForwarded);
@@ -605,7 +606,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdDummy1());
     }
 
-    private void setOrRemoveProperty(final String property, final String value) throws ReadOnlyWorkerException {
+    private void setOrRemoveProperty(final String property, final String value) throws ReadOnlyWorkerException, WorkerExistsException {
         if (value == null) {
             workerSession.removeWorkerProperty(getSignerIdDummy1(), property);
         } else {

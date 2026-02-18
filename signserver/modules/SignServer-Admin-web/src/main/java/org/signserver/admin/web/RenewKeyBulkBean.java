@@ -28,6 +28,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 
@@ -84,7 +85,7 @@ public class RenewKeyBulkBean extends BulkBean {
         return results;
     }
 
-    public String renewKeyAction() throws AdminNotAuthorizedException {
+    public String renewKeyAction() throws AdminNotAuthorizedException, WorkerExistsException {
         //FacesMessage errorMessage = new FacesMessage("Test error");
         //errorMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);

@@ -274,7 +274,7 @@ public class AdminWS {
 
         try {
             worker.setWorkerProperty(adminInfo, workerId, key, value);
-        } catch (ReadOnlyWorkerException ex) {
+        } catch (ReadOnlyWorkerException | WorkerExistsException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }
     }

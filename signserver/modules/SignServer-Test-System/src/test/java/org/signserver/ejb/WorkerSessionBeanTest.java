@@ -36,6 +36,7 @@ import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -221,7 +222,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.SetProperty(int, String, String)'
      */
     @Test
-    public void test05SetProperty() throws ReadOnlyWorkerException {
+    public void test05SetProperty() throws ReadOnlyWorkerException, WorkerExistsException {
         workerSession.setWorkerProperty(3, "test", "Hello World");
 
         Properties props = workerSession.exportWorkerConfig(3);

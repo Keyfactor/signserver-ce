@@ -85,6 +85,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
@@ -504,7 +505,7 @@ public class ModulesTestCase {
      */
     public static void addTestXMLSigner(
             final SignerConfigurationBuilder signerConfigurationBuilder
-    ) throws FileNotFoundException, ReadOnlyWorkerException {
+    ) throws FileNotFoundException, ReadOnlyWorkerException, WorkerExistsException {
         addTestSignerWithDefaultP12Keystore(
                 signerConfigurationBuilder.withClassName("org.signserver.module.xmlsigner.XMLSigner")
         );
@@ -517,7 +518,7 @@ public class ModulesTestCase {
      */
     public static void addTestSleepWorker(
             final SignerConfigurationBuilder signerConfigurationBuilder
-    ) throws FileNotFoundException, ReadOnlyWorkerException {
+    ) throws FileNotFoundException, ReadOnlyWorkerException, WorkerExistsException {
         addTestSignerWithDefaultP12Keystore(
                 signerConfigurationBuilder.withClassName("org.signserver.server.signers.SleepWorker")
         );
@@ -544,7 +545,7 @@ public class ModulesTestCase {
      */
     public static void addTestSignerWithDefaultP12Keystore(
             final SignerConfigurationBuilder signerConfigurationBuilder
-    ) throws FileNotFoundException, ReadOnlyWorkerException {
+    ) throws FileNotFoundException, ReadOnlyWorkerException, WorkerExistsException {
         addTestSigner(
                 signerConfigurationBuilder
                         .withCryptoTokenClassName("org.signserver.server.cryptotokens.P12CryptoToken")
@@ -714,7 +715,7 @@ public class ModulesTestCase {
      * Adds a test signer using configuration of SignerConfigurationBuilder.
      * @param signerConf A builder instance containing configuration for the Signer.
      */
-    public static void addTestSigner(final SignerConfigurationBuilder signerConf) throws ReadOnlyWorkerException {
+    public static void addTestSigner(final SignerConfigurationBuilder signerConf) throws ReadOnlyWorkerException, WorkerExistsException {
         final int signerId = signerConf.getSignerId();
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
         // Set properties if any
@@ -749,14 +750,14 @@ public class ModulesTestCase {
 
     public void addTimeStampSigner(final int signerId, final String signerName,
                                    final String alias, final boolean autoActivate)
-            throws FileNotFoundException, ReadOnlyWorkerException {
+            throws FileNotFoundException, ReadOnlyWorkerException, WorkerExistsException {
         addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, alias);
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
         getWorkerSession().setWorkerProperty(signerId, "ACCEPTANYPOLICY", "true");
         getWorkerSession().reloadConfiguration(signerId);
     }
 
-    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException {
+    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException, ReadOnlyWorkerException, WorkerExistsException {
         addTimeStampSigner(signerId, signerName, KEYSTORE_TSSIGNER1_ALIAS, autoActivate);
     }
 
@@ -1306,7 +1307,7 @@ public class ModulesTestCase {
      * Updates properties of the worker using properties of WorkerPropertiesBuilder.
      * @param workerProps A builder instance containing properties for the Worker.
      */
-    public static void applyWorkerPropertiesAndReload(final WorkerPropertiesBuilder workerProps) throws ReadOnlyWorkerException {
+    public static void applyWorkerPropertiesAndReload(final WorkerPropertiesBuilder workerProps) throws ReadOnlyWorkerException, WorkerExistsException {
         final int workerId = workerProps.getWorkerId();
         final WorkerSessionRemote workerSession = getCurrentWorkerSession();
         // Apply properties if any

@@ -98,6 +98,16 @@
         <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
         <location>/error-expiredview.xhtml</location>
     </error-page>
+    <!-- Special page for 400 -->
+    <error-page>
+        <exception-type>org.signserver.common.WorkerExistsException</exception-type>
+        <location>/error-409.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>409</error-code>
+        <location>/error-409.xhtml</location>
+    </error-page>
+
     <!-- Global error page for all other errors -->
     <error-page>
         <location>/error.xhtml</location>

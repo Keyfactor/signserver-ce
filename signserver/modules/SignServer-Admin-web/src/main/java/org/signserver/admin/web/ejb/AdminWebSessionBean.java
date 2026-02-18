@@ -76,6 +76,7 @@ import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.data.CertificateValidationRequest;
@@ -734,7 +735,7 @@ public class AdminWebSessionBean {
         return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
     }
 
-    public void setWorkerProperty(AdminPrincipal principal, Integer workerId, String key, String value) throws AdminNotAuthorizedException, ReadOnlyWorkerException {
+    public void setWorkerProperty(AdminPrincipal principal, Integer workerId, String key, String value) throws AdminNotAuthorizedException, ReadOnlyWorkerException, WorkerExistsException {
         final AdminInfo adminInfo = auth.requireAdminAuthorization(principal, "setWorkerProperty",
                 String.valueOf(workerId), key);
 

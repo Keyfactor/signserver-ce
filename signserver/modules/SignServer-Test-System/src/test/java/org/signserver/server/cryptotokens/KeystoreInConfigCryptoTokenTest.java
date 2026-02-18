@@ -23,6 +23,7 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 
@@ -51,7 +52,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         SignServerUtil.installBCProvider();
     }
 
-    private void setCMSSignerPropertiesSeparateToken() throws ReadOnlyWorkerException {
+    private void setCMSSignerPropertiesSeparateToken() throws ReadOnlyWorkerException, WorkerExistsException {
         // Setup crypto token
         workerSession.setWorkerProperty(30103, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(30103, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
@@ -90,6 +91,32 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
 
             cmsSigner(workerId);
         } finally {
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+    }
+
+    /**
+     * Tests setting up a CMS Signer and trying to give it the same name as the Crypto Token worker created in the same method.
+     * This test checks case insensitivity with the "NAME" parameter.
+     */
+    @Test
+    public void testCaseSensitivityWithNameProperty() throws Exception {
+        LOG.info("testCaseSensitivityWithNameProperty");
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+
+        try {
+            setCMSSignerPropertiesSeparateToken();
+            workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
+
+            workerSession.setWorkerProperty(workerId, "NamE", "TestCryptoTokenInConfig");
+            fail();
+        } catch (WorkerExistsException e) {
+            assertEquals("Worker already exists: TestCryptoTokenInConfig", e.getMessage());
+        }
+        finally {
             removeWorker(workerId);
             removeWorker(tokenId);
         }

@@ -21,6 +21,7 @@ import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ReadOnlyWorkerException;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.common.auth.AdminPrincipal;
@@ -70,7 +71,7 @@ public class AdminWebPropertiesApplier extends PropertiesApplier {
     protected void setWorkerProperty(int workerId, String key, String value) throws PropertiesApplierException, ReadOnlyWorkerException {
         try {
             sessionBean.setWorkerProperty(principal, workerId, key, value);
-        } catch (AdminNotAuthorizedException | EJBException e) {
+        } catch (AdminNotAuthorizedException | EJBException | WorkerExistsException e) {
             throw new PropertiesApplierException(e);
         }
     }

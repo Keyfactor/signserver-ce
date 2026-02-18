@@ -34,6 +34,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.auth.LoginBean;
@@ -244,7 +245,7 @@ public class BulkBean implements Serializable {
         }
     }
     
-    public String enableAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
+    public String enableAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException, WorkerExistsException {
         for (Worker worker : getSelectedWorkers()) {
             try {
                workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), DISABLED, "FALSE");
@@ -265,7 +266,7 @@ public class BulkBean implements Serializable {
         
     }
     
-     public String disableAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
+     public String disableAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException, WorkerExistsException {
         for (Worker worker : getSelectedWorkers()) {
             try {
                workerSessionBean.setWorkerProperty(loginBean.getAdminPrincipal(), worker.getId(), DISABLED, "TRUE");

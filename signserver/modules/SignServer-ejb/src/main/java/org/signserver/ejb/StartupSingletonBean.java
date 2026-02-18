@@ -39,6 +39,7 @@ import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.PKCS11Settings;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import static org.signserver.common.util.PropertiesConstants.GLOBAL_PREFIX_DOT;
@@ -319,6 +320,8 @@ public class StartupSingletonBean {
             } catch (ReadOnlyWorkerException e) {
                 // This should never happen
                 LOG.error("Worker is read-only: ", e);
+            } catch (WorkerExistsException e) {
+                LOG.error("Worker already exists: " + e.getMessage());
             }
         }
     }

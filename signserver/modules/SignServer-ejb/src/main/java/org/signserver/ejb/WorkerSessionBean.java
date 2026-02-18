@@ -34,6 +34,7 @@ import jakarta.persistence.EntityManager;
 import java.security.PublicKey;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionLocal;
 import org.cesecore.audit.enums.EventStatus;
@@ -697,25 +698,17 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
 
         WorkerConfig config = getWorkerConfig(workerId);
-
-        if (propertiesAndValues.containsKey("NAME")
-                && !config.getProperties().getProperty("NAME").equalsIgnoreCase(propertiesAndValues.get("NAME"))) {
-            String workerName = propertiesAndValues.get("NAME");
-            if (checkWorkerNameAlreadyExists(workerName)) {
-                LOG.debug("Worker name already exists: " + workerName);
-                throw new WorkerExistsException(workerName);
-            }
-        }
+        Map<String, String> upperCasePropertiesAndValues = convertKeysToUpperCaseAndNameCheck(propertiesAndValues, config);
 
         //First we add the added and changed properties to the config
-        for (Map.Entry mapElement : propertiesAndValues.entrySet()) {
+        for (Map.Entry mapElement : upperCasePropertiesAndValues.entrySet()) {
             config.setProperty(((String) mapElement.getKey()).toUpperCase(Locale.ENGLISH), (String) mapElement.getValue());
         }
 
-        //We copy the propertiesAndValues to a new hashmap and extend it with all values that shall be removed
+        //We copy the upperCasePropertiesAndValues to a new hashmap and extend it with all values that shall be removed
         //for logging purposes, the log will go through all items in the HM-hashmap
         Map<String, String> propertiesAndValuesForAuditLog = new HashMap<>();
-        propertiesAndValuesForAuditLog.putAll(propertiesAndValues);
+        propertiesAndValuesForAuditLog.putAll(upperCasePropertiesAndValues);
 
         for (String toDelete : propertiesToRemove) {
             propertiesAndValuesForAuditLog.put(toDelete, "REMOVED");
@@ -744,15 +737,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
 
         WorkerConfig config = getWorkerConfig(workerId);
-
-        if (propertiesAndValues.containsKey("NAME")
-                && !config.getProperties().getProperty("NAME").equalsIgnoreCase(propertiesAndValues.get("NAME"))) {
-            String workerName = propertiesAndValues.get("NAME");
-            if (checkWorkerNameAlreadyExists(workerName)) {
-                LOG.debug("Worker name already exists: " + workerName);
-                throw new WorkerExistsException(workerName);
-            }
-        }
+        Map<String, String> upperCasePropertiesAndValues = convertKeysToUpperCaseAndNameCheck(propertiesAndValues, config);
 
         //First we remove all the properties from the config
         for (Map.Entry mapEntry : config.getProperties().entrySet()) {
@@ -760,15 +745,15 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
 
         //We add new properties to the config
-        for (Map.Entry mapElement : propertiesAndValues.entrySet()) {
-            config.setProperty(((String) mapElement.getKey()).toUpperCase(Locale.ENGLISH), (String) mapElement.getValue());
+        for (Map.Entry mapElement : upperCasePropertiesAndValues.entrySet()) {
+            config.setProperty(((String) mapElement.getKey()), (String) mapElement.getValue());
         }
 
         updateWorkerConfig(adminInfo, workerId, config);
 
         auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId),
-                config, propertiesAndValues.keySet().toString(),
-                propertiesAndValues.values().toString());
+                config, upperCasePropertiesAndValues.keySet().toString(),
+                upperCasePropertiesAndValues.values().toString());
     }
 
     private void updateWorkerConfig(AdminInfo adminInfo, int workerId, WorkerConfig config) {
@@ -782,7 +767,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
-    public void setWorkerProperty(int workerId, String key, String value) throws ReadOnlyWorkerException {
+    public void setWorkerProperty(int workerId, String key, String value) throws ReadOnlyWorkerException, WorkerExistsException {
     	setWorkerProperty(new AdminInfo("CLI user", null, null), workerId, key, value);
     }
 
@@ -790,7 +775,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      * @see org.signserver.ejb.interfaces.WorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
      */
     @Override
-    public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) throws ReadOnlyWorkerException {
+    public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) throws ReadOnlyWorkerException, WorkerExistsException {
         // Special case for auto-detecting worker type
         if (WorkerConfig.TYPE.equalsIgnoreCase(key) && (value == null || value.trim().isEmpty())) {
             if (LOG.isDebugEnabled()) {
@@ -809,6 +794,9 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
 
         WorkerConfig config = getWorkerConfig(workerId);
+        if (key.equalsIgnoreCase("name") && checkWorkerNameAlreadyExists(value) && !getWorkerConfig(workerId).getProperty("NAME").equals(value)) {
+            throw new WorkerExistsException(value);
+        }
         config.setProperty(key.toUpperCase(Locale.ENGLISH), value);
         setWorkerConfig(adminInfo, workerId, config, null, null);
         auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId), config, key, value);
@@ -1110,7 +1098,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             String csr = null;
             try {
                 if (ret instanceof AbstractCertReqData) {
-                    csr = org.bouncycastle.util.encoders.Base64.toBase64String(((AbstractCertReqData) ret).toBinaryForm());
+                    csr = Base64.toBase64String(((AbstractCertReqData) ret).toBinaryForm());
                 } else if (ret instanceof Base64SignerCertReqData) {
                     csr = new String(((Base64SignerCertReqData) ret).getBase64CertReq());
                 } else if (ret != null) {
@@ -1718,5 +1706,21 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     public boolean checkWorkerNameAlreadyExists(String workerName) {
         return workerManagerSession.getAllWorkerNames().contains(workerName);
+    }
+
+    public Map<String, String> convertKeysToUpperCaseAndNameCheck(Map<String, String> propertiesAndValues, WorkerConfig config) throws WorkerExistsException {
+        Map<String, String> upperCasePropertiesAndValues = new HashMap<>(Map.of());
+        for (Map.Entry<String, String> entry : propertiesAndValues.entrySet()) {
+            upperCasePropertiesAndValues.put(entry.getKey().toUpperCase(Locale.ENGLISH), entry.getValue());
+        }
+        if (upperCasePropertiesAndValues.containsKey("NAME")
+                && !config.getProperties().getProperty("NAME").equals(upperCasePropertiesAndValues.get("NAME"))) {
+            String workerName = upperCasePropertiesAndValues.get("NAME");
+            if (checkWorkerNameAlreadyExists(workerName)) {
+                LOG.debug("Worker already exists: The worker name is already used." + workerName);
+                throw new WorkerExistsException(workerName);
+            }
+        }
+        return upperCasePropertiesAndValues;
     }
 }

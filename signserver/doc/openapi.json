@@ -221,7 +221,10 @@
           "description" : "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.",
           "in" : "header",
           "name" : "X-Keyfactor-Requested-With",
-          "required" : true
+          "required" : true,
+          "schema" : {
+            "type" : "object"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -367,7 +370,10 @@
           "description" : "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.",
           "in" : "header",
           "name" : "X-Keyfactor-Requested-With",
-          "required" : true
+          "required" : true,
+          "schema" : {
+            "type" : "object"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -635,6 +641,16 @@
               }
             }
           },
+          "409" : {
+            "description" : "Conflict.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage409"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "The server were unable to process the request. See server-side logs for more details.",
             "content" : {
@@ -748,6 +764,16 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage409"
                 }
               }
             }

@@ -1136,6 +1136,41 @@ public class RestWorkersTest extends ModulesTestCase {
     }
 
     /**
+     * Test REST PATCH worker to update the NAME property using lowercase letters to catch that the name
+     * already exist in another worker.
+     */
+    @Test
+    public void testRestPatchWorkerWithAlreadyExistingName() throws ReadOnlyWorkerException, IllegalRequestException, FileNotFoundException {
+        LOG.debug("testRestPatchWorkerWithAlreadyExistingName");
+        addSigner(PDFSigner.class.getName(), PDFSIGNER_WORKER_ID, PDFSIGNER_WORKER_NAME, true);
+        addSigner(CMSSigner.class.getName(), CMSSIGNER_WORKER_ID, CMSSIGNER_WORKER_NAME, true);
+        try {
+            Response response = given()
+                    .relaxedHTTPSValidation()
+                    .header("X-Keyfactor-Requested-With", "1")
+                    .contentType(JSON)
+                    .accept(JSON)
+                    // Create a request body where PDFSigner's name is used
+                    .body(rtu.createPatchWorkerAddRequestJsonBodyNameMixedCases(PDFSIGNER_WORKER_NAME))
+                    .when()
+                    .patch(baseHttpsURL + "/workers/" + CMSSIGNER_WORKER_ID)
+                    .then()
+                    .statusCode(409)
+                    .extract().response();
+
+
+            assertEquals("Check response status code 409", 409, response.statusCode());
+            assertEquals("Check that CMSSigner is still named CMSSigner_REST ",
+                    "CMSSigner_REST", getWorkerSession().exportWorkerConfig(CMSSIGNER_WORKER_ID).getProperty("NAME"));
+            JSONObject responseJsonObject = new JSONObject(response.jsonPath().getJsonObject("$"));
+            assertTrue("Response contains the correct message", responseJsonObject.containsKey("error"));
+        } finally {
+            removeWorker(CMSSIGNER_WORKER_ID);
+            removeWorker(PDFSIGNER_WORKER_ID);
+        }
+    }
+
+    /**
      * Test REST PATCH worker to update worker properties with a wrong message body. Should return status code 400.
      */
     @Test

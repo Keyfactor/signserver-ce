@@ -45,6 +45,16 @@ public class RestTestUtils {
         return patchRequestJsonBody;
     }
 
+    public JSONObject createPatchWorkerAddRequestJsonBodyNameMixedCases(final String workerName) {
+        JSONObject properties = new JSONObject();
+        properties.put("NamE", workerName);
+
+        JSONObject patchRequestJsonBody = new JSONObject();
+        patchRequestJsonBody.put("properties", properties);
+
+        return patchRequestJsonBody;
+    }
+
     public JSONObject createPatchWorkerEditRequestJsonBody() {
         JSONObject properties = new JSONObject();
         properties.put("property1", "value1");

@@ -19,6 +19,7 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.WorkerExistsException;
 
 /**
  * Sets a property for a given workerid
@@ -91,7 +92,7 @@ public class SetPropertyCommand extends AbstractAdminCommand {
         getGlobalConfigurationSession().setProperty(scope, key, value);
     }
 
-    private void setWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException, ReadOnlyWorkerException {
+    private void setWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException, ReadOnlyWorkerException, WorkerExistsException {
         final SetPropertiesHelper helper =
                     new SetPropertiesHelper(getOutputStream(), getConfiguration());
         final String value =

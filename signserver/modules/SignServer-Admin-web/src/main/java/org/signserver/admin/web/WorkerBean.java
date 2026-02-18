@@ -41,6 +41,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.auth.LoginBean;
@@ -354,7 +355,7 @@ public class WorkerBean implements Serializable {
         this.oldProperty = StringUtils.trim(oldProperty);
     }
 
-    public String editPropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
+    public String editPropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException, WorkerExistsException {
         String oldPropertyName = getOldProperty();
         String key = property;
         final String oldValue = workerConfig.getProperty(oldPropertyName);
@@ -389,7 +390,7 @@ public class WorkerBean implements Serializable {
         return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
-    public String addPropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
+    public String addPropertyAction() throws AdminNotAuthorizedException, ReadOnlyWorkerException, WorkerExistsException {
         String key = property;
 
         // Remove illegal characters

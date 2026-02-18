@@ -25,6 +25,7 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import java.io.Serializable;
 import org.signserver.admin.web.auth.LoginBean;
 import org.signserver.common.ReadOnlyWorkerException;
+import org.signserver.common.WorkerExistsException;
 
 /**
  *
@@ -90,7 +91,7 @@ public class PropertyBean implements Serializable {
         this.value = value;
     }
 
-    public String submit() throws AdminNotAuthorizedException, ReadOnlyWorkerException {
+    public String submit() throws AdminNotAuthorizedException, ReadOnlyWorkerException, WorkerExistsException {
         // Set worker property
         workerSession.setWorkerProperty(loginBean.getAdminPrincipal(), id, name, value);
         workerSession.reloadConfiguration(loginBean.getAdminPrincipal(), id);

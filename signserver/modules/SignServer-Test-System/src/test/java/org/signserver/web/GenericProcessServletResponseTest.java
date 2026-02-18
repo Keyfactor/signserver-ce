@@ -14,6 +14,7 @@ package org.signserver.web;
 
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ReadOnlyWorkerException;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.testutils.WebTestCase;
 import java.io.IOException;
 import java.io.StringReader;
@@ -184,7 +185,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Test that when an exception occurs status code 500 is returned.
      */
     @Test
-    public void test05HttpStatus500_exception() throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException, ReadOnlyWorkerException {
+    public void test05HttpStatus500_exception() throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException, ReadOnlyWorkerException, WorkerExistsException {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("data", "<root/>");

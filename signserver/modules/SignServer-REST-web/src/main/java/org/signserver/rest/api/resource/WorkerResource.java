@@ -460,6 +460,14 @@ public class WorkerResource {
             )
     )
     @APIResponse(
+            responseCode = "409",
+            description = "Worker already exists.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage409.class)
+            )
+    )
+    @APIResponse(
             responseCode = "500",
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
@@ -586,6 +594,14 @@ public class WorkerResource {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ErrorMessage.ErrorMessage405.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "409",
+            description = "Worker already exists.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage409.class)
             )
     )
     @APIResponse(

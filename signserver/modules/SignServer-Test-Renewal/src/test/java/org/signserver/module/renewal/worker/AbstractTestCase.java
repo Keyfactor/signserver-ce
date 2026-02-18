@@ -37,6 +37,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -115,7 +116,7 @@ public abstract class AbstractTestCase extends TestCase {
     protected void addSigner(final int signerId, final String signerName,
             final String endEntity, final boolean useJKSToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException, WorkerExistsException {
 
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
@@ -155,7 +156,7 @@ public abstract class AbstractTestCase extends TestCase {
     protected void addSignerReferencingToken(final int signerId, final String signerName,
             final String endEntity, final String cryptoToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException, WorkerExistsException {
 
         workerSession.setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
@@ -181,7 +182,7 @@ public abstract class AbstractTestCase extends TestCase {
     
     protected void addCryptoWorker(final int signerId, final String signerName, final boolean useJKSToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException, WorkerExistsException {
 
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
@@ -211,7 +212,7 @@ public abstract class AbstractTestCase extends TestCase {
     protected void addSigner(final int signerId, final String signerName,
             final String endEntity)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, NoSuchProviderException, ReadOnlyWorkerException {
+            CertificateException, NoSuchProviderException, ReadOnlyWorkerException, WorkerExistsException {
         addSigner(signerId, signerName, endEntity, false);
     }
 

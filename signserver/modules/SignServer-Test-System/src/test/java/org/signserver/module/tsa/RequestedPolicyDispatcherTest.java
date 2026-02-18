@@ -158,7 +158,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /**
      * Sets the DispatchedAuthorizer for the dispatchees.
      */
-    private void setDispatchedAuthorizerForAllWorkers() throws ReadOnlyWorkerException {
+    private void setDispatchedAuthorizerForAllWorkers() throws ReadOnlyWorkerException, WorkerExistsException {
         workerSession.setWorkerProperty(WORKER1, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
         workerSession.setWorkerProperty(WORKER1, "AUTHORIZEALLDISPATCHERS", "true");
         workerSession.setWorkerProperty(WORKER2, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
@@ -173,7 +173,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /**
      * Resets authorization for the dispatchees to be able to call them directly.
      */
-    private void resetDispatchedAuthorizerForAllWorkers() throws ReadOnlyWorkerException {
+    private void resetDispatchedAuthorizerForAllWorkers() throws ReadOnlyWorkerException, WorkerExistsException {
         workerSession.setWorkerProperty(WORKER1, "AUTHTYPE", "NOAUTH");
         workerSession.removeWorkerProperty(WORKER1, "AUTHORIZEALLDISPATCHERS");
         workerSession.setWorkerProperty(WORKER2, "AUTHTYPE", "NOAUTH");
@@ -430,7 +430,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      * Test that trying to send a request directly to a signer using the DispatchedAuthorizer fails.
      */
     @Test
-    public void test08DispatchedAuthorizerNonDispatched() throws ReadOnlyWorkerException {
+    public void test08DispatchedAuthorizerNonDispatched() throws ReadOnlyWorkerException, WorkerExistsException {
         try {
             setDispatchedAuthorizerForAllWorkers();
 

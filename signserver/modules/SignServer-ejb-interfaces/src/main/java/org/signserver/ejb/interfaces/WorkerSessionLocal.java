@@ -119,7 +119,7 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param key
      * @param value
      */
-    void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) throws ReadOnlyWorkerException;
+    void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) throws ReadOnlyWorkerException, WorkerExistsException;
 
     /**
      * Removes a given worker's property.

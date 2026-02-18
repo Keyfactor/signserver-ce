@@ -116,7 +116,7 @@ public interface WorkerSession {
      * @param key
      * @param value
      */
-    void setWorkerProperty(int workerId, String key, String value) throws ReadOnlyWorkerException;
+    void setWorkerProperty(int workerId, String key, String value) throws ReadOnlyWorkerException, WorkerExistsException;
 
     /**
      * Removes a given worker's property.

@@ -37,6 +37,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
@@ -173,7 +174,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         workerSession.activateSigner(new WorkerIdentifier(SIGNER1_WORKERID), KEYSTORE8_PASSWORD);
     }
 
-    private void setupValidation() throws IOException, ReadOnlyWorkerException {
+    private void setupValidation() throws IOException, ReadOnlyWorkerException, WorkerExistsException {
         final String caPEM = FileUtils.readFileToString(new File(PathUtil.getAppHome(), "res/test/dss10/DSSRootCA10.cacert.pem"));
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");

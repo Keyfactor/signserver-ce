@@ -761,7 +761,7 @@ public class ModulesTestCase {
         addTimeStampSigner(signerId, signerName, KEYSTORE_TSSIGNER1_ALIAS, autoActivate);
     }
 
-    public void addTimeStampSignerNoToken(final int signerId, final String signerName) throws ReadOnlyWorkerException {
+    public void addTimeStampSignerNoToken(final int signerId, final String signerName) throws ReadOnlyWorkerException, WorkerExistsException {
         getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
         getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", "org.signserver.module.tsa.TimeStampSigner");
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
@@ -773,7 +773,7 @@ public class ModulesTestCase {
         getWorkerSession().reloadConfiguration(signerId);
     }
 
-    public void addKeyStoreCrypto(final int workerId, final String workerName, final String keystorePath, final String authcode) throws ReadOnlyWorkerException {
+    public void addKeyStoreCrypto(final int workerId, final String workerName, final String keystorePath, final String authcode) throws ReadOnlyWorkerException, WorkerExistsException {
         getWorkerSession().setWorkerProperty(workerId, "KEYSTOREPATH", keystorePath);
         getWorkerSession().setWorkerProperty(workerId, "IMPLEMENTATION_CLASS", "org.signserver.server.signers.CryptoWorker");
         getWorkerSession().setWorkerProperty(workerId, "KEYSTORETYPE", "PKCS12");

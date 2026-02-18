@@ -176,7 +176,7 @@ public class JArchiveJarsignerComplianceTest {
              * expected on recent JDKs, fail (including the case the Warning wa
              * the last line.
              */
-            if (lines[i].contains("Warning")) {
+            if (lines[i].trim().startsWith("Warning")) {
                 // check following lines until empty line, or end of output
                 for (int j = i + 1;
                      j < numLines && StringUtils.isBlank(lines[j]);

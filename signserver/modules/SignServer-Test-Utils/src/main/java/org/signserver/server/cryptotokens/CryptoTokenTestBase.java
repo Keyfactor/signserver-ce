@@ -25,7 +25,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,6 +146,21 @@ public abstract class CryptoTokenTestBase {
     }
 
     /**
+     * Method to help with how many extra key entries to generate, this method enable adding or removing multiple
+     * existing keys in the future.
+     * This method is not perfect by no means, but it does the trick for now.
+     * @param maxEntries expected total amount of entries, will generate aliases based on maxEntries - amount of existing keys
+     * @return List of aliases that should be generated
+     */
+    public List<String> aliasesToGenerate(final int maxEntries) {
+        final List<String> aliases = new ArrayList<>();
+        for (int i = 0; i < maxEntries - testCase.getExistingTestKeys().size(); i++) {
+            aliases.add("alias-" + (i +1) + 0);
+        }
+        return aliases;
+    }
+
+    /**
      * TODO tests...
      * 
      * Checks that the entries are returned in the same order for each call (given no entries added or removed).
@@ -151,9 +168,10 @@ public abstract class CryptoTokenTestBase {
      * @throws Exception 
      */
     public void searchTokenEntriesHelper(final String existingKey) throws Exception {
-        
-        final String[] testAliases = new String[] { "alias-14", "alias-13", "alias-5", "alias-10", "alias-2", "alias-1" };
-        
+
+        // All these tests assume that there are no more or less than eight entries
+        final List <String> testAliases = aliasesToGenerate(8);
+
         try {
             // First it is empty
             TokenSearchResults searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create(), true);
@@ -162,7 +180,7 @@ public abstract class CryptoTokenTestBase {
                 aliases.add(entry.getAlias());
             }
             LOG.info("Existing aliases: " + aliases);
-            assertEquals("no entries except the test key yet", 2, searchResults.getEntries().size());
+            assertEquals("no entries except the test key yet", testCase.getExistingTestKeys().size(), searchResults.getEntries().size());
             assertFalse("no more entries", searchResults.isMoreEntriesAvailable());
 
             // Now create some entries
@@ -184,10 +202,10 @@ public abstract class CryptoTokenTestBase {
             assertTrue("should contain " + existingKey + " but only had " + aliases,
                         aliases.contains(existingKey));
             assertEquals("no more aliases than the expected in " + aliases,
-                    testAliases.length + 2, aliases.size());
+                    testAliases.size() + testCase.getExistingTestKeys().size(), aliases.size());
             
-            final String[] allAliases = aliases.toArray(new String[0]);
-            LOG.info("allAliases: " + Arrays.toString(allAliases));
+            final List<String> allAliases = aliases;
+            LOG.info("allAliases: " + allAliases);
 
             // Search 1 at the time
             searchResults = searchTokenEntries(0, 1, QueryCriteria.create(), true);
@@ -195,7 +213,7 @@ public abstract class CryptoTokenTestBase {
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[0] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(0) }, aliases.toArray());
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
 
             // Search 1 at the time
@@ -204,7 +222,7 @@ public abstract class CryptoTokenTestBase {
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[1] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(1) }, aliases.toArray());
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
 
             // Search 4 at the time, and then there are no more
@@ -213,7 +231,7 @@ public abstract class CryptoTokenTestBase {
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[3], allAliases[4], allAliases[5], allAliases[6], allAliases[7] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(3), allAliases.get(4), allAliases.get(5), allAliases.get(6), allAliases.get(7) }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
 
             // Querying out of index returns empty results
@@ -226,74 +244,77 @@ public abstract class CryptoTokenTestBase {
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
             // Query one specific entry
-            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3])), true);
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(3))), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[3] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(3) }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
             // Query two specific entries
-            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.or(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3]), new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[1]))), true);
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.or(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(3)), new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(1)))), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[1], allAliases[3] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(1), allAliases.get(3) }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
             // Query all except 3 and 1
-            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[1]))), true);
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(3)), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(1)))), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5], allAliases[6], allAliases[7] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(0), allAliases.get(2), allAliases.get(4), allAliases.get(5), allAliases.get(6), allAliases.get(7) }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
             // Query all except 3 and 1, only get the 4 first entries
-            searchResults = searchTokenEntries(0, 4, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[1]))), true);
+            searchResults = searchTokenEntries(0, 4, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(3)), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(1)))), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(0), allAliases.get(2), allAliases.get(4), allAliases.get(5) }, aliases.toArray());
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
             
             // Query all except 3 and 1 (same as last), but get the next two
-            searchResults = searchTokenEntries(4, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[1]))), true);
+            searchResults = searchTokenEntries(4, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.and(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(3)), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(1)))), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            assertArrayEquals(new String[] { allAliases[6], allAliases[7] }, aliases.toArray());
+            assertArrayEquals(new String[] { allAliases.get(6), allAliases.get(7) }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
 
             // Query with both AND and OR
-            // "alias-14", "alias-13", "alias-5", "alias-10", "alias-2", "alias-1"
-            // (alias EQ "alias-2") OR (alias LIKE alias-1% AND alias NEQ alias-13) => alias-14, alias-10, alias-2, alias-1
+            // (alias EQ existingKey) OR (alias LIKE alias-1% AND alias NEQ alias-20) => existingKey, alias-10
+            // We try to query as little as possible here but still trying out the different operators just to not break
+            // this test when more existing keys gets added or removed
             searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.or(
-                new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), "alias-2"),
+                new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), existingKey),
                 Criteria.and(
                     new Term(RelationalOperator.LIKE, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), "alias-1%"),
-                    new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), "alias-13")
+                    new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), "alias-20")
                 ))
             ), true);
             aliases = new LinkedList<>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
-            String[] expected = new String[] { "alias-14", "alias-10", "alias-2", "alias-1" };
-            Arrays.sort(expected);
-            String[] actual = aliases.toArray(new String[0]);
-            Arrays.sort(actual);
-            assertArrayEquals(expected, actual);
+            final List<String> expected = new ArrayList<>(List.of(existingKey, "alias-10"));
+            Collections.sort(expected);
+
+            final List<String> actual = aliases;
+            Collections.sort(actual);
+
+            assertEquals(expected, actual);
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
             // Check that data is not included
             boolean includeData = false;
-            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases[3])), includeData);
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), allAliases.get(3))), includeData);
             TokenEntry entry = searchResults.getEntries().iterator().next();
             assertNull("chain", entry.getChain());
             assertNull("parsedChain", entry.getParsedChain());

@@ -42,6 +42,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -150,6 +151,9 @@ public class ModulesTestCase {
     private static final String VALUE_USER_AUTHTYPE = "org.signserver.server.UsernameAuthorizer";
     private static final String VALUE_USER_PASS_AUTHTYPE = "org.signserver.server.UsernamePasswordAuthorizer";
     private static final String VALUE_JWT_AUTHTYPE = "org.signserver.server.jwtauth.JwtAuthorizer";
+
+    private static final String[] EXISTING_KEY_PROPERTIES = { "test.p11.existingkey1", "test.p11.existingECkey1",
+            "test.p11.existingMLDSAkey1", "test.p11.existingLMSkey1" };
 
     private final String JWT_PUBLICKEY =
             "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu1SU1LfVLPHCozMxH2Mo" +
@@ -1256,6 +1260,22 @@ public class ModulesTestCase {
         ret.put("keyStorePassword", "foo123");
         ret.put("trustStorePath", getSignServerHome().getAbsolutePath() + "/p12/truststore.jks");
         ret.put("trustStorePassword", "changeit");
+        return ret;
+    }
+
+    /**
+     * Method to get a list of values of expected existing keys from test-config.properties. Method does not return
+     * existing keys in cloud HSMs i.e. Fortanix or AzureKeyVault.
+     * @return List containing the property value from existing keys
+     */
+    public List<String> getExistingTestKeys() {
+        final List<String> ret = new ArrayList<>();
+        for (String prop : EXISTING_KEY_PROPERTIES) {
+            final String keyAlias = config.getProperty(prop);
+            if (keyAlias != null) {
+                ret.add(keyAlias);
+            }
+        }
         return ret;
     }
 

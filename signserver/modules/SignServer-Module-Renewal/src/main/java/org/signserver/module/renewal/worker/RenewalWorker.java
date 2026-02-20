@@ -14,12 +14,14 @@ package org.signserver.module.renewal.worker;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -33,6 +35,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +44,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import javax.net.ssl.*;
 import jakarta.persistence.EntityManager;
 import javax.xml.namespace.QName;
@@ -69,6 +73,7 @@ import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
 import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
+import org.signserver.server.AllowlistUtils;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoInstance;
@@ -170,7 +175,7 @@ public class RenewalWorker extends BaseSigner {
         if (truststoreType == null) {
             fatalErrors.add("Missing TRUSTSTORETYPE property");
         }
-        
+
         truststorePath = config.getProperty("TRUSTSTOREPATH");
         truststoreValue = config.getProperty(TRUSTSTOREVALUE);
         if (truststorePath == null && truststoreValue == null) {
@@ -178,6 +183,21 @@ public class RenewalWorker extends BaseSigner {
         }
         if (truststorePath != null && truststoreValue != null) {
             fatalErrors.add("Can not specify both TRUSTSTOREPATH and TRUSTSTOREVALUE property");
+        }
+
+        if (truststorePath != null) {
+            Set<Path> allowList = getAllowedTrustStorePaths();
+
+            if (allowList.isEmpty()) {
+                LOG.error("Missing allowlist configuration for TRUSTSTOREPATH");
+                fatalErrors.add("Missing allowlist configuration for TRUSTSTOREPATH");
+            } else {
+                Path path = Path.of(truststorePath);
+                if (!AllowlistUtils.isPathAllowed(path, allowList)) {
+                    LOG.error("TRUSTSTOREPATH is not allowed " + truststorePath);
+                    fatalErrors.add("TRUSTSTOREPATH is not allowed");
+                }
+            }
         }
 
         truststorePass = config.getProperty("TRUSTSTOREPASSWORD");
@@ -780,6 +800,9 @@ public class RenewalWorker extends BaseSigner {
                     keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
                     keystoreTrusted.load(in, truststorePass.toCharArray());
                 }
+            } catch (FileNotFoundException | CertificateParsingException | IllegalArgumentException e) {
+                LOG.error("Invalid value for TRUSTSTOREPATH : " + truststorePath, e);
+                throw new RuntimeException("Invalid value for TRUSTSTOREPATH");
             } finally {
                 if (in != null) {
                     try {
@@ -852,6 +875,10 @@ public class RenewalWorker extends BaseSigner {
             }
         }
         return result;
+    }
+
+    protected Set<Path> getAllowedTrustStorePaths() {
+        return CompileTimeSettings.getInstance().getTruststorePathProperties();
     }
 
     private static List<byte[]> getCertificateChainBytes(

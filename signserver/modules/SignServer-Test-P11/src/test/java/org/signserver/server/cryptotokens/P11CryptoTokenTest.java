@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.File;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -36,7 +37,6 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
-import org.signserver.common.ReadOnlyWorkerException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
@@ -211,6 +211,38 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
 
             removeKeyHelper();
+        } finally {
+            testCase.removeWorker(CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Tests export certificate chain with ATTRIBUTESFILE in an allowlist.
+     * @throws Exception
+     */
+    @Test
+    public void testExportCertificateChainWithAttributesFile_PKCS11CryptoToken() throws Exception {
+        String attributesfileAllowListValue = testCase.getConfig().getProperty("test.attributesfile.existingAllowedFolder");
+        assertTrue("Test requires test.attributesfile.existingAllowedFolder to be pointing to an existing " +
+                "allowed directory.", attributesfileAllowListValue != null && !attributesfileAllowListValue.isEmpty());
+
+        File attributesFileAllowedFolder = new File(attributesfileAllowListValue);
+        String attributesFile = new File(attributesFileAllowedFolder, "signserver/doc/sample-configs/p11attributes.cfg").getAbsolutePath();
+
+        try {
+            // Setup token
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "NAME", CRYPTO_TOKEN_NAME);
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "SHAREDLIBRARYNAME", sharedLibraryName);
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "SLOT", slot);
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "PIN", pin);
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "DEFAULTKEY", existingKey1);
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "ATTRIBUTESFILE", attributesFile);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            exportCertificatesHelper(existingKey1);
         } finally {
             testCase.removeWorker(CRYPTO_TOKEN);
         }

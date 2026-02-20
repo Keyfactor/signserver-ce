@@ -429,14 +429,37 @@
 #pdfsigner.archive.path.allowed.1=
 #pdfsigner.archive.path.allowed.2=
 
-# --------------- SignerStatusReportWorker Outputfile paths --------------------
+# --------------- SignerStatusReportWorker OUTPUTFILE allowlist ----------------
 #
-# To configure a list of allowed paths that SignerStatusReportWorker can write to, enter the desired paths in the outputfile.path.allowed below.
+# To configure a list of allowed paths that SignerStatusReportWorker can write to, enter the desired paths in the signerstatusreportworker.outputfile.path.allowed below.
 # Each property correspond to an entry in the outputfile allowlist for that file directory. Up to 256 different allowlist entries are allowed.
 # These properties are applicable to the SignerStatusReportWorker.
-#outputfile.path.allowed.0=
-#outputfile.path.allowed.1=
-#outputfile.path.allowed.2=
+#signerstatusreportworker.outputfile.path.allowed.0=
+#signerstatusreportworker.outputfile.path.allowed.1=
+
+# --------------- RenewalWorker TRUSTSTOREPATH Allowlist -----------------------
+#
+# To configure a list of allowed paths that RenewalWorker can read from, enter the desired paths in the renewalworker.truststore.path.allowed below.
+# Each property correspond to an entry in the truststorepath allowlist for that file directory. Up to 256 different allowlist entries are allowed.
+# These properties are applicable to the RenewalWorker.
+#renewalworker.truststore.path.allowed.0=
+#renewalworker.truststore.path.allowed.1=
+
+# --------------- KeystoreCryptotoken KEYSTOREPATH Allowlist -------------------
+#
+# To configure a list of allowed paths that KeystoreCryptotoken can read from, enter the desired paths in the keystorecryptotoken.keystore.path.allowed below.
+# Each property correspond to an entry in the keystorepath allowlist for that file directory. Up to 256 different allowlist entries are allowed.
+# These properties are applicable to the KeystoreCryptotoken.
+#keystorecryptotoken.keystore.path.allowed.0=
+#keystorecryptotoken.keystore.path.allowed.1=
+
+# --------------- LegacyPKCS11CryptoToken ATTRIBUTESFILE Allowlist -------------
+#
+# To configure a list of allowed paths that LegacyPKCS11CryptoToken can read from, enter the desired paths in the legacypkcs11cryptotoken.attributesfile.path.allowed below.
+# Each property correspond to an entry in the attributesfiles path allowlist for that file directory. Up to 256 different allowlist entries are allowed.
+# These properties are applicable to the PKCS11CryptoToken.
+#legacypkcs11cryptotoken.attributesfile.path.allowed.0=
+#legacypkcs11cryptotoken.attributesfile.path.allowed.1=
 
 # ------------- Managed Role Members ------------------------
 #

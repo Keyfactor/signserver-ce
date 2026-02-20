@@ -111,7 +111,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         signserverhome = PathUtil.getAppHome();
-        dss10KeyStorePath = getSignServerHome() + "/res/test/dss10/dss10_keystore.p12";
+        dss10KeyStorePath = getDss10Keystore().getAbsolutePath();
         setupSSLKeystores();
     }
 

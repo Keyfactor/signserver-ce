@@ -130,7 +130,7 @@ public class SignServerCLITest extends ModulesTestCase {
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setproperty", "1000", "KEYSTOREPATH",
-                        getSignServerHome() + "/res/test/dss10/dss10_keystore.p12"));
+                        getDss10Keystore().getAbsolutePath()));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setproperty", "1000", "KEYSTORETYPE", "PKCS12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,

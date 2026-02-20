@@ -109,7 +109,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final int WORKER8 = 8897;
 
     private static final String CRYPTOTOKEN_CLASSNAME =
-            "org.signserver.server.cryptotokens.KeystoreCryptoToken";
+            "org.signserver.testutils.TestableKeystoreCryptoTokenForAllowedPaths";
 
     // OID description: we sign anything that arrives
     private static final String DEFAULT_TSA_POLICY_OID = "1.3.6.1.4.1.22408.1.2.3.45";

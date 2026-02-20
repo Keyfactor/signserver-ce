@@ -607,7 +607,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     private void setupCryptoToken(int tokenId, String tokenName, String pin) throws Exception {
         // Create keystore
-        keystoreFile = File.createTempFile("testkeystore", ".p12");
+        keystoreFile = createTempKeystoreFile("testkeystore", ".p12");
         FileOutputStream out = null;
         try {
             KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
@@ -753,7 +753,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             // Copy sample P12 to a temporary P12
             File sampleP12 = new File(getSignServerHome(), "res/test/dss10/dss10_signer3.p12");
             final String keyInKeystore = "Signer 3";
-            File p12 = File.createTempFile("testkeystore", "tmp");
+            File p12 = createTempKeystoreFile("testkeystore", "tmp");
             p12.deleteOnExit();
             KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
             try (FileInputStream fin = new FileInputStream(sampleP12); FileOutputStream fout = new FileOutputStream(p12)) {
@@ -857,7 +857,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         try {
             // Copy sample P12 to a temporary P12
             File sampleP12 = new File(getSignServerHome(), "res/test/dss10/dss10_signer3.p12");
-            File p12 = File.createTempFile("testkeystore", "tmp");
+            File p12 = createTempKeystoreFile("testkeystore", "tmp");
             p12.deleteOnExit();
             KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
             try (FileInputStream fin = new FileInputStream(sampleP12); FileOutputStream fout = new FileOutputStream(p12)) {

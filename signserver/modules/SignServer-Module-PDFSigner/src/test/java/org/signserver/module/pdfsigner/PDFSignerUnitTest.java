@@ -146,7 +146,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private static final String AUTHTYPE = "AUTHTYPE";
 
     private static final String CRYPTOTOKEN_CLASSNAME =
-            "org.signserver.server.cryptotokens.KeystoreCryptoToken";
+            "org.signserver.testutils.TestableKeystoreCryptoTokenForAllowedPaths";
     private final String SAMPLE_OWNER123_PASSWORD = "owner123";
     private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
     private final String SAMPLE_OPEN123_PASSWORD = "open123";

@@ -269,6 +269,7 @@ public class ModulesTestCase {
     private StatusRepositorySessionRemote statusSession;
 
     private static File signServerHome;
+    private static File signServerTmp;
 
     private Properties config;
     private final Properties deployConfig = new Properties();
@@ -317,6 +318,12 @@ public class ModulesTestCase {
         } catch (Exception ex) {
             fail("Could not load conf/signserver_deploy.properties: " + ex.getMessage());
         }
+
+        try {
+            signServerTmp = new File(getSignServerHome(), "tmp");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+       }
     }
 
     public void setUseRestWorkerSession(final boolean useRestWorkerSession) {
@@ -1456,4 +1463,40 @@ public class ModulesTestCase {
         return chain;
     }
 
+    /**
+     * Creates a temporary file within the tmp directory of the application (i.e., SIGNSERVER_HOME/tmp)
+     * using the specified name and suffix.
+     *
+     * @param name the base name of the file to be created
+     * @param suffix the suffix to be appended to the file name
+     * @return a File object representing the newly created temporary file
+     * @throws IOException if the file cannot be created
+     */
+    public File createTempFile(String name, String suffix) throws IOException {
+        return File.createTempFile(name, suffix, signServerTmp);
+    }
+
+    /**
+     * Creates a temporary keystore file within a predefined allowed directory.
+     * The directory is defined under the test config parameter test.keystore.existingAllowedFolder.
+     * If the configuration property is missing or is null, the test will fail with an assertion error.
+     *
+     * @param name   the base name of the keystore file
+     * @param suffix the suffix to append to the file name
+     * @return a File object representing the created temporary keystore file
+     * @throws Exception if the file cannot be created, or if the
+     *     test configuration parameter test.keystore.existingAllowedFolder is missing or null
+     */
+    public File createTempKeystoreFile(String name, String suffix) throws Exception {
+        String keystoreAllowlistValue = this.config.getProperty("test.keystore.existingAllowedFolder");
+        if (keystoreAllowlistValue == null || keystoreAllowlistValue.isEmpty()) {
+            throw new Exception("Test requires test.keystore.existingAllowedFolder to be pointing to an" +
+                    " existing allowed directory.");
+        }
+        return File.createTempFile(name, suffix, new File(keystoreAllowlistValue));
+    }
+
+    public File getDss10Keystore() throws FileNotFoundException {
+        return new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE);
+    }
 }

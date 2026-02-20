@@ -89,15 +89,23 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     private static final String KEYSTORE_NAME = "p12testkeystore1234";
 
     private File keystoreFile;
+    private File keystorePathAllowlist;
 
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
+        // Read the keystorepath allowlist
+        String allowedFolder = getConfig().getProperty("test.keystore.existingAllowedFolder");
+        if (allowedFolder == null || allowedFolder.isEmpty()) {
+            throw new Exception("Test requires test.keystore.existingAllowedFolder to be pointing to an existing " +
+                    "allowed directory.");
+        }
+        keystorePathAllowlist = new File(allowedFolder);
     }
 
     private void setCMSSignerPropertiesCombined(boolean autoActivate) throws Exception {
         // Create keystore
-        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");
+        keystoreFile = createTempKeystoreFile(KEYSTORE_NAME, ".p12");
         FileOutputStream out = null;
         try {
             KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
@@ -126,7 +134,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
 
     private void setCMSSignerPropertiesSeparateToken() throws Exception {
         // Create keystore
-        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");
+        keystoreFile = createTempKeystoreFile(KEYSTORE_NAME, ".p12");
         FileOutputStream out = null;
         try {
             KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
@@ -1042,22 +1050,46 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     /**
-     * Test that setting KEYSTOREPATH not pointing an existing file results in a config error.
+     * Test that setting the KEYSTOREPATH to a non-existing file in an allowed path results in a config error.
      */
     @Test
     public void testUnknownKeystorePath() throws Exception {
-        LOG.info("testMissingKeystorePath");
+        LOG.info("testUnknownKeystorePath");
 
         final int workerId = WORKER_CMS;
 
         try {
             setCMSSignerPropertiesCombined(true);
-            workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", "non-existing.p12");
+            File nonExistingKeystore = new File(keystorePathAllowlist, "non-existing.p12");
+            workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", nonExistingKeystore.toString());
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
             assertTrue("Should contain error",
-                    errors.contains("Failed to initialize crypto token: File not found: non-existing.p12"));
+                    errors.contains("Failed to initialize crypto token: File not found: " + nonExistingKeystore));
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+        }
+    }
+
+    /**
+     * Test that setting KEYSTOREPATH to a path that is not in the allowlist results in an error.
+     */
+    @Test
+    public void testNotAllowedKeystorePath() throws Exception {
+        LOG.info("testNotAllowedKeystorePath");
+
+        final int workerId = WORKER_CMS;
+
+        try {
+            setCMSSignerPropertiesCombined(true);
+            workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", "not/allowed/path/non-existing.p12");
+            workerSession.reloadConfiguration(workerId);
+
+            final List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
+            assertTrue("Should contain error",
+                    errors.contains("Failed to initialize crypto token: KEYSTOREPATH is not allowed"));
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);
@@ -1144,7 +1176,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
 
     private void setP12CryptoTokenProperties() throws Exception {
         // Create keystore
-        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");
+        keystoreFile = createTempKeystoreFile(KEYSTORE_NAME, ".p12");
         FileOutputStream out = null;
         try {
             KeyStore ks = KeyStore.getInstance("PKCS12", "BC");

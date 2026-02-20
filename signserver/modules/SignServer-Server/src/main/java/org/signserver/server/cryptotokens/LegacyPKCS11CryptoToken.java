@@ -13,12 +13,14 @@
 package org.signserver.server.cryptotokens;
 
 import org.apache.commons.lang3.StringUtils;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -36,12 +38,13 @@ import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x9.X9ECParameters;
@@ -66,6 +69,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.AllowlistUtils;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
 import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
@@ -126,6 +130,23 @@ public class LegacyPKCS11CryptoToken extends BaseCryptoToken {
                 throw new CryptoTokenInitializationFailureException(
                         "Only specify one of " + CryptoTokenHelper.PROPERTY_ATTRIBUTES
                                 + " and " + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
+            }
+
+            String attributesFileValue = props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
+            if (attributesFileValue != null) {
+                Set<Path> allowList = getAllowedAttributesFilePaths();
+
+                if (allowList.isEmpty()) {
+                    LOG.error("Missing allowlist configuration for ATTRIBUTESFILE");
+                    throw new CryptoTokenInitializationFailureException("Missing allowlist configuration for ATTRIBUTESFILE");
+                }
+                Path path = Path.of(attributesFileValue);
+
+                if (!AllowlistUtils.isPathAllowed(path, allowList)) {
+                    LOG.error("ATTRIBUTESFILE is not allowed " + attributesFileValue);
+                    throw new CryptoTokenInitializationFailureException("ATTRIBUTESFILE is not allowed");
+                }
+                LOG.debug("ATTRIBUTESFILE " + attributesFileValue + " is in allowlist.");
             }
 
             if (attributesValue != null) {
@@ -291,7 +312,8 @@ public class LegacyPKCS11CryptoToken extends BaseCryptoToken {
             }
                 
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
-            LOG.error("Init failed", ex);
+            // Due to CWE-209 no stacktrace is printed out
+            LOG.error("Init failed: " + ex.getMessage());
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         } catch (NoSuchSlotException ex) {
             LOG.error("Slot not found", ex);
@@ -620,6 +642,10 @@ public class LegacyPKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
         // NOP
+    }
+
+    protected Set<Path> getAllowedAttributesFilePaths() {
+        return CompileTimeSettings.getInstance().getAttributesFilePathProperties();
     }
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.LegacyPKCS11CryptoToken {

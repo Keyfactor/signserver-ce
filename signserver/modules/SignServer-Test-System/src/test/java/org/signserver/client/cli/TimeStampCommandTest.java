@@ -137,7 +137,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
         final int timestampSignerId = 9000;
         final int keystoreId = 9001;
         final KeyStore ks = KeyStore.getInstance("pkcs12");
-        final File keystore = File.createTempFile("test03compositeTimestampVerifyUsingCafile", ".p12");
+        final File keystore = createTempKeystoreFile("test03compositeTimestampVerifyUsingCafile", ".p12");
         final File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response3-", ".base64");
         final File pemFile = File.createTempFile("test03compositeTimestampVerifyUsingCafile", ".pem");
         keystore.deleteOnExit();
@@ -275,7 +275,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
         final int timestampSignerId = 9000;
         final int keystoreId = 9001;
         final KeyStore ks = KeyStore.getInstance("pkcs12");
-        final File keystore = new File(getSignServerHome() + "/res/test/dss10/dss10_keystore.p12");
+        final File keystore = getDss10Keystore();
         final File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response3-", ".base64");
         final File pemFile = File.createTempFile("test03TimestampVerifyUsingSignerfile", ".pem");
         responseFile.deleteOnExit();
@@ -350,7 +350,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
         final int timestampSignerId = 9000;
         final int keystoreId = 9001;
         final KeyStore ks = KeyStore.getInstance("pkcs12");
-        final File keystore = new File(getSignServerHome() + "/res/test/dss10/dss10_keystore.p12");
+        final File keystore = getDss10Keystore();
         final File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response3-", ".base64");
         final File pemFile = File.createTempFile("test03TimestampVerifyUsingSignerfile", ".pem");
         responseFile.deleteOnExit();

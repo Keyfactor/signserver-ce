@@ -138,7 +138,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
 
     private File createEmptyKeystore() throws Exception {
         SignServerUtil.installBCProvider();
-        File result = File.createTempFile("TokenEntriesCLITest", ".p12");
+        File result = createTempKeystoreFile("TokenEntriesCLITest", ".p12");
         FileOutputStream out = null;
         try {
             KeyStore ks = KeyStore.getInstance("PKCS12", "BC");

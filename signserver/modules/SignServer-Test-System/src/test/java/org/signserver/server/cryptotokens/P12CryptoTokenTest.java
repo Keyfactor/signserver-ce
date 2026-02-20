@@ -24,6 +24,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.signserver.common.RequestContext;
 import org.signserver.common.util.PathUtil;
 import org.signserver.test.utils.mock.MockedServicesImpl;
+import org.signserver.testutils.TestableKeystoreCryptoTokenForAllowedPaths;
 
 /**
  * TODO: Document me!
@@ -51,10 +52,11 @@ public class P12CryptoTokenTest extends TestCase {
         Signature sig = null;
         String signatureAlgorithm = "SHA256WITHRSAANDMGF1";
 
-        P12CryptoToken signToken = new P12CryptoToken();
+        KeystoreCryptoToken signToken = new TestableKeystoreCryptoTokenForAllowedPaths();
         Properties props = new Properties();
         final String signserverhome = PathUtil.getAppHome().getAbsolutePath();
         assertNotNull(signserverhome);
+        props.setProperty("KEYSTORETYPE", "PKCS12");
         props.setProperty("KEYSTOREPATH", signserverhome + "/res/test/timestamp1.p12");
         signToken.init(1, props, new MockedServicesImpl());
 

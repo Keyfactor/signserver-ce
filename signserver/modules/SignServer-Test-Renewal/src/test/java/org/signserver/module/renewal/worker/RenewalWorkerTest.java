@@ -14,10 +14,10 @@ package org.signserver.module.renewal.worker;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,9 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Endpoint;
-import static junit.framework.TestCase.assertNotNull;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
@@ -69,7 +70,6 @@ import org.signserver.server.IProcessable;
 import org.signserver.server.IServices;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
-import org.signserver.server.log.AdminInfo;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
@@ -95,10 +95,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public static final int SIGNERID_6102 = 6102;
     public static final String SIGNER_6102 = "Signer_6102";
     public static final String SIGNER_6102_ENDENTITY = "Signer_6102_endentity";
-    public static final int CRYPTOWORKER_6200_ID = 6200;
-    public static final String CRYPTOWORKER_6200 = "CryptoToken_6200";
-    private static final int RENEWALSERVICE_ID = 6109;
-    private static final String RENEWALSERVICE_NAME = "RenewalService9";
     
     public static final String DEFAULT_KEYALG = "RSA";
     public static final String DEFAULT_KEYSPEC = "2048";
@@ -112,11 +108,11 @@ public class RenewalWorkerTest extends AbstractTestCase {
     private Endpoint ejbcaEndpoint;
     private MockEjbcaWS mockEjbcaWs;
     private EjbcaWS ejbcaws;
-    
+    private ModulesTestCase modulesTestCase;
+
     private static final String SIGN_CERT = "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVyIDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaIggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0OqTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9yKgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK69WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgIms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5kSVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9JC2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGOJbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JNY4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9hhr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ";
     private static final String SIGN_CERT_CHAIN = "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVyIDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaIggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0OqTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9yKgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK69WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgIms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5kSVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9JC2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGOJbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JNY4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9hhr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ;MIIFfzCCA2egAwIBAgIIMk1BOK8CwTwwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA4MTQyN1oXDTM2MDUyNzA4MTQyN1owTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAgblgjTTkMp1QAhgWDprhvqE9zX1Ux/A/RTOu4G4f6CTkd6JEEkbdKZv+CKv4cRoVCtfO3wnOokFRw/1JMmHHiQ1Z//uDoDjo8jk8nek0ArFE9R5NT02wMJCQa/mP1wU9ZSl1tx3jQRUFB+rTNeCcPTft+1FL7UjYMdkRzl261IOlmXzDMA+EYIGJ2c2wYhOv2DqfQygNz5GOf0EFqlQZIt/pzopSS+0K8mNb53ROhg9GJujwzugSH5Z+r0fsVHbCV0QUkZBfkRo9KMcdaDEPa8xpYTjsFPqU6RcnGkVABhn8OS8SIWw2re1f+htj6p9EGbk1m0I9pWGBA9ktWnrqlqDXV+tEhhh1O4f+LHieoxiscrF7RXxlYqyam6oabfXsX3VAC0M1UkwIciE8wA1Sj/+dgoSMqvEDNDfwpEYt6l8Z8czDTWDi7MM2u5VY0nP3+A+PepKrOtrdaGSP396f4a7A3un1o6nQWHsyWQ7kc8GIn8zN5nykQaghGyYlHHYe1XUSPtHmxjbdsyztrkIis3cfjFne0XgPAiQuYx3T/B+po9BhGIUwCV0Qi/gWVN6NkydsbzMeRXELQYyK+lHgIGiEaBzQRRtXbnB+wQXi2IacJNdKqICwDsl/PvvcZI9ZV6pB/KIzB+8IJm0CLY24K0OXJs3Bqij8gmpvbI+o0wUCAwEAAaNjMGEwHQYDVR0OBBYEFCB6Id7orbsCqPtxWKQJYrnYWAWiMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUIHoh3uituwKo+3FYpAliudhYBaIwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQAxFvpOZF6Kol48cQeKWQ48VAe+h5dmyKMfDLDZX51IRzfKKsHLpFPxzGNw4t9Uv4YOR0CD9z81dR+c93t1lwwIpKbx9Qmq8jViHEHKYD9FXThM+cVpsT25pg35m3ONeUX/b++l2d+2QNNTWMvdsCtaQdybZqbYFIk0IjPwLLqdsA8Io60kuES4JnQahPdLkfm70rgAdmRDozOfSDaaWHY20DovkfvKUYjPR6MGAPD5w9dEb4wp/ZjATblyZnH+LTflwfftUAonmAw46E0Zgg143sO6RfOOnbwjXEc+KXd/KQ6kTQ560mlyRd6q7EIDYRfD4n4agKV2R5gvVPhMD0+IK7kagqKNfWa9z8Ue2N3MedyWnb9wv4wC69qFndGaIfYADkUykoOyLsVVteJ70PVJPXO7s66LucfD2R0wo2MpuOYCsTOm7HHS+uZ9VjHl2qQ0ZQG89Xn+AXnzPbk1INe2z0lq3hzCW5DTYBKsJEexErzMpLwiEqUYJUfR9EeCM8UPMtLSqz1utdPoIYhULGzt5lSJEpMHMbquYfWJxQiKCbvfxQsP5dLUMEIqTgjNdo98OlM7Z7zjYH9Kimz3wgAKSAIoQZr7Oy1dMHO5GK4jBtZ8wgsyyQ6DzQQ7R68XFVKarIW8SATeyubAP+WjdMwk/ZXzsDjMZEtENaBXzAefYA==";
     private static final String KEY_DATA = "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";
-
 
     @Override
     protected void setUp() throws Exception {
@@ -131,6 +127,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 new QName("http://ws.protocol.core.ejbca.org/",
                 "EjbcaWSService"));
         ejbcaws = service.getEjbcaWSPort();
+        modulesTestCase = new ModulesTestCase();
     }
 
     @Override
@@ -162,16 +159,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     }
 
     private void doRenewalFirstTime() throws Exception {
-        final Properties reqProperties = new Properties();
-        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
-                SIGNER_6102);
-        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
-                "foo123");
-        final GenericPropertiesRequest request = new GenericPropertiesRequest(
-                reqProperties);
-        GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
+        GenericPropertiesResponse response = getGenericPropertiesResponse();
 
         // OK result
         final String message = response.getProperties().getProperty(RenewalWorkerProperties.RESPONSE_MESSAGE);
@@ -207,6 +195,18 @@ public class RenewalWorkerTest extends AbstractTestCase {
         System.out.println("cert: " + cert);
         
         assertTrue("chain contains cert", chain.contains(cert));
+    }
+
+    private GenericPropertiesResponse getGenericPropertiesResponse() throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final Properties reqProperties = new Properties();
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
+                SIGNER_6102);
+        reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
+                "foo123");
+        final GenericPropertiesRequest request = new GenericPropertiesRequest(
+                reqProperties);
+        return (GenericPropertiesResponse) getProcessSession().process(
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
     }
 
     /** 
@@ -557,7 +557,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public void test09truststoreTypePEM() throws Exception {
     	
     	// Setup workers
-    	addRenewalWorkerWithPEM(WORKERID, WORKERNAME);
+        Path truststorePath = Path.of(PathUtil.getAppHome().getPath(), "res/test/renewal.pem");
+        addRenewalWorkerWithPEM(WORKERID, WORKERNAME, truststorePath);
     	addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
     	
     	// Setup EJBCA end entitity
@@ -701,7 +702,34 @@ public class RenewalWorkerTest extends AbstractTestCase {
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }
     }
-    
+
+    /**
+     * Tests renewal using a non-existing PEM file in the allowlist.
+     * @throws Exception
+     */
+    public void test13TruststorepathToNonExistingPEMShouldFail() throws Exception {
+
+        // Setup workers
+        Path nonExistingTruststorePath = Path.of("nonExisting.pem");
+        addRenewalWorkerWithPEM(WORKERID, WORKERNAME, nonExistingTruststorePath);
+        addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
+
+        doRenewalFirstTimeExpectFailure();
+    }
+
+    /**
+     * Tests renewal using invalid PEM file in the allowlist.
+     * @throws Exception
+     */
+    public void test14TruststorepathIsSetToInvalidPEMShouldFail() throws Exception {
+        // Setup workers
+        Path nonExistingTruststorePath = Path.of(PathUtil.getAppHome().getPath(), "res/test/ok.pdf");
+        addRenewalWorkerWithPEM(WORKERID, WORKERNAME, nonExistingTruststorePath);
+        addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
+
+        doRenewalFirstTimeExpectFailure();
+    }
+
     /**
      * Tests renewal of key and certificate for a worker using CLI.
      * @throws Exception
@@ -793,22 +821,18 @@ public class RenewalWorkerTest extends AbstractTestCase {
     }
     
     private void setupRenewalWorker(final int signerId, final String signerName) throws Exception {
-        // Create keystore TODO: Don't create an empty one
-        final String keystorePath = newTempFile().getAbsolutePath();
-        final String keystorePassword = "foo123";
-        createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
-    	
         getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
     	getWorkerSession().setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
                 "org.signserver.module.renewal.worker.RenewalWorker");
         getWorkerSession().setWorkerProperty(signerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
-                "org.signserver.server.cryptotokens.P12CryptoToken");
+                "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
         getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
         getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
-        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystorePath);
-        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", keystorePassword);
-        getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", "defaultKey");
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTORETYPE", "PKCS12");
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", modulesTestCase.getDss10Keystore().getAbsolutePath());
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", "foo123");
+        getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", "signer00001");
     }
 
     protected void addRenewalWorker(final int signerId, final String signerName, 
@@ -816,7 +840,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         setupRenewalWorker(signerId, signerName);
 
-        final String truststorePath = newTempFile().getAbsolutePath();
+        final String truststorePath = newTempTruststoreFile().getAbsolutePath();
         final String truststorePassword = "foo123";
         createEmptyKeystore(truststoreType, truststorePath, truststorePassword);
 
@@ -828,19 +852,19 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 truststoreType);
         getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
                 EJBCAWSURL_PREFIX);
-        getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", "defaultKey");
 
         getWorkerSession().reloadConfiguration(signerId);
+        assertTrue(getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors().isEmpty());
     }
     
     private void addRenewalWorkerMock(final GlobalConfigurationSessionMock conf, final MockWorkerSession workerSession, final int signerId, final String signerName)
         throws Exception {
         // Create keystore TODO: Don't create an empty one
-        final String keystorePath = newTempFile().getAbsolutePath();
+        final String keystorePath = newTempKeystoreFile().getAbsolutePath();
         final String keystorePassword = "foo123";
         createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
 
-        final String truststorePath = newTempFile().getAbsolutePath();
+        final String truststorePath = newTempTruststoreFile().getAbsolutePath();
         final String truststorePassword = "foo123";
         createEmptyKeystore("PKCS12", truststorePath, truststorePassword);
         
@@ -865,6 +889,12 @@ public class RenewalWorkerTest extends AbstractTestCase {
             @Override
             protected WorkerSessionLocal getWorkerSession(IServices services) {
                 return workerSession;
+            }
+
+            @Override
+            protected Set<Path> getAllowedTrustStorePaths() {
+                String allowList = modulesTestCase.getConfig().getProperty("test.truststore.existingAllowedFolder");
+                return Set.of(Path.of(allowList));
             }
         });
         
@@ -904,18 +934,17 @@ public class RenewalWorkerTest extends AbstractTestCase {
         workerSession.reloadConfiguration(signerId);
     }
     
-    private void addRenewalWorkerWithPEM(final int signerId, final String signerName)
-    	throws Exception {
+    private void addRenewalWorkerWithPEM(final int signerId, final String signerName, Path truststorePath) throws Exception {
     	
     	setupRenewalWorker(signerId, signerName);
         
-        final File truststorePath = new File(PathUtil.getAppHome(), "res" + File.separator + "test" + File.separator + "renewal.pem");
-        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPATH", truststorePath.getAbsolutePath());
+        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPATH", truststorePath.toAbsolutePath().toString());
         getWorkerSession().setWorkerProperty(signerId, "TRUSTSTORETYPE", "PEM");
         getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
                 EJBCAWSURL_PREFIX);
 
         getWorkerSession().reloadConfiguration(signerId);
+        assertTrue(getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors().isEmpty());
     }
     
     private void addRenewalWorkerWithInlinePEM(final int signerId, final String signerName)
@@ -935,6 +964,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 EJBCAWSURL_PREFIX);
 
         getWorkerSession().reloadConfiguration(signerId);
+        assertTrue(getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors().isEmpty());
     }
     
     private void addRenewalWorkerWithInlineJKS(final int signerId, final String signerName)
@@ -968,7 +998,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 EJBCAWSURL_PREFIX);
 
         getWorkerSession().reloadConfiguration(signerId);
-    }    
+        assertTrue(getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors().isEmpty());
+    }
     
     
     private void mockSetupEjbcaSearchResult() {
@@ -990,14 +1021,26 @@ public class RenewalWorkerTest extends AbstractTestCase {
         findResult.put(match1, Arrays.asList(user1));
         mockEjbcaWs.setFindUserResults(findResult);
     }
-    
+
+    private void doRenewalFirstTimeExpectFailure() throws Exception {
+        GenericPropertiesResponse response = getGenericPropertiesResponse();
+
+        // NOK result
+        final String message = response.getProperties().getProperty(RenewalWorkerProperties.RESPONSE_MESSAGE);
+        LOG.info("Response message: " + message);
+        assertEquals("message: " + message, RenewalWorkerProperties.RESPONSE_RESULT_FAILURE,
+                response.getProperties().getProperty(
+                        RenewalWorkerProperties.RESPONSE_RESULT));
+    }
+
+
     /**
      * Mockup worker session recording the explicitEccParameters parameter when
      * calling getCertificateRequest.
-     * 
+     *
      * @author Marcus Lundblad
      *
-     */
+     * */
     private static class MockWorkerSession extends WorkerSessionMock {
 
         protected boolean explicitEccParametersSet = false;

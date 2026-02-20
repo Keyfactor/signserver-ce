@@ -99,8 +99,17 @@ public class CompileTimeSettings {
 
     public static final String READ_ONLY_WORKERS = "workerids.readonly";
 
-    public static final String OUTPUTFILE_PATH_ALLOWLIST = "outputfile.path.allowed";
+    public static final String OUTPUTFILE_PATH_ALLOWLIST = "signerstatusreportworker.outputfile.path.allowed";
     public static final int MAX_OUTPUTFILE_PATHS = 256;
+
+    public static final String TRUSTSTORE_PATH_ALLOWLIST = "renewalworker.truststore.path.allowed";
+    public static final int MAX_TRUSTSTORE_PATHS = 256;
+
+    public static final String KEYSTORE_PATH_ALLOWLIST = "keystorecryptotoken.keystore.path.allowed";
+    public static final int MAX_KEYSTORE_PATHS = 256;
+
+    public static final String ATRRIBUTESFILE_PATH_ALLOWLIST = "legacypkcs11cryptotoken.attributesfile.path.allowed";
+    public static final int MAX_ATTRIBUTESFILE_PATHS = 256;
 
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();
@@ -223,6 +232,33 @@ public class CompileTimeSettings {
      */
     public Set<Path> getOutputfilePathProperties() {
         return getNormalizedPaths(CompileTimeSettings.OUTPUTFILE_PATH_ALLOWLIST, MAX_OUTPUTFILE_PATHS);
+    }
+
+    /**
+     * Retrieves all truststore.path.allowed.x deploy properties.
+     *
+     * @return Collection of normalized allowed paths for TRUSTSTORE
+     */
+    public Set<Path> getTruststorePathProperties() {
+        return getNormalizedPaths(CompileTimeSettings.TRUSTSTORE_PATH_ALLOWLIST, MAX_TRUSTSTORE_PATHS);
+    }
+
+    /**
+     * Retrieves all keystore.path.allowed.x deploy properties.
+     *
+     * @return Collection of normalized allowed paths for KEYSTOREPATH
+     */
+    public Set<Path> getKeystorePathProperties() {
+        return getNormalizedPaths(CompileTimeSettings.KEYSTORE_PATH_ALLOWLIST, MAX_KEYSTORE_PATHS);
+    }
+
+    /**
+     * Retrieves all attributesfile.path.allowed.x deploy properties.
+     *
+     * @return Collection of normalized allowed paths for ATTRIBUTESFILE
+     */
+    public Set<Path> getAttributesFilePathProperties() {
+        return getNormalizedPaths(CompileTimeSettings.ATRRIBUTESFILE_PATH_ALLOWLIST, MAX_ATTRIBUTESFILE_PATHS);
     }
 
     /**

@@ -34,7 +34,6 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
@@ -71,8 +70,9 @@ public class MRTDSODSignerUnitTest extends TestCase {
             MRTDSODSignerUnitTest.class.getName());
 
     private static final String AUTHTYPE = "AUTHTYPE";
-    private static final String CRYPTOTOKEN_CLASSNAME
-            = "org.signserver.server.cryptotokens.P12CryptoToken";
+    private static final String CRYPTOTOKEN_CLASSNAME =
+            "org.signserver.testutils.TestableKeystoreCryptoTokenForAllowedPaths";
+
     private static final String NAME = "NAME";
 
     /** Worker7897: Default algorithms, default hashing setting. */
@@ -131,6 +131,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
     private static final String KEYSTOREPATH = "KEYSTOREPATH";
     private static final String KEYSTOREPASSWORD = "KEYSTOREPASSWORD";
+    private static final String KEYSTORETYPE = "KEYSTORETYPE";
     private static final String DEFAULTKEY = "DEFAULTKEY";
 
     private File keystore1;
@@ -756,6 +757,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner1");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
@@ -769,6 +771,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner2");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSA");
@@ -784,6 +787,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner1");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DODATAGROUPHASHING", "true");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
@@ -798,6 +802,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner1");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSA");
@@ -814,6 +819,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner5");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("LDSVERSION", "0108");
             config.setProperty("UNICODEVERSION", "040000");
@@ -829,6 +835,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner11");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
@@ -844,6 +851,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner12");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
@@ -860,6 +868,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty("DIGESTALGORITHM", "SHA384");
             config.setProperty("SIGNATUREALGORITHM", "SHA384withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
@@ -874,6 +883,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner14");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSAandMGF1");
@@ -889,6 +899,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner15");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
@@ -904,6 +915,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner16");
             config.setProperty(KEYSTOREPATH, keystore2.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore2Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
@@ -919,6 +931,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner17");
             config.setProperty(KEYSTOREPATH, keystore3.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore3Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
@@ -934,6 +947,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner16");
             config.setProperty(KEYSTOREPATH, keystore4.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore4Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withECDSA");
@@ -950,6 +964,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner11");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1WithRSAandMGF1");
@@ -965,6 +980,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner11");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1WithRSAAndMGF1");
@@ -980,6 +996,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner12");
             config.setProperty(KEYSTOREPATH, keystore1.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256WithRSAandMGF1");
@@ -995,6 +1012,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner22");
             config.setProperty(KEYSTOREPATH, keystore4.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA384");
             config.setProperty("SIGNATUREALGORITHM", "SHA384withECDSA");
@@ -1011,6 +1029,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(NAME, "TestMRTDSODSigner23");
             config.setProperty(KEYSTOREPATH, keystore4.getAbsolutePath());
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
+            config.setProperty(KEYSTORETYPE, "PKCS12");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withECDSA");

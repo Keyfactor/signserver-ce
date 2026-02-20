@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -55,12 +54,8 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
     /** Output file. */
     private File outputFile;
-
     private List<String> workers;
-
-    private String outputFileError;
-    private Set<Path> allowedOutputFilePaths;
-    
+    private final List<String> localFatalErrors = new LinkedList<>();
 
     /**
      * Initializes the worker.
@@ -75,30 +70,22 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             final EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
 
-        allowedOutputFilePaths = getAllowedOutputFilePaths();
-
         final String outputfileValue = config.getProperties()
                 .getProperty(PROPERTY_OUTPUTFILE);
-
         if (outputfileValue != null && !outputfileValue.isEmpty()) {
-            validateOutputFileAgainstAllowList(outputfileValue);
-
-            if (outputFileError == null) {
-            outputFile = Path.of(outputfileValue).normalize().toFile();
-            LOG.info("Output file: " + outputFile.getAbsolutePath());
-            } else {
-            outputFile = null;
-        }
-    } else {
-            outputFileError = "Property OUTPUTFILE missing!";
-            LOG.error(outputFileError);
-            outputFile = null;
+            if (isOutputFileValid(outputfileValue)) {
+                outputFile = new File(outputfileValue);
+            }
+        } else {
+            localFatalErrors.add("Property OUTPUTFILE missing!");
+            LOG.error("Property OUTPUTFILE missing!");
         }
 
         workers = new LinkedList<>();
         final String workersValue = config.getProperty(PROPERTY_WORKERS);
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");
+            localFatalErrors.add("Property WORKERS missing!");
         } else {
             for (String workerName : workersValue.split(",")) {
                 workers.add(workerName.trim());
@@ -121,6 +108,9 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
         PrintWriter out = null;
         try {
+            if (outputFile == null) {
+                throw new ServiceExecutionFailedException("OUTPUTFILE is not correctly configured");
+            }
             final SignerStatusReportBuilder reportBuilder = new SignerStatusReportBuilder(workers, context.getServices().get(WorkerSessionLocal.class), context.getServices().get(IKeyUsageCounterDataService.class));
             final CharSequence report = reportBuilder.buildReport();
             out = new PrintWriter(new FileOutputStream(outputFile));
@@ -144,20 +134,8 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
     @Override
     protected List<String> getFatalErrors(final IServices services) {
-        final List<String> fatalErrors = new LinkedList<>();
-        
-        fatalErrors.addAll(super.getFatalErrors(services));
-        
-        if (workers.isEmpty()) {
-            fatalErrors.add("Property WORKERS missing");
-        }
-        
-        if (outputFileError != null) {
-            fatalErrors.add(outputFileError);
-        } else if (outputFile == null) {
-            fatalErrors.add("Property OUTPUTFILE missing!");
-        }
-
+        final List<String> fatalErrors = new LinkedList<>(super.getFatalErrors(services));
+        fatalErrors.addAll(localFatalErrors);
         return fatalErrors;
     }
 
@@ -167,27 +145,22 @@ public class SignerStatusReportTimedService extends BaseTimedService {
      * @return
      */
     protected Set<Path> getAllowedOutputFilePaths() {
-        if(allowedOutputFilePaths == null) {
-            return CompileTimeSettings.getInstance().getOutputfilePathProperties();
-        }
-        return allowedOutputFilePaths;
+        return CompileTimeSettings.getInstance().getOutputfilePathProperties();
     }
 
-    private void validateOutputFileAgainstAllowList(final String outputfileValue) {
-
+    private boolean isOutputFileValid(final String outputfileValue) {
         final Set<Path> allowedOutputFilePaths = getAllowedOutputFilePaths();
-
-        Path outputFilePath = null;
-        if (outputfileValue != null && !outputfileValue.isEmpty()) {
-            outputFilePath = Path.of(outputfileValue).normalize();
+        if (allowedOutputFilePaths.isEmpty()) {
+            LOG.error("Missing allowlist configuration for OUTPUTFILE");
+            localFatalErrors.add("Missing allowlist configuration for OUTPUTFILE");
+            return false;
         }
-
+        Path outputFilePath = Path.of(outputfileValue).normalize();
         if (!AllowlistUtils.isPathAllowed(outputFilePath, allowedOutputFilePaths)) {
-            outputFileError = "Unable to use the provided file path to the outputfile " + outputFilePath;
-                LOG.error(outputFileError);
-            }
-            else if (outputFilePath != null && LOG.isDebugEnabled()) {
-                LOG.debug("OUTPUTFILE allowed: " + outputFilePath.toAbsolutePath());
-         }
+            LOG.error("OUTPUTFILE is not allowed " + outputFilePath);
+            localFatalErrors.add("OUTPUTFILE is not allowed " + outputFilePath);
+            return false;
+        }
+        return true;
     }
 }

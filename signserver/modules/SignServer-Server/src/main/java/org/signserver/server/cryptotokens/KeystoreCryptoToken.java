@@ -18,6 +18,7 @@ import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.io.*;
+import java.nio.file.Path;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -32,6 +33,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
+import org.signserver.server.AllowlistUtils;
 import org.signserver.server.IServices;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
@@ -117,12 +119,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         if (TYPE_PKCS12.equals(keystoretype) || TYPE_JKS.equals(keystoretype)) {
             if (keystorepath == null) {
                 throw new CryptoTokenInitializationFailureException("Missing KEYSTOREPATH property");
-            } else {
-                final File keystoreFile = new File(keystorepath);
+            }
+            validateKeystorePath(keystorepath);
 
-                if (!keystoreFile.isFile()) {
-                    throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
-                }
+            final File keystoreFile = new File(keystorepath);
+
+            if (!keystoreFile.isFile()) {
+                throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
             }
         }
 
@@ -151,7 +154,26 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 LOG.error("Auto activation failed: " + ex.getLocalizedMessage());
             }
         }
+    }
 
+    private void validateKeystorePath(String keystorepath) throws CryptoTokenInitializationFailureException {
+        Set<Path> allowList = getAllowedKeystorePaths();
+
+        if (allowList.isEmpty()) {
+            LOG.error("Missing allowlist configuration for KEYSTOREPATH");
+            throw new CryptoTokenInitializationFailureException("Missing allowlist configuration for KEYSTOREPATH");
+        }
+        Path path = Path.of(keystorepath);
+
+        if (!AllowlistUtils.isPathAllowed(path, allowList)) {
+            LOG.error("KEYSTOREPATH is not allowed " + keystorepath);
+            throw new CryptoTokenInitializationFailureException("KEYSTOREPATH is not allowed");
+        }
+        LOG.debug("KEYSTOREPATH " + keystorepath + " is in allowlist.");
+    }
+
+    protected Set<Path> getAllowedKeystorePaths() {
+        return CompileTimeSettings.getInstance().getKeystorePathProperties();
     }
 
     @Override

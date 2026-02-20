@@ -44,6 +44,7 @@ import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.server.signers.CryptoWorker;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Base class for test cases. Handles creation and deletion of temporary files
@@ -61,8 +62,11 @@ public abstract class AbstractTestCase extends TestCase {
     private static ProcessSessionRemote processSession;
     private static GlobalConfigurationSessionRemote globalSession;
 
-    private Collection<File> tempFiles = new LinkedList<>();
-    private Random random = new Random();
+    private final Collection<File> tempFiles = new LinkedList<>();
+    private final Random random = new Random();
+    protected File truststorePathAllowedFolder;
+    protected File keystorePathAllowedFolder;
+
 
     @Override
     protected void setUp() throws Exception {
@@ -73,6 +77,21 @@ public abstract class AbstractTestCase extends TestCase {
         globalSession = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
         processSession = ServiceLocator.getInstance().lookupRemote(
                 ProcessSessionRemote.class);
+
+        ModulesTestCase modulesTestCase = new ModulesTestCase();
+        String truststorePathAllowListValue = modulesTestCase.getConfig().getProperty("test.truststore.existingAllowedFolder");
+        if (truststorePathAllowListValue == null || truststorePathAllowListValue.isEmpty()) {
+            throw new Exception("Test requires test.truststore.existingAllowedFolder to be pointing to an existing " +
+                    "allowed directory.");
+        }
+        truststorePathAllowedFolder = new File(truststorePathAllowListValue);
+
+        String keystorePathAllowListValue = modulesTestCase.getConfig().getProperty("test.keystore.existingAllowedFolder");
+        if (keystorePathAllowListValue == null || keystorePathAllowListValue.isEmpty()) {
+            throw new Exception("Test requires test.keystore.existingAllowedFolder to be pointing to an existing " +
+                    "allowed directory.");
+        }
+        keystorePathAllowedFolder = new File(keystorePathAllowListValue);
     }
 
     @Override
@@ -80,9 +99,28 @@ public abstract class AbstractTestCase extends TestCase {
         super.tearDown();
     }
 
-    protected File newTempFile() {
-        final String tempdir = System.getProperty("java.io.tmpdir");
-        final File result = new File(tempdir, random.nextLong() + ".tmp");
+    /**
+     * Creates a temporary keystore file within the allowed folder for keystore files.
+     * The allowed folder for keystore files is specified by the "test.keystore.existingAllowedFolder" configuration property.
+     * The file has a randomly generated name with a ".p12" extension.
+     *
+     * @return A File object representing the newly created temporary keystore file.
+     */
+    protected File newTempKeystoreFile() {
+        File result = new File(keystorePathAllowedFolder, random.nextLong() + ".p12");
+        tempFiles.add(result);
+        return result;
+    }
+
+    /**
+     * Creates a temporary truststore file within the allowed folder for truststore files.
+     * The allowed folder for truststore files is specified by the "test.truststore.existingAllowedFolder" configuration property.
+     * The file has a randomly generated name with a ".tmp" extension.
+     *
+     * @return A File object representing the newly created temporary truststore file.
+     */
+    protected File newTempTruststoreFile() {
+        File result = new File(truststorePathAllowedFolder, random.nextLong() + ".tmp");
         tempFiles.add(result);
         return result;
     }
@@ -119,7 +157,7 @@ public abstract class AbstractTestCase extends TestCase {
             CertificateException, NoSuchProviderException, ReadOnlyWorkerException, WorkerExistsException {
 
         // Create keystore
-        final String keystorePath = newTempFile().getAbsolutePath();
+        final String keystorePath = newTempKeystoreFile().getAbsolutePath();
         final String keystorePassword = "foo123";
         createEmptyKeystore(useJKSToken ? "JKS" : "PKCS12", keystorePath, keystorePassword);
 
@@ -185,7 +223,7 @@ public abstract class AbstractTestCase extends TestCase {
             CertificateException, NoSuchProviderException, ReadOnlyWorkerException, WorkerExistsException {
 
         // Create keystore
-        final String keystorePath = newTempFile().getAbsolutePath();
+        final String keystorePath = newTempKeystoreFile().getAbsolutePath();
         final String keystorePassword = "foo123";
         createEmptyKeystore(useJKSToken ? "JKS" : "PKCS12", keystorePath, keystorePassword);
 

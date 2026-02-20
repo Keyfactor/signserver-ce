@@ -90,8 +90,8 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
-        final String allowList = this.getConfig().getProperty("test.outputfile.existingAllowedPath");
-        Assume.assumeTrue("Test requires test.outputfile.existingAllowedPath to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
+        final String allowList = this.getConfig().getProperty("test.outputfile.existingAllowedFolder");
+        Assume.assumeTrue("Test requires test.outputfile.existingAllowedFolder to be pointing to an existing allowed directory.", allowList != null && !allowList.isEmpty());
 
         outputFile = new File(allowList + File.separator
                 + "~test-outputfile.dat");
@@ -202,7 +202,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
         workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
         errors = workerStatus.getFatalErrors();
-        assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing"));
+        assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing!"));
         assertTrue("Should mention missing OUTPUTFILE property", errors.contains("Property OUTPUTFILE missing!"));
 
         // restore
@@ -254,7 +254,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
             boolean hasAllowlistError = false;
             for (String err : errors) {
-                if (err != null && err.contains("Unable to use the provided file path to the outputfile ")){
+                if (err != null && err.contains("OUTPUTFILE is not allowed ")){
                     hasAllowlistError = true;
                     break;
                 }

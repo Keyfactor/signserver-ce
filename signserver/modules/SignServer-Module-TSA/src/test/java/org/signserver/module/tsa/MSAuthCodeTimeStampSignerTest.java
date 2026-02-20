@@ -182,7 +182,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         SignServerUtil.installBCProvider();
 
         final String CRYPTOTOKEN_CLASSNAME =
-                "org.signserver.server.cryptotokens.KeystoreCryptoToken";
+                "org.signserver.testutils.TestableKeystoreCryptoTokenForAllowedPaths";
 
         final GlobalConfigurationSessionMock globalConfig
                 = new GlobalConfigurationSessionMock();

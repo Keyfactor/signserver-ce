@@ -93,7 +93,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
 
-        keystoreFileEndentity8 = new File(PathUtil.getAppHome(), "res/test/dss10/dss10_keystore.p12");
+        keystoreFileEndentity8 = getDss10Keystore();
         if (!keystoreFileEndentity8.exists()) {
             throw new FileNotFoundException("Keystore file: " + keystoreFileEndentity8.getAbsolutePath());
         }

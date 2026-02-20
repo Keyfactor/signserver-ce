@@ -74,7 +74,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME =
-            "org.signserver.server.cryptotokens.KeystoreCryptoToken";
+            "org.signserver.testutils.TestableKeystoreCryptoTokenForAllowedPaths";
 
     private static final String KEY_ALIAS = "ts00001";
 

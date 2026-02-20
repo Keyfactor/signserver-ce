@@ -28,7 +28,6 @@ import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
@@ -70,7 +69,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     }
 
     private void setupCryptoTokenProperties(final int tokenId) throws Exception {        
-        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".jks");
+        keystoreFile = testCase.createTempKeystoreFile(KEYSTORE_NAME, ".jks");
         FileUtils.copyFile(keystore, keystoreFile);
         
         // Setup token

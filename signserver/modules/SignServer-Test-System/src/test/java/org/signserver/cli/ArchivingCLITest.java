@@ -64,7 +64,7 @@ public class ArchivingCLITest extends ModulesTestCase {
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setproperty", TESTTSID, "KEYSTOREPATH",
-                        getSignServerHome() + "/res/test/dss10/dss10_keystore.p12"));
+                        getDss10Keystore().getAbsolutePath()));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setproperty", TESTTSID, "KEYSTORETYPE", "PKCS12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
@@ -157,7 +157,7 @@ public class ArchivingCLITest extends ModulesTestCase {
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setproperty", TESTTSID, "KEYSTOREPATH",
-                        getSignServerHome() + "/res/test/dss10/dss10_keystore.p12"));
+                        getDss10Keystore().getAbsolutePath()));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setproperty", TESTTSID, "KEYSTORETYPE", "PKCS12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,

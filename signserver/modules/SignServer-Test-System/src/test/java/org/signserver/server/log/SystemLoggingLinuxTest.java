@@ -53,7 +53,7 @@ public class SystemLoggingLinuxTest extends ModulesTestCase {
     public void setUp() throws Exception {
         logFile = new File(getSignServerHome(), "signserver.log");
 
-        sodStatusReport = File.createTempFile("sodstatusreport", "");
+        sodStatusReport = createTempFile("sodstatusreport", "");
         sodStatusReport.deleteOnExit();
         sodStatusReport.setWritable(false, false);
 

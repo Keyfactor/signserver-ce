@@ -210,10 +210,10 @@
   },
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.3.2"
+    "version" : "1.4.0"
   },
   "paths" : {
-    "/workers" : {
+    "/signserver/rest/v1/workers" : {
       "get" : {
         "summary" : "Request to get list of workers",
         "description" : "Required role: admin role \n\n",
@@ -221,10 +221,7 @@
           "description" : "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.",
           "in" : "header",
           "name" : "X-Keyfactor-Requested-With",
-          "required" : true,
-          "schema" : {
-            "type" : "object"
-          }
+          "required" : true
         } ],
         "responses" : {
           "200" : {
@@ -364,16 +361,13 @@
         }
       }
     },
-    "/workers/reload" : {
+    "/signserver/rest/v1/workers/reload" : {
       "post" : {
         "parameters" : [ {
           "description" : "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.",
           "in" : "header",
           "name" : "X-Keyfactor-Requested-With",
-          "required" : true,
-          "schema" : {
-            "type" : "object"
-          }
+          "required" : true
         } ],
         "responses" : {
           "200" : {
@@ -450,7 +444,7 @@
         }
       }
     },
-    "/workers/{idOrName}/process" : {
+    "/signserver/rest/v1/workers/{idOrName}/process" : {
       "post" : {
         "summary" : "Submit data for processing",
         "description" : "Required role: set by AUTHTYPE in worker \n\nSubmit data/document/file for processing such as for instance signing and get back the result (i.e. signature).",
@@ -556,7 +550,7 @@
         }
       }
     },
-    "/workers/{id}" : {
+    "/signserver/rest/v1/workers/{id}" : {
       "patch" : {
         "summary" : "Submit data for update and delete worker properties",
         "description" : "Required role: admin role \n\nSubmit a worker ID and a list of worker properties to update or delete.",
@@ -642,7 +636,7 @@
             }
           },
           "409" : {
-            "description" : "Conflict.",
+            "description" : "Worker already exists.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -769,7 +763,7 @@
             }
           },
           "409" : {
-            "description" : "Conflict.",
+            "description" : "Worker already exists.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1056,8 +1050,5 @@
         }
       }
     }
-  },
-  "servers" : [ {
-    "url" : "/signserver/rest/v1"
-  } ]
+  }
 }

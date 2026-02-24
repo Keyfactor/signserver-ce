@@ -1,0 +1,214 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000102">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:37.246+0000">
+    <meta name="exp-page-id" content="371000102">
+    <meta name="exp-page-title" content="One-time Crypto Worker">
+    <meta name="exp-page-version" content="9">
+    <meta name="exp-page-scroll-page-id" content="7078b5d356c5b5dc014e72ac0b925e12">
+    <meta name="exp-page-created" content="2022-04-07T06:57:53.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T15:11:12.156+0000">
+    <meta name="exp-page-labels" content="signserveree">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>One-time Crypto Worker</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="c63b8b4c8a8acfd049be0bd596c77880b6e7b2a731247dd6cc1ba2e3138c8149"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="One-timeCryptoWorker-top" pageid="371000102" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000102" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Crypto_Tokens__HSMs_&amp;_Keystores.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Crypto Tokens: HSMs &amp; Keystores</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="One-time_Crypto_Worker.html" target="_self" aria-current="page">One-time Crypto Worker</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-d90b96440ba9573a4e5265f68a3de93ba34537d375e2c56ea76079fb7436b0d1"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">One-time Crypto Worker</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="b3b1da82b058"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="03142f3522ab">The One-time Crypto Worker used for one-time keys and certificates, allowing you to have a large number of individual signing keys and certificates, despite the often limited storage capabilities of HSMs. </p><blockquote local-id="11fca8941270"><p local-id="6cdefa565a8a">Fully qualified class name:&nbsp;<strong>org.signserver.module.onetime.cryptoworker.OneTimeCryptoWorker</strong></p></blockquote><h2 local-id="f997ae88d7c1" id="One-timeCryptoWorker-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="098d782ad0ae">One-time keys are created on request and are deleted once the signature has been created. For more information on setting up one-time keys using the One-time Crypto Worker, see <a href="Set_up_One-time_Keys.html" data-linked-resource-id="370999526" data-linked-resource-version="16" data-linked-resource-type="page" data-scroll-target-source-id="370999526" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999526/Set+up+One-time+Keys" data-scroll-link-target-source-id="370999526">Setting up One-time Keys</a>.</p><p local-id="b94bcf0d828b">The One-time Crypto Worker generates a new key-pair for each signing request, creates a certificate signing request (CSR), and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (such as the HSM) after signing.</p><p local-id="35bf65339abb">The One-time Crypto Worker internally requires a <a href="PKCS_11_Crypto_Token.html" data-linked-resource-id="371000127" data-linked-resource-version="13" data-linked-resource-type="page" data-scroll-target-source-id="371000127" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000127/PKCS+11+Crypto+Token" data-scroll-link-target-source-id="371000127">PKCS11 Crypto Token</a> referenced by the CRYPTOTOKEN property to use as the source crypto token.</p><p local-id="452f2ccdead5">When using the One-time Crypto Worker, enable the CESeCore keystore caching by setting <code>cryptotoken.keystorecache=true</code> in <code>conf/cesecore.properties</code> (by default disabled).</p><p local-id="9dfc734346e4">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><p local-id="f3a49d0ca346">The following displays an overview of the One-time Crypto Worker operations:</p><span class="confluence-embedded-file-wrapper image-left-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-left scroll-document-image" width="500" src="_scroll_external/attachments/d9c990b58975/onetimekeysoverview.png"></span><ul local-id="f70fd23b79cb"><li local-id="773ca380bdc0"><p local-id="46df02b30ac3">The Source Crypto Worker contains a Crypto Token in order to communicate with the HSM and perform key operations. The TLS key is created in the HSM using the Source Crypto Token.</p></li></ul><ul local-id="2aa030cb7dae"><li local-id="3364135ed45f"><p local-id="59487933eb0a">The One-time Crypto Worker generates a new key-pair for each signing request, creates a certificate signing request (CSR), and uses a CA Connector to obtain a certificate issued for the CSR. One-time keys are not stored once the signature has been created and the key is deleted from the CryptoToken (such as the HSM) after signing.</p></li></ul><ul local-id="ff434f9bac04"><li local-id="622d93a46456"><p local-id="9a23025e7721">The One-time Crypto Worker references the Source Crypto Worker to get hold of the TLS key/certificate in order to connect to EJBCA CA and also to perform one-time key creation/deletion operations in HSM before/after signing respectively.</p></li></ul><ul local-id="a145f95988f1"><li local-id="39136e5a4a75"><p local-id="056e13fe8dbb">The XAdeSSigner references the One-time Crypto Worker in order to perform a signing operation. The signer is configured with a <a href="Username_Authorizer.html" data-linked-resource-id="371000225" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="371000225" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000225/Username+Authorizer" data-scroll-link-target-source-id="371000225">Username Authorizer</a> to provide the user data used by the CA for certificate issuance.</p></li></ul><h2 local-id="fd733e4e61fc" id="One-timeCryptoWorker-WorkerProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-Worker-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Worker Properties</span></h2><h3 local-id="71905031ed86" id="One-timeCryptoWorker-CommonProperties" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-Common-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Common Properties</span></h3><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="89b947db-a217-4be4-895a-033f1ba24169" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 25.4171%;"><col span="1" style="width: 74.5829%;"></colgroup><thead><tr data-local-id="f57220eb3b5d"><th colspan="1" rowspan="1" data-local-id="7dc6a237e778" class="confluenceTh"><p local-id="48bb5b50ae6d"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="6ee5a60bf3e5" class="confluenceTh"><p local-id="7d376ac50a89"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="c8d718ff9cb0"><td colspan="1" rowspan="1" data-local-id="7b83013010f8" class="confluenceTd"><p local-id="7e1dcb4c7e1c">CACONNECTOR_IMPLEMENTATION</p></td><td colspan="1" rowspan="1" data-local-id="b337898f0601" class="confluenceTd"><p local-id="f72346802811">Specifies the CA connector implementation class.<br clear="none">Example:</p><p local-id="3aae5740afaa"><code>org.signserver.module.onetime.caconnector.EjbcaPeersCAConnector</code><br clear="none"><code>org.signserver.module.onetime.caconnector.EjbcaWSCAConnector</code><br clear="none"><code>org.signserver.module.onetime.caconnector.SelfSignedCAConnector</code></p></td></tr><tr data-local-id="a330939fc653"><td colspan="1" rowspan="1" data-local-id="90dc1a8890db" class="confluenceTd"><p local-id="ce43e55d41a7">CRYPTOTOKEN</p></td><td colspan="1" rowspan="1" data-local-id="5e914d0448d5" class="confluenceTd"><p local-id="fb97cdd0c6c9">Specifies the name of (crypto) worker holding (for instance) the <a href="PKCS_11_Crypto_Token.html" data-linked-resource-id="371000127" data-linked-resource-version="13" data-linked-resource-type="page" data-scroll-target-source-id="371000127" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000127/PKCS+11+Crypto+Token" data-scroll-link-target-source-id="371000127">PKCS11 Crypto Token</a> to use as the source crypto token.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="cd4745069dfe">When using the PKCS11CryptoToken, ensure to set <a href="PKCS_11_Crypto_Token.html" data-linked-resource-id="371000127" data-linked-resource-version="13" data-linked-resource-type="page" data-scroll-target-source-id="371000127" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000127/PKCS+11+Crypto+Token" data-scroll-link-target-source-id="371000127">CACHE_PRIVATEKEY=false</a> as each request should use a new key pair.</p></div></div></td></tr><tr data-local-id="e0f720640f68"><td colspan="1" rowspan="1" data-local-id="2ce8edfb566c" class="confluenceTd"><p local-id="e0a8615d2a25">KEYALG</p></td><td colspan="1" rowspan="1" data-local-id="35c097ba9198" class="confluenceTd"><p local-id="40980994d35e">Specifies the key algorithm to be used for key generation.</p><p local-id="c0d798cb4b21">Example: <code>RSA</code>, <code>ECDSA</code></p></td></tr><tr data-local-id="517dfd676430"><td colspan="1" rowspan="1" data-local-id="8b1e426bf514" class="confluenceTd"><p local-id="45f191d83dd0">KEYSPEC</p></td><td colspan="1" rowspan="1" data-local-id="9b3cd6ca07e1" class="confluenceTd"><p local-id="e666f6decf6d">Specifies the key specification to be used for key generation.</p><p local-id="1ae2d4aa7ca4">Example: <code>2048</code>, <code>prime256v1</code></p></td></tr><tr data-local-id="53988e64ed41"><td colspan="1" rowspan="1" data-local-id="5b450b6c1c8a" class="confluenceTd"><p local-id="3fbdc9878f0a">KEYALIAS_PREFIX</p></td><td colspan="1" rowspan="1" data-local-id="7e6b0a2c8f57" class="confluenceTd"><p local-id="e1bff55c9430">Specifies the key alias prefix. </p><p local-id="3a3864e0e660">Default: <code>onetime-</code></p></td></tr></tbody></table></div><h3 local-id="2c99e86a9e52" id="One-timeCryptoWorker-CAConnectorProperties" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-CA-Connector-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">CA Connector Properties</span></h3><h4 local-id="75b33465c3d3" id="One-timeCryptoWorker-EJBCAPeersCAConnector" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-EJBCA-Peers-CA-Connector"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">EJBCA Peers CA Connector</span></h4><p local-id="a3afc5d73b2e">The EJBCA Peers CA Connector uses <a class="external-link scroll-external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/peer-systems" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/peer-systems" data-scroll-link-local="false">EJBCA Peer Systems</a> for issuing certificates. See <a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a> for information on setting up a peer connection, additionally enabling the <a class="external-link scroll-external-link" href="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-operations-guide/ca-operations-guide/peer-systems-operations/adding-an-outgoing-peer-connection" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://doc.primekey.com/ejbca/ejbca-operations/ejbca-operations-guide/ca-operations-guide/peer-systems-operations/adding-an-outgoing-peer-connection" data-scroll-link-local="false"><strong>Process incoming requests</strong>&nbsp;option for the Peer Connector in EJBCA</a> (<strong>EJBCA Admin Web&gt;Peer Systems</strong>).</p><p local-id="25be06787205">This <strong>EJBCA Peers CA Connector</strong> uses EJBCA Peers in a mode where SignServer acts as the RA and posts certificate signing requests to the CA over the peer connection. The CA Connector also maps the SignServer User Credentials (username) to the user data required by EJBCA to issue the certificate. The mapping can use data forwarded via JWT Bearer token using <a href="JWT_Authorizer.html" data-linked-resource-id="371000245" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="371000245" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000245/JWT+Authorizer" data-scroll-link-target-source-id="371000245">JWT Authorizer</a>. All claim values of a token accesible via pattern &lt;JWT.Claim_Name1&gt; in the corresponding Subject alternative name, Subject DN and User name patterns.</p><div class="table-wrap"><table data-table-width="1066.3956" data-layout="align-start" data-local-id="40a3a234-2cb4-4ed5-9793-79df72b49326" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.8168%;"><col span="1" style="width: 69.1832%;"></colgroup><thead><tr data-local-id="665ddfe00be9"><th colspan="1" rowspan="1" data-local-id="ff53f8996ac1" class="confluenceTh"><p local-id="a995e5483648"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="ba0ec5acec16" class="confluenceTh"><p local-id="dd95dfe023e3"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="285805627edd"><td colspan="1" rowspan="1" data-local-id="80a8428af67d" class="confluenceTd"><p local-id="04dd48883019">CANAME</p></td><td colspan="1" rowspan="1" data-local-id="864dbdeadce4" class="confluenceTd"><p local-id="f36c3cb498a5">Specifies the CA name.</p></td></tr><tr data-local-id="a5f5e6105483"><td colspan="1" rowspan="1" data-local-id="826979ce25f8" class="confluenceTd"><p local-id="9ea425d2b34f">CERTIFICATEENDTIME</p></td><td colspan="1" rowspan="1" data-local-id="43b8ae54665f" class="confluenceTd"><p local-id="b1501bed7289">(Optional) Specifies the certificate end time.</p></td></tr><tr data-local-id="f84b55c5da00"><td colspan="1" rowspan="1" data-local-id="98765ebc6738" class="confluenceTd"><p local-id="502c4ce9216c">CERTIFICATESTARTTIME</p></td><td colspan="1" rowspan="1" data-local-id="ffe7ee411a28" class="confluenceTd"><p local-id="bcecd605cad5">(Optional) Specifies the certificate start time.</p></td></tr><tr data-local-id="935549d0a81d"><td colspan="1" rowspan="1" data-local-id="77c64ca9bba2" class="confluenceTd"><p local-id="1e3e24a04bf8">CERTIFICATEPROFILE</p></td><td colspan="1" rowspan="1" data-local-id="469001d3c28d" class="confluenceTd"><p local-id="35ad77df4b6c">Specifies the certificate profile. Required.</p></td></tr><tr data-local-id="81dfd2d73a7c"><td colspan="1" rowspan="1" data-local-id="915874baf2c2" class="confluenceTd"><p local-id="f39cd6c1179d">CERTSIGNATUREALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="b1cbddf3e817" class="confluenceTd"><p local-id="b37e84607114">Specifies the signature algorithm used to sign the certificate signing request (CSR).</p></td></tr><tr data-local-id="50587bf93d5a"><td colspan="1" rowspan="1" data-local-id="bf3e927436fc" class="confluenceTd"><p local-id="2ef72d65b875">EJBCAWSURL</p></td><td colspan="1" rowspan="1" data-local-id="cc3fe79eead4" class="confluenceTd"><p local-id="e4d00e934d89">Specifies the EJBCA Web Service URL. </p></td></tr><tr data-local-id="52ba1c24be47"><td colspan="1" rowspan="1" data-local-id="b74bf0a7a511" class="confluenceTd"><p local-id="5105e908b332">ENDENTITYPROFILE</p></td><td colspan="1" rowspan="1" data-local-id="903eb85c94c9" class="confluenceTd"><p local-id="931ded75b9d8">Specifies the end entity profile.</p></td></tr><tr data-local-id="2d0e34560938"><td colspan="1" rowspan="1" data-local-id="b3ce885d50c1" class="confluenceTd"><p local-id="707fe6e332cc">SUBJECTALTNAME_PATTERN</p></td><td colspan="1" rowspan="1" data-local-id="d4e3a5b218b0" class="confluenceTd"><p local-id="8f9c5ce4fd7e">(Optional) Specifies the subject alternative name pattern used to derive the <strong>Subject Alternative Names</strong> attribute of the certificate to be issued. </p><p local-id="6655654f1d80">Examples: <code>dNSName=signservertest</code>.<br clear="none"><br clear="none">Example subject alternative names: <br clear="none"><code>rfc822Name=&lt;email&gt;</code><br clear="none"><code>dNSName=&lt;host name&gt;</code><br clear="none"><code>uri=&lt;http://host.com/&gt;</code><br clear="none"><code>ipaddress=&lt;address&gt;</code><br clear="none"><code>upn=&lt;MS UPN&gt;</code><br clear="none"><code>guid=&lt;MS globally unique id&gt;</code><br clear="none"><code>directoryName=&lt;LDAP escaped DN&gt;</code><br clear="none"><code>krb5principal=&lt;Krb5 principal name&gt;</code></p></td></tr><tr data-local-id="ad6e0dd2f126"><td colspan="1" rowspan="1" data-local-id="68b4aceb9012" class="confluenceTd"><p local-id="5a9cd6d49656">SUBJECTDN_PATTERN</p></td><td colspan="1" rowspan="1" data-local-id="d8c9ee3ba01c" class="confluenceTd"><p local-id="948b4c58cce4">Specifies the subject DN pattern used to derive the <strong>SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued.<br clear="none">Example: <code>CN=User ${username},UID=${transactionId},O=SignServer Testing,C=SE</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="1f28b88610d4">The<strong> </strong><code>username</code> is the name of the SignServer logged-in user, and the <code>transactionId</code> is a SignServer internal random alphanumeric number unique for each signing request.</p></div></div><p local-id="84163479783f">JWT Example: <code>CN=${JWT.firstName} ${JWT.lastName},UID=${transactionId},O=SignServer Testing,C=SE</code><br clear="none">The<strong> </strong><code>firstName</code> and <code>lastName</code><strong> </strong>are corresponding claims of JWT token.</p></td></tr><tr data-local-id="8d380152e96e"><td colspan="1" rowspan="1" data-local-id="5030884e6b89" class="confluenceTd"><p local-id="2e6528de4478">USERNAME_PATTERN</p></td><td colspan="1" rowspan="1" data-local-id="8c1649e58d40" class="confluenceTd"><p local-id="186c69c4aee4">Specifies the user name pattern used to derive the user name for the end entity which is registered before the certificate issuance.<br clear="none">Example: <code>onetime-${transactionId}</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="ff801cc1fe1f">The <code>transactionId</code> is a SignServer internal random alpha numeric number unique for each signing request.</p></div></div><p local-id="8e6e7271dc9d">JWT Example: <code>onetime-${transactionId}-${JWT.iat}</code><br clear="none">The<strong> </strong><code>iat</code><strong>&nbsp;</strong>is issued at time of JWT token.</p></td></tr></tbody></table></div><h4 local-id="6a5e156c422e" id="One-timeCryptoWorker-EJBCAWSCAConnector" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-EJBCA-WS-CA-Connector"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">EJBCA WS CA Connector</span></h4><p local-id="fdba81bda1d8">The EJBCA WS CA Connector connects to EJBCA using Web Services in the same way as the <a href="Renewal_Worker.html" data-linked-resource-id="371000078" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="371000078" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000078/Renewal+Worker" data-scroll-link-target-source-id="371000078">RenewalWorker</a>.</p><p local-id="f77a7df266f4">The CA Connector maps the SignServer User Credentials (username) to the user data required by EJBCA to issue the certificate.</p><div class="table-wrap"><table data-table-width="1067.1156" data-layout="align-start" data-local-id="fb99f8d0-a296-43f8-adfc-358a84e5b62a" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.9408%;"><col span="1" style="width: 69.0592%;"></colgroup><thead><tr data-local-id="6ea58b1846e5"><th colspan="1" rowspan="1" data-local-id="fcdc8f76f91a" class="confluenceTh"><p local-id="6b8516e1ce13"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="b6e9b4e9ebb6" class="confluenceTh"><p local-id="dce68347999f"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="4ef6494b7aad"><td colspan="1" rowspan="1" data-local-id="7f5a51745fd5" class="confluenceTd"><p local-id="8ebcdb736233">CANAME</p></td><td colspan="1" rowspan="1" data-local-id="f6bb6d58adef" class="confluenceTd"><p local-id="5517d8d45844">Specifies CA name. </p></td></tr><tr data-local-id="a80a30f08d28"><td colspan="1" rowspan="1" data-local-id="230948d10323" class="confluenceTd"><p local-id="01134a415d35">CERTIFICATEENDTIME</p></td><td colspan="1" rowspan="1" data-local-id="5f4f39f2571a" class="confluenceTd"><p local-id="9484d785c009">(Optional) Specifies the certificate end time.</p></td></tr><tr data-local-id="b1cf4045910b"><td colspan="1" rowspan="1" data-local-id="2df33efae2a9" class="confluenceTd"><p local-id="10babb25514a">CERTIFICATESTARTTIME</p></td><td colspan="1" rowspan="1" data-local-id="0c6389b3dd30" class="confluenceTd"><p local-id="a9618e0933f3">(Optional) Specifies the certificate start time.</p></td></tr><tr data-local-id="384a9d72136d"><td colspan="1" rowspan="1" data-local-id="95920c1c097b" class="confluenceTd"><p local-id="7be8581a9bbb">CERTIFICATEPROFILE</p></td><td colspan="1" rowspan="1" data-local-id="189a698dc749" class="confluenceTd"><p local-id="61f4ad46bc17">Specifies the certificate profile. </p></td></tr><tr data-local-id="59479eab6485"><td colspan="1" rowspan="1" data-local-id="f8b21605b361" class="confluenceTd"><p local-id="85bd7041dcbc">EJBCAWSURL</p></td><td colspan="1" rowspan="1" data-local-id="717cf98e04a9" class="confluenceTd"><p local-id="00f090ee594d">Specifies the the EJBCA Web Service URL. </p></td></tr><tr data-local-id="6af6196b8f03"><td colspan="1" rowspan="1" data-local-id="ce6b478b9691" class="confluenceTd"><p local-id="d16e9f7f211e">ENDENTITYPROFILE</p></td><td colspan="1" rowspan="1" data-local-id="3a4dc76d40f9" class="confluenceTd"><p local-id="d79691e0a019">Specifies the end entity profile.</p></td></tr><tr data-local-id="0083145042d7"><td colspan="1" rowspan="1" data-local-id="bf0a0c32fc2c" class="confluenceTd"><p local-id="ea1b5faaaea6">CERTSIGNATUREALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="aaa2f0deb3f1" class="confluenceTd"><p local-id="9d49a138e9f3">Specifies the signature algorithm used to sign the certificate signing request (CSR).</p></td></tr><tr data-local-id="4834b8e90f73"><td colspan="1" rowspan="1" data-local-id="dcd7a2a63ee4" class="confluenceTd"><p local-id="7f594204606e">SUBJECTALTNAME_PATTERN</p></td><td colspan="1" rowspan="1" data-local-id="a691ebff4c02" class="confluenceTd"><p local-id="87ea13eac6b6">(Optional) Specifies the subject alternative name pattern used to derive the <strong>Subject Alternative Names</strong> attribute of the certificate to be issued. Example: <code>dNSName=signservertest</code>.<strong> </strong><br clear="none"><br clear="none">Example subject alternative names: <br clear="none"><code>rfc822Name=&lt;email&gt;</code><br clear="none"><code>dNSName=&lt;host name&gt;</code><br clear="none"><code>uri=&lt;http://host.com/&gt;</code><br clear="none"><code>ipaddress=&lt;address&gt;</code><br clear="none"><code>upn=&lt;MS UPN&gt;</code><br clear="none"><code>guid=&lt;MS globally unique id&gt;</code><br clear="none"><code>directoryName=&lt;LDAP escaped DN&gt;</code><br clear="none"><code>krb5principal=&lt;Krb5 principal name&gt;</code></p></td></tr><tr data-local-id="9933621b649b"><td colspan="1" rowspan="1" data-local-id="0351cf7c7832" class="confluenceTd"><p local-id="2f0ce59b2674">SUBJECTDN_PATTERN</p></td><td colspan="1" rowspan="1" data-local-id="2c6358c0c4df" class="confluenceTd"><p local-id="1615dcf51203">Specifies the subject DN pattern used to derive the <strong>SUBJECT DN</strong> (Distinguished Name) of the certificate to be issued.<br clear="none">Example: <code>CN=User ${username},UID=${transactionId},O=SignServer Testing,C=SE</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="b08baf42364e">The<strong> </strong><code>username</code> is the name of the SignServer logged-in user, and the <code>transactionId</code> is a SignServer internal random alpha numeric number unique for each signing request.</p></div></div></td></tr><tr data-local-id="b2d69efffea2"><td colspan="1" rowspan="1" data-local-id="c8590d7344c4" class="confluenceTd"><p local-id="f4e6807fa370">TLSCLIENTKEY</p></td><td colspan="1" rowspan="1" data-local-id="479d328a772e" class="confluenceTd"><p local-id="ddee31c696e6">Specifies the TLS client key. </p></td></tr><tr data-local-id="413c48e7b4da"><td colspan="1" rowspan="1" data-local-id="7ed2f5a1b613" class="confluenceTd"><p local-id="e718da899696">TRUSTSTOREPASSWORD</p></td><td colspan="1" rowspan="1" data-local-id="be990506cfa0" class="confluenceTd"><p local-id="c486eb6f06b3">Specifies the trust store password.</p></td></tr><tr data-local-id="48eab6d4f973"><td colspan="1" rowspan="1" data-local-id="a9cdc195979a" class="confluenceTd"><p local-id="559d787974b1">TRUSTSTOREPATH</p></td><td colspan="1" rowspan="1" data-local-id="b4cb86739dee" class="confluenceTd"><p local-id="4213f6c58ec1">Specifies the trust store path. Either <code>TRUSTSTOREPATH</code> or <code>TRUSTSTOREVALUE</code> is required.</p></td></tr><tr data-local-id="d4a760ede7ef"><td colspan="1" rowspan="1" data-local-id="8b30476a7ead" class="confluenceTd"><p local-id="a97eeefa2b96">TRUSTSTOREVALUE</p></td><td colspan="1" rowspan="1" data-local-id="c30f6002190a" class="confluenceTd"><p local-id="6a69bc8bacfa">Specifies the trust store value. Either <code>TRUSTSTOREPATH</code> or <code>TRUSTSTOREVALUE</code> is required.</p></td></tr><tr data-local-id="656ba48e4e0b"><td colspan="1" rowspan="1" data-local-id="d8c0ddfb335f" class="confluenceTd"><p local-id="c35bc481d9c8">TRUSTSTORETYPE</p></td><td colspan="1" rowspan="1" data-local-id="9b252b709110" class="confluenceTd"><p local-id="cd9a70a8f92e">Specifies the trust store type. <br clear="none">Example: <code>PEM</code>, <code>JKS</code></p></td></tr><tr data-local-id="02570bcd141e"><td colspan="1" rowspan="1" data-local-id="f36cfcf13c42" class="confluenceTd"><p local-id="28e2efe97db5">USERNAME_PATTERN</p></td><td colspan="1" rowspan="1" data-local-id="20305df0c7ce" class="confluenceTd"><p local-id="b274505d53b7">Specifies the user name pattern used to derive the user name for the end entity which is registered before the certificate issuance.<br clear="none">Example: <code>onetime-${transactionId}</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="7182074e4f95">The <code>transactionId</code> is a SignServer internal random alpha numericnumber unique for each signing request.</p></div></div></td></tr></tbody></table></div><h4 local-id="02e7b89712a6" id="One-timeCryptoWorker-Self-SignedCAConnector" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000102_One-timeCryptoWorker-Self-Signed-CA-Connector"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Self-Signed CA Connector</span></h4><p local-id="915d6c341404">The Self-Signed CA Connector generates its own self-signed certificate and is suitable for testing the One-time Crypto Worker without requiring an actual CA.</p><div class="table-wrap"><table data-table-width="1071.5706" data-layout="align-start" data-local-id="8bb1e0cb-bf75-4b1d-b37c-800851d349c9" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.8123%;"><col span="1" style="width: 69.1877%;"></colgroup><thead><tr data-local-id="7d2ffd24cf2e"><th colspan="1" rowspan="1" data-local-id="b0416ab3cbf3" class="confluenceTh"><p local-id="decdcd1124a3"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="d3ccc11b743a" class="confluenceTh"><p local-id="fa4c9e1add48"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="8c880671cb82"><td colspan="1" rowspan="1" data-local-id="ba2e534f5108" class="confluenceTd"><p local-id="7ab6c505e51f">CERTSIGNATUREALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="e7d50d4f6627" class="confluenceTd"><p local-id="87e8b9e88f4b">Specifies the signature algorithm used for self-signing the certificate and for signing the certificate signing request (CSR).</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Keystore_Crypto_Token_Algorithm_Support.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Keystore Crypto Token Algorithm Support</span>
+        </a>
+
+        <a href="Dispatchers.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Dispatchers</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

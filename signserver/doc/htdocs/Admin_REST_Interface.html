@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999584">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:24:51.849+0000">
+    <meta name="exp-page-id" content="370999584">
+    <meta name="exp-page-title" content="Admin REST Interface">
+    <meta name="exp-page-version" content="41">
+    <meta name="exp-page-scroll-page-id" content="aa2f35ce2def99b0e0b88acb26d551e2">
+    <meta name="exp-page-created" content="2024-02-08T22:12:36.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T19:22:43.247+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Admin REST Interface</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b7ff30a95852a191f2920b8877485c30adb4a75539f881af5eb16972faf9fec0"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="AdminRESTInterface-top" pageid="370999584" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999584" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Admin_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Admin Interfaces</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Admin_REST_Interface.html" target="_self" aria-current="page">Admin REST Interface</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-a5bbca3c3f68a2eed31233a777816c21f682d67bbddc93fc5d81368c72c9f611"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Admin REST Interface</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="db285aa7-f434-4b7b-8806-83dd3b17c911">The following cov<span class="inline-comment-marker" data-ref="0ab7f586-e405-4bf0-aa40-ccc59f6d3ff3">ers information on the SignServer REST Interface.</span></p><h2 local-id="6e664d8d-f7f9-4699-a83a-82eccd79207f" id="AdminRESTInterface-APIOverview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-API-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">API Overview</span></h2><p local-id="c3cf8e19-781a-4aaf-9a0e-ecb9773f07d1">The SignServer REST Interface supports integration with SignServer over a RESTful Web Service.</p><p local-id="8b3f11d8-5337-4e7a-97d6-96c6872537b7">In future versions, the interface may be extended to support additional API calls from other interfaces and add new ones.</p><h2 local-id="55639106-f862-437a-86d2-b89ae42dd1c9" id="AdminRESTInterface-GettingStarted" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-Getting-Started"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Getting Started&nbsp;</span></h2><p local-id="c7f85591-3486-4c80-a24a-4ef4844d95a1">The SignServer REST interface is described using the OpenAPI Specification (OAS). The OpenAPI Specification is a community-driven specification for describing REST APIs.</p><p local-id="3453352b-afef-4673-a54e-9782689edef7">OpenAPI documents describe API services and are represented in YAML or JSON formats. These documents may be produced and served statically or generated dynamically from an application.</p><h2 local-id="7d222ca7-d281-428f-9875-fb188b35cd5a" id="AdminRESTInterface-OpenAPIDocument" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-OpenAPI-Document"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">OpenAPI Document</span></h2><p local-id="1ccc7e1c-9373-4d78-b319-726198bda71f">The interface is documented in an OpenAPI document in YAML or JSON format:</p><div class="table-wrap"><table data-table-width="760" data-layout="align-start" data-local-id="08c57f85-6347-40b3-a3b7-8a27b99b2c61" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 34.7826%;"><col span="1" style="width: 31.8841%;"><col span="1" style="width: 33.3333%;"></colgroup><thead><tr data-local-id="680ca16a-3f40-47dd-982e-ec13bd5a1631"><th colspan="1" rowspan="1" data-local-id="6f11ec90-f2d8-42f5-a305-600c86cd9aac" class="confluenceTh"><p local-id="3cefa051-678d-4a65-910d-eb54ad8af50b"><strong>Document</strong></p></th><th colspan="1" rowspan="1" data-local-id="1db52167-90ec-444c-a27e-b60bbd1fdc1e" class="confluenceTh"><p local-id="dddcf3cc-1070-4c68-bed8-454257d92720"><strong>JSON</strong></p></th><th colspan="1" rowspan="1" data-local-id="510c082f-9421-40f6-b568-f0b58c989c5b" class="confluenceTh"><p local-id="627bd30c-5836-4d1c-b425-8571a596a51e"><strong>YAML</strong></p></th></tr></thead><tbody><tr data-local-id="9e3336ab-e93f-48cb-b6ac-2836da1892a3"><td colspan="1" rowspan="1" data-local-id="aef2d982-a49b-403e-91ca-8a4986fb8a52" class="confluenceTd"><p local-id="85398ce3-14cb-433c-8714-e5159d5fb7e2">SignServer REST Interface 1.4.0</p></td><td colspan="1" rowspan="1" data-local-id="ebed3f6f-ce6c-4044-aa57-e59a6d9c58f9" class="confluenceTd"><p local-id="6ed31057-865d-49cc-b55b-de1d26fb71e7"> <a href="_scroll_external/attachments/a3d50792f35e/openapi.json" data-linked-resource-id="370999605" data-linked-resource-version="17" data-linked-resource-type="attachment" data-linked-resource-default-alias="openapi.json" data-linked-resource-content-type="application/json" data-linked-resource-container-id="370999584" data-linked-resource-container-version="41" class=" scroll-attachment-link" data-scroll-attachment-filename="openapi.json" download="openapi.json">openapi.json</a></p></td><td colspan="1" rowspan="1" data-local-id="652b2366-1a59-43f9-b1d0-6b41fb26c567" class="confluenceTd"><p local-id="d46b6ecd-7887-4a93-aee3-541b2db408e8"><a href="_scroll_external/attachments/c041813126f3/openapi.yaml" data-linked-resource-id="370999589" data-linked-resource-version="14" data-linked-resource-type="attachment" data-linked-resource-default-alias="openapi.yaml" data-linked-resource-content-type="application/yaml" data-linked-resource-container-id="370999584" data-linked-resource-container-version="41" class=" scroll-attachment-link" data-scroll-attachment-filename="openapi.yaml" download="openapi.yaml">openapi.yaml</a> </p></td></tr></tbody></table></div><p local-id="adc7e1a1-e175-42fc-b477-5d3a9ed836c2">These files can be downloaded and opened in an editor of choice. </p><p local-id="a7a5116f-78d8-4706-be56-38b5aa49d202">Alternatively, you can generate the OpenAPI document from a server running SignServer, assuming that it is enabled and supported by the application server. For instructions, <span class="inline-comment-marker" data-ref="0f9fdba3-ee38-4dd1-9204-e6b898e6f3d8">see</span> <a href="Generate_the_OpenAPI_Document.html" data-linked-resource-id="1499103741" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="1499103741" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1499103741/Generate+the+OpenAPI+Document" data-scroll-link-target-source-id="1499103741">Generate the OpenAPI Document</a>. </p><h2 local-id="1dc49870-5901-41cb-ae73-deb4eabd58e3" id="AdminRESTInterface-IntegratingwiththeRESTAPI" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-Integrating-with-the-REST-API"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Integrating with the REST API</span></h2><h3 local-id="4af04951-388a-47c7-9c8a-993ab75a8725" id="AdminRESTInterface-Resources" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-Resources"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Resources</span></h3><p local-id="b2d582f9-9121-478e-9fd3-36d74e217fa1">The SignServer REST API provides the following resource:</p><div class="table-wrap"><table data-table-width="760" data-layout="align-start" data-local-id="e8ed053c-f626-4389-8ea1-b402dcfb865b" class="confluenceTable" style=" width: 100%;"><tbody><tr data-local-id="c1dd4957-6a48-400a-b163-6c7b2343912d"><td colspan="1" rowspan="1" data-local-id="bea69095-7348-4b63-9d8d-85203590e7ee" class="confluenceTd"><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">/rest/v1/workers</code></div>
+</div>
+</div></td></tr></tbody></table></div><h3 local-id="eeb759e7-1e96-41d4-823e-69848f560225" id="AdminRESTInterface-Methods" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-Methods"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Methods</span></h3><p local-id="f2740d65-3617-4004-a8bb-5a4b16a0e706">Each request requires a specified HTTP method.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="1d68a2a1-39d3-49f9-a830-8be9697702f7">A numeric value for {idOrName} is treated by SignServer as a WorkerID. If the {idOrName} value is not numeric, SignServer takes it as a worker name.</p></div></div><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="fc427cd1-92bf-40f3-8b55-194a3ed8eb7d" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 6.9522%;"><col span="1" style="width: 25.1390%;"><col span="1" style="width: 16.8521%;"><col span="1" style="width: 17.0189%;"><col span="1" style="width: 17.0189%;"><col span="1" style="width: 17.0189%;"></colgroup><thead><tr data-local-id="6d9792c6-9025-4155-824c-f62f2324c681"><th colspan="1" rowspan="1" data-local-id="5283978e-a01e-495c-b0dd-4f856f0e7aad" class="confluenceTh"><p local-id="71cf8475-c53d-4a21-b626-d68d2686ed8b"><strong>Method</strong></p></th><th colspan="1" rowspan="1" data-local-id="0403e461-0dbb-4a42-a83f-f6d996ba37d7" class="confluenceTh"><p local-id="2e38d4ca-920d-4c43-bea8-efd929453b8d"><strong>URL</strong></p></th><th colspan="1" rowspan="1" data-local-id="940a749d-6c23-4a1c-a0bf-dd6161a16fdf" class="confluenceTh"><p local-id="9e9fb6dc-e18f-4ff5-ab94-68d09896cabd"><strong>Accept</strong></p></th><th colspan="1" rowspan="1" data-local-id="c926c0e0-277a-4cc0-895e-b0e4a165bebe" class="confluenceTh"><p local-id="140bf352-056d-4003-a2db-fbedc633b8a9"><strong>Request Content-Type</strong></p></th><th colspan="1" rowspan="1" data-local-id="c74fa556-5dac-4b6f-a993-e0c75b1df9f1" class="confluenceTh"><p local-id="99b1dc34-7385-4e1c-94cf-ca165d320755"><strong>Request Parameters</strong></p></th><th colspan="1" rowspan="1" data-local-id="e9d1b443-9ddd-48a3-a0e1-fb7cd73d321b" class="confluenceTh"><p local-id="fa80d8e3-aa21-43d6-bf10-c8aec6a9e644"><strong>Response Content-Type</strong></p></th></tr></thead><tbody><tr data-local-id="c5bccf61-1ace-445b-ad70-5bfaa1a86140"><td colspan="1" rowspan="1" data-local-id="eb1c1d77-e313-4c30-afd6-b743cc4c8b83" class="confluenceTd"><p local-id="82f97595-163b-4408-bd7b-48eb255db58a">POST</p></td><td colspan="1" rowspan="1" data-local-id="1a6e8183-9f4c-434f-b2e5-6f975ffa1e50" class="confluenceTd"><p local-id="ebf9f9f7-18ef-4f77-bf73-d5a0b300b619">/rest/v1/workers/{idOrName}/process</p></td><td colspan="1" rowspan="1" data-local-id="5bb51203-5213-411d-bf66-7cd60cd8d4f7" class="confluenceTd"><p local-id="cfdc928a-ac8c-4206-b467-66908b9e8bd6">application/json</p></td><td colspan="1" rowspan="1" data-local-id="16691912-0a50-41aa-ae93-5e4703806676" class="confluenceTd"><p local-id="0220cd47-2b8c-4431-8703-cc540f58bcf8">application/json</p></td><td colspan="1" rowspan="1" data-local-id="8f16febc-6871-48e0-b52e-a319b76357b3" class="confluenceTd"><p local-id="b98af426-2279-44b3-bc83-07e4208148df">data, metadata, encoding</p></td><td colspan="1" rowspan="1" data-local-id="92641360-6ba0-40b6-95a4-2388513a3d34" class="confluenceTd"><p local-id="75f95d52-2c2c-4f78-8bb7-6e05b1b3d97c">application/json</p></td></tr><tr data-local-id="a42630ed-706e-448b-88ec-c8732a533180"><td colspan="1" rowspan="1" data-local-id="475c3f6f-c271-43d5-baef-5a648fd724ff" class="confluenceTd"><p local-id="727b93ca-977a-4600-ae07-510f5fc043f6">POST</p></td><td colspan="1" rowspan="1" data-local-id="1510aa87-8534-4130-a76f-37c0a9606faa" class="confluenceTd"><p local-id="38405f37-f8d9-45ba-b64f-89ec891d7e3b">/rest/v1/workers/{idOrName}/process</p></td><td colspan="1" rowspan="1" data-local-id="56bec6f1-5455-44b6-be13-fe62ea43529d" class="confluenceTd"><p local-id="c20a0111-c373-4e85-aa5b-3cd46f6dba57">application/octet-stream</p></td><td colspan="1" rowspan="1" data-local-id="91e08c85-dbf4-4bea-9b34-128ee7beb500" class="confluenceTd"><p local-id="557243ae-4499-4026-9f67-55abf2bf495f">multipart/form-data</p></td><td colspan="1" rowspan="1" data-local-id="1fe7d20e-52a0-4ec0-8322-781d10a04f29" class="confluenceTd"><ul local-id="ef0b9419-4a07-4a62-9a27-883dcdbd17e9"><li local-id="fc41e006-25a6-4b55-9746-77084d410799"><p local-id="c7ebb94a-7de0-4daa-997e-2edcfed22710">file (field name not important)</p></li><li local-id="25a97387-03e8-4d74-9fc7-11c0e896aa00"><p local-id="73f92007-983a-407e-82de-b37cfe732a49">REQUEST_METADATA.x</p></li><li local-id="21d2bfe5-cab0-4fa0-af06-a44224d5ec38"><p local-id="61cd5a66-7e51-46eb-af4a-7821d29a74b2">REQUEST_METADATA x=y</p></li></ul></td><td colspan="1" rowspan="1" data-local-id="ed965ea3-d281-4396-b961-8279b1ab0c48" class="confluenceTd"><p local-id="92e38bdf-c9ec-404d-b568-b2ce54f874bb">For file uploads, the Content-Type varies depending on the signer the request is sent to.</p></td></tr><tr data-local-id="bc695c76-f4b6-4fb4-98ef-07eef54d1fc3"><td colspan="1" rowspan="1" data-local-id="5a6e3d7b-2244-4207-9bbb-a73afe36c3fe" class="confluenceTd"><p local-id="277ef1b8-4164-421f-b946-38079fc39801">POST</p></td><td colspan="1" rowspan="1" data-local-id="d4f9ae73-9019-4935-ad0b-9a3f43c65234" class="confluenceTd"><p local-id="b66ff947-5959-467e-9145-b0e0efe0302b">/rest/v1/workers/{idOrName}/process</p></td><td colspan="1" rowspan="1" data-local-id="1c89212f-fb84-493f-a54a-b82607868c36" class="confluenceTd"><p local-id="02df5198-4256-4244-9448-dc4ef2e46cec">application/json</p></td><td colspan="1" rowspan="1" data-local-id="4f76fd81-3744-4cdd-8d85-742393997ca9" class="confluenceTd"><p local-id="886fe794-b2e5-4858-834e-f3cd25c46099">multipart/form-data</p></td><td colspan="1" rowspan="1" data-local-id="cdae80aa-4137-41cd-a59c-0d31cdadf5fd" class="confluenceTd"><p local-id="0ef1fbcd-8e0b-44fe-b1be-2571f12d9f2d">data, metadata, encoding</p></td><td colspan="1" rowspan="1" data-local-id="9b6379db-b5c7-417e-96a4-04a4c032b2a2" class="confluenceTd"><p local-id="6282ca94-4820-4ac1-9f6e-a3d00a8d0c8c">application/json</p></td></tr></tbody></table></div><h2 local-id="706ae147-7769-4eb9-a71b-adb472883e62" id="AdminRESTInterface-CustomHeaderRequirements" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-Custom-Header-Requirements"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Custom Header Requirements</span></h2><p local-id="e241ce08-8c21-4a1e-a40c-e1e5f5fcabc8">The admin operations of the SignServer REST API require a custom header called "<strong>X-Keyfactor-Requested-With</strong>" to accept the request. This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods.</p><h2 local-id="3bca932b-90e7-4840-b03e-4bda2f6ce42b" id="AdminRESTInterface-UsingtheSignServerRESTAPI" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999584_AdminRESTInterface-Using-the-SignServer-REST-API"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using the SignServer REST API</span></h2><p local-id="d01fdc31-390a-4974-bc9f-a0f9723ad522">The REST API can be used with various tools. For detailed examples, see:</p><ul local-id="2c5daccd-6744-46f6-a066-9d20f893c3d5"><li local-id="e3bdbca5-e8b9-4e86-972c-f7e4b1150868"><p local-id="bae32c29-ab39-406f-adce-aa9f792da09a"><a href="REST_endpoints_using_Postman.html" data-linked-resource-id="1500479606" data-linked-resource-version="36" data-linked-resource-type="page" data-scroll-target-source-id="1500479606" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1500479606/REST+endpoints+using+Postman" data-scroll-link-target-source-id="1500479606">REST endpoints using Postman</a> </p></li><li local-id="832f5b65-5610-4af9-879e-a6aa9fa5784e"><p local-id="ea59d617-f5d3-4d7f-9aa0-6e7b3e6ec8bf"><a href="REST_endpoints_using_cURL.html" data-linked-resource-id="1501102143" data-linked-resource-version="25" data-linked-resource-type="page" data-scroll-target-source-id="1501102143" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1501102143/REST+endpoints+using+cURL" data-scroll-link-target-source-id="1501102143">REST endpoints using cURL</a> </p></li></ul>
+<nav id="ht-post-nav">
+        <a href="Admin_WS_Interface.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Admin WS Interface</span>
+        </a>
+
+        <a href="Generate_the_OpenAPI_Document.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Generate the OpenAPI Document</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

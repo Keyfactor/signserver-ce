@@ -1,0 +1,284 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000115">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:40.580+0000">
+    <meta name="exp-page-id" content="371000115">
+    <meta name="exp-page-title" content="Components">
+    <meta name="exp-page-version" content="14">
+    <meta name="exp-page-scroll-page-id" content="b970c852194ec8d1e793da6aec4f0916">
+    <meta name="exp-page-created" content="2020-09-10T12:11:19.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-20T13:13:39.589+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Components</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="20e2d7f16c6c04c6d5a2534480dfaf1bae4c975042e55efc530fe41a6363698e"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="Components-top" pageid="371000115" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000115" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Components.html" target="_self" aria-current="page">Components</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-94ac659321419c2e47ca90e20324557f4e07e3ae86c2946b17153576c79c47da"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Components</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="0ba03ec1-1d5f-4a0b-83d1-ce04eb9bd146">SignServer <span class="inline-comment-marker" data-ref="ebce4100-5d9d-4a08-aef7-0d029d7cf245">Components </span>provide specific functionality and are configured in the SignServer workers.</p><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="6f3fd7bb-3832-4166-84f9-03a2201a4ea3"><strong>Component</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="3b629750-0974-476b-a05c-8ed20206fdce"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="ecd85eed-ada0-4748-b794-8b54d495675d"><a href="Authorizers.html" data-linked-resource-id="371000209" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000209" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000209/Authorizers" data-scroll-link-target-source-id="371000209">Authorizers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="f4f4cfe2-ae6a-45b2-bd54-b782c2f71b53">Responsible for deciding if a request should be allowed or not. Options include HTTPS/TLS client certificate authentication, HTTP Basic Authentication, IP address restrictions, or using a reverse proxy. </p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="db00ed5a-cbe9-4e15-a589-489a2128ac1d"><a href="Alias_Selectors.html" data-linked-resource-id="371000193" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000193" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000193/Alias+Selectors" data-scroll-link-target-source-id="371000193">Alias Selectors</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="1292edaa-9ee8-47f4-9296-00ca1d55a9e3">Controll how the key used for signing is selected at run-time based on the signing request. For example, it is possible to have keys selected based on the authenticated user for a signing request.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="22ed98a6-4b6e-46f9-b7e8-bd6b27e557c3"><a href="Archivers.html" data-linked-resource-id="371000163" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000163" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000163/Archivers" data-scroll-link-target-source-id="371000163">Archivers</a> </p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="3b7246b5-00f3-4a1d-857b-83c1a022f1cc">By configuring one or more Archivers on a worker, the request and response can be stored by the Archiver, for example, to the database using the <a href="Base64_Database_Archiver.html" data-linked-resource-id="371000171" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000171" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000171/Base64+Database+Archiver" data-scroll-link-target-source-id="371000171">Base64 Database Archiver</a>.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="db144365-f9b0-4ba3-934a-8679100635a0"><a href="Time_Sources_in_SignServer.html" data-linked-resource-id="371000354" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000354" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000354/Time+Sources+in+SignServer" data-scroll-link-target-source-id="371000354">Time Sources</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="10a8832e-a357-4d29-8393-b3bff76dcf7d">Acquire the current time through a configured TimeSource on the <a href="Timestamp_Signers.html" data-linked-resource-id="1986232323" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="1986232323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1986232323/Timestamp+Signers" data-scroll-link-target-source-id="1986232323">Timestamp Signers</a>. </p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="d5baa870-07e7-4ba4-b9ba-231104bcf6fd"><a href="Worker_Logger.html" data-linked-resource-id="371000306" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="371000306" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000306/Worker+Logger" data-scroll-link-target-source-id="371000306">Worker Loggers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="a9b710cb-e8d6-47ed-839a-4e1c7cbfa225">Log each transaction handled by a worker and can be configured per worker. See <a href="Logging.html" data-linked-resource-id="371000302" data-linked-resource-version="3" data-linked-resource-type="page" data-scroll-target-source-id="371000302" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000302/Logging" data-scroll-link-target-source-id="371000302">Logging</a>.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="6f19f425-b07f-439c-b9b6-a483582f3181"><a href="Accounters.html" data-linked-resource-id="371000181" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000181" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000181/Accounters" data-scroll-link-target-source-id="371000181">Accounters</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="57c8dd15-67bd-42a5-9bbd-821146f69277">Can be implemented and configured to integrate with for example an external accounting or billing system.</p></div>
+</div>
+</div>
+</div>
+<p local-id="16a17b22-08e8-4d7e-93bc-5ea1655ba6ab">For more information, see <a href="SignServer_Authentication_and_Authorization.html" data-linked-resource-id="371000334" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000334" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000334/SignServer+Authentication+and+Authorization" data-scroll-link-target-source-id="371000334">SignServer Authentication and Authorization</a>.</p>
+<nav id="ht-post-nav">
+        <a href="Signer_Status_Report_Timed_Service.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Signer Status Report Timed Service</span>
+        </a>
+
+        <a href="Authorizers.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Authorizers</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

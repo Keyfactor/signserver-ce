@@ -1,0 +1,214 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000030">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:38.239+0000">
+    <meta name="exp-page-id" content="371000030">
+    <meta name="exp-page-title" content="Requested Policy Dispatcher">
+    <meta name="exp-page-version" content="12">
+    <meta name="exp-page-scroll-page-id" content="82d1783a1e61e77ef1cc6c7400716db9">
+    <meta name="exp-page-created" content="2019-08-08T13:49:02.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T15:14:51.996+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Requested Policy Dispatcher</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="87857716883e815e356a03664f0333c6ad294c54d7d28b7881c3d05ec913e49e"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="RequestedPolicyDispatcher-top" pageid="371000030" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000030" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Dispatchers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Dispatchers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Requested_Policy_Dispatcher.html" target="_self" aria-current="page">Requested Policy Dispatcher</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-8b592a80b11d0c77b65eec72fcc30a821cb4e781199819779caa7437f01e743b"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Requested Policy Dispatcher</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="21bb19d1-52d7-4c8c-a682-be10a4f77435">Requested Policy Dispatcher dispatches the time-stamp request to another Signer based on the requested TSA Policy according to an configured mapping table. </p><blockquote local-id="1cce7c6d0cb5"><p local-id="b9f64159cfd7">Fully qualified class name: <strong>org.signserver.module.tsa.RequestedPolicyDispatcher</strong></p></blockquote><h2 local-id="668965c8-b875-4797-b9ae-7ab2e1d4a73d" id="RequestedPolicyDispatcher-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000030_RequestedPolicyDispatcher-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="0a6932e3-ddd7-43ea-a86f-1c7c4e468845">This Dispatcher can be useful if you want to have multiple Signers (Timestamp Units) signing with different TSA policies but do not want the client to have to call different Workers.</p><p local-id="301ffe9d-c4a5-48ee-9ee9-cc11f254f598">See also the <a href="Dispatched_Authorizer.html" data-linked-resource-id="371000237" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000237" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000237/Dispatched+Authorizer" data-scroll-link-target-source-id="371000237">Dispatched Authorizer</a>, which, if configured by a Signer, can allow all requests that have gone through a Dispatcher.</p><p local-id="ea3ca4fe-7dce-4578-8710-7cd849fdb61a">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><h2 local-id="c8402719-8230-45fe-8af6-65e70c81e023" id="RequestedPolicyDispatcher-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000030_RequestedPolicyDispatcher-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties&nbsp;</span></h2><div class="table-wrap"><table data-table-width="768" data-layout="center" data-local-id="878ec548-f2fe-448a-b81c-a11e55f62ffd" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 18.3594%;"><col span="1" style="width: 7.6823%;"><col span="1" style="width: 73.9583%;"></colgroup><thead><tr data-local-id="efb31929-4680-4a34-b003-1740ec77f8f3"><th colspan="1" rowspan="1" data-local-id="c47fc4eb-b276-4602-95a3-7d5ff8425602" class="confluenceTh"><p local-id="697db410-a160-422e-9578-a1db63682671"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="7278dc61-8c57-48f5-b2ee-86b1307c3860" class="confluenceTh"><p local-id="d1cc0e1d-89b1-46c1-b102-6451cd1b6b68"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="96f446c5-586d-4c57-97a1-2a54a1aaa5e1" class="confluenceTh"><p local-id="f318858a-6719-459b-b579-4da391eb1b20"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="66b0b4a1-ed12-41c4-86d1-2a0e48668b9a"><td colspan="1" rowspan="1" data-local-id="35dd156a-8416-4403-8b5a-adba3040aa15" class="confluenceTd"><p local-id="7c42d0d4-71e4-4d68-87c5-6417a3eab71e">DEFAULTWORKER&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="6bdae211-f9f6-4ebe-a6b1-e670d2d00dc2" class="confluenceTd"><p local-id="efc24764-27c2-4863-8935-125318da2f79">None</p></td><td colspan="1" rowspan="1" data-local-id="d5f42db6-c587-4401-bb39-83e4997e5885" class="confluenceTd"><p local-id="447a9a20-a838-4595-9e5e-862d9ae148a5">Specifies the Worker name or ID to dispatch to in the case that no policy was requested.</p></td></tr><tr data-local-id="bca2eed8-a2b5-439a-b302-3f54c07efcea"><td colspan="1" rowspan="1" data-local-id="aa8bfb5a-a38f-4122-91ef-e69bb983dfda" class="confluenceTd"><p local-id="34f8145e-7cfa-4d93-bdd7-22afdab7ebaf">INCLUDESTATUSSTRING</p></td><td colspan="1" rowspan="1" data-local-id="fb5dbe80-fb00-4aac-98b7-c42e0c2e3a91" class="confluenceTd"><p local-id="e7bf008c-249e-4e3c-8275-ac1b18b426c1"><em>True</em></p></td><td colspan="1" rowspan="1" data-local-id="c7cd43c8-000a-44a0-b78f-c870ed7f433e" class="confluenceTd"><p local-id="6c4beb1b-0f20-4a6d-b134-f0593a6b9b97">(Optional) Specifies if the status string is to be included in the response. This setting only affects the behavior when <code>USEDEFAULTIFMISMATCH</code> is <em>false</em>, and there is no mapping for the requested policy. In case there is a mapping (or no mapping and <code>USEDEFAULTIFMISMATCH</code> is <em>true</em>), the state of <code>INCLUDESTATUSSTRING</code> of the used signer is used to determine if the status string is included. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="ec5acad6-9770-4ee2-a0ae-0933bf93351c">Setting this to <em>true</em> triggers a bug in some versions of OpenJDK's jarsigner utility.</p></div></div></td></tr><tr data-local-id="85e8a26e-8d7e-460c-90fa-41fa80b11cbc"><td colspan="1" rowspan="1" data-local-id="9d8b6149-fb87-46f5-bfc1-96d8355aa751" class="confluenceTd"><p local-id="625fe290-7c7c-4796-aaa4-dfa3970265ca">MAPPINGS&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="8437c7c4-f540-4137-b2f2-73e5041550ea" class="confluenceTd"><p local-id="adce7e64-33b8-4079-af19-1a95ee090e2b">None</p></td><td colspan="1" rowspan="1" data-local-id="5b72d941-a501-45a9-84e6-619e23c7e7e9" class="confluenceTd"><p local-id="014ff9b0-0602-4861-8a91-5ce69c6df898">Mapping from requested policy OID to a Worker name.&nbsp;</p><p local-id="49467cd6-921e-4a63-b459-89c71c2f7979">Example:&nbsp;<br clear="none"><code>POLICYOID1:WORKERNAMEORID1; POLICYOID2:WORKERNAMEORID2; POLICYOID3:WORKERNAMEORID3;</code></p></td></tr><tr data-local-id="5fa12d03-7118-4357-ba20-eb9743da60bf"><td colspan="1" rowspan="1" data-local-id="68bcc982-9416-4b77-8f6d-4b9161d8cefa" class="confluenceTd"><p local-id="755d09cd-66fd-4a79-8946-f10f65635a7a">USEDEFAULTIFMISMATCH&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="0f31c21e-21b4-463d-9e7d-89abe3d28354" class="confluenceTd"><p local-id="a2a227b8-31d9-49c4-84e1-9a8a480b2afc"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="24b1153c-043e-45dd-a411-d27eb469713d" class="confluenceTd"><p local-id="502d46e7-1bc1-4aa4-832f-1dea1720b043">If <em>true</em>, this property dispatches to <code>DEFAULTWORKER</code> in the case that no mapping existed for the requested policy OID.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="First_Active_Dispatcher.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>First Active Dispatcher</span>
+        </a>
+
+        <a href="User_Mapped_Dispatcher.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>User Mapped Dispatcher</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

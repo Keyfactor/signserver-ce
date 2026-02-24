@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000167">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:45.633+0000">
+    <meta name="exp-page-id" content="371000167">
+    <meta name="exp-page-title" content="Old Database Archiver">
+    <meta name="exp-page-version" content="8">
+    <meta name="exp-page-scroll-page-id" content="1c9f5aa8cfcb52f90f53e2904fdfe092">
+    <meta name="exp-page-created" content="2017-12-05T12:24:08.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-20T13:27:31.740+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Old Database Archiver</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="1a1dcfb9c84f0a927ab8c3b3bcc4b55760cdb271678b0794100d44c8b5735cdb"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="OldDatabaseArchiver-top" pageid="371000167" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000167" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Archivers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Archivers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Old_Database_Archiver.html" target="_self" aria-current="page">Old Database Archiver</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b99a5b06bed6322a3f53ca6290b5afb2df96ca8177cb37116615eba80984ba24"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Old Database Archiver</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="233b7f6e6ff1">Fully qualified class name: <strong>ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</strong></p><h2 local-id="9649aae0d272" id="OldDatabaseArchiver-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000167_OldDatabaseArchiver-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="f3636419d143">The Old Database Archiver is the default Archiver used if the the property <code>ARCHIVE=true</code> is set, or if the <code>ARCHIVERS</code> property contains its class name. This Archiver archives to the ArchiveData&nbsp;database table using the same datasource as SignServer uses for accessing the database for its configuration,.</p><p local-id="5126957a4d8a">It is similar to the <a href="Base64_Database_Archiver.html" data-linked-resource-id="371000171" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000171" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000171/Base64+Database+Archiver" data-scroll-link-target-source-id="371000171">Base64 Database Archiver</a> but stores data in an XML encoded <strong>Base64PutHashMap</strong>. In the <strong>dataEncoding</strong>&nbsp;column, this format is indicated as <code>DATA_ENCODING_XML</code>.</p><p local-id="ad835416e0b4">For the Worker properties, see <a href="Base64_Database_Archiver.html" data-linked-resource-id="371000171" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000171" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000171/Base64+Database+Archiver" data-scroll-link-target-source-id="371000171">Base64 Database Archiver</a>.</p><h2 local-id="4f161c8b81bc" id="OldDatabaseArchiver-ArchiveDatatable" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000167_OldDatabaseArchiver-ArchiveData-table"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">ArchiveData table</span></h2><p local-id="613456386f01">The values of the ArchiveData table are the same as the <a href="Base64_Database_Archiver.html" data-linked-resource-id="371000171" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000171" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000171/Base64+Database+Archiver" data-scroll-link-target-source-id="371000171">Base64 Database Archiver</a>, with the exception of the <strong>dataEncoding</strong> value. The exact database table structure is described in the SQL scripts available under <code>doc/sql-scripts/</code>.</p><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="07b7a78d-1dd1-48b2-b405-deb9092533af" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 25.5982%;"><col span="1" style="width: 74.4018%;"></colgroup><thead><tr data-local-id="97238e132d2d"><th colspan="1" rowspan="1" data-local-id="30390c49cfa0" class="confluenceTh"><p local-id="046c55ca5bdb"><strong>Database table</strong></p></th><th colspan="1" rowspan="1" data-local-id="3641fc1434a6" class="confluenceTh"><p local-id="83a8d7ad6f73"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="f751dbd3b911"><td colspan="1" rowspan="1" data-local-id="8a254cfca48b" class="confluenceTd"><p local-id="f1763de1aa5d">dataEncoding&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="4bab9c99b0e5" class="confluenceTd"><p local-id="7f00480d39f0">Specifies the type of encoding used for the archiveData. Valid values:</p><ul local-id="00d142869fb8"><li local-id="f53dc2ade9f0"><p local-id="e854d5338a78"><code>NULL - DATA_ENCODING_XML</code></p></li><li local-id="07216b8103d0"><p local-id="6768fb357fa3"><code>0 - DATA_ENCODING_XML</code></p></li><li local-id="76b58d5a2328"><p local-id="b606f6408739"><code>1 - DATA_ENCODING_BASE64</code></p></li></ul><p local-id="754f502563f2">Where <code>DATA_ENCODING_XML</code> uses the <strong>Base64PutHashMap</strong>, and <code>DATA_ENCODING_BASE64</code> uses a plain Base64 encoding of the binary data.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Base64_Database_Archiver.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Base64 Database Archiver</span>
+        </a>
+
+        <a href="Accounters.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Accounters</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1966931987">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:24:50.885+0000">
+    <meta name="exp-page-id" content="1966931987">
+    <meta name="exp-page-title" content="Admin Interfaces">
+    <meta name="exp-page-version" content="15">
+    <meta name="exp-page-scroll-page-id" content="0ce6aa2c50982972d2b99817ea2250ae">
+    <meta name="exp-page-created" content="2025-11-20T14:53:16.572+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T14:54:08.572+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Admin Interfaces</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="db243cb61c87c9ae7c1a59d89c50d4823b591f01391d9a17337abdd455fb6cbf"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="AdminInterfaces-top" pageid="1966931987" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1966931987" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Admin_Interfaces.html" target="_self" aria-current="page">Admin Interfaces</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-7d4451fc1285337f126d2e5d0edeacf92de3eccb30c3747b3f8111e3a03b01b1"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Admin Interfaces</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="e649a58a-82eb-483f-aefd-48d21e6298d0">The Administration Interfaces allow for the administering of SignServer, such as setting up workers, tokens, and configuration.</p><p local-id="e649a58a-82eb-483f-aefd-48d21e6298d0">The following lists the available administration interfaces:</p><ul class="childpages-macro"><li><a href="Admin_CLI.html" data-linked-resource-id="371000510" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI" data-scroll-link-target-source-id="371000510">Admin CLI</a></li><li><a href="Admin_WS_Interface.html" data-linked-resource-id="370999665" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999665" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999665/Admin+WS+Interface" data-scroll-link-target-source-id="370999665">Admin WS Interface</a></li><li><a href="Admin_REST_Interface.html" data-linked-resource-id="370999584" data-linked-resource-version="41" data-linked-resource-type="page" data-scroll-target-source-id="370999584" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999584/Admin+REST+Interface" data-scroll-link-target-source-id="370999584">Admin REST Interface</a></li><li><a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="13" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a></li><li><a href="Admin_Tools.html" data-linked-resource-id="1964933565" data-linked-resource-version="13" data-linked-resource-type="page" data-scroll-target-source-id="1964933565" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1964933565/Admin+Tools" data-scroll-link-target-source-id="1964933565">Admin Tools</a></li></ul><div class="contentLayout2">
+<div class="columnLayout single" data-layout="single">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<h2 local-id="954af065-59b1-4d0e-a5a8-2a2daadaa135" id="AdminInterfaces-AdminCLI" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-Admin-CLI"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Admin CLI</span></h2><p local-id="373cc248-2ab2-4b0b-9b44-6b332043d5c7">Provides administration functionalities such as automating configuration, scripting deployments, and bulk updates.</p><p local-id="0c74ce61-e3fd-4fee-82e1-2f0b2ff2474e"><strong>Best for:</strong> DevOps workflows and automated deployments. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="a174032f-99a5-4f53-a08c-6ceddd997135">Admin CLI is not remote and requires command line access to where SignServer is running.</p></div></div></div>
+</div>
+</div>
+<div class="columnLayout single" data-layout="single">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<h2 local-id="14802aaf-a2a0-4b9d-a70e-bbc3aabcf767" id="AdminInterfaces-AdminWSInterface" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-Admin-WS-Interface"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Admin WS Interface</span></h2><p local-id="b23c0d4c-2c84-40ab-9ec1-bf763f14965c">Provides remote administration of SignServer over client-authenticated HTTPS.</p><p local-id="9d21bec4-9b49-4535-a12b-f69193ebeb4b"><strong>Best for:</strong> Administrators who prefer SOAP-based management.</p><h2 local-id="74696b3c-a276-492c-bf8f-532c0ab1e6a8" id="AdminInterfaces-AdminRESTInterface" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-Admin-REST-Interface"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Admin REST Interface</span></h2><p local-id="8d7158cd-0078-4f1e-a0c8-be0a25d79cba">Provides remote administration of SignServer through a RESTful interface.</p><p local-id="b680fbcd-1055-4e24-9c5a-c77b3d01b982"><strong>Best for:</strong> New integrations.</p><h2 local-id="3448f186-1932-4f7c-8ed5-49e37e85f284" id="AdminInterfaces-AdminWeb" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-Admin-Web"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Admin Web</span></h2><p local-id="1e1aaca8-e4b8-4c70-b4f4-a1053fb67e9a">Provides a web-based graphical interface, and is suitable for most configuration work.</p><p local-id="7dd07abf-42b0-469c-8efe-6f7baf330e8f"><strong>Best for:</strong> Administrators who prefer GUI-based management.</p></div>
+</div>
+</div>
+<div class="columnLayout single" data-layout="single">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<h2 local-id="d9bd487e-8036-46bd-833b-87b76da23af5" id="AdminInterfaces-AdminTools" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-Admin-Tools"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Admin Tools</span></h2><h3 local-id="69b17c92-b333-4ee6-9578-dfa9c744a5f6" id="AdminInterfaces-DatabaseCLIEnterpriseBlue" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-Database-CLI-enterprise"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Database CLI  <span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></span></h3><p local-id="b57fbc46-22af-4a12-8855-1a3a3f21860d">The SignServer <a href="Database_CLI.html" data-linked-resource-id="371000719" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000719" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000719/Database+CLI" data-scroll-link-target-source-id="371000719">Database CLI</a> uses the Java Persistence API (JPA) to connect to the SignServer database.</p><h3 local-id="243cfd69-be7c-401e-98d9-8f00e482cf06" id="AdminInterfaces-SNTPTool" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-SNTP-Tool"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SNTP Tool</span></h3><p local-id="f8ada844-2b39-44eb-882a-1dd518f690a9">The <a href="SNTP_Tool.html" data-linked-resource-id="370999703" data-linked-resource-version="8" data-linked-resource-type="page" data-scroll-target-source-id="370999703" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999703/SNTP+Tool" data-scroll-link-target-source-id="370999703">SNTP Tool</a> is a command line interface tool that allows querying external NTP servers.</p><h3 local-id="54669343-7834-4b87-abcd-48c21d4300e6" id="AdminInterfaces-P11NGCLI" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1966931987_AdminInterfaces-P11NG-CLI"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">P11NG CLI</span></h3><p local-id="572fdcbf-906e-466a-8add-ae4940ace383">The <a href="P11NG_CLI.html" data-linked-resource-id="370999681" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="370999681" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999681/P11NG+CLI" data-scroll-link-target-source-id="370999681">P11NG CLI</a> tool provides actions for querying, removing, and creating objects(keys) in an HSM.</p></div>
+</div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Interfaces.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Interfaces</span>
+        </a>
+
+        <a href="Admin_CLI.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Admin CLI</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

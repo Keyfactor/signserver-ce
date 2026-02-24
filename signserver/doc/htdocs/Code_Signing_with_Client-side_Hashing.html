@@ -1,0 +1,228 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371001295">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:26:11.313+0000">
+    <meta name="exp-page-id" content="371001295">
+    <meta name="exp-page-title" content="Code Signing with Client-side Hashing">
+    <meta name="exp-page-version" content="11">
+    <meta name="exp-page-scroll-page-id" content="468b10ffd3a35fe242b342183e5747f3">
+    <meta name="exp-page-created" content="2022-09-28T12:12:24.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T15:48:45.895+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Code Signing with Client-side Hashing</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="0ac7f87f52378cf0b4b1db4148be5f33903f7af7e26dfafe8f7c7450afe0e777"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="CodeSigningwithClient-sideHashing-top" pageid="371001295" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371001295" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Code_Signing_with_Client-side_Hashing.html" target="_self" aria-current="page">Code Signing with Client-side Hashing</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0ea63b0b05151d5ff501d2c677f95e898c3479db1073e703b78e5db13700dff6"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Code Signing with Client-side Hashing</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="eb7eae79-1338-4a81-b201-7fb2d1a4b58d">When signing large executables, software releases, virtual machines, or container images, the overhead from the data transfer can be significant. In those cases, it would be preferable to not have to send the original file data to and from the server when signing.</p><p local-id="81ba8985-0339-445d-8a06-b627baacb374">For CMS detached signatures, only the much smaller signature file is sent back and thus eliminating half of the data transfers. However, it would be even better to not send the original file at all. This can be achieved for some signature formats (such as for CMS detached signatures) if the client performs the hashing and then this much smaller data is sent to the server and the signature created for it.</p><p local-id="912df86f-5c8a-4c64-bce6-ccdc9258ad4d">For signature formats where the signature is embedded within the file, this scheme would require some logic on the client side first for preparing the file for signing, then to hash it and finally to include the signature within the data structure. <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a> provides support for the embedded signature formats in Authenticode and JAR signing.</p><p local-id="f391197d-8922-46fc-b68c-fab1ca7a61ba">See the <a href="Client-side_Hashing.html" data-linked-resource-id="371000790" data-linked-resource-version="22" data-linked-resource-type="page" data-scroll-target-source-id="371000790" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000790/Client-side+Hashing" data-scroll-link-target-source-id="371000790">Client-side Hashing</a> section for more information including which signers to set up instead of the normal MSAuthCode and JArchiveSigner and for how to run SignClient with the "-clientside" flag in order to use this mode.</p><h2 local-id="7beaf5c1-a661-4ed7-85ad-b621a5771a62" id="CodeSigningwithClient-sideHashing-CMSClient-SideHashingExample" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371001295_CodeSigningwithClient-sideHashing-CMS-Client-Side-Hashing-Example"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>CMS Client-Side Hashing Example</strong></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">cat software-release-</code><code class="value">1.0</code><code class="plain">.zip | openssl sha256 -binary -out software-release-</code><code class="value">1.0</code><code class="plain">.zip.hash</code></div>
+<div class="line"><code class="plain">bin/signclient signdocument -workername CMSSigner \</code></div>
+<div class="line"><code class="plain">  -metadata USING_CLIENTSUPPLIED_HASH=</code><code class="keyword">true</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">  -metadata CLIENTSIDE_HASHDIGESTALGORITHM=SHA-</code><code class="value">256</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">  -infile software-release-</code><code class="value">1.0</code><code class="plain">.zip.hash \</code></div>
+<div class="line"><code class="plain">  -outfile software-release-</code><code class="value">1.0</code><code class="plain">.zip.p7s</code></div>
+</div>
+</div><h2 local-id="35e2fedc-70d6-4fe2-acde-6251bb3114ad" id="CodeSigningwithClient-sideHashing-Authenticode®Client-SideHashingExample" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371001295_CodeSigningwithClient-sideHashing-Authenticode®-Client-Side-Hashing-Example"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>Authenticode® Client-Side Hashing Example</strong></span></h2><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signclient signdocument -clientside -workername MSAuthCodeCMSSigner \</code></div>
+<div class="line"><code class="plain">  -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">  -infile application-unsigned.exe \</code></div>
+<div class="line"><code class="plain">  -outfile application-signed.exe</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Code_Signing_with_Authenticode_Signatures.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Code Signing with Authenticode Signatures</span>
+        </a>
+
+        <a href="Code_Signing_with_NIST_Post-Quantum_Algorithms.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Code Signing with NIST Post-Quantum Algorithms</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

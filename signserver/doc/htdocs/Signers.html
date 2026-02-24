@@ -1,0 +1,274 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999759">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:14.184+0000">
+    <meta name="exp-page-id" content="370999759">
+    <meta name="exp-page-title" content="Signers">
+    <meta name="exp-page-version" content="22">
+    <meta name="exp-page-scroll-page-id" content="852af1a0c7f6bd5c79e40ac48bcffef4">
+    <meta name="exp-page-created" content="2021-10-13T12:37:58.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T09:43:53.387+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Signers</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="9a99fac08feb22fe69ac8959a04b5c3213f436989f1b07fc9a4ee4c85778689d"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="Signers-top" pageid="370999759" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999759" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Signers.html" target="_self" aria-current="page">Signers</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-5bef92c6da9cc527b46e1dc296c35713e2f18eb7c9ef261b19ea15cc2ef8ab42"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Signers</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="12654651-22c3-4e76-a5f1-bcc068540093">Signers are workers that perform signing operations. A Signer specifies how to perform the signature creation, and which key and certificate to use. </p><h2 local-id="220e8933-eb2c-42ce-941e-1507fcdc8c73" id="Signers-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999759_Signers-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="b299aabc-46b1-466a-bdf1-4e6dd3ce6b7b">Signers perform cryptographic operations such as:</p><ul local-id="723564eb-4fce-4c0a-8521-a88480371cb8"><li local-id="c4ec4677-1a36-4f34-b663-8becbd95f191"><p local-id="68b31baa-b349-401c-a7ee-1bb3705ca364">Document signing (PDF, XML)</p></li><li local-id="2d95c84b-691f-48f1-b31e-4074e4d99d4d"><p local-id="0ca01c18-e7ab-4aee-8aec-996faa1cd3b4">Code signing</p></li><li local-id="0f0da0e2-07c0-4fc5-8507-d85166a13364"><p local-id="ce262646-f624-4cb1-91fb-5344b9e1ac90">Timestamping (TSA)</p></li><li local-id="6aad2509-1ac8-4d27-98ec-83a4bc0d6277"><p local-id="f7b3f17a-8536-414c-927e-d85236193d81">Key generation &amp; certificate requests</p></li></ul><p local-id="563ccae5-6234-4db1-a0c1-8aec84e2aea2"><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">Each signer worker is typically associated with:</span></p><ul local-id="ed8b2d7d-17be-49d1-99ce-e8d1531b9fb9"><li local-id="e916a149-2cbb-4e9a-8f0d-cc7029cf527a"><p local-id="bd87ffb9-44d5-496a-b370-a8b1b36ff82c"><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">A </span><strong><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">key</span></strong><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1"> (generated or imported)</span></p></li><li local-id="3bd0af04-1563-48fe-9269-37115c6c030b"><p local-id="de4205c8-5b34-4b48-8ecc-44b2ef1acc8a"><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">A </span><strong><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">certificate chain</span></strong></p></li><li local-id="6f6c179a-80e1-4375-964d-ceede4d27f0b"><p local-id="bc612283-6fa8-457a-9340-84508758a02d"><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">A </span><strong><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">signing algorithm</span></strong></p></li><li local-id="354db34c-3fa7-4b5d-867c-acaedaf27755"><p local-id="73f26d78-71f1-47bf-9624-2332b682b5bb"><strong><span class="inline-comment-marker" data-ref="3a6378ca-636f-4c78-943e-5b539b546ea1">Access control policies</span></strong></p></li></ul><p local-id="397d3fe0-3f64-41fe-8cf3-fdad29915702">There are multiple implementations of SignServer Signers available for signing different formats and additional implementations can be developed.</p><h2 local-id="c132d0f3-a615-42d0-85b9-1f012143af6a" id="Signers-SignerWorkerTypes" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999759_Signers-Signer-Worker-Types"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Signer Worker Types</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="9fedbcc6-80d1-4c83-8dc0-49cefb3b8f96"><strong>Worker</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="8ba01ca8-cde1-4d45-b10f-4ab84f8d6fa2"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="7c723d7a-46e6-4b3c-9f8b-06b88921afed"><a href="Document_Signers.html" data-linked-resource-id="1984397479" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="1984397479" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1984397479/Document+Signers" data-scroll-link-target-source-id="1984397479">Document Signers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="6d1486b7-07e1-4582-a1c1-c74208a7d48d">Allow for signing any digital document and is designed to perform automated signatures and other cryptographic operations on digital documents.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="611266f2-9414-4a44-b56f-9f25e5a2a093"><a href="Code_Signers.html" data-linked-resource-id="1984594060" data-linked-resource-version="16" data-linked-resource-type="page" data-scroll-target-source-id="1984594060" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1984594060/Code+Signers" data-scroll-link-target-source-id="1984594060">Code Signers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="d42cdc4b-2d82-45b9-b53a-d5454a2bbff7">Digitally sign executables and scripts to confirm the software author and guarantee that the code has not been altered or corrupted since it was signed.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="b740d311-fcd0-4398-a118-dd4cab51edb8"><a href="Timestamp_Signers.html" data-linked-resource-id="1986232323" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="1986232323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1986232323/Timestamp+Signers" data-scroll-link-target-source-id="1986232323">Timestamp Signers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="f702abc1-5fab-439d-8455-2e63ad46d713">Provide timestamps used together with eSignatures to provide proof that a document existed before a certain time, and can also be used together with advanced signatures to ensure long-term validation of archives.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="a5b505b2-9411-470b-bade-1e87dbb9d2d0"><a href="ePassport_Signers.html" data-linked-resource-id="1983611033" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="1983611033" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1983611033/ePassport+Signers" data-scroll-link-target-source-id="1983611033">ePassport Signers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="ad1d0f8d-7818-41da-8087-cca53fd20b3c">SignServer includes a built-in plug-in for Machine Readable Travel Document (MRTD) signing. MRTD is implemented worldwide within electronic passports mandated by ICAO.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="bb1d9d8a-7b4c-4b6e-b6d2-f4b8016e8607"><a href="DNS_Zone_File_Signers.html" data-linked-resource-id="1984725165" data-linked-resource-version="3" data-linked-resource-type="page" data-scroll-target-source-id="1984725165" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1984725165/DNS+Zone+File+Signers" data-scroll-link-target-source-id="1984725165">DNS Zone File Signers</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="9e64d81b-c621-421d-a3a9-b68e2766a1ac"><span class="inline-comment-marker" data-ref="f9e47a4d-9d9f-4fe8-953d-9cc3e06b4d5a">Sign Domain Name System (DNS) zone files and</span> zip files.</p></div>
+</div>
+</div>
+</div>
+<h2 local-id="c132d0f3-a615-42d0-85b9-1f012143af6a" id="Signers-SignerswithClient-sideHashingCapability" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999759_Signers-Signers-with-Client-side-Hashing-Capability"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="d6e7c0aa-ecab-42b8-b75e-c38d1850b509">Signers with Client-side Hashing Capabili</span>ty</span></h2><p local-id="3e2509b4-c438-4fa7-ad18-aa25442ecdfe"><span class="inline-comment-marker" data-ref="3c2fa1e9-bd74-42d7-8864-5a94abc7c3e2">You can perform the hashing on the client-side with <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>, instead of the more complex server-side signing. </span></p><p local-id="63766f2495f3">The following Signers have client-side hashing capability:</p><ul local-id="e6d3ac98-a5b0-4bd5-a5d7-409d10d20372"><li local-id="9422ab91-93e0-4358-927e-77a40ac7b281"><p local-id="416474ea-9481-4840-a912-8070a14c7b63"><a href="CMS_Signer.html" data-linked-resource-id="370999849" data-linked-resource-version="18" data-linked-resource-type="page" data-scroll-target-source-id="370999849" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999849/CMS+Signer" data-scroll-link-target-source-id="370999849">CMS Signer</a></p></li><li local-id="721095ad-006f-4ae5-81bc-6ed8a6a9a713"><p local-id="6ba4c28a-26d4-4e9f-bc6c-1eeffc1aea51"><a href="Plain_Signer.html" data-linked-resource-id="370999934" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="370999934" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999934/Plain+Signer" data-scroll-link-target-source-id="370999934">Plain Signer</a></p></li><li local-id="2172d209-530a-4bc4-80ea-3e9608c6a3e9"><p local-id="0cd6e2f8-1115-4d76-8136-fc6bdead7433"><a href="JArchive_CMS_Signer.html" data-linked-resource-id="370999869" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999869" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999869/JArchive+CMS+Signer" data-scroll-link-target-source-id="370999869">JArchive CMS Signer</a></p></li><li local-id="3fcc3841-3d4d-4eb3-8003-47482a1b7dab"><p local-id="87aa76fb-e815-48dc-a90d-e6e006ef70b0"><a href="MS_Authenticode_CMS_Signer.html" data-linked-resource-id="370999893" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="370999893" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999893/MS+Authenticode+CMS+Signer" data-scroll-link-target-source-id="370999893">MS Authenticode CMS Signer</a></p></li><li local-id="7e7d72e7-2714-4e5c-ab28-23f11c09bdfc"><p local-id="8523f857-ec91-4231-858f-e612614942f6"><a href="OpenPGP_Plain_Signer.html" data-linked-resource-id="370999913" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="370999913" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999913/OpenPGP+Plain+Signer" data-scroll-link-target-source-id="370999913">OpenPGP Plain Signer</a></p></li><li local-id="72a91030-c72e-4083-9edb-1a833db4acfd"><p local-id="cd3d0556-6092-4bcb-9daf-565a15c024b8"><a href="ZoneHash_Signer.html" data-linked-resource-id="371000002" data-linked-resource-version="12" data-linked-resource-type="page" data-scroll-target-source-id="371000002" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000002/ZoneHash+Signer" data-scroll-link-target-source-id="371000002">ZoneHash Signer</a></p></li><li local-id="70cf825f-a797-4367-9428-56d6da386eac"><p local-id="9c31d2ee-108b-4dd3-b1df-ac44f185238b"><a href="APPX_Signer.html" data-linked-resource-id="370999845" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="370999845" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999845/APPX+Signer" data-scroll-link-target-source-id="370999845">APPX Signer</a></p></li><li local-id="d507f60c-ec93-47cd-92cf-a5817741c426"><p local-id="3ba16794-271b-4542-b3f9-6923a40e719d"><a href="APK_Hash_Signer.html" data-linked-resource-id="370999809" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999809" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999809/APK+Hash+Signer" data-scroll-link-target-source-id="370999809">APK Hash Signer</a></p></li></ul><p local-id="96f10f7b-1889-4d54-80c9-2e47f948017f">For more information on client-side hashing operation and configuration, see <a href="Client-side_Hashing.html" data-linked-resource-id="371000790" data-linked-resource-version="22" data-linked-resource-type="page" data-scroll-target-source-id="371000790" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000790/Client-side+Hashing" data-scroll-link-target-source-id="371000790">Client-Side Hashing</a>.</p>
+<nav id="ht-post-nav">
+        <a href="Supported_Interfaces_by_Worker.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Supported Interfaces by Worker</span>
+        </a>
+
+        <a href="Common_Signer_Properties.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Common Signer Properties</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

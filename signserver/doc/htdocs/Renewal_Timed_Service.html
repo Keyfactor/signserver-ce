@@ -1,0 +1,243 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000066">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:40.109+0000">
+    <meta name="exp-page-id" content="371000066">
+    <meta name="exp-page-title" content="Renewal Timed Service">
+    <meta name="exp-page-version" content="9">
+    <meta name="exp-page-scroll-page-id" content="46c3fe0007cd85fa14f8526c9b9ee638">
+    <meta name="exp-page-created" content="2017-12-04T11:43:04.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T15:17:13.431+0000">
+    <meta name="exp-page-labels" content="command,prompt,signserveree">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Renewal Timed Service</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="74cb461dcfb8620f7431be75bfd0f477b27fe1a6f7428dc818ab1aafb392e78a"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="RenewalTimedService-top" pageid="371000066" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000066" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Timed_Services.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Timed Services</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Renewal_Timed_Service.html" target="_self" aria-current="page">Renewal Timed Service</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-d13b5d940dd9de9f1e91d20fba42c537aef4db741d2a13254eff7646aca9ebe3"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Renewal Timed Service</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="8f1cfe99fa00"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="fc33ebefc796">The Renewal Timed Service is a timed service that can be used to periodically check the signing validity of Workers and invoking the <a href="Renewal_Worker.html" data-linked-resource-id="371000078" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="371000078" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000078/Renewal+Worker" data-scroll-link-target-source-id="371000078">Renewal Worker</a> if needed.</p><blockquote local-id="e42a593d41fe"><p local-id="60c5514ae224">Fully qualified class name: <strong>org.signserver.module.renewal.service.RenewalTimedService</strong></p></blockquote><h2 local-id="5ad21ad4bfc9" id="RenewalTimedService-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="2f6b5c44cf2d">To download a sample configuration file for this worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><h2 local-id="20088567e19f" id="RenewalTimedService-Setup" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Setup"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Setup</span></h2><p local-id="d2e5a73e165a">A typical setup with automatic renewal contains at least the following workers:</p><h3 local-id="be3d840314df" id="RenewalTimedService-CryptoWorker" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Crypto-Worker"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Crypto Worker</span></h3><p local-id="7406b9e29880">The Crypto Worker is the worker holding the Crypto Token. Configured as usual, but needs to be separated from the worker that will be renewed. This prevents the Crypto Worker from being deactivated when the configuration of the other Worker changes during the renewal.</p><h3 local-id="83785d56814f" id="RenewalTimedService-Renewee(s)" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Renewee(s)"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Renewee(s)</span></h3><p local-id="5c2692c15bf3">The renewee is one or more Workers that should be automatically renewed.</p><p local-id="7cc029064388">Each renewee requires the <code>RENEWWORKER</code> property, and can have additional properties:</p><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="1aa40e6e-f969-42be-b972-203f43232886" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 29.6667%;"><col span="1" style="width: 7.7778%;"><col span="1" style="width: 62.5556%;"></colgroup><thead><tr data-local-id="0023d7ce75f4"><th colspan="1" rowspan="1" data-local-id="6eef5dd6d22f" class="confluenceTh"><p local-id="d8b834a30358"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="f60f542f4613" class="confluenceTh"><p local-id="da7793310818"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="f1cb545b6ac8" class="confluenceTh"><p local-id="4be5d0afd81c"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="053aca25f90a"><td colspan="1" rowspan="1" data-local-id="fd7f05defd09" class="confluenceTd"><p local-id="79c6473d8717">RENEWWORKER</p></td><td colspan="1" rowspan="1" data-local-id="3bad709ece66" class="confluenceTd"><p local-id="1e06b0f961a2">None</p></td><td colspan="1" rowspan="1" data-local-id="691c4925ea26" class="confluenceTd"><p local-id="f40df84c7a3a">Points out which Renewal Worker to use.</p></td></tr><tr data-local-id="4faa4a6332e7"><td colspan="1" rowspan="1" data-local-id="ae2d51ef7416" class="confluenceTd"><p local-id="20a04cb756c5">RENEW_FORDEFAULTKEY</p></td><td colspan="1" rowspan="1" data-local-id="e258fd154d92" class="confluenceTd"><p local-id="8faea6cf87e4"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="d52e26c0c835" class="confluenceTd"><p local-id="15e14c462445">(Optional) If set to <em>true</em>, the certificate request is sent for the current <code>DEFAULTKEY</code>, and no key generation is performed. </p></td></tr><tr data-local-id="60e9bbabb4e8"><td colspan="1" rowspan="1" data-local-id="ff5913ad59bc" class="confluenceTd"><p local-id="bec7b7c03087">RENEW_MINREMAININGSIGNINGVALIDITY</p></td><td colspan="1" rowspan="1" data-local-id="81af25f4c8e5" class="confluenceTd"><p local-id="ddc557920682"><em>0d</em></p></td><td colspan="1" rowspan="1" data-local-id="c91a23025dce" class="confluenceTd"><p local-id="fa08a41825c9">(Optional) Specifies the minimum signing validity that must remain for the Worker without it being up for renewal. This value is expressed as number of days, hours, minutes, and milliseconds in the format <em>*d *h *m *s *ms</em>. </p></td></tr></tbody></table></div><h3 local-id="e65a4cc440b4" id="RenewalTimedService-RenewalWorker" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Renewal-Worker"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Renewal Worker</span></h3><p local-id="390606704da4">The Worker performing the renewal. For configuration information, see <a href="Renewal_Worker.html" data-linked-resource-id="371000078" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="371000078" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000078/Renewal+Worker" data-scroll-link-target-source-id="371000078">Renewal Worker</a>.</p><h3 local-id="b56ddd8fbcd4" id="RenewalTimedService-RenewalTimedService" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Renewal-Timed-Service"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Renewal Timed Service</span></h3><p local-id="22575f2b3036">The Worker that runs periodically and checks if a Worker needs renewal. Requires a property listing each Worker to check and renew if needed.</p><h2 local-id="92d4f4a63803" id="RenewalTimedService-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="b94df710-b2aa-40f2-a231-a2f95e9d2871" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 33.0551%;"><col span="1" style="width: 66.9449%;"></colgroup><thead><tr data-local-id="d95b7cea6d0e"><th colspan="1" rowspan="1" data-local-id="195b73512044" class="confluenceTh"><p local-id="c8fcf205ece3"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="16cdadd87f2f" class="confluenceTh"><p local-id="32f196a83adf"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="23caa7c4c2ab"><td colspan="1" rowspan="1" data-local-id="8d78354c660f" class="confluenceTd"><p local-id="f5b7f08af61c">WORKERS&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="66965bb593a4" class="confluenceTd"><p local-id="567d1ffcf886">Comma-separated list of Workers to check the validity time for, and request renewal for, if needed.</p></td></tr></tbody></table></div><h2 local-id="b8d418e4f997" id="RenewalTimedService-Execution" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Execution"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Execution</span></h2><p local-id="f18cd079c8e8">Like all timed services, the Renewal Timed Service is executed periodically. The service checks the configurations and certificates for all the configured Workers and creates a list with renewal statuses for each Worker. Each Worker in the list configured correctly and up for renewal is then renewed by sending a request for it to the Renewal Worker.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="77e7874d83e9">For Crypto Token activation,  the Workers that should be renewed must have their Crypto Tokens previously activated. Since only activated Workers configured with a certificate will be scheduled for renewal, the Worker needs to be renewed manually the first time to get its initial key and certificate. For the renewal service to work automatically, the Worker to be renewed must use a separate Worker (such as a Crypto Worker) for its Crypto Token. If the Worker has its own Crypto Token configuration, the token is deactivated during the renewal process.</p></div></div><h2 local-id="0a76269c15ae" id="RenewalTimedService-Troubleshooting" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Troubleshooting"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Troubleshooting</span></h2><p local-id="1dac8454818a">The complete status information of the services list renewal statuses. For example:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ bin/signserver getstatus complete RenewalTimedService1</code></div>
+<div class="line"><code class="plain">...</code></div>
+<div class="line"><code class="plain">Workers Renewal Prognose:</code></div>
+<div class="line"><code class="plain"> - TimeStampSigner (102): Renewal after: 2016-03-02 16:14:07,000, with key generation, using renewal worker "RenewalWorker1".</code></div>
+<div class="line"><code class="plain"> - CMSSigner (3): Renewal after: 2016-02-22 16:01:00,000 (on next run), without key generation, using renewal worker "RenewalWorker1".</code></div>
+</div>
+</div><p local-id="67800b483305">The example shows that:</p><ul local-id="16da20c2b477"><li local-id="1148d47ce49b"><p local-id="6c9f5ad01376">The service is configured to manage two Workers, and their names and Worker ID are displayed.</p></li><li local-id="4a27eea49554"><p local-id="8916282e06fe">Both Workers have certificates configured and are active so the service is able to determine after which date the Workers need to be renewed.</p></li><li local-id="a6da105bf49b"><p local-id="f2528cb04d9d">For the CMSSigner, the renewal date has already passed and this is indicated by the text <code>(on next run)</code>, showing that the renewal will take place as soon as the service runs.</p></li><li local-id="60c28f876b64"><p local-id="150d511fc8f3">We can assume that the CMSSigner is configured with the Worker property <code>RENEW_FORDEFAULTKEY=true</code> as the status says <code>without key generation</code>.</p></li><li local-id="31a6d795edfb"><p local-id="4f9de17b974d">Both Workers are configured with <code>RENEWWORKER=RenewalWorker1</code>.</p></li></ul><h2 local-id="23488b125bd5" id="RenewalTimedService-InstallingaService" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000066_RenewalTimedService-Installing-a-Service"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Installing a Service</span></h2><p local-id="c6ed6ff87aa2">To install a service, use the same commands as for installing a Worker:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ bin</code><code class="plain">/signserver</code><code class="plain"> setproperties configuration.properties</code></div>
+</div>
+</div><p local-id="7069cbea2d82">Example:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ bin</code><code class="plain">/signserver</code><code class="plain"> setproperties doc</code><code class="plain">/sample-configs/signerstatusreport</code><code class="plain">.properties</code></div>
+<div class="line"><code class="plain">===========================================</code></div>
+<div class="line"><code class="plain"> Executing Command on host : localhost</code></div>
+<div class="line"><code class="plain">===========================================</code></div>
+<div class="line"><code class="plain">Configuring properties as defined </code><code class="keyword">in</code><code class="plain"> the </code><code class="functions">file</code><code class="plain"> : doc</code><code class="plain">/sample-configs/signerstatusreport</code><code class="plain">.properties</code></div>
+<div class="line"><code class="plain">Setting the property ACTIVE to TRUE </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the property INTERVAL to 10 </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the global property WORKER2.CLASSPATH to org.signserver.server.timedservices.SignerStatusReportTimedService with scope GLOB.</code></div>
+<div class="line"><code class="plain">Setting the property WORKERS to PDFSigner1 </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the property NAME to SignerStatusReporter </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the property OUTPUTFILE to </code><code class="plain">/tmp/statusreport</code><code class="plain"> </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">$ bin</code><code class="plain">/signserver</code><code class="plain"> reload 2</code></div>
+<div class="line"><code class="plain">===========================================</code></div>
+<div class="line"><code class="plain">Executing Command on host : localhost</code></div>
+<div class="line"><code class="plain">===========================================</code></div>
+<div class="line"><code class="plain">SignServer reloaded successfully</code></div>
+<div class="line"><code class="plain">Current configuration is now activated</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="HSMKeepAlive_Timed_Service.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>HSMKeepAlive Timed Service</span>
+        </a>
+
+        <a href="Signer_Status_Report_Timed_Service.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Signer Status Report Timed Service</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

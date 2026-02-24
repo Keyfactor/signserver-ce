@@ -1,0 +1,208 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999707">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:51.180+0000">
+    <meta name="exp-page-id" content="370999707">
+    <meta name="exp-page-title" content="Configuration Reference">
+    <meta name="exp-page-version" content="10">
+    <meta name="exp-page-scroll-page-id" content="a1c6768e33783ffabc2c8891bf15adbe">
+    <meta name="exp-page-created" content="2023-06-25T16:47:01.000+0000">
+    <meta name="exp-page-last-modified" content="2025-11-21T14:07:59.473+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Configuration Reference</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="49ff1abe485884d5545054200c71f93397250f38d49f0b2b08b7e6594dc35c64"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ConfigurationReference-top" pageid="370999707" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999707" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Configuration_Reference.html" target="_self" aria-current="page">Configuration Reference</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-50c476de16df07d46685d41d621b951f857e395a946123250804110919d07001"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Configuration Reference</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p><style>[data-colorid=no1x1ps6gc]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=no1x1ps6gc]{color:#d6d8e3}[data-colorid=t8v8cctomc]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=t8v8cctomc]{color:#d6d8e3}[data-colorid=wm9e1ot3st]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=wm9e1ot3st]{color:#d6d8e3}[data-colorid=qw639x52jj]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=qw639x52jj]{color:#d6d8e3}[data-colorid=ke0bs5zqlc]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=ke0bs5zqlc]{color:#d6d8e3}[data-colorid=ye2tk510r5]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=ye2tk510r5]{color:#d6d8e3}[data-colorid=p2ajhi4y13]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=p2ajhi4y13]{color:#d6d8e3}[data-colorid=v83tgeeq1g]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=v83tgeeq1g]{color:#d6d8e3}[data-colorid=xn7p1vsowm]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=xn7p1vsowm]{color:#d6d8e3}[data-colorid=rr5mgmjhfn]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=rr5mgmjhfn]{color:#d6d8e3}[data-colorid=job3x2rnlq]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=job3x2rnlq]{color:#d6d8e3}[data-colorid=rlk28p4h8c]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=rlk28p4h8c]{color:#d6d8e3}[data-colorid=o6xxk0ynty]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=o6xxk0ynty]{color:#d6d8e3}[data-colorid=sc7p84esds]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=sc7p84esds]{color:#d6d8e3}[data-colorid=drhgzbrlqe]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=drhgzbrlqe]{color:#d6d8e3}[data-colorid=cz9u9w9xp1]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=cz9u9w9xp1]{color:#d6d8e3}[data-colorid=hk0p493r0a]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=hk0p493r0a]{color:#d6d8e3}[data-colorid=k8ms6v2qj4]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=k8ms6v2qj4]{color:#d6d8e3}[data-colorid=ixnnas0rub]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=ixnnas0rub]{color:#d6d8e3}[data-colorid=j6k3g6wzix]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=j6k3g6wzix]{color:#d6d8e3}[data-colorid=kb4pzbo3ov]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=kb4pzbo3ov]{color:#d6d8e3}[data-colorid=jk70x0101x]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=jk70x0101x]{color:#d6d8e3}[data-colorid=ayyohhyk44]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=ayyohhyk44]{color:#d6d8e3}[data-colorid=v7oz3hzsri]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=v7oz3hzsri]{color:#d6d8e3}[data-colorid=bmv3euqz5f]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=bmv3euqz5f]{color:#d6d8e3}</style>This Reference covers information on configuration options, peer systems, and the developer reference.</p><h2 id="ConfigurationReference-Highlights" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Highlights"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Highlights</span></h2><h3 id="ConfigurationReference-Deploy-timeConfiguration" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Deploy-time-Configuration"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="k8ms6v2qj4">Deploy-time Configuration</span></span></h3><p><span data-colorid="p2ajhi4y13">Information on </span><a href="Deploy-time_Configuration.html" data-linked-resource-id="370999711" data-linked-resource-version="36" data-linked-resource-type="page" data-scroll-target-source-id="370999711" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999711/Deploy-time+Configuration" data-scroll-link-target-source-id="370999711">Deploy-time Configuration</a><span data-colorid="hk0p493r0a"> properties used when deploying SignServer to the application server.</span></p><h3 id="ConfigurationReference-Logging" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Logging"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="sc7p84esds">Logging</span></span></h3><p><span data-colorid="jk70x0101x">SignServer uses Log4j for debug logging and the security events logger from CESeCore for system/audit logging. In addition, the worker logger (transaction log) can be configured to use Log4j and/or the security events logger. See </span><a href="Logging.html" data-linked-resource-id="371000302" data-linked-resource-version="3" data-linked-resource-type="page" data-scroll-target-source-id="371000302" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000302/Logging" data-scroll-link-target-source-id="371000302">Logging</a><span data-colorid="j6k3g6wzix">.</span></p><h3 id="ConfigurationReference-AuthenticationandAuthorization" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Authentication-and-Authorization"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="no1x1ps6gc">Authentication and Authorization</span></span></h3><p><span data-colorid="cz9u9w9xp1">Client </span><a href="SignServer_Authentication_and_Authorization.html" data-linked-resource-id="371000334" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="371000334" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000334/SignServer+Authentication+and+Authorization" data-scroll-link-target-source-id="371000334">Authentication and Authorization</a> <span data-colorid="xn7p1vsowm">can be configured per-worker and occurs in different components as the request comes in.&nbsp;</span></p><h3 id="ConfigurationReference-HealthCheck" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Health-Check"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="rr5mgmjhfn">Health Check</span></span></h3><p><span data-colorid="ixnnas0rub">The </span><a href="Health_Check.html" data-linked-resource-id="371000342" data-linked-resource-version="8" data-linked-resource-type="page" data-scroll-target-source-id="371000342" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000342/Health+Check" data-scroll-link-target-source-id="371000342">Health Check</a><span data-colorid="ye2tk510r5"> service is used for health monitoring and is useful for clusters.</span></p><h3 id="ConfigurationReference-SignServerTimeMonitor" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-SignServer-TimeMonitor"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="o6xxk0ynty">SignServer TimeMonitor</span></span></h3><p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p><span data-colorid="wm9e1ot3st">The external SignServer TimeMonitor application can be used together with the&nbsp;</span><strong><span data-colorid="drhgzbrlqe">StatusReadingLocalComputerTimeSource</span></strong><span data-colorid="t8v8cctomc">&nbsp;for monitoring the local time and informing SignServer about its state. For more information, see&nbsp;</span><a href="SignServer_TimeMonitor_Application.html" data-linked-resource-id="371000346" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000346" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000346/SignServer+TimeMonitor+Application" data-scroll-link-target-source-id="371000346">SignServer TimeMonitor Application</a><span data-colorid="kb4pzbo3ov">.</span></p><h3 id="ConfigurationReference-PeerSystems" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Peer-Systems"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="qw639x52jj">Peer Systems</span></span></h3><p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p><span data-colorid="v83tgeeq1g">For more information on the SignServer support for incoming peer connections, see&nbsp;</span><a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a><span data-colorid="ke0bs5zqlc">.</span></p><h3 id="ConfigurationReference-KeyWrapping" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Key-Wrapping"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="ayyohhyk44">Key Wrapping</span></span></h3><p><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p><a href="Key_Wrapping.html" data-linked-resource-id="371000794" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="371000794" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000794/Key+Wrapping" data-scroll-link-target-source-id="371000794"><span style="color: rgb(28,30,41);">Key wrapping</span></a><span data-colorid="rlk28p4h8c"> allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database. </span></p><h3 id="ConfigurationReference-DeveloperReference" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999707_ConfigurationReference-Developer-Reference"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span data-colorid="bmv3euqz5f">Developer Reference</span></span></h3><p><span data-colorid="v7oz3hzsri">For instructions needed for building and developing SignServer, see&nbsp;</span><a href="Developer_Reference.html" data-linked-resource-id="371000815" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="371000815" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000815/Developer+Reference" data-scroll-link-target-source-id="371000815">Developer Reference</a><span data-colorid="job3x2rnlq">.</span></p>
+<nav id="ht-post-nav">
+        <a href="XAdES_Signer.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>XAdES Signer</span>
+        </a>
+
+        <a href="Status_Repository.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Status Repository</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

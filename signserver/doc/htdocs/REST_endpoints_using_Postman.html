@@ -1,0 +1,360 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1500479606">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:24:52.579+0000">
+    <meta name="exp-page-id" content="1500479606">
+    <meta name="exp-page-title" content="REST endpoints using Postman">
+    <meta name="exp-page-version" content="36">
+    <meta name="exp-page-scroll-page-id" content="bbdd0ff3da9aa74d577095e566cc3bdb">
+    <meta name="exp-page-created" content="2025-05-12T09:39:30.191+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T15:02:08.543+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>REST endpoints using Postman</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="d88be50297f4835035cd91902f40900875821847276293fc1c768ddaf0038c1a"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="RESTendpointsusingPostman-top" pageid="1500479606" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1500479606" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Admin_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Admin Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Admin_REST_Interface.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Admin REST Interface</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="REST_endpoints_using_Postman.html" target="_self" aria-current="page">REST endpoints using Postman</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-1387b46c2d0fdd1c6fbc49e2ae91c51d5135d523954331981e643f648cdfe2ed"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">REST endpoints using Postman</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="f381f0af-bd22-4485-a2f9-162b094ab662">The following covers how to use Postman to send requests to the SignServer REST API, including required configuration, example requests, and typical responses.</p><ul local-id="f0543f6e-0cee-466d-99fd-4cd5e7cb9ad5"><li local-id="57dd3c6b-6f6b-49d3-9879-b0859b5a0b71"><p local-id="82cee1cd-9c9c-4702-ba14-0d47ef1a3408"><a href="REST_endpoints_using_Postman.html#RESTendpointsusingPostman-postman" data-scroll-target-source-id="1500479606" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1500479606/REST+endpoints+using+Postman#src-1500479606_RESTendpointsusingPostman-postman" data-scroll-link-target-source-id="1500479606">Configure Postman</a></p></li><li local-id="83bc5f84-0c93-47fa-b44a-5e5cc7384737"><p local-id="d408540f-40b1-4a66-9f72-1cdfe0dbc8d4"><a href="REST_endpoints_using_Postman.html#RESTendpointsusingPostman-endpoints" data-scroll-target-source-id="1500479606" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1500479606/REST+endpoints+using+Postman#src-1500479606_RESTendpointsusingPostman-endpoints" data-scroll-link-target-source-id="1500479606">Use REST Endpoints to Configure Workers</a></p></li><li local-id="e2562860-a143-4822-9b12-0c49936c5767"><p local-id="76ed29ec-0ac4-43f5-894d-1dbd0b022809"><a href="REST_endpoints_using_Postman.html#RESTendpointsusingPostman-endpoint-signing" data-scroll-target-source-id="1500479606" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1500479606/REST+endpoints+using+Postman#src-1500479606_RESTendpointsusingPostman-endpoint-signing" data-scroll-link-target-source-id="1500479606">Use Postman REST Endpoint for Signing</a></p></li></ul><h2 local-id="49940dcb-48e6-4359-aca2-dad630143e6c" id="RESTendpointsusingPostman-ConfigurePostmanpostman" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="RESTendpointsusingPostman-postman"></span><span class="confluence-anchor-link" id="postman"></span><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Configure-Postman"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure Postman</span></h2><p local-id="68f9c0fc-7696-4f08-aa2d-b846e445808b">The examples use Postman to send requests to the SignServer REST endpoints. For Postman to be able to send requests that will not be rejected by SignServer, you need to configure your Postman instance. </p><p local-id="50fb71ae-218b-4641-b0da-f908ec446ce2">First, add your certificate to the host and port you are running your SignServer instance on. This is done under <strong>Settings&gt;Certificates&gt;Add Certificates</strong>. </p><p local-id="eaedecc8-393e-4f8c-a6b8-0e1190b0cd4f">In these examples, the certificate has been added to <code>localhost:8443</code> and <code>localhost:8080.</code></p><p local-id="a478b3c7-26cf-4376-ac37-73f68303186d">Base HTTPS URL used for all admin requests:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">https:</code><code class="comments">//localhost:8443/signserver/rest/v1</code></div>
+</div>
+</div><p local-id="583f30f3-8eb7-4de2-aa69-9f1cdb0dda36">Base HTTP URL used for signing requests:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/rest/v1 </code></div>
+</div>
+</div><p local-id="5d475842-778c-462c-949a-62f7bc55854f"><span class="inline-comment-marker" data-ref="1b98d863-d9aa-4900-9f93-54f0721bd2d0">As mentioned in <a href="Admin_REST_Interface.html" data-linked-resource-id="370999584" data-linked-resource-version="41" data-linked-resource-type="page" data-scroll-target-source-id="370999584" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999584/Admin+REST+Interface" data-scroll-link-target-source-id="370999584">Admin REST Interface</a>, SignServer has a custom header that is required. This header can be configured by setting </span><strong>X-Keyfactor-Requested-With</strong> under <strong>Headers</strong><em>. </em>This needs to be done for each new request.</p><h2 local-id="4eb0f202-6536-46bf-a096-923e785bed09" id="RESTendpointsusingPostman-UseRESTEndpointstoConfigureWorkersinSignServerendpoints" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="RESTendpointsusingPostman-endpoints"></span><span class="confluence-anchor-link" id="endpoints"></span><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Use-REST-Endpoints-to-Configure-Workers-in-SignServer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Use REST Endpoints to Configure Workers in SignServer</span></h2><h3 local-id="27f53ccd-2eb5-4fb8-b53b-022fe0b4d873" id="RESTendpointsusingPostman-AddaNewWorker" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Add-a-New-Worker"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Add a New Worker</span></h3><p local-id="73ede6dc-7f3f-4854-abcc-449b378e3b41">Adding a new worker can be done from two endpoints. You can choose to provide a specific ID in the URL. If you do not provide an ID, SignServer sets the next available one for you.</p><p local-id="58f5c6100c38"><strong>Endpoint: POST /workers or /workers/id</strong></p><p local-id="dc6b8eec-e649-40d5-937b-a7556b22f052">Submit a list of properties to add a new worker. </p><p local-id="9f5ef1d1-efe5-47b7-9a48-0866f256e831">An example body for sending a request to create a PlainSigner:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"properties"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"NAME"</code><code class="plain">:</code><code class="string">"PlainSigner"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"IMPLEMENTATION_CLASS"</code><code class="plain">:</code><code class="string">"org.signserver.module.cmssigner.PlainSigner"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"TYPE"</code><code class="plain">:</code><code class="string">"PROCESSABLE"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"AUTHTYPE"</code><code class="plain">:</code><code class="string">"NOAUTH"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"CRYPTOTOKEN"</code><code class="plain">:</code><code class="string">"CryptoTokenP12"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"DEFAULTKEY"</code><code class="plain">:</code><code class="string">"signer00003"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"DISABLEKEYUSAGECOUNTER"</code><code class="plain">:</code><code class="string">"true"</code></div>
+<div class="line"><code class="plain">   }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="60e3dbcc-fc4a-4487-abef-4e6c5e625461">If the request is successful, SignServer returns status <code>201 Created</code>. </p><p local-id="6c68d0e3-03df-45fb-a1e3-c152e3218ab0">If the request fails, SignServer returns an error message with the cause of the failure.</p><p local-id="e268bdc4-6e39-4c2e-a5c9-e1ab8d8ef4e7">For example, a conflict for the chosen worker ID can return status <code>409 Conflict</code>, with the error: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="string">"error"</code><code class="plain">: </code><code class="string">"Worker already exists: 4"</code></div>
+</div>
+</div><p local-id="14193e1b-4279-4521-9bd8-5d8d859b3685">Or a conflict for the chosen worker name can return status <code>409 Conflict</code>, with the error: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain"> </code><code class="string">"error"</code><code class="plain">: </code><code class="string">"Worker already exists: PlainSigner"</code></div>
+</div>
+</div><h3 local-id="42d0749d-ef6f-4373-bc40-cd8de105e4de" id="RESTendpointsusingPostman-GetWorkerConfiguration" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Get-Worker-Configuration"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Get Worker Configuration</span></h3><p local-id="f0d2adc6-1067-45a8-92a9-c5dc34c82fa3">You can request the full configuration of all workers from the SignServer instance or a more detailed configuration for one specific worker ID.</p><p local-id="973d472ed2d3"><strong>Endpoint: GET /workers</strong></p><p local-id="6faf9a2e-f1e5-460b-9339-c9d93845c4a0">The endpoint GET <code>/workers</code> only returns the ID and name of the existing workers on the SignServer instance. It will not look at the body even if one is provided. </p><p local-id="39b20604-939f-4ff6-ab3c-fbf7d188510b">Example response to an empty body:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"workers"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"id"</code><code class="plain">: </code><code class="value">1</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"name"</code><code class="plain">: </code><code class="string">"CryptoTokenP12"</code></div>
+<div class="line"><code class="plain">        },</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"id"</code><code class="plain">: </code><code class="value">2</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"name"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">    ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="faa4e03530e9"><strong>Endpoint: GET /workers/id</strong></p><p local-id="51ff41a5-d1b2-42c2-ab4a-1155bfe90d74">This endpoint can provide more detailed configuration for a specified worker. This endpoint will also <span class="inline-comment-marker" data-ref="2848a7e4-b682-4002-97a2-6882634aa48a">not use </span>the body even if one is provided.</p><p local-id="41defdd5-b3cf-4a3e-8666-f39121827261">Example response for ID provided pointing to an existing PlainSigner:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"properties"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"CRYPTOTOKEN"</code><code class="plain">: </code><code class="string">"CryptoTokenP12"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"AUTHTYPE"</code><code class="plain">: </code><code class="string">"NOAUTH"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"IMPLEMENTATION_CLASS"</code><code class="plain">: </code><code class="string">"org.signserver.module.cmssigner.PlainSigner"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"DEFAULTKEY"</code><code class="plain">: </code><code class="string">"signer00003"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"TYPE"</code><code class="plain">: </code><code class="string">"PROCESSABLE"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"DISABLEKEYUSAGECOUNTER"</code><code class="plain">: </code><code class="string">"true"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"NAME"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><h3 local-id="dd4c46ad-8a90-49e6-9f80-e5a7aaffc2a6" id="RESTendpointsusingPostman-ChangeWorkerConfiguration" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Change-Worker-Configuration"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Change Worker Configuration</span></h3><p local-id="e3a89b65a9e1"><strong>Endpoint: PATCH /workers/id</strong></p><p local-id="0d10b179-5e8b-4768-832e-229a51f4a64f">The body only needs to contain the properties that you want to be added or changed. Remaining worker properties are not affected by this request.</p><p local-id="e081dd94-bcc8-4ad7-9f34-03b9ffcede61">Use this endpoint to:</p><ul local-id="a2fc1dd3-dd38-4cf6-ae70-9770a7920789"><li local-id="5dd2d3cf-2c7c-4e6e-b4e3-1b58a05d6181"><p local-id="1ccedfd7-d5c5-4cc1-979b-d67bbbd70985"><strong>Change</strong> the existing property by providing a different value.</p></li><li local-id="bc3d4186-fc82-4bdf-9af2-eb024a4f65bd"><p local-id="d9795d55-d212-4a6a-a358-b0b64af5ebe8"><strong>Add</strong> a property by providing it in the request body.</p></li></ul><p local-id="2b202529-a072-4a60-aea2-128b8a37028b"><span class="inline-comment-marker" data-ref="13275794-f8b1-4c7e-a5fa-70596f0d8fc9">Example body for changing the name of the worker:</span></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"properties"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"NAME"</code><code class="plain">: </code><code class="string">"NewPlainSigner"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="5c745a73-34b7-4439-b563-be4f531e8d36">If the request is successful, SignServer returns status <code>200 OK</code> with the following response body: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="string">"responseMessage"</code><code class="plain">: </code><code class="string">"Worker properties successfully updated"</code><code class="plain">.</code></div>
+</div>
+</div><p local-id="08c55daa-86db-44a9-a2ef-0dc92ac0621f">If the request fails, SignServer returns an error message with the cause of the failure. <br clear="none">For example, if you attempt to make changes to a worker ID that does not exist, the failure returns status <code><span class="inline-comment-marker" data-ref="4c8e9254-2705-47cd-be06-5ea0c444cd25">404 Not Found</span></code> with response body: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain"> </code><code class="string">"error"</code><code class="plain">: </code><code class="string">"No such worker: 3"</code></div>
+</div>
+</div><p local-id="6ecddf654192"><strong>Endpoint: PUT /workers/id</strong></p><p local-id="ccc99a54-2be7-4acb-a659-fe23028905f3">The body needs to contain all the properties of the worker. This endpoint overwrites the full configuration of the provided worker ID.</p><p local-id="74d24b3c-8307-4ce8-8747-dba7f712e7cf">Use this endpoint to:</p><ul local-id="98b5dd2d-6735-4919-8236-92b1d8784303"><li local-id="978f8892-1914-469c-bc68-1c2ddbb29039"><p local-id="9b07a9af-9ced-4d9c-8cc2-12dcdee4ede0"><strong>Change</strong> the existing property by providing a different value.</p></li><li local-id="719187c0-29e6-4faa-83ce-4486c089bf80"><p local-id="6be2f6f5-61f1-485a-b758-6ac1d09dbca9"><strong>Remove</strong> a property by not providing it in the request.</p></li><li local-id="3566b28f-bc09-4116-9f3c-105a1d14b77f"><p local-id="3cd6b458-f3b1-4e74-a074-e27846b61fab"><strong>Add</strong> a property by providing it in the request body.</p></li></ul><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="b963b801-8760-4a18-bb13-af0c6bf07f3c">All properties that you do not want to change need to be provided with the current value.</p></div></div><p local-id="cae1ca63-0870-4a7a-8964-c67d10cede0d">Example body for changing the name of the worker:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"properties"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"CRYPTOTOKEN"</code><code class="plain">: </code><code class="string">"CryptoTokenP12"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"AUTHTYPE"</code><code class="plain">: </code><code class="string">"NOAUTH"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"IMPLEMENTATION_CLASS"</code><code class="plain">: </code><code class="string">"org.signserver.module.cmssigner.PlainSigner"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"DEFAULTKEY"</code><code class="plain">: </code><code class="string">"signer00003"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"TYPE"</code><code class="plain">: </code><code class="string">"PROCESSABLE"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"DISABLEKEYUSAGECOUNTER"</code><code class="plain">: </code><code class="string">"true"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"NAME"</code><code class="plain">: </code><code class="string">"NewPlainSigner"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="300a853f-2846-494e-bc09-cc20b04a75a2">If the request is successful, SignServer returns a status <code>200 OK</code> with the following response body: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="string">"responseMessage"</code><code class="plain">: </code><code class="string">"Worker properties successfully replaced"</code><code class="plain">.</code></div>
+</div>
+</div><p local-id="f5568fd4-c391-4ae7-aad8-1fe1496e44de">If the request fails, SignServer returns an error message with the cause of the failure. <br clear="none">For example, if you attempt to make changes to a worker ID that does not exist, the failure returns status <code><span class="inline-comment-marker" data-ref="4c8e9254-2705-47cd-be06-5ea0c444cd25">404 Not Found</span></code> with response body:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain"> </code><code class="string">"error"</code><code class="plain">: </code><code class="string">"No such worker: 3"</code></div>
+</div>
+</div><h3 local-id="35bb8a50-69a7-46a9-a043-1d96beab7c4a" id="RESTendpointsusingPostman-RemoveWorker" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Remove-Worker"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Remove Worker</span></h3><h4 local-id="6565be21-6847-4a82-90fd-f7448e200a18" id="RESTendpointsusingPostman-Endpoint:DELETE/workers/id" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Endpoint:-DELETE-/workers/id"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Endpoint: DELETE <code>/workers/id</code></span></h4><p local-id="fe4d99a7-f900-4615-b078-6bf1d7ee8310">This endpoint removes the worker with the provided ID. The endpoint will not take any body input from the request.</p><p local-id="cd010cfa-ad46-4d8f-b7f3-2ca0741f8966">If the request is successful, SignServer returns status <code>200 OK</code> with the following response body: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="string">"responseMessage"</code><code class="plain">: </code><code class="string">"Worker removed successfully"</code></div>
+</div>
+</div><p local-id="1c2fa79d-7406-46df-bf51-9ec9aeb08a8d">If the request fails, SignServer returns an error message with the cause of the failure. <br clear="none">For example, a failure can return status <code><span class="inline-comment-marker" data-ref="3eb154d2-b8a8-45a5-8ead-d217a7ca6b2c">404 Not Found</span></code> with response body <code>"error": "No such worker: 2"</code>, for attempting to remove a worker that does not exist.</p><h3 local-id="5115a2f4-eed6-41c0-9d28-e9a372c2566c" id="RESTendpointsusingPostman-ReloadfromDatabase" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Reload-from-Database"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Reload from Database</span></h3><p local-id="aafbb1d12004">Endpoint: POST /workers/reload</p><p local-id="0180d8dd-50c9-475b-b321-ed0080f1509d">This endpoint reloads the configuration from the database. If the body is left empty, the endpoint reloads all workers.</p><p local-id="4b53ba61-81d8-474d-84df-33d06af7fa79"><span class="inline-comment-marker" data-ref="a1529eee-eac0-4aa9-bcbc-e70417ba182b">If the request to reload all workers is successful, SignServer will return status </span><code>200 OK</code> with the following response body: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="string">"responseMessage"</code><code class="plain">: </code><code class="string">"All workers successfully reloaded"</code><code class="plain">.</code></div>
+</div>
+</div><p local-id="291655e3-7f54-4324-a5cc-c0564d19d042">If you only want to reload specific workers, the wanted worker IDs can be provided in the body of the request.</p><p local-id="aaf5c9f2-6b7e-47ce-b3f8-27de942957e6">Example body for reloading defined worker IDs:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"workerIDs"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    </code><code class="value">1</code><code class="plain">, </code><code class="value">2</code></div>
+<div class="line"><code class="plain">  ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="5921f4ee-6106-401b-b66d-e1f81e6f0b48">If the request is successful, SignServer will return status <code>200 OK</code> with the following response body <code>"responseMessage": "Workers successfully reloaded"</code>.</p><p local-id="95e174f7-9ad3-4d89-b9a6-5db04e05f936">If the request fails, it will return an error message with the cause of the failure. <br clear="none">An example of what a failure could look like, status <code><span class="inline-comment-marker" data-ref="641f2be2-2773-42e5-b1c9-722ae63bf118">404 Not Found</span></code> with response body <code>"error": "No such worker: 3"</code>, for trying to reload a worker that does not exist.</p><h2 local-id="79f4e282-de94-4a15-98d7-eb462c5bdbdf" id="RESTendpointsusingPostman-UsePostmanRESTEndpointforSigningendpoint-signing" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="RESTendpointsusingPostman-endpoint-signing"></span><span class="confluence-anchor-link" id="endpoint-signing"></span><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Use-Postman-REST-Endpoint-for-Signing"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Use Postman REST Endpoint for Signing</span></h2><h3 local-id="a6bd8414-44cf-4ac0-a8aa-10d9514893a5" id="RESTendpointsusingPostman-Signingrequest" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Signing-request"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Signing request</span></h3><p local-id="17782a6a325b"><strong>Endpoint: POST /workers/{IDorName}/process</strong></p><p local-id="30fa018a-5a6f-484f-b4d9-e478877a6013">Example of simple body only data to be signed with a <strong>PlainSigner</strong>:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"Sample Data!"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="331e37d8-0077-4a8e-8bc5-b836daf3e376">Response from a PlainSigner:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"archiveId"</code><code class="plain">: </code><code class="string">"022a0fee43ba76ed26605cc87c090afb9ea66b07"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"P2TkMBhhwDGfu9OUarAf65Z2h2gkDYqiQGV6WPi+N6mdxxbi8g14k+BvCz47yhDAVD3D/bJhP+L5knYQ92rgfcf7AS2o2o7ppzCE0ZvEtY0mZHL/7GAe4ZnuK+8cqeK1kP9mY9/dIWsZelZb8LPLVsC/rdFBAW89LsGzvjw6mEK1Zle4JkkqM7K+c1bnOYWYaLxIXTgxgPz6i9ccMoYREUntZ0srf2rKcv1k1W0/kc8G0R3CjC8Hje/J+FpIAOtd89kG4nvqa/OPt8GqipnXAmPXpCOuDAvDsWEJL32x+QHqdkl4ixaeAxFWnougm/qL0MZF6KmYXXm/wXqTD2o6pA=="</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"metaData"</code><code class="plain">: {},</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"requestId"</code><code class="plain">: </code><code class="string">"-1361181487"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"signerCertificate"</code><code class="plain">: </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhcwDQYJKoZIhvcNAQELBQAwTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMTYwMzAzMDgyNTA0WhcNMzYwMjI3MDgyNTA0WjBKMRQwEgYDVQQDDAtzaWduZXIwMDAwMzEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCyFKqwwiHS2o4PO3zovqC+jGuIELnja1iAlg/hyrRp28mF6BOGVaKE6ZzbQIMmmICRz+EeqXN1W8gyCEh6T2qN3QvXTAF9mrrUI3hG4Xn/Davgsln8saRE0zt45yy47dPq5YofYJWWIdW/6qssiX+ApcPqthCQfkgraUSagS/Reqy0WT/A2lwKh147GB9+MxhheskQIPaKQasOpI7vGfzey+GnkHPsfU21irS2nC8uzv6hd0G6hNYUEmJtIh9/5WebMoMiGFq1sydTtZp7pJilfPyxrAkHXEwMUEEMcVlE/ISCoKMttnLMUT/F00cHesU4D2yNl6gcSjpMj4Q/iF+hAgMBAAGjfzB9MB0GA1UdDgQWBBQ2/WY3Ln7tdUmDrTyvtvSZwBg8YzAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFBxgQUremK3l1gOK6GaCqX6w8gKHMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAIUh6kkCMc0Fs6U+Sw6Ns0Yd28Fb5SM//nE6mq3mf1SD4lAyChVrFvlqMZJaqeJlkVeHc9E+KCE5bX1r2iGC8rnE9DuItI0pKMrgFt4cbSbDwgovnTrkiIhuqP2pjdhmrHtlLqZBR8e16c4xGSn6XWKJ8vPzx2AJl7MY3sY3Z4aPckBFNjG1lzH1inq5WM/+WaLghOQQngaXeU+SWpoAM7cUjB8Uyjf2Qr2GerI4AZZJMuC6BuvMdFMyXX78l7c9qmvK9Bre+SFKdtcMAgnglLzu0lyPHPwYL0R+pwc5dFOJipafxeqeHGpkZTXMsdMn6f1USRznlGbRWru68/XOOFU="</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><h3 local-id="34cc53f6-1e70-4417-bdc2-fb79951ad7f7" id="RESTendpointsusingPostman-Client-sidehashing" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-Client-side-hashing"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Client-side hashing</span></h3><p local-id="767a980ef56a"><strong>Endpoint: POST /workers/{IDorName}/process</strong></p><p local-id="e5b96185-75fc-441d-be07-d349fcae23a6">When the client sends the request, the following properties need to be provided as request metadata:</p><ul local-id="292373fa-6db9-4a94-ad06-25ecae7a51e5"><li local-id="340cc7d4-c9a0-45f0-a289-c7519965e5e7"><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">USING_CLIENTSUPPLIED_HASH=</code><code class="keyword">true</code></div>
+</div>
+</div></li><li local-id="bb094bd1-1e58-4e10-a451-b95e48425195"><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">CLIENTSIDE_HASHDIGESTALGORITHM=SHA-</code><code class="value">256</code></div>
+</div>
+</div></li></ul><p local-id="fd7c790e-bd76-4931-890f-bb43f3a64e2b">Replace “SHA-256” with the name of the hash algorithm used to digest the data. The algorithm must be one of those configured in the signer with the <code>ACCEPTED_HASH_DIGEST_ALGORITHMS</code> property.</p><p local-id="eae2fedb-00e5-44c7-8974-b68693e1f0e2">These properties can be provided in the metadata of the request.</p><p local-id="ca5590f6-d57d-4037-9ef1-2bf701b35fc2">For client-side hashing, the encoding of the data needs to be set to “<code>BASE64</code>”, and the data needs to be base64 encoded binary. </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">  </code><code class="string">"encoding"</code><code class="plain">: </code><code class="string">"BASE64"</code></div>
+</div>
+</div><p local-id="fefdf4d0-4731-41f6-a739-ddb06b9882c4">Example for formatting data:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">echo </code><code class="string">"test"</code><code class="plain">| openssl sha256 -binary | base64</code></div>
+<div class="line"><code class="plain">8sobtsfpB9Btr+Roflefznazfk6Tt2BQItpS5szCb9I=</code></div>
+</div>
+</div><p local-id="3c5785c3-fe82-4b60-a38a-566b484b2484">Example of body for a <strong>CMSSigner</strong> using client-side hashing:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"metaData"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"USING_CLIENTSUPPLIED_HASH"</code><code class="plain">:</code><code class="string">"true"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"CLIENTSIDE_HASHDIGESTALGORITHM"</code><code class="plain">:</code><code class="string">"SHA256"</code></div>
+<div class="line"><code class="plain">  },</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"encoding"</code><code class="plain">: </code><code class="string">"BASE64"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"8sobtsfpB9Btr+Roflefznazfk6Tt2BQItpS5szCb9I="</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="a2785136-77e7-4b5a-ac8a-f14ec426254a">If the request is successful, SignServer will return status <code>200 OK</code> with the following response body:</p><pre class="scroll-code" data-language="json" data-title-type="code">{
+    "archiveId": "61f5414b202a8c4006a1f9e7486af0181f73d710",
+    "data": "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",
+    "metaData": {},
+    "requestId": "457529920",
+    "signerCertificate": "MIIDlzCCAn+gAwIBAgIIOdPbElQbJhcwDQYJKoZIhvcNAQELBQAwTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMTYwMzAzMDgyNTA0WhcNMzYwMjI3MDgyNTA0WjBKMRQwEgYDVQQDDAtzaWduZXIwMDAwMzEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCyFKqwwiHS2o4PO3zovqC+jGuIELnja1iAlg/hyrRp28mF6BOGVaKE6ZzbQIMmmICRz+EeqXN1W8gyCEh6T2qN3QvXTAF9mrrUI3hG4Xn/Davgsln8saRE0zt45yy47dPq5YofYJWWIdW/6qssiX+ApcPqthCQfkgraUSagS/Reqy0WT/A2lwKh147GB9+MxhheskQIPaKQasOpI7vGfzey+GnkHPsfU21irS2nC8uzv6hd0G6hNYUEmJtIh9/5WebMoMiGFq1sydTtZp7pJilfPyxrAkHXEwMUEEMcVlE/ISCoKMttnLMUT/F00cHesU4D2yNl6gcSjpMj4Q/iF+hAgMBAAGjfzB9MB0GA1UdDgQWBBQ2/WY3Ln7tdUmDrTyvtvSZwBg8YzAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFBxgQUremK3l1gOK6GaCqX6w8gKHMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAIUh6kkCMc0Fs6U+Sw6Ns0Yd28Fb5SM//nE6mq3mf1SD4lAyChVrFvlqMZJaqeJlkVeHc9E+KCE5bX1r2iGC8rnE9DuItI0pKMrgFt4cbSbDwgovnTrkiIhuqP2pjdhmrHtlLqZBR8e16c4xGSn6XWKJ8vPzx2AJl7MY3sY3Z4aPckBFNjG1lzH1inq5WM/+WaLghOQQngaXeU+SWpoAM7cUjB8Uyjf2Qr2GerI4AZZJMuC6BuvMdFMyXX78l7c9qmvK9Bre+SFKdtcMAgnglLzu0lyPHPwYL0R+pwc5dFOJipafxeqeHGpkZTXMsdMn6f1USRznlGbRWru68/XOOFU="
+}</pre><p local-id="f73862db-28b5-4b0f-9166-d25c6dab1443">If the request fails, it will return an error message with the cause of the failure. <br clear="none">An example of what a failure could look like is, status <code>400 Bad Request</code> with response body <code>"error": "Client-side hashing requested but not allowed"</code>, for trying to use a CMS worker that has <code>ALLOW_CLIENTSIDEHASHING_OVERRIDE</code> set to false or using default value which is also false.</p><h3 local-id="beeb7d70-7d32-4ace-b2b3-5f1e3aa8ebad" id="RESTendpointsusingPostman-Fileupload" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1500479606_RESTendpointsusingPostman-File-upload"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">File upload</span></h3><p local-id="b74dddd23cad"><strong>Endpoint: POST /workers/{IDorName}/process</strong></p><p local-id="18b6a972-ac58-444e-a730-8848b6922206">To use the file upload endpoint: </p><ol start="1" local-id="c4a6c3d3-ec69-4de0-a7a6-6c198d7fdc90"><li local-id="9c3cbcc2-9114-47a9-b1ca-325bfc9d0ef7"><p local-id="2f226eca-8388-40c8-9e3e-7054a141502f">Change the Header Accept from default value <code>*/*</code> to <code>application/octet-stream</code>.  This is found under <em>Header</em> in Postman.</p></li><li local-id="445a3c9d-09f5-4405-a4c7-cb6eb0ff3409"><p local-id="3486ae05-fe1c-4821-bbeb-e783af861c32">Set the body input type to <code>form-data</code> to provide a file instead a body.</p></li><li local-id="aaa0772a-8db6-49e9-8b4f-8273b7fde495"><p local-id="2d3ac9b3-8c10-4fe2-aed1-00317fe4eac4">Choose <code>file</code> in the drop down for input type and browse for the file you would like to provide for signing.</p></li></ol><p local-id="2d0c981d-5d4b-49ff-9e8f-af6af02fa205">If the request is successful, SignServer returns status <code>200 OK</code> with a response body with the file you signed.</p><p local-id="288344c5-a42d-4bc6-9a52-9f06ab2a946e">If the request fails, SignServer returns an error message with the cause of the failure. <br clear="none">For example, if you try to use a PDF worker but you provided a file that is not a PDF, the failure shows <code>400 Bad Request</code> with response body:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="string">"error"</code><code class="plain">: </code><code class="string">"Could not sign document: PDF header signature not found."</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Generate_the_OpenAPI_Document.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Generate the OpenAPI Document</span>
+        </a>
+
+        <a href="REST_endpoints_using_cURL.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>REST endpoints using cURL</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

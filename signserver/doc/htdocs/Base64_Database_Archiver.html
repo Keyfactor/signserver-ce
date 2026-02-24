@@ -1,0 +1,220 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000171">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:45.421+0000">
+    <meta name="exp-page-id" content="371000171">
+    <meta name="exp-page-title" content="Base64 Database Archiver">
+    <meta name="exp-page-version" content="6">
+    <meta name="exp-page-scroll-page-id" content="4b80ce9a6d7c13f8c9acbc66828d367d">
+    <meta name="exp-page-created" content="2017-03-10T07:49:15.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-20T13:11:04.466+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Base64 Database Archiver</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="2e09243d1d3f947572c45cff9bc74ca6aa883e377d874ca4ca509aa508a4c7ad"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="Base64DatabaseArchiver-top" pageid="371000171" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000171" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Archivers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Archivers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Base64_Database_Archiver.html" target="_self" aria-current="page">Base64 Database Archiver</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0d41a771c00229198053484624a6c338024b7ff99eccc3cdf010fe312491a999"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Base64 Database Archiver</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="b207d53920ac">Fully qualified class name: <strong>ARCHIVERS=org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver</strong></p><h2 local-id="4c73f12b-0144-4052-a814-468bb3b13123" id="Base64DatabaseArchiver-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000171_Base64DatabaseArchiver-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="cdfba76abf14">This Archiver archives to the database table <a href="Base64_Database_Archiver.html#Base64DatabaseArchiver-ArchiveData-table" data-scroll-target-source-id="371000171" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000171/Base64+Database+Archiver#src-371000171_Base64DatabaseArchiver-ArchiveData-table" data-scroll-link-target-source-id="371000171">ArchiveData</a>&nbsp;using the same datasource as SignServer uses for accessing the database for its configuration and other elements. It is similar to the <a href="Old_Database_Archiver.html" data-linked-resource-id="371000167" data-linked-resource-version="8" data-linked-resource-type="page" data-scroll-target-source-id="371000167" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000167/Old+Database+Archiver" data-scroll-link-target-source-id="371000167">Old Database Archiver</a> but does not use an XML structure for storing the data. Instead, the data is simply base64 encoded.</p><h2 local-id="4f161c8b81bc" id="Base64DatabaseArchiver-WorkerProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000171_Base64DatabaseArchiver-Worker-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Worker Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="a791ec6a-dcef-4d96-815d-15c060fc48a5" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 23.1667%;"><col span="1" style="width: 7.7778%;"><col span="1" style="width: 69.0556%;"></colgroup><thead><tr data-local-id="218f657b-966d-4c41-93f6-32322ddaffc5"><th colspan="1" rowspan="1" data-local-id="30c0ad9b-6204-431e-afe6-a74d0748397f" class="confluenceTh"><p local-id="ce41d58beade"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="928c874a-a9a8-4847-a55b-19aba6ad9029" class="confluenceTh"><p local-id="dc5ecb2f9d19"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="04fe8a0e-44f1-49a8-8bd6-548bab2c820d" class="confluenceTh"><p local-id="27a7f50b8a2b"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="26ec1367-f7fd-4861-872b-d33c9194b590"><td colspan="1" rowspan="1" data-local-id="a84102a9-d0f8-4ee8-a165-edc2f999e059" class="confluenceTd"><p local-id="11275e8391d2">ARCHIVERx.ARCHIVE_OF_TYPE</p></td><td colspan="1" rowspan="1" data-local-id="e3026a27-0c9f-418c-8a11-f5c3979cadff" class="confluenceTd"><p local-id="8d525f52a7ef"><em>RESPONSE</em></p></td><td colspan="1" rowspan="1" data-local-id="ce33f3bf-3352-4cbc-a526-f74eb1cc7ba4" class="confluenceTd"><p local-id="9e3c9caa63fb">Where "x" is the index of the Archiver in the <code>ARCHIVERS</code> property. Determines what this Archiver should archive.&nbsp;Valid values:</p><ul local-id="236c29cd-5592-47bf-be74-d728b73d0880"><li local-id="d489baf5-0226-4fb3-9d8b-aa639ac42d60"><p local-id="576c6ce0c13b">REQUEST</p></li><li local-id="38fbff8d-a90b-491e-84d1-93e18228f81e"><p local-id="d68e443712bc">RESPONSE</p></li><li local-id="663d11e8-d97f-4762-a751-0c0936a8a3f7"><p local-id="6f34cbfb2123">REQUEST_AND_RESPONSE</p></li></ul><p local-id="adbd3af68187">Example:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE </code></div>
+</div>
+</div></td></tr><tr data-local-id="dee76e54-18c1-4959-be95-61bf0fe011ac"><td colspan="1" rowspan="1" data-local-id="ab5e30fc-1819-4814-a86a-5e44d1dcef00" class="confluenceTd"><p local-id="b89577ab5a09">ARCHIVERx.USE_FORWARDED_ADDRESS</p></td><td colspan="1" rowspan="1" data-local-id="91de3702-c72e-48fd-9cf1-b191305d3630" class="confluenceTd"><p local-id="1656f840e712"><em>false</em></p></td><td colspan="1" rowspan="1" data-local-id="6b455b50-5943-4ddf-8238-5f13dd1c2b72" class="confluenceTd"><p local-id="dc2df0da1899">Where "x" is the index of the archiver in the <code>ARCHIVERS</code> property. If this property is set to <em>true</em><strong>,</strong> IP addresses in the comma-separated list given in the <strong>X-Forwarded-For</strong> header is used as the remote IP stored in the archive in case this header is set (by default, the last forwarded address is used). If the header is not included, the IP address the request comes from is used (the same behavior as when this property is not set, or set to <em>false</em>. This is useful when running a proxy in front of SignServer to record the original IP address of the client, instead of the proxy's IP address. </p></td></tr><tr data-local-id="312d6605-8ca0-47aa-ae9e-b7d6ed84bbe4"><td colspan="1" rowspan="1" data-local-id="17983a68-ab91-433e-b3ad-148c2f0b4a17" class="confluenceTd"><p local-id="5b426b0ac4fb">ARCHIVERx.MAX_FORWARDED_ADDRESSES</p></td><td colspan="1" rowspan="1" data-local-id="5aedfcde-5cf0-43a1-a3ec-7bf59b8d212f" class="confluenceTd"><p local-id="d19c5f68168e"><em>1 </em>(only include the last address)</p></td><td colspan="1" rowspan="1" data-local-id="68e84c39-d10c-457a-a31c-166cc71a53eb" class="confluenceTd"><p local-id="dd109d874c86">Where "x" is the index of the archiver in the <code>ARCHIVERS</code> property. Sets the maximum number of forwarded addresses to add the remote IP in the archive, counted from the end. The addresses are listed in the order they appear in the header.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="83afd6c6f52d">This property is only used when <code>USE_FORWARDED_ADDRESS</code> is set to <em>true</em>.</p></div></div></td></tr><tr data-local-id="9e818d3c-b1f7-44c7-a6fa-1241d7ba1134"><td colspan="1" rowspan="1" data-local-id="34619f7b-372a-430d-ba1b-fc4026c0c4b8" class="confluenceTd"><p local-id="234d5a1bf9d1">ARCHIVERx.INCLUDE_DIRECT_ADDRESS</p></td><td colspan="1" rowspan="1" data-local-id="e73f334e-c6be-4c79-a5ae-38170b392616" class="confluenceTd"><p local-id="5195a2361c15"><em>false</em> (not included)</p></td><td colspan="1" rowspan="1" data-local-id="29a9d1b8-8d51-41df-bb97-8edab33e6602" class="confluenceTd"><p local-id="0765d13f087f">Where "x" is the index of the archiver in the <code>ARCHIVERS</code> property. When both this property and <code>USE_FORWARDED_ADDRESS</code> is set to <em>true</em><strong>,</strong> the host IP address (direct address) is added to the end of the list of forwarded addresses. This address is not taken into account for the number of forwarded addresses by <code>MAX_FORWARDED_ADDRESSES</code> above. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="eea7271fac5d">This property is only used when <code>USE_FORWARDED_ADDRESS</code> is set to <em>true</em>.</p></div></div></td></tr></tbody></table></div><h3 local-id="d1645e5fa240" id="Base64DatabaseArchiver-ArchiveDatatableArchiveData-table" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="Base64DatabaseArchiver-ArchiveData-table"></span><span class="confluence-anchor-link" id="ArchiveData-table"></span><span class="confluence-anchor-link" id="src-371000171_Base64DatabaseArchiver-ArchiveData-table"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">ArchiveData table </span></h3><p local-id="94c72d24465a">The exact database table structure is described in the SQL scripts available under <code>doc/sql-scripts/</code>.</p><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="07b7a78d-1dd1-48b2-b405-deb9092533af" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 25.5982%;"><col span="1" style="width: 74.4018%;"></colgroup><thead><tr data-local-id="36281129-9964-40b0-b1eb-a4039634f65e"><th colspan="1" rowspan="1" data-local-id="47cb6bfe-29fd-4a40-a47a-0180b471038d" class="confluenceTh"><p local-id="67d7c02740cb"><strong>Database table</strong></p></th><th colspan="1" rowspan="1" data-local-id="a7a9a83c-8a5e-488f-9849-a5b1ff29dcbb" class="confluenceTh"><p local-id="6a2be957e241"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="ed5aa127-45d8-416c-b4fc-696e093b8399"><td colspan="1" rowspan="1" data-local-id="65cbae74-9529-406a-9a65-cfd6258fda4e" class="confluenceTd"><p local-id="21431f3e6ea2">archiveData&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="fa1309b1-c150-47b2-8845-723a3421a85e" class="confluenceTd"><p local-id="8136f3015d64">Specifies the actual data encoded in an <strong>Base64PutHashMap</strong>.</p></td></tr><tr data-local-id="a5665d94-c710-4b20-b108-164680f85544"><td colspan="1" rowspan="1" data-local-id="b2091307-ff99-46bb-9076-2444de6532ab" class="confluenceTd"><p local-id="edbe0986c10b">archiveId&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="570209dc-2e51-4a46-b0c1-fffbc5e9f213" class="confluenceTd"><p local-id="07e2d54dd0e9">Specifies the identifier for the produced item.</p><p local-id="f290b908315a">For the <strong>TimeStampSigner, </strong>this would be the Time stamp token serial number (in hex encoding). Other signers might use a hash of the request document and the transaction ID.</p></td></tr><tr data-local-id="a98f8273-95bb-42d6-ae18-df3598e8e46d"><td colspan="1" rowspan="1" data-local-id="8f755b27-b610-49f0-8262-fd4db85c166f" class="confluenceTd"><p local-id="da7a6f1d9a8b">dataEncoding&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="9f5a1e45-a90c-4e21-bde3-1c8f3f9dba12" class="confluenceTd"><p local-id="c823d5f5cb62">Shows that the type of encoding uses a plain Base64 encoding of the binary data:</p><p local-id="52bf413559b7"><code>1 - DATA_ENCODING_BASE64</code></p></td></tr><tr data-local-id="90507863-6930-4f33-adfe-d7d60fc1be91"><td colspan="1" rowspan="1" data-local-id="6338edd2-7255-4e8b-9197-af3c599c5146" class="confluenceTd"><p local-id="ab19925bf730">requestCertSerialnumber&nbsp;<span class="confluence-anchor-link" id="Base64DatabaseArchiver-requestCertSerialnumber"></span><span class="confluence-anchor-link" id="requestCertSerialnumber"></span></p></td><td colspan="1" rowspan="1" data-local-id="f2013926-9383-4010-9c6c-abdf7d7637d4" class="confluenceTd"><p local-id="41cc45b7b205">Specifies the serial number (in hex encoding) of the client certificate (if any) used by the client.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="925aa0d9d5b7">This only indicates that the client certificate was used when establishing the connection to the web server, and not whether the worker required a client certificate or not, nor if it checked if the authenticated client was authorized.</p></div></div></td></tr><tr data-local-id="68986ea1-8a21-4108-bf57-ce462072e15b"><td colspan="1" rowspan="1" data-local-id="f4e8672d-539a-44f5-add1-c82100422f2d" class="confluenceTd"><p local-id="b997f55f8b87">requestIP&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="72ea3f49-1d43-4a2a-9e08-6e05fca2baa5" class="confluenceTd"><p local-id="b3ee1a73c963">By default, the <code>requestIP</code> is the IP address of the connecting host. When <code>USE_FORWARDED_ADDRESS</code> is set to <em>true</em>, this contains a list of forwarded IP addresses from <strong>X-Forwarded-For</strong> optionally ending with the host address (when setting <code>INCLUDE_DIRECT_ADDRESS</code> to <em>true</em>).</p></td></tr><tr data-local-id="8ffb6fc7-f9bb-4577-93ab-46cf2e7d73f4"><td colspan="1" rowspan="1" data-local-id="da15d4f2-1f50-4df0-aa78-5adc6ba6c284" class="confluenceTd"><p local-id="ccdf09287d9d">requestIssuerDN&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="9b92ebfe-4372-4d11-b865-deeb30a90658" class="confluenceTd"><p local-id="60d1eaac08dc">Specifies the Issuer DN (in string representation) of the issuer of the client certificate (if any) used by the client.</p><p local-id="22f23a759d6c">See also note about <a rel="nofollow" shape="rect">requestCertSerialnumber</a>.</p></td></tr><tr data-local-id="fe2b094d-77ea-4db4-b8eb-9d728bbdd7c3"><td colspan="1" rowspan="1" data-local-id="416593aa-185e-40d0-9375-edc3fd0bb94c" class="confluenceTd"><p local-id="c8e42b295e01">signerId&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="f767b04b-05bb-4321-84d1-89c0f3429c56" class="confluenceTd"><p local-id="f11f5aaf8a29">Specifies the ID of the worker handling the request.</p></td></tr><tr data-local-id="2450dd0b-e6f2-498e-a63c-50e5f306bae2"><td colspan="1" rowspan="1" data-local-id="fda04391-8844-45db-b776-fdd219e28d42" class="confluenceTd"><p local-id="e5227c191585">time&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="ec1aa103-bb53-46be-914e-5a45819367a7" class="confluenceTd"><p local-id="2db60bee5454">Specifies the time stamp (number of milliseconds since January 1 1970 00:00:00) on the SignServer host when the item was archived.</p></td></tr><tr data-local-id="bd1be0b2-51ca-4647-afe5-9ba63aad10c0"><td colspan="1" rowspan="1" data-local-id="eef50667-e4cf-4d7e-a814-79339ed2aa5d" class="confluenceTd"><p local-id="5528941b4243">type&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="a9402e92-39f0-462c-8d36-eb84b9c17b72" class="confluenceTd"><p local-id="7bb70e441c0d">Specifies the type of archivable item. Valid values:</p><ul local-id="9b4cd630-0dcf-47c8-b97c-beb1c71ab1bf"><li local-id="bd1d2e25-a6a5-4d5d-a4a4-01d7fe8990d5"><p local-id="63bbce968a1f"><code>0 - TYPE_RESPONSE</code></p></li><li local-id="f7aba020-9d8d-441c-a7c4-991df4b39d33"><p local-id="368a46ab34d0"><code>1 - TYPE_REQUEST</code></p></li></ul></td></tr><tr data-local-id="20560175-2f62-4877-bb36-143b0cd26086"><td colspan="1" rowspan="1" data-local-id="f55e9e5c-1943-4634-a709-bd7019ccd3d5" class="confluenceTd"><p local-id="91b879a5c054">uniqueId&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="6bc69026-0a48-4df7-8d33-564fefd176bc" class="confluenceTd"><p local-id="4b759b0ea20a">Specifies the primary key of the archive row.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Archivers.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Archivers</span>
+        </a>
+
+        <a href="Old_Database_Archiver.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Old Database Archiver</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

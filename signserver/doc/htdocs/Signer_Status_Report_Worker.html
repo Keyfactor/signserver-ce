@@ -1,0 +1,232 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000094">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:47.250+0000">
+    <meta name="exp-page-id" content="371000094">
+    <meta name="exp-page-title" content="Signer Status Report Worker">
+    <meta name="exp-page-version" content="8">
+    <meta name="exp-page-scroll-page-id" content="01a9c2f92cb97938fe1f1cb06d02185a">
+    <meta name="exp-page-created" content="2018-03-23T15:16:10.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T09:17:07.549+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Signer Status Report Worker</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="99cb7b89b7b374317ceece941b2340cfb5a43e7f4b9270a6c131859c518268bf"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignerStatusReportWorker-top" pageid="371000094" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000094" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Other_Workers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Other Workers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Signer_Status_Report_Worker.html" target="_self" aria-current="page">Signer Status Report Worker</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-f82b75d8cea7b5feb58fc2e146b2238754ff9e8c289c0f59058a5beb886911d0"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Signer Status Report Worker</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="7e612daac422">Fully qualified class name: <strong>org.signserver.module.signerstatusreport.SignerStatusReportWorker</strong></p><h2 local-id="4eef2fdafdb7" id="SignerStatusReportWorker-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="d3aa7b459d09">The Signer Status Report Worker is a Worker that returns a status report for a configured set of Workers. The information includes each Worker's Crypto Token status ACTIVE/OFFLINE and, if available, the numbers of signatures that has been performed with the key currently associated with the Worker. If the Worker has a configured limit of number of signatures, this value is also included. This Worker returns the report in the same format as defined for the <a href="Signer_Status_Report_Timed_Service.html" data-linked-resource-id="371000058" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="371000058" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000058/Signer+Status+Report+Timed+Service" data-scroll-link-target-source-id="371000058">SignerStatusReportTimedService</a>.</p><p local-id="2a2e2b64-88bf-448e-b216-de40ee067b30">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><p local-id="53386585-7028-4564-b5b8-d39e3b6508c1">For information on the interfaces this Worker can be called through, see <a href="Supported_Interfaces_by_Worker.html" data-linked-resource-id="1886322694" data-linked-resource-version="37" data-linked-resource-type="page" data-scroll-target-source-id="1886322694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1886322694/Supported+Interfaces+by+Worker" data-scroll-link-target-source-id="1886322694">Supported Interfaces by Worker</a>.</p><h2 local-id="d12437419128" id="SignerStatusReportWorker-WorkerProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Worker-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Worker Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="779ca4fb-c57b-40c1-b890-b248d452719d" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 12.9516%;"><col span="1" style="width: 87.0484%;"></colgroup><thead><tr data-local-id="5865ec22938f"><th colspan="1" rowspan="1" data-local-id="5262f560425c" class="confluenceTh"><p local-id="19dd05ec12cb"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="1ce13e09fabc" class="confluenceTh"><p local-id="9a56125b8de2"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="b9036045de85"><td colspan="1" rowspan="1" data-local-id="39923066d980" class="confluenceTd"><p local-id="f9e67a5f87f7">WORKERS&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="85d5820a18f9" class="confluenceTd"><p local-id="a3e24167db5f">Comma-separated list of Worker names (Signers) that should be monitored.</p></td></tr></tbody></table></div><h2 local-id="16305681b740" id="SignerStatusReportWorker-OutputFormat" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Output-Format"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Output Format</span></h2><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">workerName=WORKERNAME1, status=STATUS1, KEY3=VALUE3, KEY4=VALUE4, ...</code></div>
+<div class="line"><code class="plain">workerName=WORKERNAME2, status=STATUS2, KEY3=VALUE3, KEY4=VALUE4, ...</code></div>
+<div class="line"><code class="plain">workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...</code></div>
+<div class="line"><code class="plain">...</code></div>
+</div>
+</div><h3 local-id="92ac88c6549d" id="SignerStatusReportWorker-Rules" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Rules"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Rules</span></h3><ul local-id="c0a1092a23e1"><li local-id="819473a7105e"><p local-id="b5c287ec5872">Each line contains a set of properties for one Worker.</p></li><li local-id="f99628df2315"><p local-id="612189676d0c">Lines are separated by a system dependent newline character (CR, LF, or CRLF).</p></li><li local-id="40d109d72725"><p local-id="e57c8cf38cc4">Properties are in the KEY=VALUE format and are separated by a comma and a space (", ").</p></li><li local-id="35a7fd73a478"><p local-id="8160f0838c2e">The properties <code>workerName</code> and <code>status</code>&nbsp;are mandatory.</p></li><li local-id="9f92e22da5a9"><p local-id="57c29579d736">The property <code>workerName</code>&nbsp;is always the first property.</p></li></ul><h3 local-id="35c75a36e749" id="SignerStatusReportWorker-Properties" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Properties</span></h3><p local-id="506aef2c1ea9">The following table lists the available output properties:</p><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="4c57bbbc-d57d-4771-a959-7f08b82dc589" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 18.9550%;"><col span="1" style="width: 81.0450%;"></colgroup><thead><tr data-local-id="59a2ecaf41fe"><th colspan="1" rowspan="1" data-local-id="0489cbd268f0" class="confluenceTh"><p local-id="3be90d0cabe0"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="bdd2c257d403" class="confluenceTh"><p local-id="d68bb81c5abc"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="3c41b7ea5f94"><td colspan="1" rowspan="1" data-local-id="730ce4026886" class="confluenceTd"><p local-id="22f27fe9bc7a">workerName</p></td><td colspan="1" rowspan="1" data-local-id="328de8952360" class="confluenceTd"><p local-id="0f6a947bc0da">Name of the Worker. </p><p local-id="5bab4a0ffdfc">Example: <code>sod71</code> or <code>sod72</code></p></td></tr><tr data-local-id="81902fc9e8b4"><td colspan="1" rowspan="1" data-local-id="c94e744f5360" class="confluenceTd"><p local-id="a79cf2b3b8df">status</p></td><td colspan="1" rowspan="1" data-local-id="0c00d49782d4" class="confluenceTd"><p local-id="9943517437ef">Status of the Worker's Crypto Token and key. Either <em>ACTIVE</em> or <em>OFFLINE</em>.</p></td></tr><tr data-local-id="ece5caa1a837"><td colspan="1" rowspan="1" data-local-id="cf26a403c7ef" class="confluenceTd"><p local-id="93d254c77ba3">validityNotBefore</p></td><td colspan="1" rowspan="1" data-local-id="d633df76df61" class="confluenceTd"><p local-id="57a256b5da8c">The first date the signer is allowed to sign. The format is java.text.SimpleDateFormat(<em>yyyy-MM-dd HH:mm:ss z</em>).</p></td></tr><tr data-local-id="93ba44b7a6c6"><td colspan="1" rowspan="1" data-local-id="8dfd6ee231d0" class="confluenceTd"><p local-id="cd8cfe17f9da">validityNotAfter</p></td><td colspan="1" rowspan="1" data-local-id="be2b2c31d1f0" class="confluenceTd"><p local-id="aff56e6bbb1e">The last date the signer is allowed to sign.</p></td></tr><tr data-local-id="5119b84eb1b0"><td colspan="1" rowspan="1" data-local-id="e9952f287d84" class="confluenceTd"><p local-id="1d46eaaa564f">signings</p></td><td colspan="1" rowspan="1" data-local-id="ca2704511587" class="confluenceTd"><p local-id="29132f02d7b5">The number of signatures that have been performed with the key used by this Worker.</p></td></tr><tr data-local-id="0eef232ca1ed"><td colspan="1" rowspan="1" data-local-id="d43293f83c41" class="confluenceTd"><p local-id="7ee23a646d85">signLimit</p></td><td colspan="1" rowspan="1" data-local-id="6339f8390c95" class="confluenceTd"><p local-id="d2ed235d33b8">The maximum number of signatures this Worker is allowed to perform, or -1 if there is no limit.</p></td></tr></tbody></table></div><h3 local-id="e5286bd32d51" id="SignerStatusReportWorker-Examples" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Examples"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Examples</span></h3><h4 local-id="bc605c0ae6b4" id="SignerStatusReportWorker-Example1" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Example-1"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Example 1</span></h4><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">workerName=Sod71, status=ACTIVE, validityNotBefore=2010-07-05 17:32:36 CEST, validityNotAfter=2010-09-08 17:32:36 EEST, signings=132, signLimit=100000,</code></div>
+</div>
+</div><p local-id="f169bd62918b">Explanation: Sod71 has done 132 signings and is <code>ACTIVE</code>. <code>validityNotAfter</code> indicates that it can continue to sign until 8th September if the sign limit is not reached before.</p><h4 local-id="2acd17c67e20" id="SignerStatusReportWorker-Example2" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Example-2"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Example 2</span></h4><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">workerName=Sod72, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=100000, signLimit=100000,</code></div>
+</div>
+</div><p local-id="530ec547249d">Explanation:&nbsp;Sod72 has performed all of its 100000 signings and cannot sign until it gets a new key and certificate.</p><h4 local-id="97224b95c792" id="SignerStatusReportWorker-Example3" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Example-3"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Example 3</span></h4><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,</code></div>
+</div>
+</div><p local-id="2d1e7f07e870">Explanation:&nbsp;Sod73 has not reached its limit and is still in validity time, but is <code>OFFLINE</code> for some other reason.</p><h4 local-id="12f0e0bb25a8" id="SignerStatusReportWorker-Example4" data-scroll-heading-rank="4" data-scroll-original-heading-rank="4" data-scroll-relative-heading-rank="4" class="scroll-h4 scroll-original-h4 scroll-relative-h4 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000094_SignerStatusReportWorker-Example-4"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Example 4</span></h4><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">workerName=Sod74, status=OFFLINE,</code></div>
+</div>
+</div><p local-id="a1ebe0c0c2f3">Explanation:&nbsp;Sod74 is <code>OFFLINE</code> and has no certificate configured.</p>
+<nav id="ht-post-nav">
+        <a href="Status_Properties_Worker.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Status Properties Worker</span>
+        </a>
+
+        <a href="TimeMonitor_Status_Report_Worker.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>TimeMonitor Status Report Worker</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

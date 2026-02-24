@@ -1,0 +1,211 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000506">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:04.491+0000">
+    <meta name="exp-page-id" content="371000506">
+    <meta name="exp-page-title" content="Client Interfaces">
+    <meta name="exp-page-version" content="27">
+    <meta name="exp-page-scroll-page-id" content="d14abda95b37b49e454605edf3983311">
+    <meta name="exp-page-created" content="2023-05-22T09:51:32.000+0000">
+    <meta name="exp-page-last-modified" content="2025-12-11T14:03:22.398+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Client Interfaces</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b45443638a554d2fd5937b54fb57106c422cde4e21a478caa8779d9b69bd28db"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ClientInterfaces-top" pageid="371000506" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000506" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Client_Interfaces.html" target="_self" aria-current="page">Client Interfaces</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-8cdd66ac99ba892bfec4fd9ca45693c4312d6d017c6ba6fcd3f16d1dfb3cf435"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Client Interfaces</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="38fc832f-11cf-4c55-b2db-3f8c79338c6e"><style>[data-colorid=pq5oo9rzow]{color:#1c1e29} html[data-color-mode=dark] [data-colorid=pq5oo9rzow]{color:#d6d8e3}</style>The Client Interfaces allow for the non-administrative use of SignServer to sign documents, code, or data.</p><p local-id="38fc832f-11cf-4c55-b2db-3f8c79338c6e">The following lists available client interfaces for&nbsp;<span data-colorid="pq5oo9rzow">using</span> SignServer:</p><ul class="childpages-macro"><li><a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a></li><li><a href="Signum_Agents.html" data-linked-resource-id="1845329962" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="1845329962" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1845329962/Signum+Agents" data-scroll-link-target-source-id="1845329962">Signum Agents</a></li><li><a href="Client_REST_Interface.html" data-linked-resource-id="1981153323" data-linked-resource-version="16" data-linked-resource-type="page" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Interface" data-scroll-link-target-source-id="1981153323">Client REST Interface</a></li><li><a href="Client_Web.html" data-linked-resource-id="1924661694" data-linked-resource-version="25" data-linked-resource-type="page" data-scroll-target-source-id="1924661694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1924661694/Client+Web" data-scroll-link-target-source-id="1924661694">Client Web</a></li><li><a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564">Client HTTP Interface</a></li></ul><h2 local-id="f2282fcd-e1ce-49f9-9047-1a435c05325a" id="ClientInterfaces-SignClient" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000506_ClientInterfaces-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignClient</span></h2><p local-id="a13e1eb3-928a-4112-9957-9b23057b0b3d">Command-line tool for sending requests to the workers.</p><p local-id="d46e6906-d3da-49ef-bf18-a9aef36ba834">Supports:</p><ul local-id="375bf203-f88f-4bfa-ae93-30f8c67a70ff"><li local-id="5cb9e010-fd5e-452a-bbe8-c30d05a72d1d"><p local-id="4fe94dfe-cf33-45c6-adee-07b5670fcc61">Submitting signing and timestamp requests</p></li><li local-id="4a971b8c-2bdc-4482-a9e1-5d88d44e05de"><p local-id="9b7d9765-847c-4020-9a6c-440333376c9f">Testing worker configurations</p></li><li local-id="05a6d4a1-4581-4850-862e-acca449e3543"><p local-id="b181ca01-cead-4d8c-9609-ff51329a30a2">Automating signing in pipelines</p></li></ul><p local-id="7804b609-31e6-47f4-b1cb-52d19fd519b1"><strong>Good for:</strong> CI/CD, testing, batch jobs.</p><h2 local-id="a116c38c-6596-4cfb-ba67-2231738f9855" id="ClientInterfaces-SignumAgents" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000506_ClientInterfaces-Signum-Agents"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Signum Agents</span></h2><p local-id="de0c9bec-7798-43b8-a6a6-1588b8018719">Interface for signing with any platform-native signing tool that can access certificates stored in SignServer.</p><p local-id="80a12ee7-4fe4-4d1e-9cc2-0060ef648ff6">Supports:</p><ul local-id="62d392af-c34e-4002-b143-8319cff95d78"><li local-id="d314c521-a368-4415-beed-6f8ecfe791d2"><p local-id="e8937f03-b8b2-43f3-91ce-cc2f72b49907">Signing with macOS</p></li><li local-id="699fdc15-519d-41a7-81ea-dc7b0c4d4d86"><p local-id="4372e598-ad0a-4fd8-9ce8-5bee20af7f38">Signing with Linux</p></li></ul><p local-id="8b6e80d4-a5ec-4529-a912-804efa2c19f5"><strong><span class="inline-comment-marker" data-ref="9aaf89c6-a868-46ba-9375-ea4f1346e863">Good for:</span></strong><span class="inline-comment-marker" data-ref="9aaf89c6-a868-46ba-9375-ea4f1346e863"> Signing using native tools of file formats not supported by SignServer.</span></p><h2 local-id="55ec0306-3c99-46ba-a3b4-21cd4bb71a0a" id="ClientInterfaces-ClientRESTInterface" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000506_ClientInterfaces-Client-REST-Interface"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Client REST Interface</span></h2><p local-id="7cfac067-270e-4187-a83f-d3eb72410559">Modern JSON/HTTP interface for signing operations.</p><p local-id="85616efe-9d5b-4b15-9dce-e1c2d2af3894">Supports:</p><ul local-id="0f600ec3-3329-40d0-89e2-13b89c6560c6"><li local-id="5a09b7c6-1acb-4290-b634-6287aaa5bb70"><p local-id="3edd5220-7bce-4957-853e-58b85ed2dd2c">Binary data signing</p></li><li local-id="3eb7f7b9-68cc-4ba5-b71b-1dd5cd786d90"><p local-id="225a5612-97ce-43f6-b915-ae4ca14297bd">PDF signing</p></li><li local-id="3bc456ab-8dfb-423e-9e84-2970b65f49cc"><p local-id="aaaae21c-b039-4aea-a7ff-3c57d6ab945c">XML signing</p></li><li local-id="132aaba8-4b2d-4ca0-98ca-9c88632b0508"><p local-id="235f4527-985b-4848-a59c-c1d9d4f85ec4">Timestamping</p></li><li local-id="62c7ed6d-a412-42ff-ae95-558ebc4a3b58"><p local-id="96161e09-294c-40c1-9e20-a61b2f3c33b4">Worker status queries</p></li></ul><p local-id="22808faf-e955-47e1-955f-5abcf748228a"><strong>Good for:</strong> New integrations.</p><h2 local-id="288b61e9-e7d4-4085-b5df-6dee0cb1b30e" id="ClientInterfaces-ClientHTTPInterface" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000506_ClientInterfaces-Client-HTTP-Interface"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Client HTTP Interface</span></h2><p local-id="bee66eea-92e0-4d83-945a-2231718b8f7a">Interface for sending HTTP requests to the SignServer servlet.</p><p local-id="1c613a19-b2c5-42b6-99d5-643eea57b949">Supports:</p><ul local-id="f758ffbf-6c0a-48fe-b5d1-207bb47fd948"><li local-id="e15abce0-ccc5-4866-ab5a-83d948630ab3"><p local-id="712f384d-8d5b-40de-8135-4a8609521830">Sending signing requests</p></li><li local-id="dbc7ee2b-d558-46ae-ab75-328394b0c328"><p local-id="5066f024-9694-44f1-b33e-4a870ee7ea32">Handling signatures</p></li><li local-id="79faa53c-1502-4e33-ad9d-d76c8f76a480"><p local-id="8293cd27-4aa7-46eb-a484-3243ec21a49c">TLS client-auth based signing</p></li><li local-id="7d03948d-dcf7-40f1-885e-16e474813cc5"><p local-id="88918988-126f-4bd7-8cfd-50f83b09327f">Worker selection and configuration</p></li></ul><p local-id="f0124092-7635-4aa5-b89c-6dfe5f933d8a"><strong>Good for:</strong> Existing integrations.</p>
+<nav id="ht-post-nav">
+        <a href="SNTP_Tool.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>SNTP Tool</span>
+        </a>
+
+        <a href="SignClient.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>SignClient</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

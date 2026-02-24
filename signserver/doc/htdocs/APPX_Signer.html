@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999845">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:22.717+0000">
+    <meta name="exp-page-id" content="370999845">
+    <meta name="exp-page-title" content="APPX Signer">
+    <meta name="exp-page-version" content="20">
+    <meta name="exp-page-scroll-page-id" content="45747dbd4c59177bed847e717c061d5c">
+    <meta name="exp-page-created" content="2023-05-22T09:50:46.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T14:44:29.088+0000">
+    <meta name="exp-page-labels" content="code,signserveree">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>APPX Signer</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="0bfba2c8f581c17695fcc1a03c374683253e7e84cb7adb430ea5797280a7a1ab"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="APPXSigner-top" pageid="370999845" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999845" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Signers</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="APPX_Signer.html" target="_self" aria-current="page">APPX Signer</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-8f6837a2f71560a877b90fe2766afa29c48472077d872ebfca5e367ac1ac41c4"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">APPX Signer</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="b0faf150-b44d-4b0a-822e-21ee4458add4"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="04bc9feb-7b9a-472e-acdb-78bdef0e8068">The APPX signer signs Microsoft APPX packages and bundles.</p><blockquote local-id="88aadb598dd0"><p local-id="705067f1-9d52-44fd-9ba7-d5c85803383b">Fully qualified class name: <strong>org.signserver.module.msauthcode.signer.AppxSigner</strong>.</p></blockquote><h2 local-id="5669a9f2-ea9f-4e4a-a547-b983fe6485cf" id="APPXSigner-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999845_APPXSigner-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="ad2ecef8-470e-47c8-b9d7-ba73b8fe0e10">The signature can optionally include a timestamp response from a TSA using the RFC#3161, or legacy Authenticode format.</p><p local-id="c800d078-d3ca-4b21-9a0d-a354780bf5a2">The Publisher DN set in AppxManifest.xml (or AppxBundleManifest.xml) must match the Subject DN of the signing certificate. The Publisher DN order should also match the order set in the certificate (LDAP DN Order or X509 DN Order).</p><p local-id="2a2e2b64-88bf-448e-b216-de40ee067b30">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><p local-id="53386585-7028-4564-b5b8-d39e3b6508c1">For information on the interfaces this Worker can be called through, see <a href="Supported_Interfaces_by_Worker.html" data-linked-resource-id="1886322694" data-linked-resource-version="37" data-linked-resource-type="page" data-scroll-target-source-id="1886322694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1886322694/Supported+Interfaces+by+Worker" data-scroll-link-target-source-id="1886322694">Supported Interfaces by Worker</a>.</p><h2 local-id="84631a89-f0a5-417d-8ed5-14bf9e5e00d7" id="APPXSigner-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999845_APPXSigner-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="494300a5-12b1-4e52-a397-88fa759ca373" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 27.8889%;"><col span="1" style="width: 7.7778%;"><col span="1" style="width: 64.3333%;"></colgroup><thead><tr data-local-id="2e76ef10-f39a-4088-9195-b8c2036bf9a0"><th colspan="1" rowspan="1" data-local-id="c61fadd0-1225-4cf6-854e-e467d3c3d56c" class="confluenceTh"><p local-id="0a5d50ab-6bf0-43ff-ad5c-92005bc113bb"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="48908398-38f3-4cee-b8bb-fbb5264a4c6a" class="confluenceTh"><p local-id="794be2db-224d-41cc-b7df-335c383edbdf"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="ed3ae394-2647-478c-86df-e1158c1a1b53" class="confluenceTh"><p local-id="00bcce10-2a6f-4a5c-82df-26dfb17969bc"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="7fed1846-203a-409c-8d53-a1dcd93584b9"><td colspan="1" rowspan="1" data-local-id="8954c332-0a06-4bca-b64d-88151ad4aebd" class="confluenceTd"><p local-id="be2a8ac5-682d-407f-bcb5-2072ce9c8552">ALLOW_PROGRAM_NAME_OVERRIDE&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="2f370e05-fa93-44da-b6ac-6aee7e750f52" class="confluenceTd"><p local-id="61d37e4c-0820-414a-a230-1f1d956bf5ea"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="ea9a26d6-790e-46d4-b007-b6d5ba5c418c" class="confluenceTd"><p local-id="de3ec1af-0762-4e86-bab7-2f6320947247">(Optional) Specifies if the requestor can override the program name by supplying it as a request metadata property.</p></td></tr><tr data-local-id="ab8f32d9-6e57-49dc-8b77-6a90023f3f1b"><td colspan="1" rowspan="1" data-local-id="662d2f38-7e1c-4f02-934d-7fcd4e016277" class="confluenceTd"><p local-id="a4dd8515-6c7a-4eaf-ae4b-bc1ce0c60a33">ALLOW_PROGRAM_URL_OVERRIDE</p></td><td colspan="1" rowspan="1" data-local-id="34518823-8c79-4c73-a246-644c79a203ce" class="confluenceTd"><p local-id="3f52b79d-6272-4155-92b5-c1d1ec07a75b"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="964a84d1-e1eb-4eb7-9331-3488e0e47301" class="confluenceTd"><p local-id="16caa753-5402-4cb0-bc54-7c034fc20ac3">(Optional) Specifies if the requestor can override the program URL by supplying it as a request metadata property.</p></td></tr><tr data-local-id="63bca1b7-3ecd-46a9-a41e-4104b1b3c7be"><td colspan="1" rowspan="1" data-local-id="58ecd310-fedf-4233-bfb1-e260b05cc6a7" class="confluenceTd"><p local-id="a5f2f2bd-38dc-46b0-b89b-b37507a4cac8">DIGESTALGORITHM&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="1c26f045-7b09-4204-8453-8534f27ed50f" class="confluenceTd"><p local-id="c098aba9-bf00-413a-9fab-5bc2b2d23f59"><em>SHA256</em></p></td><td colspan="1" rowspan="1" data-local-id="f36c673f-61bb-473b-aa56-c9281a564070" class="confluenceTd"><p local-id="0a4cba4f-7a42-479f-a93a-c3e7583f63a9">(Optional) Algorithm for the digest of the binary. </p></td></tr><tr data-local-id="d7479e43-9f03-4c42-af4c-f6b72ee9a8dc"><td colspan="1" rowspan="1" data-local-id="718d6ec9-a670-44a9-bfe8-ec414e0100f6" class="confluenceTd"><p local-id="c99ed1fd-081a-4fb7-be04-681dd6221e38">DO_LOGRESPONSE_DIGEST&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="b58e5590-346f-4216-9f0f-e4c8d64628f9" class="confluenceTd"><p local-id="455b43f6-aff7-4265-9886-cae2de3f4ecc"><em>True</em></p></td><td colspan="1" rowspan="1" data-local-id="8068d2c1-64b6-4890-8892-26b1f155adce" class="confluenceTd"><p local-id="0333ad78-d568-4217-8bb1-cc58ad05cdaf">(Optional) Specifies if a digest of the response should be computed and logged. </p></td></tr><tr data-local-id="98773382-1744-479e-89c1-38703a60ce66"><td colspan="1" rowspan="1" data-local-id="c780a802-386e-4b47-9944-32f7a9ea8273" class="confluenceTd"><p local-id="7cb881a9-de39-4c46-ad51-63536bef88ed">DO_LOGREQUEST_DIGEST&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="e4e76521-8435-4dca-b567-f5e2befbcfcf" class="confluenceTd"><p local-id="f0647483-1ba5-4886-ba0f-a0210acc8f73"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="07ca241a-a144-46db-8890-0fbbafbc0b3c" class="confluenceTd"><p local-id="34f53acf-8655-494f-b29f-5fc49b5ba0ea">(Optional) Specifies if a digest of the request should be computed and logged. </p></td></tr><tr data-local-id="966b4d3e-9ecc-4215-9aa2-957cf3a190d7"><td colspan="1" rowspan="1" data-local-id="95879fd1-729d-4413-befc-3e0ba56981dd" class="confluenceTd"><p local-id="be0121f0-de9a-4daa-aa1d-3aac86a3f164">LOGRESPONSE_DIGESTALGORITHM&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="02edfb6b-57c8-4fd8-8ce1-86d64cfb2132" class="confluenceTd"><p local-id="3b475041-610c-4c30-89ba-8806deadbb4d"><em>SHA256</em></p></td><td colspan="1" rowspan="1" data-local-id="89d47438-979c-439d-8aa0-aac49113628d" class="confluenceTd"><p local-id="b034e7d3-7e8b-4871-b236-898d28c372f1">Specifies the algorithm used to create the message digest (hash) of the response document to put in the log. </p></td></tr><tr data-local-id="fe7a155f-d9a9-454f-9d81-5b8d7daff9fe"><td colspan="1" rowspan="1" data-local-id="2af24dce-2594-4bd0-bfcd-447714f64dd6" class="confluenceTd"><p local-id="5aaf0c21-e81c-400a-8d53-b1f605c6b8bc">LOGREQUEST_DIGESTALGORITHM&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="c2f93818-79f9-4e72-9297-58c55375f205" class="confluenceTd"><p local-id="971fe635-e376-41d2-9ca1-9fe45896260c"><em>SHA256</em></p></td><td colspan="1" rowspan="1" data-local-id="297cb5ba-c4ec-4039-9312-70758985cc42" class="confluenceTd"><p local-id="98ff1ad6-e81b-49b7-a46c-dee8bdef1d18">Specifies the algorithm used to create the message digest (hash) of the request document to put in the log.</p></td></tr><tr data-local-id="b4bbf3b0-0b46-4d88-a127-fbeeb5f5343e"><td colspan="1" rowspan="1" data-local-id="5f20a7ff-d7c5-45ae-859a-cc7788b56a3b" class="confluenceTd"><p local-id="8380761e-04db-40f1-96f6-5462a03f16ec">PROGRAM_NAME</p></td><td colspan="1" rowspan="1" data-local-id="b188b215-3e66-4c1b-a27f-9fd8860e72d9" class="confluenceTd"><p local-id="f4d35f4d-0a46-4935-8c5a-63d18beb5034">None</p></td><td colspan="1" rowspan="1" data-local-id="c44b282f-544e-4754-9df3-db3cf1d16bc2" class="confluenceTd"><p local-id="02720166-9df2-4ab1-b00d-c690721693a1">(Optional) Program name to embed in the signature.</p></td></tr><tr data-local-id="722174bf-b6a6-4c95-8613-e9682c4123a2"><td colspan="1" rowspan="1" data-local-id="adc6150c-0aa5-4aad-a64e-14ee18f95297" class="confluenceTd"><p local-id="50792127-f4af-4590-b105-ccb319f825d3">PROGRAM_URL&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="95af9608-394b-4c2e-918f-95a092f08438" class="confluenceTd"><p local-id="5d127cc5-0998-48c3-9dc9-26b1b78ddd21">None</p></td><td colspan="1" rowspan="1" data-local-id="15c8851d-1816-4bf3-a789-c714e912ade7" class="confluenceTd"><p local-id="6d906d42-b5bb-4a95-aae9-1759336e84fd">(Optional) Program URL to embed in the signature.</p></td></tr><tr data-local-id="c8720c71-eaf6-4d61-ab0e-e113b2579e8b"><td colspan="1" rowspan="1" data-local-id="2dee10a9-ad21-47e8-bb67-f2d12d90ea31" class="confluenceTd"><p local-id="75741f9b-f438-4283-9d3d-87880fc8036c">SIGNATUREALGORITHM&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="b5443dc0-84b5-436f-a2c6-52c4c6a7d4ac" class="confluenceTd"><p local-id="cabf0163-7c74-4059-a403-5fcc21c4e695">Depends on the signing key</p></td><td colspan="1" rowspan="1" data-local-id="ac823a9a-0f3a-49a6-9d60-45514a83468c" class="confluenceTd"><p local-id="cea23d7a-74f1-4d05-9ba4-407a9c773c35">(Optional) Signature algorithm. The default depends on the signing key: </p><ul local-id="115c0dca-9cbd-4990-9bb1-0b1dad47aeea"><li local-id="2bc4dd8e-28f9-48a0-9c0b-9609826b55e8"><p local-id="af90d0c6-3b5a-4376-81f6-9bb5eabeca1f"><em>SHA256withRSA</em></p></li><li local-id="fae53fad-7d29-487b-9e3b-3fecc8f6d85d"><p local-id="9502a1be-b367-472f-b17c-faddc9450241"><em>SHA256withDSA</em></p></li><li local-id="4a3989ee-9a2b-49b1-9861-091ca11a4bb7"><p local-id="bc04425a-9feb-4ff4-8bcf-de495cee11f6"><em>SHA256withECDSA</em></p></li></ul></td></tr><tr data-local-id="8f6ee9d9-e539-4b76-bf71-908ea533bf89"><td colspan="1" rowspan="1" data-local-id="1a4bdf7d-5b80-4363-968a-0b8fdcc96c44" class="confluenceTd"><p local-id="1d404521-9835-4d53-8554-33c749a34777">TIMESTAMP_FORMAT&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="43df0449-8a6a-44d5-aae8-635df2c796cf" class="confluenceTd"><p local-id="11f2717d-68c0-474d-bcb4-0338c5413d51"><em>RFC3161</em></p></td><td colspan="1" rowspan="1" data-local-id="92c60922-b072-4a59-a080-c8555ebe68d7" class="confluenceTd"><p local-id="0a14a03e-2473-4027-9c0c-009b7d566f7b">Specifies the timestamp format to use. Allowed values: </p><ul local-id="e59b8afc-e399-4abf-972c-66cd635705c2"><li local-id="c3fdd1af-783c-434b-8d93-e639236b8203"><p local-id="b236ada2-0c92-41c1-bc63-2606514a6c93"><em>RFC3161 </em>(Default)</p></li><li local-id="30e864d3-d2b0-4c4f-901b-9e7f551c2c2d"><p local-id="5b2cce52-4dad-4052-bcf5-7a375e5b66ec"><em>AUTHENTICODE</em></p></li></ul><p local-id="9869ca3b-c76b-4883-9d5d-9e04527d1abe">If the value <em>AUTHENTICODE</em> is set, a legacy Authenticode timestamp signer is assumed, rather than a standard RFC3161-compliant one.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="490ad652-0679-4016-8b45-ba58903870e8">In order to use this property, you must specify a TSA source, using <code>TSA_WORKER</code> or <code>TSA_URL</code>.</p></div></div></td></tr><tr data-local-id="243c44f6-26b1-4bff-99a7-fc0f2d780f07"><td colspan="1" rowspan="1" data-local-id="a973fb48-89e3-4fe8-91b2-540fb39ef4f0" class="confluenceTd"><p local-id="7925a08b-1089-41ce-b631-edd1894d056a">TSA_PASSWORD&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="2e90ce03-d7a9-4aca-8694-cdbf12d8ffed" class="confluenceTd"><p local-id="d3686b42-c477-42d8-882a-3238846adab7">None</p></td><td colspan="1" rowspan="1" data-local-id="9ff73ce7-ccac-4894-8277-c2e6fd0d41b8" class="confluenceTd"><p local-id="82058225-568e-4a70-92a6-cca0ec38e705">Login password used if the TSA uses HTTP Basic Auth. Required if <code>TSA_USERNAME</code> is specified. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="7753777d-10b1-4a97-930a-a318607fdc02">In order to use this property, you must specify a TSA source, using <code>TSA_WORKER</code> or <code>TSA_URL</code>.</p></div></div></td></tr><tr data-local-id="5e6fc608-e36f-4c9e-8b78-d0d43b7eca8f"><td colspan="1" rowspan="1" data-local-id="ad2cb7eb-dad2-42e3-a24f-9a664257ffea" class="confluenceTd"><p local-id="75dbb238-49a4-4a2b-9d3c-b43bb8691ec0">TSA_URL&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="a484f039-58fc-4eda-b59e-2477e55047dc" class="confluenceTd"><p local-id="0e2f9a76-00df-4e21-a1b9-50d2099bee3a">None</p></td><td colspan="1" rowspan="1" data-local-id="95c51a59-709c-4169-8f74-d4979f156225" class="confluenceTd"><p local-id="ce5adb46-3323-4b22-856c-5789d3649613">(Optional) URL of external (Authenticode or RFC#3161) timestamp authority.</p><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="ef0ff51a-987a-41cd-8f08-9155596a1917">This property cannot be combined with <code>TSA_WORKER</code>.</p></div></div></td></tr><tr data-local-id="0fd3b8b0-bebd-4d86-861a-98ce6c42d2e8"><td colspan="1" rowspan="1" data-local-id="59b8a7b5-760c-48ea-91a6-e684235434d2" class="confluenceTd"><p local-id="5d303377-9c0a-4b03-bb1b-fcde76fffa47">TSA_USERNAME&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="6ca75fdc-7bc5-4cb3-b055-9553c134f521" class="confluenceTd"><p local-id="1d810bfd-1807-4afa-a369-4b4014279770">None</p></td><td colspan="1" rowspan="1" data-local-id="b19c247a-1333-4f19-bff5-93ffc52c40f6" class="confluenceTd"><p local-id="f6370cc3-4757-4dbe-a0a3-05272ff931d7">(Optional) Login username used if the TSA uses HTTP Basic Auth.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="f4ac204c-da36-43e9-b343-b2e66ef2508e">In order to use this property, you must specify a TSA source, using <code>TSA_WORKER</code> or <code>TSA_URL</code>.</p></div></div></td></tr><tr data-local-id="0654f432-dee2-4215-b778-5af1736ba871"><td colspan="1" rowspan="1" data-local-id="85b1445a-8def-42a4-9642-3486599fe991" class="confluenceTd"><p local-id="cd9cf287-6509-4bdc-8d59-438bdccf2ef4">TSA_WORKER&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="3ab044a4-efae-4c56-a917-8f386a667fc6" class="confluenceTd"><p local-id="3c24690a-09c3-4079-9be5-d2eaada87deb">None</p></td><td colspan="1" rowspan="1" data-local-id="5c0e66dc-5d55-4c03-baa1-8713d7ba5cd7" class="confluenceTd"><p local-id="dbab11cb-baa7-4e4d-9dfc-d0fcf183943b">(Optional) Worker ID or name of internal (Authenticode or RFC#3161) timestamp signer in the same SignServer.</p><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="d100aaf5-d971-42cf-b6e9-632d092669e8">This property cannot be combined with <code>TSA_URL.</code></p></div></div></td></tr></tbody></table></div><h3 local-id="3d73fbb3-8629-4125-86e4-d8a23d33ba16" id="APPXSigner-RequestProperties" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999845_APPXSigner-Request-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Request Properties</span></h3><p local-id="abe9f108-2027-490f-9acb-dbd1d74ae149">This worker can accept the following request metadata properties, given that they are configured to be allowed:</p><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="1c403cca-3d98-41ae-a4d7-c78c33583c5a" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.2778%;"><col span="1" style="width: 69.7222%;"></colgroup><thead><tr data-local-id="f9b94bce-5c89-41ff-957e-7c227666e660"><th colspan="1" rowspan="1" data-local-id="7b22988c-8744-4849-bd47-d225b39b2fe6" class="confluenceTh"><p local-id="b75ee12e-0adc-4709-b7d1-956bb74e481d"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="0544bb45-7631-4c73-bd86-5eeb835a46d5" class="confluenceTh"><p local-id="8a762c33-a4c6-44a8-b5e3-b389f9fc92e1"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="1d2b6c8e-c77f-4ade-bd4d-29e760b7da78"><td colspan="1" rowspan="1" data-local-id="f9d23baa-a6bb-4928-a951-23cc3b550b72" class="confluenceTd"><p local-id="256a87e6-5f55-430a-8756-03f7c7dfedef">PROGRAM_NAME&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="69f79066-78e7-4fb8-bb20-58737f950803" class="confluenceTd"><p local-id="c5f9b1c5-0c0b-4e01-910e-dadae252c8d2">Program name text to use instead of the configured one (if any). Specifying an empty value removes the configured program name. Without <code>ALLOW_PROGRAM_NAME_OVERRIDE</code> configured in the worker request, including this request property will not be allowed.</p></td></tr><tr data-local-id="13a48253-003e-4d4b-8d69-d8ffad1efc63"><td colspan="1" rowspan="1" data-local-id="6a92f8a6-c304-4df9-8be0-128ee36bb83b" class="confluenceTd"><p local-id="f770df83-0391-443e-965e-fe161a41b4a5">PROGRAM_URL&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="55ce244f-df38-417b-aa6d-fef9199f6511" class="confluenceTd"><p local-id="ba2badaf-0d8e-4bd4-936b-8fc20487a915">Program URL to use instead of the configured one (if any). Specifying an empty value removes the configured program URL. Without <code>ALLOW_PROGRAM_URL_OVERRIDE</code> configured in the worker request, including this request property will not be allowed.</p></td></tr></tbody></table></div><h3 local-id="4986e5a9-4271-43ca-9607-a3613bb65672" id="APPXSigner-WorkerLogFields" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999845_APPXSigner-Worker-Log-Fields"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Worker Log Fields</span></h3><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="793bf00b-c706-4ed4-a0ad-7c2d0b557f4a" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.2778%;"><col span="1" style="width: 69.7222%;"></colgroup><thead><tr data-local-id="3cbf0f60-07bb-4a98-82e8-b2217526e7fd"><th colspan="1" rowspan="1" data-local-id="50082546-c835-4d1e-8808-f7a76c7dd113" class="confluenceTh"><p local-id="6b68293b-cad5-4df1-bb19-2e061e544c52"><strong>Field</strong></p></th><th colspan="1" rowspan="1" data-local-id="e6311397-e4fc-467d-a5dc-d01e9016f227" class="confluenceTh"><p local-id="969829b8-0186-4971-a65a-aaab0053b847"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="62bdfd07-2c7a-4fb4-b0c4-57458ff2fbe2"><td colspan="1" rowspan="1" data-local-id="0c7fb189-e017-48c7-8698-dc68c0de4878" class="confluenceTd"><p local-id="990b9514-58bb-4f11-8685-dcfd7330403f">REQUEST_DIGEST&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="5005c53e-edea-4425-bc3d-9592ad85c8f1" class="confluenceTd"><p local-id="d7d8cbb3-6606-47a2-a726-0204c867fe29">A message digest (hash) for the request document in hex encoding.</p></td></tr><tr data-local-id="26fdf79a-04c7-4bfc-8937-a0c2d1a71d63"><td colspan="1" rowspan="1" data-local-id="ea4b470b-527c-4874-96a2-7f04211983e0" class="confluenceTd"><p local-id="1fe456db-a0d4-448a-b751-cab22ed2356f">REQUEST_DIGEST_ALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="a446ebdc-db84-4fd3-9b10-e518ba557a8e" class="confluenceTd"><p local-id="304b640f-cc0f-4005-a4d0-433455a4ec20">The name of the message digest (hash) algorithm used for the request digest in the log.</p></td></tr><tr data-local-id="90cf8c54-efbc-4230-982c-7241e320ca06"><td colspan="1" rowspan="1" data-local-id="0d196db2-8967-45e9-9722-0e71ab1f0370" class="confluenceTd"><p local-id="ac1df281-0b6c-4cb3-ad25-4f609bab5bcd">RESPONSE_DIGEST</p></td><td colspan="1" rowspan="1" data-local-id="9b8d8448-bdde-4c80-a412-215335c301e9" class="confluenceTd"><p local-id="6593b14b-58d7-4b96-a10c-685fe0667762">A message digest (hash) for the response document in hex encoding.</p></td></tr><tr data-local-id="b8f0c13c-c3d6-45ed-9bbb-983d2b38d0ba"><td colspan="1" rowspan="1" data-local-id="0ca44276-b125-48be-bc36-80ab06b5fe04" class="confluenceTd"><p local-id="33177357-a846-4173-bf24-f5b4b1d3ab7e">RESPONSE_DIGEST_ALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="29fdbb4f-fba2-4215-88b8-9272c56dc99f" class="confluenceTd"><p local-id="6b7153ff-c2d5-47e2-aa98-c74aa2dfb137">The name of the message digest (hash) algorithm used for the response digest in the log.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="MS_Authenticode_CMS_Signer.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>MS Authenticode CMS Signer</span>
+        </a>
+
+        <a href="APPX_CMS_Signer.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>APPX CMS Signer</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

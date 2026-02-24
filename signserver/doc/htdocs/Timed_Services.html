@@ -1,0 +1,211 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000054">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:39.623+0000">
+    <meta name="exp-page-id" content="371000054">
+    <meta name="exp-page-title" content="Timed Services">
+    <meta name="exp-page-version" content="7">
+    <meta name="exp-page-scroll-page-id" content="03458acfd8050ae2722867dfa26f1e6c">
+    <meta name="exp-page-created" content="2019-11-08T14:04:39.000+0000">
+    <meta name="exp-page-last-modified" content="2025-11-26T08:51:49.483+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Timed Services</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="05fac7488ee775434eb8de2d4e0d2f37d1a4157f054a2ed16939c3bd3242e58a"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="TimedServices-top" pageid="371000054" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000054" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Timed_Services.html" target="_self" aria-current="page">Timed Services</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-027abf398bbc43ab9171719907a84230516d720f41df12c32223f3d697d1eb39"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Timed Services</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="2958ef25-de50-4706-aae3-77d51a2bd8c3">A Timed Service (formerly called just service) is a task that is run on a timely basis, performing maintenance tasks like changing active key, or it could generate a report.</p><p local-id="77364b7e-c153-4b77-97ee-79f6424323f3">For example, this can be useful for setting up an hourly timed service keeping the connection to the&nbsp;Hardware Security Module (HSM) from timing out. </p><p local-id="4be36843-1677-4641-9b2f-a01c88f4df57">The timed services options are: </p><ul class="childpages-macro"><li><a href="HSMKeepAlive_Timed_Service.html" data-linked-resource-id="371000062" data-linked-resource-version="8" data-linked-resource-type="page" data-scroll-target-source-id="371000062" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000062/HSMKeepAlive+Timed+Service" data-scroll-link-target-source-id="371000062">HSMKeepAlive Timed Service</a></li><li><a href="Renewal_Timed_Service.html" data-linked-resource-id="371000066" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="371000066" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000066/Renewal+Timed+Service" data-scroll-link-target-source-id="371000066">Renewal Timed Service</a></li><li><a href="Signer_Status_Report_Timed_Service.html" data-linked-resource-id="371000058" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="371000058" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000058/Signer+Status+Report+Timed+Service" data-scroll-link-target-source-id="371000058">Signer Status Report Timed Service</a></li></ul><p local-id="ef7c0255-d2f0-4e90-bebb-422f505b289c">A Timed Service framework supports a couple basic properties that is used to calculate when and how a timed service should run. These properties are:</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="fe5ae715-6daa-48b7-ad76-92aa5bafe1de" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 15.3947%;"><col span="1" style="width: 84.6053%;"></colgroup><thead><tr data-local-id="4e2d35ce-fa0d-4817-bfde-99d614895dfa"><th colspan="1" rowspan="1" data-local-id="853c536c-bc25-4145-a56c-e7e344ac0b0e" class="confluenceTh"><p local-id="755a3260-4938-449e-88a7-74cd63222c26"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="d4791047-a439-4f20-acda-ab0499257ee7" class="confluenceTh"><p local-id="d4594d46-ef27-4e7d-996b-ae9f4013981d"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="f3ec9e43-b3f9-4fee-a1a0-a533174003c8"><td colspan="1" rowspan="1" data-local-id="6650d831-20f9-42ab-a121-208dc4dc4a73" class="confluenceTd"><p local-id="084f12cc-0e61-4715-9dd6-d5e5b864c83a">ACTIVE&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="a8df9867-37fe-4a50-8318-60b49b4ea54c" class="confluenceTd"><p local-id="a8dec825-f1d2-425d-9056-4b3fe3262e7b"><em>True</em> if the service should be run. Otherwise, it is disabled.</p></td></tr><tr data-local-id="de608769-30d0-4ac3-9943-fa6c5fed3416"><td colspan="1" rowspan="1" data-local-id="09f0f8a6-2791-45af-a9df-ff992e71bc36" class="confluenceTd"><p local-id="700ad451-b00d-47f3-a663-9c3fe9610dd0">CRON&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="182f8098-02d3-4967-ac1c-085adca79593" class="confluenceTd"><p local-id="4b9bd74c-9116-4f53-983b-5f7476be4f11">Defines a CRON expression of how often the service should run. The expression must conform to Unix CRON standard.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="0d0852a7-9549-43b0-bded-62da7e1982a1">Only one <code>INTERVAL</code>, <code>INTERVALMS</code>, or <code>CRON</code> is required.</p></div></div></td></tr><tr data-local-id="acb7bdc7-1f74-450c-a86f-cb7e3bbde1db"><td colspan="1" rowspan="1" data-local-id="c11a8cb4-1c12-4648-9829-95591545d03f" class="confluenceTd"><p local-id="8fb20963-4514-4248-9ee5-6dc7f084c406">INTERVAL&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="4d766a25-de95-4a3e-b6e8-18af228daa02" class="confluenceTd"><p local-id="4a32cc01-4fe2-4956-8819-2d3bae57eb5b">Defines the interval in seconds the service should run.</p></td></tr><tr data-local-id="0e48578f-fc04-431e-b8c1-7757109db29c"><td colspan="1" rowspan="1" data-local-id="e9f5094f-772c-4f13-90e1-b3c9746d724f" class="confluenceTd"><p local-id="498545db-bb57-4a03-a4bf-2a1a9aac68c7">INTERVALMS&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="44ce8cd3-f587-405c-ac8d-ea56613704ca" class="confluenceTd"><p local-id="50a1ead8-5ae1-4ed8-bf8c-341312329862">Defines the interval in milliseconds the service should run. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="f26d00c1-2f1d-4c58-9e3c-9e4f40af1b18">The platform and application server might put a lower bound on the value. The lower limit for GlassFish is by default 7000 milliseconds but can be changed by editing <code>minimum-delivery-interval-in-millis</code> in domain.xml.</p></div></div></td></tr><tr data-local-id="a7cd2264-bb54-431f-abe9-04ccb427e01d"><td colspan="1" rowspan="1" data-local-id="a8c5f9e8-9fea-4648-866b-383642049691" class="confluenceTd"><p local-id="9dda1f46-3531-43e9-be27-4048670d2e44">SINGLETON&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="cc9babf8-d49c-4399-b278-2e4e27cd2ab9" class="confluenceTd"><p local-id="567dabfc-a3c9-4b84-9f92-487990dc4105"><em>True</em> if the service only should be run on one of the nodes in the cluster at the time. If the property is not set or set to <em>false</em>, the service runs simultaneously on all nodes in the cluster. If the node running a singleton service fails, another node senses this and starts up the service.</p></td></tr><tr data-local-id="b5ebfd79-fe2a-4649-8eda-58039f65f385"><td colspan="1" rowspan="1" data-local-id="28470b9e-05c1-4843-bcf0-9d6cbdc0c6c1" class="confluenceTd"><p local-id="fa820ed7-1846-42ff-9ffd-5262158599d8">WORK_LOG_TYPES</p></td><td colspan="1" rowspan="1" data-local-id="2e612017-5e97-4ced-ad31-3b0583b4afab" class="confluenceTd"><p local-id="f73e09da-ae23-4a1f-926f-622302587e74">Specifies the log types for logging invocations of the service in a comma-separated list.<br clear="none">The following values can be used:</p><div class="table-wrap"><table data-layout="default" data-local-id="fc953dfe-6380-4496-b4f6-b073b7067388" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 29.9373%;"><col span="1" style="width: 70.0627%;"></colgroup><thead><tr data-local-id="c02d5446-13b6-45bf-a097-9e3b6afa150e"><th colspan="1" rowspan="1" data-local-id="9df5e26e-cfcd-44f4-ae1c-9ce0d583b6ba" class="confluenceTh"><p local-id="e1e413c4-6df4-4483-90a6-a696a6a4226f"><strong>Value</strong></p></th><th colspan="1" rowspan="1" data-local-id="036e47b7-ccc0-437d-8b82-1613bf2a675c" class="confluenceTh"><p local-id="c9d29fa3-3425-4c2d-9dd3-ed9dcd45b9aa"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="709abbbb-1e07-4707-ae49-ab60abebd2aa"><td colspan="1" rowspan="1" data-local-id="78607ad9-95a9-4823-99de-b0a86e3c1c45" class="confluenceTd"><p local-id="1094cb21-028e-46cb-8008-10661c2208ac">INFO_LOGGING</p></td><td colspan="1" rowspan="1" data-local-id="c1360508-5d45-4f89-8743-53f06985b26c" class="confluenceTd"><p local-id="c19e4c00-1215-47f9-8701-de6991a69840">Use Log4J info logging.</p></td></tr><tr data-local-id="774eb2e1-7ac1-4cf8-b721-5cd9f9bba290"><td colspan="1" rowspan="1" data-local-id="5cd75e07-ff33-4c64-a0c1-7adf6fb18842" class="confluenceTd"><p local-id="1c0ed061-1c62-44b0-a513-af7146e41fa0">SECURE_AUDITLOGGING</p></td><td colspan="1" rowspan="1" data-local-id="c18a8bde-89e6-4d9f-9480-f81816025587" class="confluenceTd"><p local-id="4c09e7d8-1577-47b2-a856-39da30fbf5bc">Use CESeCore secure audit logging.</p></td></tr></tbody></table></div><p local-id="b72dae96-8891-416a-a1ff-afcdb79ce042">By default, if this property is not set, <code>INFO_LOGGING</code> is used. You can turn off logging by setting this property to an empty value. Errors during service invocations are always logged at error level using Log4J. If the property contains <code>SECURE_AUDITLOGGING</code>, the error is additionally logged to the audit log.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Validation_CLI_Interface.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Validation CLI Interface</span>
+        </a>
+
+        <a href="HSMKeepAlive_Timed_Service.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>HSMKeepAlive Timed Service</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

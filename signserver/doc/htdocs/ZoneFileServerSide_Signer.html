@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999998">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:30.451+0000">
+    <meta name="exp-page-id" content="370999998">
+    <meta name="exp-page-title" content="ZoneFileServerSide Signer">
+    <meta name="exp-page-version" content="11">
+    <meta name="exp-page-scroll-page-id" content="bd9a551e3b2cd4aa8a639af4fabd4d96">
+    <meta name="exp-page-created" content="2023-02-07T16:50:38.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T15:02:41.524+0000">
+    <meta name="exp-page-labels" content="code,document">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>ZoneFileServerSide Signer</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="55366586fce67226e6f07a18d4347bc3d1543395b0f57dc3d168269774bba7e5"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ZoneFileServerSideSigner-top" pageid="370999998" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999998" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Signers</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="DNS_Zone_File_Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">DNS Zone File Signers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="ZoneFileServerSide_Signer.html" target="_self" aria-current="page">ZoneFileServerSide Signer</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-e0431bc670f48b3215eddd484a874ad43265f98a16e8be3f428208df829eea70"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">ZoneFileServerSide Signer</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="ad7e981cdadb">The ZoneFileServerSide Signer can be used to sign Domain Name System (DNS) zone files using DNS Security Extensions (DNSSEC). The&nbsp;DNSSEC adds a layer of trust on top of DNS by providing authentication.</p><blockquote local-id="73f389a42072"><p local-id="1fdb0c0ebf9e">Fully qualified class name:&nbsp;<strong>org.signserver.module.dnssec.signer.ZoneFileServerSideSigner</strong></p></blockquote><h2 local-id="6e774d1161e2" id="ZoneFileServerSideSigner-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999998_ZoneFileServerSideSigner-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="d5573124c561">The input should be an unsigned zone file in text format and a parameter specifying the key sequence number to use. The output is the zone file with the signatures, keys, and NSEC3 records added and signed by the Zone Signing Key (ZSK) with the specified sequence number and with the public key including the next sequence number (pre-publishing). The Key Signing Keys (KSK) to use are specified in the Worker configuration. During KSK rollover, two keys can be specified (double signing).</p><p local-id="2a2e2b64-88bf-448e-b216-de40ee067b30">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><p local-id="53386585-7028-4564-b5b8-d39e3b6508c1">For information on the interfaces this Worker can be called through, see <a href="Supported_Interfaces_by_Worker.html" data-linked-resource-id="1886322694" data-linked-resource-version="37" data-linked-resource-type="page" data-scroll-target-source-id="1886322694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1886322694/Supported+Interfaces+by+Worker" data-scroll-link-target-source-id="1886322694">Supported Interfaces by Worker</a>.</p><h2 local-id="3dd02d74391a" id="ZoneFileServerSideSigner-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999998_ZoneFileServerSideSigner-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1653.9228" data-layout="full-width" data-local-id="f0302f01-8ed8-40a4-a88e-1e5ef5c5eca6" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 17.6044%;"><col span="1" style="width: 8.4694%;"><col span="1" style="width: 73.9262%;"></colgroup><thead><tr data-local-id="ba6b8d181fde"><th colspan="1" rowspan="1" data-local-id="523d68bc2469" class="confluenceTh"><p local-id="6eaf45f39223"><strong>Required Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="82118addf963" class="confluenceTh"><p local-id="c404d3148b84"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="90444e503501" class="confluenceTh"><p local-id="0ddf14708665"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="59dfc5d1ae79"><td colspan="1" rowspan="1" data-local-id="2e91bb1dee05" class="confluenceTd"><p local-id="33a151cd30fc">ACTIVE_KSKS</p></td><td colspan="1" rowspan="1" data-local-id="604badae7333" class="confluenceTd"><p local-id="a7ec39f683a3">None</p></td><td colspan="1" rowspan="1" data-local-id="4395941bd86e" class="confluenceTd"><p local-id="e9a3e4eb0572">Specifies the active key signing keys to use. Must specify exactly 1 or 2 key aliases, comma-separated.</p><p local-id="90fe73131952">Example: <code>example.com_K_1,example.com_K_2</code></p></td></tr><tr data-local-id="740c2ae82537"><td colspan="1" rowspan="1" data-local-id="75e9336fefb7" class="confluenceTd"><p local-id="a99564b96965">ZONE_NAME</p></td><td colspan="1" rowspan="1" data-local-id="b1aea2af26bc" class="confluenceTd"><p local-id="07a0025f90d1">None</p></td><td colspan="1" rowspan="1" data-local-id="525cb4c520bc" class="confluenceTd"><p local-id="b09e9bd9ebb7">Specifies the name of the top-level zone in the zone file.</p><p local-id="3d60cb4439d7">Example: <code>example.com </code></p></td></tr><tr data-local-id="09df29b0e8ea"><td colspan="1" rowspan="1" data-local-id="5edbda501653" class="confluenceTd"><p local-id="1b18bd0c7694">ZSK_KEY_ALIAS_PREFIX</p></td><td colspan="1" rowspan="1" data-local-id="bb336ef05eec" class="confluenceTd"><p local-id="4e4b5425febf">None</p></td><td colspan="1" rowspan="1" data-local-id="d746f0f21832" class="confluenceTd"><p local-id="19a1ca4e70d2">Specifies the key alias prefix to use for zone signing. The key used is based on the prefix with the key sequence number appended.</p><p local-id="45f355fe5ab9">Example: <code>example.com_Z_</code></p></td></tr><tr data-local-id="ede95dfeee9a"><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="40fd7d7e3097" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="9f1bfbbd0bc8"><strong>Property</strong></p></td><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="94354d62ba3b" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="76370aac33f3"><strong>Default</strong></p></td><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="aec95385e66b" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="2bdad68b54be"><strong>Description</strong></p></td></tr><tr data-local-id="ec5c4bfebefc"><td colspan="1" rowspan="1" data-local-id="7337cdac96d1" class="confluenceTd"><p local-id="c510a73de175">CHECK_ACTIVE_KSKS</p></td><td colspan="1" rowspan="1" data-local-id="800c36839bc6" class="confluenceTd"><p local-id="1d010ac76329"><em>True</em></p></td><td colspan="1" rowspan="1" data-local-id="c405c8ae7c01" class="confluenceTd"><p local-id="d619c9164361"><em>True</em> if the keys configured in <code>ACTIVE_KSKS</code> should be checked for existence. Setting <code>CHECK_ACTIVE_KSKS</code> to <em>false</em> can improve performance in some environments when listing Zone File Signers in AdminWeb and when calling health check.</p></td></tr><tr data-local-id="fd85c9ed76b2"><td colspan="1" rowspan="1" data-local-id="100391e2c29e" class="confluenceTd"><p local-id="e66ddbf9b257">DISABLEKEYUSAGECOUNTER</p></td><td colspan="1" rowspan="1" data-local-id="9a66c0fba80c" class="confluenceTd"><p local-id="325b3774b951"><em>True</em></p></td><td colspan="1" rowspan="1" data-local-id="a10e75236f7a" class="confluenceTd"><p local-id="ebcddc289d0f">Disables the key usage counter. As the key usage counter is not supported by this Signer, if set, only the value <em>true</em> is supported.</p></td></tr><tr data-local-id="6682ec26ad81"><td colspan="1" rowspan="1" data-local-id="bd0d81253168" class="confluenceTd"><p local-id="b360daf02d61">NSEC3_SALT</p></td><td colspan="1" rowspan="1" data-local-id="c51d26462d3c" class="confluenceTd"><p local-id="14d1ba2f49b7"></p></td><td colspan="1" rowspan="1" data-local-id="a7605ef04c16" class="confluenceTd"><p local-id="770c5465e8fc">(Optional) Specifies the fixed, HEX-encoded salt (64-bit value) to use instead of a random salt for testing/troubleshooting purposes.</p><p local-id="ec5c9cbf226c">Example: <code>6dcd4ce23d88e2ee</code></p></td></tr><tr data-local-id="6cf234925fee"><td colspan="1" rowspan="1" data-local-id="72442e9fe684" class="confluenceTd"><p local-id="ffe55b73ae6a">PUBLISH_PREVIOUS_ZSK</p></td><td colspan="1" rowspan="1" data-local-id="29d1fee39b9a" class="confluenceTd"><p local-id="6cf6380e4a1d"><em>True</em></p></td><td colspan="1" rowspan="1" data-local-id="73cd90e81345" class="confluenceTd"><p local-id="5ce66aff6186">(Optional) Specifies if the previous ZSK (if one) should be kept published.</p></td></tr><tr data-local-id="7ce4592d1403"><td colspan="1" rowspan="1" data-local-id="e4a6466a0f44" class="confluenceTd"><p local-id="0e43cc790923">SIGNATUREALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="73c4a79ac9b5" class="confluenceTd"><p local-id="4500bc991be0"><em>SHA256withRSA</em> </p></td><td colspan="1" rowspan="1" data-local-id="103cda6cd8b1" class="confluenceTd"><p local-id="1e7650dbc4bc">Specifies the signature algorithm to use for all signatures. Only <em>SHA1withRSA</em>, <em>SHA256withRSA</em>, and <em>SHA512withRSA</em> are supported. All signature algorithms map to DNSSEC algorithms using NSEC3.</p></td></tr></tbody></table></div><h2 local-id="a6b034db1041" id="ZoneFileServerSideSigner-RequestParameters" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999998_ZoneFileServerSideSigner-Request-Parameters"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Request Parameters</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="8f4fb1c1-f10f-4694-a0c1-a496ae5e1fbf" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 19.3333%;"><col span="1" style="width: 80.6667%;"></colgroup><thead><tr data-local-id="e1e3f9ac493e"><th colspan="1" rowspan="1" data-local-id="d8e4acaacb4f" class="confluenceTh"><p local-id="38545a8db32d"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="db3a2d8592f7" class="confluenceTh"><p local-id="3045f8522f41"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="0a26c7c03e7a"><td colspan="1" rowspan="1" data-local-id="89573fb36383" class="confluenceTd"><p local-id="33190ce1c538">ZSK_SEQUENCE_NUMBER</p></td><td colspan="1" rowspan="1" data-local-id="040057d9e8ec" class="confluenceTd"><p local-id="3dba27c914d9">Specifies the sequence number to append after key alias prefix. </p><p local-id="1025f608a7c8">Example: <code>1</code></p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="DNS_Zone_File_Signers.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>DNS Zone File Signers</span>
+        </a>
+
+        <a href="ZoneZipFileServerSide_Signer.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>ZoneZipFileServerSide Signer</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

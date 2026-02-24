@@ -1,0 +1,214 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000147">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:34.286+0000">
+    <meta name="exp-page-id" content="371000147">
+    <meta name="exp-page-title" content="Azure Key Vault Crypto Token">
+    <meta name="exp-page-version" content="16">
+    <meta name="exp-page-scroll-page-id" content="33ae052dae5b21a700103a569fe627a5">
+    <meta name="exp-page-created" content="2021-12-07T14:22:10.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T15:06:36.977+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Azure Key Vault Crypto Token</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="4a9756cd5ee903d3f22a2e7a0286b7db48ce7b7e1e8f1a0615ede95eff309031"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="AzureKeyVaultCryptoToken-top" pageid="371000147" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000147" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Crypto_Tokens__HSMs_&amp;_Keystores.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Crypto Tokens: HSMs &amp; Keystores</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Azure_Key_Vault_Crypto_Token.html" target="_self" aria-current="page">Azure Key Vault Crypto Token</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-76a42683d5b2acc1475b9e800d27f3cb1296544d80581e58c635087aab6536b0"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Azure Key Vault Crypto Token</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="91b011b5d3c8"><style>[data-colorid=cst782xfgw]{color:#0e101a} html[data-color-mode=dark] [data-colorid=cst782xfgw]{color:#e5e7f1}[data-colorid=sjrub82iej]{color:#0e101a} html[data-color-mode=dark] [data-colorid=sjrub82iej]{color:#e5e7f1}[data-colorid=qeyo2i28ap]{color:#0e101a} html[data-color-mode=dark] [data-colorid=qeyo2i28ap]{color:#e5e7f1}</style>The Azure Key Vault Crypto Token implements storing keys in an Azure Key Vault, leveraging the advantages of cloud-stored keys.</p><blockquote local-id="20b51e428fd7"><p local-id="58c7f6e15018">Fully qualified class name: CRYPTOTOKEN_IMPLEMENTATION=<strong>org.signserver.server.cryptotokens.AzureKeyVaultCryptoToken</strong></p></blockquote><h2 local-id="776ded450de2" id="AzureKeyVaultCryptoToken-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000147_AzureKeyVaultCryptoToken-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="306d75546907">For more information on the Microsoft Azure cloud Key Vault for HSM storage of cryptographic keys, refer to the Microsoft <a class="external-link scroll-external-link" href="https://docs.microsoft.com/en-us/azure/key-vault" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.microsoft.com/en-us/azure/key-vault" data-scroll-link-local="false">Azure Key Vault documentation</a>.</p><p local-id="346d4a9b5ff2">To download a sample configuration file for this worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><h2 local-id="048cb56cb8ab" id="AzureKeyVaultCryptoToken-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000147_AzureKeyVaultCryptoToken-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="wide" data-local-id="5f4dd1e2-0083-4c10-933c-1842f43006c6" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 14.8416%;"><col span="1" style="width: 85.1584%;"></colgroup><thead><tr data-local-id="f2959f3f089c"><th colspan="1" rowspan="1" data-local-id="bd555059f7a3" class="confluenceTh"><p local-id="cde207737a5e"><strong>Required Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="18cb2fa2bb0c" class="confluenceTh"><p local-id="7ed66e3618bc"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="52df7f5260aa"><td colspan="1" rowspan="1" data-local-id="3c2f39be3dba" class="confluenceTd"><p local-id="6bb8760a9e3c">KEY_VAULT_CLIENTID</p></td><td colspan="1" rowspan="1" data-local-id="9ea96e37f751" class="confluenceTd"><p local-id="f1871c420a17">Specifies the Client ID. This is the “AD user” that is authorized to connect to and use the key vault.</p></td></tr><tr data-local-id="ae8d42a94feb"><td colspan="1" rowspan="1" data-local-id="ce766e027bff" class="confluenceTd"><p local-id="a3654cb2aa78">KEY_VAULT_NAME</p></td><td colspan="1" rowspan="1" data-local-id="b5f25677662b" class="confluenceTd"><p local-id="b64e969e4dd2">Specifies the name of the key vault. If the name contains at least one dot, it is assumed to be the full host name of the vault (allowing for alternative endpoints), otherwise it is assumed to be the first part of a host name in the default namespace (<code>&lt;KEY_VAULT_NAME&gt;.vault.azure.net</code>).</p></td></tr><tr data-local-id="fd70742bce66"><td colspan="1" rowspan="1" data-local-id="8535346d9613" class="confluenceTd"><p local-id="d7084657e1e8">KEY_VAULT_TYPE</p></td><td colspan="1" rowspan="1" data-local-id="9eece712b5b3" class="confluenceTd"><p local-id="7a00e7ad90c0">Specifies the type of key vault. </p><p local-id="5ac321a8773d">Valid values: <code>standard</code> or <code>premium</code></p></td></tr><tr data-local-id="28ded3b70eca"><td colspan="1" rowspan="1" data-local-id="58a12fb31000" class="confluenceTd"><p local-id="c516b21c35ea">PIN</p></td><td colspan="1" rowspan="1" data-local-id="fd50dd97fa3e" class="confluenceTd"><p local-id="c9c63fdc6119">Specifies the authentication code for activation. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="69e4749e76b9">Only required for auto-activation and is not required when the token is manually activated.</p></div></div></td></tr><tr data-local-id="8c23b9a70bdf"><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="2897bed85fcf" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="f38557a797c7"><strong>Property</strong></p></td><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="403962130fd8" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="3c24bb01b888"><strong>Description</strong></p></td></tr><tr data-local-id="402fdf04402e"><td colspan="1" rowspan="1" data-local-id="017a6ad83bf5" class="confluenceTd"><p local-id="84abe33a50b3">DEFAULTKEY</p></td><td colspan="1" rowspan="1" data-local-id="e2c2309d7ec7" class="confluenceTd"><p local-id="eaf6a138a01d">Specifies the key alias of the private key to be used for testing that this crypto token is working.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="520135ec4678">Since <strong>SignServer 7.4.0</strong>, the <code>DEFAULTKEY</code> property is no longer a required property for this worker.</p><p local-id="b04d88ad2b2d">If no default key is set, the connection between this worker and the Azure Key Vault instance will be performed to determine if the Worker is ACTIVE or OFFLINE. </p><p local-id="ac96df878a27">If a default key is set, a test signing will be performed to determine if the Worker is ACTIVE or OFFLINE.</p></div></div><p local-id="a593e65a9351">A property with this name is typically accepted by the worker using this crypto token and will then be the key to use for actual signing.</p></td></tr><tr data-local-id="518387c3a403"><td colspan="1" rowspan="1" data-local-id="92269828fbb8" class="confluenceTd"><p local-id="0dd202cfe91a">NEXTCERTSIGNKEY</p></td><td colspan="1" rowspan="1" data-local-id="a5fa6f5daff4" class="confluenceTd"><p local-id="14c59a4577fa">A property with this name is typically configured in the worker using this crypto token to hold the name of the next key to use.&nbsp; Certificate signing requests (CSR) can be made for this key while the current key (<code>DEFAULTKEY</code>) is still in production. After uploading the new certificate, the value of <code>NEXTCERTSIGNKEY</code> can be moved to <code>DEFAULTKEY</code>.</p></td></tr></tbody></table></div><h2 local-id="196cd0f5af0f" id="AzureKeyVaultCryptoToken-KnownLimitations" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000147_AzureKeyVaultCryptoToken-Known-Limitations"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Known Limitations</span></h2><p local-id="934043af9863">The following lists limitations of the current implementation:</p><ul local-id="f68be5bb2a9e"><li local-id="fce7073d3f4f"><p local-id="cdbda9318045">Import of certificate <strong>in token</strong> is not supported for this crypto token.</p></li><li local-id="fe60b197ec52"><p local-id="5b75bc334480">The Azure Key Vault Crypto Token does not provide any certificates and cannot be used with signers that require a certificate from the token such as OpenPGP-based signers. </p></li><li local-id="ce86a60f2baa"><p local-id="753a7ebed6e8"><span data-colorid="qeyo2i28ap">If the Key Vault has soft-delete enabled, the keys will not be completely deleted by SignServer, and new keys cannot be created with the same name as keys that have been soft-deleted. For more information on the Key Vault's soft-delete feature, allowing recovery of the deleted vaults and vault objects, refer to the Microsoft </span><a class="external-link scroll-external-link" href="https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete" data-scroll-link-local="false"><span data-colorid="sjrub82iej">Azure Key Vault soft-delete overview</span></a><span data-colorid="cst782xfgw">.</span></p></li></ul>
+<nav id="ht-post-nav">
+        <a href="P11NG_Key_Wrapping_Crypto_Token.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>P11NG Key Wrapping Crypto Token</span>
+        </a>
+
+        <a href="Azure_Key_Vault_Crypto_Token_Algorithm_Support.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Azure Key Vault Crypto Token Algorithm Support</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

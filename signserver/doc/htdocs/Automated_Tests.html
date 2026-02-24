@@ -9,10 +9,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-11-12T12:32:45.195+0000">
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:59.412+0000">
     <meta name="exp-page-id" content="371000831">
     <meta name="exp-page-title" content="Automated Tests">
     <meta name="exp-page-version" content="6">
@@ -31,7 +31,7 @@
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
     <meta name="exp-version-description" content="">
-    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
     <meta name="exp-variant-id" content="">
     <meta name="exp-variant-name" content="">
     <meta name="exp-variant-description" content="">
@@ -83,7 +83,7 @@
 </script>
     <title>Automated Tests</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="d723724403a3f19188b8e0ad17b7b8954ccbf80c3244e401d342fb3c3990773b"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="52171c85927ebadea190a8ab1be5a83d3287fb86d1eb3112c23e427ab9b4ef62"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
     <body id="AutomatedTests-top" pageid="371000831" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
@@ -94,7 +94,7 @@
 <header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
     <div class="header__navigation--logo">
         <a href="SignServer_Documentation.html">
-            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
         </a>
     </div>
         <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
@@ -142,7 +142,7 @@
                     <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                    <a href="Configuration_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Configuration Reference</a>
                 </li>
                 <li class="js-hide-until-loaded">
                     <a href="Developer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Developer Reference</a>
@@ -155,7 +155,7 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-5e7631f2b0c980e908f1becfcbd9e4366528646b44c801c98a33676da3f01d2a"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Automated Tests</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-47fde3a528d85da996c162123ccd6f55b458e24d90efa5ea2934479c7bcf33f5"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Automated Tests</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
@@ -166,7 +166,7 @@
 </div><p>Before running system tests, configure the test properties:</p><ol start="1"><li><p>Find the default-test-config.properties in the code base. </p></li><li><p>Copy to SIGNSERVER_HOME and rename to <em>test-config.properties</em>. </p></li><li><p>Modify the properties to your testing needs.</p></li></ol><p>Generally, tests are organized according to the following:</p><ul><li><p>Each new module can include its own Unit tests.</p></li><li><p>Some components (such as Web Services) use their own test projects (<code>SignServer-Test-*WS</code>) in order to not include client-side code in their projects.</p></li><li><p>Legacy tests and system tests are placed in <code>SignServer-Test-System</code>.</p></li></ul><h2 id="AutomatedTests-WebTests" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000831_AutomatedTests-Web-Tests"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Web Tests</span></h2><p>SignServer also includes a WebTest module for automated testing of the web interface. For more information, see <a href="WebTest_Module.html" data-linked-resource-id="371000835" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="371000835" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000835/WebTest+Module" data-scroll-link-target-source-id="371000835">WebTest Module</a>.</p><h2 id="AutomatedTests-PlatformTests" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000831_AutomatedTests-Platform-Tests"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Platform Tests</span></h2><p>The following command can be used to run only the platform verification tests:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">ant systemtest:jars -Dsystemtest.jars.include=lib/SignServer-Test-Platform-*-tests.jar systemtest:report</code></div>
 </div>
-</div><p>The <strong>BasicSigningAdminWsTest</strong> assumes:</p><ul><li><p>There is a "p12" folder.</p></li><li><p>The "p12" folder containing a keystore "truststore.jks" with the CA certificate that issued the&nbsp; TLS server certificate and using the password "changeit". If the server uses <code>res/test/dss10/dss10_demo-tls.jk</code>, then the <code>dssk10_truststore.jks</code> can be used for this.</p></li><li><p>The "p12" folder containing a&nbsp;keystore "client.p12" with password "foo123" and a key entry with certificate allowed by the truststore of the server. For instance if the server uses <code>dss10_truststore.jks</code>, the sample keystore <code>dss10_admin1.p12</code> can be used for this.</p></li></ul><p>The <strong>BasicStartupAdminCliTest</strong> assumes:</p><ul><li><p>The test is running on the same server as the application server and APPSRV_HOME is configured.</p></li></ul><h2 id="AutomatedTests-TestCoveragewithClover" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000831_AutomatedTests-Test-Coverage-with-Clover"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Test Coverage with Clover</span></h2><p>To run Clover, copy the Clover installation folder (or make a symlink to it) and store it as <code>lib/ext/clover-dir</code>.</p><p>If the project has been built previously, a dummy Clover folder already exists with the name <code>lib/ext/clover-dir</code> and the following must be run to remove it:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><p>The <strong>BasicSigningAdminWsTest</strong> assumes:</p><ul><li><p>There is a "p12" folder.</p></li><li><p>The "p12" folder containing a keystore "truststore.jks" with the CA certificate that issued the&nbsp; TLS server certificate and using the password "changeit". If the server uses <code>res/test/dss10/dss10_demo-tls.jk</code>, then the <code>dssk10_truststore.jks</code> can be used for this.</p></li><li><p>The "p12" folder containing a&nbsp;keystore "client.p12" with password "foo123" and a key entry with certificate allowed by the truststore of the server. For instance if the server uses <code>dss10_truststore.jks</code>, the sample keystore <code>dss10_admin1.p12</code> can be used for this.</p></li></ul><p>The <strong>BasicStartupAdminCliTest</strong> assumes:</p><ul><li><p>The test is running on the same server as the application server and APPSRV_HOME is configured.</p></li></ul><h2 id="AutomatedTests-TestCoveragewithClover" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000831_AutomatedTests-Test-Coverage-with-Clover"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="483653a9-7b9d-49a6-ae9d-82a3bd9879ac">Test Coverage with Clover</span></span></h2><p>To run Clover, copy the Clover installation folder (or make a symlink to it) and store it as <code>lib/ext/clover-dir</code>.</p><p>If the project has been built previously, a dummy Clover folder already exists with the name <code>lib/ext/clover-dir</code> and the following must be run to remove it:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">bin/ant clean clover.clean build deploy</code></div>
 <div class="line"><code class="plain">bin/ant ant test:run</code></div>
 </div>

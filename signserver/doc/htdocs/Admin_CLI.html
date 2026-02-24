@@ -1,0 +1,813 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000510">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:24:51.211+0000">
+    <meta name="exp-page-id" content="371000510">
+    <meta name="exp-page-title" content="Admin CLI">
+    <meta name="exp-page-version" content="20">
+    <meta name="exp-page-scroll-page-id" content="123673bf4c11d1f44ca3486c688bad0d">
+    <meta name="exp-page-created" content="2023-02-28T12:27:29.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T14:19:23.287+0000">
+    <meta name="exp-page-labels" content="format,table">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Admin CLI</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="88d399667cfe6e4a393680ad462048fa1a503e607ba6ab0f245356e7c4de038d"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="AdminCLI-top" pageid="371000510" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000510" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Admin_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Admin Interfaces</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Admin_CLI.html" target="_self" aria-current="page">Admin CLI</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b22242365d1cff34d95bb31e5fb5f747e45455d2f1b63c00fc1b5ab0752a2fb8"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Admin CLI</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="dff3788e-bbcc-41f1-b3bf-dcb5b33a23d4">The SignServer Administration CLI (AdminCLI) is one of the available interfaces to administrate SignServer. It supports configuration of workers and associated key management as well as querying the audit log and archive.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="3df88728-0cc3-4a63-961b-27fe7d664716">The AdminCLI is not available for the SignServer Software Appliance deployment. For the Container deployment, only the owner can access AdminCLI.</p></div></div><h2 local-id="3fcb6a49-1a96-413a-8035-d39a83f05cbf" id="AdminCLI-UsingAdminCLI" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Using-AdminCLI"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using AdminCLI</span></h2><p local-id="86943778-55f5-4a55-bb36-c7401b88bd89">The SignServer administration command line interface (AdminCLI) is started using <code>bin/signserver</code> (or <code>bin/signserver.cmd</code> for Windows).</p><p local-id="842c4430-bf19-4969-9987-2df031f3b7ec">Every Worker is identified by an ID and an optional name that can be used in all CLI commands.</p><p local-id="f43c776f-8ee3-4a5a-90eb-b124d398d473">You can configure a Worker while it is in production since all configuration commands are cached until a reload command is issued and the configuration becomes active.</p><p local-id="b78fee6a-c718-4aef-a49a-191075eaff4f">The following describes the SignServer Administration CLI (AdminCLI) commands:</p><ul local-id="39d0610b-cfde-4bef-a048-84d0ba2af4bf"><li local-id="bf9c1f77-efc4-4ee4-9ebe-c91d1ae70ec9"><p local-id="fce4274b-4d6f-4d1d-bdd5-aa56c6833664"><a href="Admin_CLI.html#AdminCLI-General-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-General-Commands" data-scroll-link-target-source-id="371000510">General Commands</a></p></li><li local-id="2d92759e-1a75-4676-810e-48b5bfcd1944"><p local-id="a3829213-764f-4fc4-a414-cf84be0ed2ff"><a href="Admin_CLI.html#AdminCLI-Authorization-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Authorization-Commands" data-scroll-link-target-source-id="371000510">Authorization Commands</a></p></li><li local-id="f2f89205-bc63-4bd6-bb99-5039952a3501"><p local-id="942202ff-4ee2-4df5-aae5-9f4cf8cd8a70"><a href="Admin_CLI.html#AdminCLI-Database-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Database-Commands" data-scroll-link-target-source-id="371000510">Database Commands</a></p></li><li local-id="0dff3ddd-f2a5-4141-bd30-57cac09aa4a0"><p local-id="d882f7d3-f4f2-470c-80ed-3575b8c5c090"><a href="Admin_CLI.html#AdminCLI-Archive-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Archive-Commands" data-scroll-link-target-source-id="371000510">Archive Commands</a></p></li><li local-id="02089998-df28-45c3-b015-e3db3367dc54"><p local-id="29299cab-7fc2-4712-a711-e2a3eac029d5"><a href="Admin_CLI.html#AdminCLI-Administrator-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Administrator-Commands" data-scroll-link-target-source-id="371000510">Administrator Commands</a></p></li><li local-id="917e7813-fc82-408b-a615-9bfb82166497"><p local-id="d0918425-b085-4f02-8b1d-f3f207144c57"><a href="Admin_CLI.html#AdminCLI-Auditor-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Auditor-Commands" data-scroll-link-target-source-id="371000510">Auditor Commands</a></p></li><li local-id="4dabac13-388d-4f89-bfe5-0af86d239b9c"><p local-id="6f58a1f1-e506-4502-9d9b-5c91b3234119"><a href="Admin_CLI.html#AdminCLI-Archive-Auditor-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Archive-Auditor-Commands" data-scroll-link-target-source-id="371000510">Archive Auditor Commands</a></p></li><li local-id="61166dea-6877-448a-985c-2741ce58e882"><p local-id="30e410c5-0e20-4364-bf2d-d6fa445ddae2"><a href="Admin_CLI.html#AdminCLI-Peer-Systems-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Peer-Systems-Commands" data-scroll-link-target-source-id="371000510">Peer Systems Commands</a></p></li><li local-id="5ae24a36-42e2-41e1-8011-464d8e2a7d67"><p local-id="ac076853-848f-4318-abd0-71ce5c770e20"><a href="Admin_CLI.html#AdminCLI-Status-Repository-Commands" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-Status-Repository-Commands" data-scroll-link-target-source-id="371000510">Status Repository Commands</a></p></li></ul><h2 local-id="3c52e4cc-9968-4ab9-98dc-8e31d3813e41" id="AdminCLI-GeneralCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-General-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">General Commands</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="52cd47dc-cf99-4446-a3ca-19b00bed38c8"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="91e0faf0-285f-40e8-9713-259a7281380b"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="dbc52c43-3eb4-4e23-97cb-017665ade15f">getstatus</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="b535834d-4446-44ec-8a87-6b56e24e8813">Returns the status of the given Worker, stating if its crypto token is active or not, and the loaded 'active' configuration. It is possible to get a&nbsp;<em>brief</em>&nbsp;summary or a&nbsp;<em>complete</em>&nbsp;listing for one Worker or all configured Workers. If all Workers are displayed, all the global configuration parameters will also be displayed.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="00a54ea6-b550-4910-8db4-a4be4cebdb94">getconfig</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="edc2c12f-54bd-46f3-90b6-771b528da06f">Returns the current Worker or global configuration depending on options. Note that for Worker configuration, this configuration might be inactive until a&nbsp;<code>reload</code>&nbsp;command is issued.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="abaaef3f-bc31-4a05-bc9b-933154d2a668">setproperty</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="924880b1-9315-4e44-9667-0d7164ecf4f8">Sets a custom property used by the Worker or Crypto Token. <span class="inline-comment-marker" data-ref="8ada478b-db6a-4b9b-97e0-b02756f34de0">For available properties, refer to the respective page for the given Worker and Crypto Token.</span></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="32f2fdc4-3976-4a3a-b4f0-6ec567e59061">getproperty</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="c1082915-2f43-4194-b807-145d5bf5f374">List the value of a Worker or global property.</p><p local-id="c787577d-61cd-4a4d-97c5-537890d768ba">Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver getproperty &lt;signerid | signerName | global | node&gt; &lt;propertykey&gt;</code></div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="f833a4a9-9039-4fe7-9f5b-bb0aff14eb59">setproperties</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="2b61b32d-618c-407b-bc70-200351367389">Used to batch a set of properties, both for the global and Worker configuration. The command can be used to configure a Signer in a test environment, dump all the properties and upload it into production.</p><p local-id="c8c91205-261d-41c9-8dc2-20a259d79f91">The <code>setproperties</code> command reads all the configuration properties form a property file, and depending on the contents of the key, it then sets the given property. All properties are set according to the following defined rule set.</p><div class="expand-container"><p class="expand-control-text">Defined Rule Set</p><div class="expand-content"><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="18d75dd7-b9a5-4747-85bb-98f51d9c41e1" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="099e7d1c-a30e-46e0-9a25-e396eba8a00c"><th colspan="1" rowspan="1" data-local-id="232cb633-b495-4f8b-be60-79d3428fbeee" class="confluenceTh"><p local-id="ad81855f-ab0b-4f40-85d6-99ba58e52f33"><strong>Rule</strong></p></th><th colspan="1" rowspan="1" data-local-id="01b1517c-3e8f-43ee-987e-5e5b51fe3755" class="confluenceTh"><p local-id="b0497054-b5ba-4c05-baed-2aacb3aa0df1"><strong>Comment</strong></p></th></tr></thead><tbody><tr data-local-id="e4a3e430-3ee4-44f6-b7ff-d41f45afe91f"><td colspan="1" rowspan="1" data-local-id="2e8ac698-a5fe-434c-b7f8-00ca04626a3e" class="confluenceTd"><p local-id="cbc966af-10a9-42cb-8216-e7bbaa84e62f">Properties starting with id&lt;num&gt;.</p></td><td colspan="1" rowspan="1" data-local-id="c48f45c0-a6ac-4b9e-8673-5fd2ca494323" class="confluenceTd"><p local-id="c9335b67-8f9b-4066-9f32-075f1106d0c1">Sets the property to the value of the given ID to the Worker with the given id.</p></td></tr><tr data-local-id="d63f48b6-e529-4232-bc06-f50c1c7669ed"><td colspan="1" rowspan="1" data-local-id="08b7f43d-1e0e-49d8-a52f-459382796d01" class="confluenceTd"><p local-id="7cfc627f-cf0f-461b-9a80-c34a9645722c">Properties starting with name&lt;name&gt;.</p></td><td colspan="1" rowspan="1" data-local-id="1b9349dd-b3e7-457e-b211-c703529ae24b" class="confluenceTd"><p local-id="059ec813-6013-46ce-ab91-9d4568ebc117">Sets&nbsp;the property to a Worker with the given name. If the name does not exists, a unique ID will be generated and assigned.</p></td></tr><tr data-local-id="b2b3f935-e823-4781-8af0-93dea4a920fb"><td colspan="1" rowspan="1" data-local-id="5dd1a103-f1e9-487e-a1d2-3df42d4bddf7" class="confluenceTd"><p local-id="2c41b61a-a11e-4711-8853-482ee2073bb0">Property keys containing GENID&lt;NUM&gt;, example WORKERGENID1 or GLOB. WORKERGENID1</p></td><td colspan="1" rowspan="1" data-local-id="c5574b50-e590-4703-af41-8fbc7be1ec4d" class="confluenceTd"><p local-id="f87c742a-e22c-4d14-9553-5619f3915bc5">The SignServer will find a free unique ID and assign substitute all GENID&lt;num&gt; with this ID.</p></td></tr><tr data-local-id="4fcff4f2-d5d0-4a19-b07b-4cb6e7a73fed"><td colspan="1" rowspan="1" data-local-id="34b65b6c-2861-47a8-8ac9-49cec9e44b8a" class="confluenceTd"><p local-id="03698bc9-1468-48aa-b573-b4e640f9e054">Properties starting with glob.</p></td><td colspan="1" rowspan="1" data-local-id="f8888f58-8bca-4ebf-81c2-fbfa91aacd60" class="confluenceTd"><p local-id="6eabb5da-eb71-4a49-a258-4b36cbb640d5">Sets&nbsp;a global property with global scope.</p></td></tr><tr data-local-id="5ee5e23e-1d72-4e13-be91-5ecda55c4a97"><td colspan="1" rowspan="1" data-local-id="a6d6eec1-ba1d-4eff-80ea-f27504782adb" class="confluenceTd"><p local-id="12bd1627-fd08-429a-8177-acaedba60f1f">Properties starting with node.</p></td><td colspan="1" rowspan="1" data-local-id="d418e450-79f3-4975-bc93-aac2b13243ce" class="confluenceTd"><p local-id="3148280e-5b3e-40fd-a1ec-5e799be39940">Sets&nbsp;a global property with node scope.</p></td></tr><tr data-local-id="f59c59f2-b54a-4816-89d3-c46587090d90"><td colspan="1" rowspan="1" data-local-id="8722fbcf-2496-4a5f-8e44-2e4e23932cde" class="confluenceTd"><p local-id="43e28ea2-1b80-4ca8-b216-d9a2edf2aff9">Properties starting with -&lt;other prefix&gt;&lt;value&gt;</p></td><td colspan="1" rowspan="1" data-local-id="ab1e0e24-6b64-4023-a7b8-006f2278e6a2" class="confluenceTd"><p local-id="73512a30-5aa9-4018-917d-99575cac4b41">Removes the property, either Worker or global.</p></td></tr></tbody></table></div></div></div><p local-id="27970d2e-b1b5-42c2-a4fa-7813762c1ba5">For examples, see the directory <code>sample-configs</code>.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="6cee3b97-853a-43b5-b16e-826b5d94b4bc">removeproperty</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="fc759771-36dd-464d-8031-0259ca93df08">Removes a configured property.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="fdfa89f6-31e7-4438-8b8b-e763557ae3d7">dumpproperties</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="9b773565-4ead-4219-a559-41ee8d0470c1">Dumps all configured properties for one or all Workers in the system into a property file. If the configuration for one Worker is dumped, the&nbsp;<code>dumpproperties</code> tool can be used to transfer the configuration from one installation to another. If all configurations are dumped, it can be used as a backup tool.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="78d23392-1450-4381-a896-76f8f8930f13">uploadsignercertificate</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="98875a1a-a409-494f-8378-0e3e372c022d">Used to upload the certificate when the Worker only needs the actual signing certificate and not the entire chain.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="4d2849da-9b4c-4dec-a43d-3b9588026cd0">uploadsignercertificatechain</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="5d15ce72-238e-4ff9-a78d-dd17dde82408">Used when uploading a complete certificate chain to the Worker.</p><p local-id="db1488c0-3733-4ad9-a0da-34f47ce05257">Note that the correct command to use for upload depends on the Worker and Crypto Token used.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="aae1647e-bf73-4b49-baaa-ce000331a55f">importcertificatechain</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="b6a8769b-0806-47ca-8fe8-716613cf482a">Used to import a certificate chain into a crypto token. It takes a Worker ID of the Crypto Worker (or a Worker ID of a Worker with the Crypto Token configured in the legacy way), and a path pointing to a file containing the certificate chain and a key alias to import to. Currently supported by the PKCS11 and keystore Crypto Token implementations.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="fa526d6b-a5f8-4393-9bfb-8b442bbc4e61">generatecertreq</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="c4e819ed-5557-4b61-abef-5a3921865061">Used to generate a certificate request for a Worker to be signed by a certificate authority. The command takes distinguished name and signature algorithm as parameters, and writes the request in PEM format to file. An optional key alias can be specified to generate a request given a specific key alias from the Crypto Token.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="5ae0a3f8-8a46-4dad-89f8-66803afaff54">activatecryptotoken</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="2b07d5c8-6113-4a02-af17-653dd1fe53cf">Used to activate Crypto Tokens. Authentication code is usually the PIN used to unlock the keys on the HSM. Not used if the token is set to auto-activation.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="38c51854-801f-4603-8a90-e01c32db5ade">deactivatecryptotoken</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="c2dbcda0-3527-422c-b129-ec382a0c1b5a">Brings a Crypto Token off-line. Not used if token is set to auto-activation.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="531b7602-4c5c-4da0-a9ed-406ad663abb9">renewsigner</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="02de31aa-3e97-41eb-aeec-51362a78afef">Sends a request for renewal of the specified Worker to the specified renewal Worker. If the authcode parameter is omitted, the command will renew the certificate without an authcode, assuming the Crypto Token is auto-activated, or the Worker is using a separate Crypto Worker (recommended). To use the previous behavior of prompting for the authcode, specify the <code>-authprompt</code> option. When the authcode is not passed as a parameter or prompted for, an explicit activation of the token will not be performed. For more information, see&nbsp;<a href="Renewal_Worker.html" data-linked-resource-id="371000078" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="371000078" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000078/Renewal+Worker" data-scroll-link-target-source-id="371000078">Renewal Worker</a>.</p></div>
+</div>
+</div>
+</div>
+<hr local-id="f2e8b65c-74d2-4275-b6c4-3a59f7391785"><h2 local-id="aaca1c89-4a0e-4ac5-b4b7-c89ed937c567" id="AdminCLI-AuthorizationCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Authorization-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Authorization Commands</span></h2><p local-id="8f3e3e7e-fbb9-44e4-baa6-30c2346d606b">Authorization-related commands are used to configure the client authorization rules for a Worker when the <a href="Client_Certificate_Authorizer.html" data-linked-resource-id="371000217" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000217" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000217/Client+Certificate+Authorizer" data-scroll-link-target-source-id="371000217">Client Certificate Authorizer</a> is used as AUTHTYPE.</p><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="8c55042e-3bbb-4108-a267-232eda66aaff"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="e58c166f-3e01-4f05-b105-12055dfd2603"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="cf1fdd00-fa66-4f24-8281-b691e4b511f6">authorizedclients <span class="confluence-anchor-link" id="AdminCLI-authorizedclients"></span><span class="confluence-anchor-link" id="authorizedclients"></span></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="ac807095-14c7-49ff-ae56-37c8806a50e4">Command for adding, removing, or listing a Worker's client authorization rules. Replaces the legacy commands <code>addauthorizedclient</code>, <code>removeauthorizedclient</code>, and <code>listauthorizedclient</code>.</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">Usage: signserver authorizedclients -worker &lt;worker name or ID&gt; -list </code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">       signserver authorizedclients -worker &lt;worker name or ID&gt; &lt;-add/-remove&gt; </code></div>
+<div class="line"><code class="plain">          -matchSubjectWithType &lt;SUBJECT_MATCH_TYPE&gt; -matchSubjectWithValue &lt;value&gt; \</code></div>
+<div class="line"><code class="plain">          [-matchIssuerWithType &lt;ISSUER_MATCH_TYPE&gt;] -matchIssuerWithValue &lt;issuer DN&gt; \</code></div>
+<div class="line"><code class="plain">          [-description &lt;textual description&gt;]</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">       signserver authorizedclients -worker &lt;worker name or ID&gt; &lt;-add/-remove&gt; \</code></div>
+<div class="line"><code class="plain">          -matchSubjectWithType &lt;SUBJECT_MATCH_TYPE&gt; \</code></div>
+<div class="line"><code class="plain">          [-matchIssuerWithType &lt;ISSUER_MATCH_TYPE&gt;] \</code></div>
+<div class="line"><code class="plain">          [-description &lt;textual description&gt;] \</code></div>
+<div class="line"><code class="plain">          -cert &lt;PEM file&gt;</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">Supported values for -matchSubjectWithType:</p><div class="expand-content"><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="df1292c4-8bcd-43ae-a47c-c61752645247" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="20bc58b9-cb33-4aef-a242-c877f8a642c4"><th colspan="1" rowspan="1" data-local-id="df12232d-dc81-42c3-b3ec-1b9856eb9407" class="confluenceTh"><p local-id="e4943079-9818-48b0-bfb5-cdd0b758afc4"><strong>Type</strong></p></th><th colspan="1" rowspan="1" data-local-id="8eda3c28-716f-4bf1-b487-17543f0cbb18" class="confluenceTh"><p local-id="1006ba40-2a67-4e0f-bc8c-432d091c9ef7"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="62edf8c7-61bb-4f57-ad12-d2240e86c056"><td colspan="1" rowspan="1" data-local-id="8311ae76-3726-431f-b220-9d1363a7ab89" class="confluenceTd"><p local-id="f73833f1-b3de-4055-b7ad-a3021755a052">CERTIFICATE_SERIALNO</p></td><td colspan="1" rowspan="1" data-local-id="861d5a50-4027-44d1-8a7e-cb62af7e72eb" class="confluenceTd"><p local-id="bf5ef944-f623-42ed-9ac7-c3ce068b7ae1">Serial number of the certificate.</p></td></tr><tr data-local-id="486e0839-dbef-4c2f-8201-3a4f0cda862a"><td colspan="1" rowspan="1" data-local-id="4054a375-e33d-43c0-974d-3c310f674782" class="confluenceTd"><p local-id="b112b364-da1c-4f28-b6ef-f4180ebe0268">SUBJECT_RDN_CN</p></td><td colspan="1" rowspan="1" data-local-id="18016241-4061-4c51-981a-1866ecf8b0df" class="confluenceTd"><p local-id="a346edf2-16a8-4755-9eef-bed9c24e2900">Common Name (CN) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="30d35f5a-f0d2-42fe-918d-654e197a636d"><td colspan="1" rowspan="1" data-local-id="50efc663-2103-418f-b9a6-0ef09e66816f" class="confluenceTd"><p local-id="ec11d9d0-9dc0-4583-9f3b-853ea5522af9">SUBJECT_RDN_SERIALNO</p></td><td colspan="1" rowspan="1" data-local-id="227af4fa-5d20-493e-b610-02c720c055a0" class="confluenceTd"><p local-id="3a05e2c4-4582-49c2-a5e4-6b5927747998">Serial number (serialNumber/SN) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="03e63d50-899d-4c92-bb89-47b46899d337"><td colspan="1" rowspan="1" data-local-id="335ed472-b4f3-467d-aeb1-a63168c93e6c" class="confluenceTd"><p local-id="ce2d0873-51be-4bab-9d30-97cec7110fcd">SUBJECT_RDN_C</p></td><td colspan="1" rowspan="1" data-local-id="bcc54933-b173-4fb5-b0c3-9f4ceb83a529" class="confluenceTd"><p local-id="90c675b4-8912-49d4-a16a-e28f903d3045">Country (C) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="87bb9c3b-f51f-4eda-8427-bd62997a132e"><td colspan="1" rowspan="1" data-local-id="416c11fb-f3fb-42d5-b8fa-74af7cc0f3c5" class="confluenceTd"><p local-id="45b92596-fb8a-4068-a6d5-161a758c79cf">SUBJECT_RDN_DC</p></td><td colspan="1" rowspan="1" data-local-id="007ec69d-0d49-4345-a306-c991d2794e8f" class="confluenceTd"><p local-id="e4909342-ce57-45a3-bdd3-3f7b722886db">Domain Component (DC) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="e505d72a-eb1d-4fc1-8949-85c847eadaf1"><td colspan="1" rowspan="1" data-local-id="490f6557-5c57-4fd8-8da9-20db694710d7" class="confluenceTd"><p local-id="81843d52-8988-4a9c-8629-c45330232310">SUBJECT_RDN_ST</p></td><td colspan="1" rowspan="1" data-local-id="583c8590-107c-457c-af05-af2f6670625c" class="confluenceTd"><p local-id="0fd9d387-b1c9-41f4-b008-8f45637c0c7b">State or Province (ST) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="275c164f-cdc0-4855-91c7-324194fd1736"><td colspan="1" rowspan="1" data-local-id="77315b37-79e8-4268-9ea8-ed60e64e7ce8" class="confluenceTd"><p local-id="6ec9feae-7ccb-4374-9584-ca299b1e1825">SUBJECT_RDN_L</p></td><td colspan="1" rowspan="1" data-local-id="876b0ade-9340-42f0-9def-6257385efa1a" class="confluenceTd"><p local-id="013b5c1a-322e-4e9b-b0a5-9efd42aecc65">Locality (L) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="8f906ab8-1285-4f10-9787-92ad18dd29d1"><td colspan="1" rowspan="1" data-local-id="9fbeed04-a8d0-45dc-a668-835fbe6992bc" class="confluenceTd"><p local-id="01233b32-5bf2-4769-a0bf-a9a568588d3c">SUBJECT_RDN_O</p></td><td colspan="1" rowspan="1" data-local-id="25898152-ab2e-4ea8-818f-a39fb7906751" class="confluenceTd"><p local-id="fb5f3ec1-3a85-47ab-85d4-a9adb61590b4">Organization (O) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="a92dde0d-a423-4f4e-8a92-4a115d477125"><td colspan="1" rowspan="1" data-local-id="fe693d96-e370-4832-9cf3-ff886de90946" class="confluenceTd"><p local-id="4374a85c-77fe-44c3-b7a9-9c2d50778170">SUBJECT_RDN_OU</p></td><td colspan="1" rowspan="1" data-local-id="984c1394-228c-4837-869d-ab0f818ab173" class="confluenceTd"><p local-id="eef5c3f0-859c-40de-9dc6-a28bc482c29c">Organizational Unit (OU) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="3540d07f-d385-489e-afce-5ba013e978a1"><td colspan="1" rowspan="1" data-local-id="99e5820e-8ffa-439d-9a57-1bc7ee8fa90a" class="confluenceTd"><p local-id="b3e7c0c3-d365-4163-a37d-0f036d4f4d6c">SUBJECT_RDN_TITLE</p></td><td colspan="1" rowspan="1" data-local-id="51e869df-4309-4483-b0a3-343e10682cf6" class="confluenceTd"><p local-id="227a2e26-63f3-4c43-9f72-a6fe02f9c826">Title (title) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="151764d9-6ec7-4a53-93cb-d4fe241acca0"><td colspan="1" rowspan="1" data-local-id="d16202f8-e816-4bb1-b8c9-73fa49c5de94" class="confluenceTd"><p local-id="dde61fc9-f1eb-4c3d-b7d4-6f986c2c257d">SUBJECT_RDN_UID</p></td><td colspan="1" rowspan="1" data-local-id="328643fb-6eb9-488b-9b02-59804862db70" class="confluenceTd"><p local-id="26f1f7fd-72aa-430e-bce6-2c3183889462">Unique ID (UID) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="58f68afb-3c0d-445e-8cef-b1600ee44535"><td colspan="1" rowspan="1" data-local-id="4f04e91b-d109-48cf-8abc-2c9be2f5d1bc" class="confluenceTd"><p local-id="f8e0382b-33f8-4de6-adff-35467e8989e9">SUBJECT_RDN_E</p></td><td colspan="1" rowspan="1" data-local-id="7671f876-b20e-4f84-a1ea-95242b75886a" class="confluenceTd"><p local-id="91bff40b-a36c-477e-9a6c-3044d1e43adb">E-mail address in DN (E) RDN in textual representation from Subject DN.</p></td></tr><tr data-local-id="5efc2710-31a6-47a1-9023-1f69c6f609af"><td colspan="1" rowspan="1" data-local-id="8f5cded5-f03c-4031-bb89-1a1613f24bbd" class="confluenceTd"><p local-id="c340832d-478d-43bc-802e-7d6f30b80309">SUBJECT_ALTNAME_RFC822NAME</p></td><td colspan="1" rowspan="1" data-local-id="b34f4db0-1440-4ad2-beeb-c5d5876673ec" class="confluenceTd"><p local-id="097a519c-f02f-4d3c-864d-4d7a3177849b">RFC822Name Subject Alternative Name.</p></td></tr><tr data-local-id="c351b770-a1df-4f0d-953b-f6bbd5e68ea7"><td colspan="1" rowspan="1" data-local-id="02078abb-e498-4477-8a7c-bb7664ab1e8e" class="confluenceTd"><p local-id="6f5d65ed-0759-4b1d-abff-b56f2ad6c726">SUBJECT_ALTNAME_MSUPN</p></td><td colspan="1" rowspan="1" data-local-id="bface832-df5c-4f6c-a093-ffdc14f1587b" class="confluenceTd"><p local-id="eb63560c-f3ce-48b5-af24-27b734ebb3a7">MS UPN Subject Alternative Name.</p></td></tr></tbody></table></div></div></div><div class="expand-container"><p class="expand-control-text">Supported values for -matchIssuerWithType:</p><div class="expand-content"><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="aa2183ec-156a-44e7-98de-fb0445436254" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 34.5622%;"><col span="1" style="width: 65.4378%;"></colgroup><thead><tr data-local-id="255d3e54-a191-49d2-9fce-fb35c8a74397"><th colspan="1" rowspan="1" data-local-id="f75008f5-8411-4835-b06e-fe91bb9475fd" class="confluenceTh"><p local-id="75fa33fb-8b3f-4578-ab31-04da4f11a14b"><strong>Type</strong></p></th><th colspan="1" rowspan="1" data-local-id="86a235cc-d86c-40e2-9fcc-e33c78160e60" class="confluenceTh"><p local-id="e1d95026-24e1-4727-b597-39ff2ecf1ed5"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="78731b34-f78b-42a5-9b9a-04ba0f33368f"><td colspan="1" rowspan="1" data-local-id="2accc910-21b6-4b4b-ba49-0631ccbb5fd0" class="confluenceTd"><p local-id="d8df7e13-797a-46a3-92d5-812fbcaad8dc">ISSUER_DN_BCSTYLE</p></td><td colspan="1" rowspan="1" data-local-id="8d876a67-ed70-4f46-9b1c-f79239707fad" class="confluenceTd"><p local-id="c9501215-798f-46d3-9da6-412ac763014d">Issuer DN in textual EJBCA/BC DN style.</p></td></tr></tbody></table></div></div></div><div class="expand-container"><p class="expand-control-text">Usage Examples</p><div class="expand-content"><p local-id="c5b4f221-2b7a-473b-8b3e-a2ba7d36ed4a">Example 1:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -list</code></div>
+</div>
+</div><p local-id="59582126-0e71-435f-b03e-c5f17c208a58">Example 2:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -add </code></div>
+<div class="line"><code class="plain"> -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue </code><code class="string">"Client One"</code></div>
+<div class="line"><code class="plain"> -matchIssuerWithValue </code><code class="string">"CN=AdminCA1, C=SE"</code></div>
+</div>
+</div><p local-id="1a8736eb-8548-4e56-bdf5-a3e7a019a9ee">Example 3:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -add </code></div>
+<div class="line"><code class="plain"> -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue </code><code class="string">"Client One"</code></div>
+<div class="line"><code class="plain"> -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue </code><code class="string">"CN=AdminCA1, C=SE"</code><code class="plain"> -description </code><code class="string">"my rule"</code></div>
+</div>
+</div><p local-id="a8830b1e-d186-4950-a372-4e4a6ecfef91">Example 4:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -add </code></div>
+<div class="line"><code class="plain"> -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_BCSTYLE </code></div>
+<div class="line"><code class="plain"> -cert /tmp/admin.pem</code></div>
+</div>
+</div><p local-id="1abfbd06-d0a9-4759-829a-1fac7c8196f1">Example 5:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -remove </code></div>
+<div class="line"><code class="plain"> -matchSubjectWithType CERTIFICATE_SERIALNO </code></div>
+<div class="line"><code class="plain"> -matchIssuerWithType ISSUER_DN_BCSTYLE </code></div>
+<div class="line"><code class="plain"> -cert /tmp/admin.pem</code></div>
+</div>
+</div></div></div></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="e48a1f49-384d-4252-8fce-7a991dd9e86f"><del>addauthorizedclient</del></p><p local-id="b155f9b1-cb3a-4c89-852e-74cfafd70c75"></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="9f062151-6354-4a10-9bdd-5fa850f83f74">The addauthorizedclient command is deprecated and only supports legacy rules. Use the <a href="Admin_CLI.html#AdminCLI-authorizedclients" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-authorizedclients" data-scroll-link-target-source-id="371000510">authorizedclients</a> command instead.</p></div></div><p local-id="57c1ed51-46db-410d-b915-da99693d34d0">Adds a client certificate to a processable Workers list of acceptable clients using this Worker. Specify certificate serial number in hex and the Issuer DN of the client certificate. If DN components contains commas, these need to be escaped with backslashes. Alternatively, a certificate file (PEM or DER format) can be specified, from which the serial number and issuer DN is fetched.</p><div class="expand-container"><p class="expand-control-text">Usage Examples</p><div class="expand-content"><p local-id="ab8a41cd-f2d3-4d54-8f9f-b26c9cd4fd7e">Usage example 1:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver addauthorizedclient 1 EF34242D2324 </code><code class="string">"CN=Test Root CA"</code></div>
+</div>
+</div><p local-id="733de87c-c755-4131-ac9c-b3aa53f408b9">Usage example 2:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver addauthorizedclient 1 EF3456789ABC </code><code class="string">"CN=Client,O=Test Organization,C=SE"</code></div>
+</div>
+</div><p local-id="a7f80223-5b27-4887-81bd-4dcbb19bf340">Usage example 3:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver addauthorizedclient 1 client.pem</code></div>
+</div>
+</div></div></div></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="f8958771-23c3-4b53-a36e-05723fdff7ea"><del>removeauthorizedclient</del></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="184f4d6e-43b1-43fd-8582-b47b11e5f4f2">The removeauthorizedclient command is deprecated and only supports legacy rules. Use the <a href="Admin_CLI.html#AdminCLI-authorizedclients" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-authorizedclients" data-scroll-link-target-source-id="371000510">authorizedclients</a> command instead.</p></div></div><p local-id="d40f5b98-0ade-4655-8953-92123dd2d161">Removes added client certificate entries.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="d5006156-2091-4f86-991c-26bc5ddfe19d"><del>listauthorizedclients</del></p><p local-id="a38e5087-3fd9-4523-89f9-3033891bd234"></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="719d22fa-2600-44b5-a498-cf41cef02af3">The listauthorizedclients command is deprecated and only supports legacy rules. Use the <a href="Admin_CLI.html#AdminCLI-authorizedclients" rel="nofollow" shape="rect" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI#src-371000510_AdminCLI-authorizedclients" data-scroll-link-target-source-id="371000510">authorizedclients</a> command instead.</p></div></div><p local-id="901871e3-8c2e-4bc7-8ac6-fa098e365936">Displays the current list of acceptable clients.</p></div>
+</div>
+</div>
+</div>
+<hr local-id="c6ed99e6-96ad-4af1-8a89-2d74822351a9"><h2 local-id="71be635f-6d15-4a9f-bc14-d5ff8c93a125" id="AdminCLI-DatabaseCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Database-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Database Commands</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="f2290b91-1389-45c0-91de-d8a2bed49855"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="c6f67498-8a26-48b2-960e-108dcb49bf1e"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="7687c604-23fe-48a9-9bae-b5cea854291d">resync</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="37612563-4a74-457c-9d26-135b6f38e23c">The <code>resync</code> command is used if a SignServer had a complete database failure. When this happens, the Global Configuration switches to Off-line mode and it is not possible for the nodes to communicate internally and the Global Configurations will no longer be in sync. When the database is up again, the&nbsp;<code>resync</code> command can be sent to the node that has the most valid Global Configuration to write it to the database. After the resynchronization is performed, the Global Configuration will re-enter On-line mode.</p></div>
+</div>
+</div>
+</div>
+<hr local-id="0e5d9575-9ce0-41c7-ae7d-eb3dda7e5318"><h2 local-id="86475360-e92a-48c6-a2a5-a9315664163e" id="AdminCLI-ArchiveCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Archive-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Archive Commands</span></h2><p local-id="211f829d-67d3-40f5-b38b-3b8460fc2af5">The archive commands can be used for processable Workers with archiving enabled to find specific archived responses. Whether a Worker or Archiver supports being queried using the archive commands, is governed by their respective implementation.&nbsp;For Archivers other than the default <strong>OldDatabaseArchiver</strong> and <strong>Base64DatabaseArchiver</strong>, querying might have to be performed directly in a database, filesystem, or by some custom application.</p><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="ca9f51da-ba16-4642-b44a-9a11252eb932"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="36cd6b15-d522-47ad-a539-c85ddc61bdfb"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="67e80740-99c4-4230-9ccc-05c7aadfd998">archive findfromarchiveid</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="f4a68c87-4a4f-4b82-9bab-c13366c89f5a">Used to extract archived data from database identified by the archive ID. The ID depends on the Worker. For example,&nbsp; in case of the TSA, the TimeStampInfo serial number is used. The data is stored with the same file title as the archive ID, and with the file extension depending on the type of item, for example <code>.request</code> or <code>.response</code>.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="c292f504-b096-466e-9987-8a397f244fcb">archive findfromrequestip</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="8c9013ee-7c3c-489e-aa18-f61051313a10">Used to extract all archived data requested from a specified IP address. All data is stored as separate files with the archive ID as file title, and the file extension depending on the type of item.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="4429f4c9-28dc-44f2-8e2c-167f3107764e">archive findfromrequestcert</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="182a074c-1cf3-49ad-84a3-412730740945">&nbsp;Used to extract all archived data requested from a client by its specified certificate serial number and issuer DN. All data is stored as separate files with the archive ID as file title and the file extension depending on the type of item.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="ab61f55b-0d47-478e-ae02-2a733cd43390">archive query</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="b3b68691-b728-4df8-a5fb-7f2f183cbc2f">Used to query contents of the archive. Actual archived data is not fetched by this command.</p><p local-id="73064098-44a7-42b8-a241-8cbe7f3489bc">Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver archive query -limit &lt;number&gt; [-criteria  </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-header] [-request|-response]</code></div>
+</div>
+</div><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="c2aff3ec-e8e7-4cf2-bb44-0ae7d9245d49" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="7083d07d-e112-4c00-83ae-bd97aadd554a"><th colspan="1" rowspan="1" data-local-id="658dbc70-b44a-464a-94aa-2a51a6f6906b" class="confluenceTh"><p local-id="2e28bde8-bb4b-485e-bcd9-cb7da6476b00"><strong>Option</strong></p></th><th colspan="1" rowspan="1" data-local-id="3f7a93cd-9687-488a-966b-2446b73994e1" class="confluenceTh"><p local-id="5c56dbb4-f9ed-439b-bea1-6469f96c5857"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="ff393e92-06af-4603-a233-ec94d2fcf44d"><td colspan="1" rowspan="1" data-local-id="d66b3081-9a94-4b7e-804c-d60c61f1ed39" class="confluenceTd"><p local-id="c2347ad7-20bb-4d85-97e2-59c7ebe7416b">&lt;field&gt;</p></td><td colspan="1" rowspan="1" data-local-id="3fec7161-7c3d-4307-9153-b281c2084a84" class="confluenceTd"><p local-id="6b654db3-4f7e-45bb-9888-ec1219ef531b">Field name from the archive: <strong>archiveId</strong>, <strong>requestCertSerialNumber</strong>, <strong>requestIP</strong>, <strong>requestIssuerDN</strong>, <strong>signerid</strong>, <strong>time</strong>, <strong>type</strong>.</p></td></tr><tr data-local-id="c5775391-354d-4067-b02c-09925eb72b12"><td colspan="1" rowspan="1" data-local-id="b62ec084-bc05-456b-b80c-180fd85551e9" class="confluenceTd"><p local-id="f833d17d-05a3-442e-bfc1-3fc2e9528d03">&lt;op&gt;</p></td><td colspan="1" rowspan="1" data-local-id="e4feb32d-d9a7-4547-a49f-b6c323825d06" class="confluenceTd"><p local-id="71be3279-0a5b-493d-8545-bc61c8b1761d">Relational operator: <strong>GT</strong>, <strong>GE</strong>, <strong>LT</strong>, <strong>LE</strong>, <strong>EQ</strong>, <strong>NEQ</strong>, <strong>LIKE,NULL</strong>, <strong>NOTNULL</strong>.</p></td></tr><tr data-local-id="bcd2f53b-ef4c-4e6c-938a-2d07267e4793"><td colspan="1" rowspan="1" data-local-id="1fa82f92-6164-4766-a8da-117341918f78" class="confluenceTd"><p local-id="742fba1d-ad11-459b-86ab-e0e098c222b0">-request</p></td><td colspan="1" rowspan="1" data-local-id="05215e63-0f7b-4cb0-8d77-e822da8d2eff" class="confluenceTd"><p local-id="40030ee7-c84c-46e9-8434-02ab294cb668">&nbsp;Shows only entries for requests.</p></td></tr><tr data-local-id="66101f04-8eef-49a2-a79f-a04269782845"><td colspan="1" rowspan="1" data-local-id="8516bd20-0aa9-4e0f-9f3b-c206e147ad78" class="confluenceTd"><p local-id="cd10bb56-75d3-457a-b654-f81775974412">-response</p></td><td colspan="1" rowspan="1" data-local-id="e9301911-97b8-41a7-b5d2-e9be54d08a7f" class="confluenceTd"><p local-id="13eaedcf-f65c-4397-af4a-ce24c18f17c5">Shows only entries for responses.</p></td></tr></tbody></table></div><p local-id="65657c15-3152-4929-bbd8-fc0cee4412b2">Examples:&nbsp;</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code><code class="plain"> -request</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"time GT 1359623137000"</code><code class="plain"> -criteria "requestIP EQ 127.0.0.1</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code><code class="plain"> -outpath </code><code class="plain">/tmp/out</code><code class="plain">\n\n"</code></div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+<hr local-id="211b926f-4b66-4e8b-b96b-82290d773d97"><h2 local-id="8709e26b-7eab-4d27-b55a-1770c23f599b" id="AdminCLI-AdministratorCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Administrator-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Administrator Commands</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="85008de4-77bb-4bbb-bad3-18be1a9b336e"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="3762b7f7-1af1-4b05-be9a-b0e66ad09aed"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="30b862cb-931a-41ee-9cfd-7a612a76b3ca">wsadmins -list</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="5d9a7c08-ef1c-44a6-aa0f-f09c5b8dc31a">Lists administrator certificates (certificate serial number and issuer DN) for administrators authorized to use the Admin Web Service interface to administrate SignServer.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="37af39e3-c378-4662-9da1-40409b4b597f">wsadmins -add</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="26d4e5dc-8bbf-4f4a-a9d5-616fbcb45bf1">Authorizes an administrator to use the Admin Web Service interface by certificate serial number (in hexadecimal) and issuer DN with space after each comma separating DN components. If DN components contains commas, these needs to be escaped with backslashes.</p><p local-id="201e4349-1248-4f10-a7db-caed078f0922">The following displays how to enter the issuer DN when using a certificate issued from EJBCA with the default (as specified by EJBCA) LDAP DN order:</p><div class="scroll-code scroll-highlighted-code-block" data-language="text" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">C=SE, O=TestOrganization, CN=IssuingCA</code></div>
+</div>
+</div><p local-id="2a4d1032-ed7c-436b-870c-d4716cb0a8cf">The following displays using escaped DN components:</p><div class="scroll-code scroll-highlighted-code-block" data-language="text" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">C=SE, O=TestOrganization\, The, CN=IssuingCA\, Th</code></div>
+</div>
+</div><p local-id="c79d2109-bbe5-4982-9ba6-7e944a760e3d">Note that the order is reversed, compared to how the issuer DN is stored in the certificate.</p><p local-id="c9669e23-e442-4022-b57c-33db6d201ab4">The following displays how to enter the issuer DN when using a certificate issued from EJBCA with the Use LDAP DN order option disabled:</p><div class="scroll-code scroll-highlighted-code-block" data-language="text" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">CN=ReverseIssuingCA, O=TestOrganization, C=S</code></div>
+</div>
+</div><p local-id="db2f8e9c-09ea-467b-9422-61b5ccf4888f">Alternatively, a certificate file can be specified from which the serial number and issuer DN will be taken.</p><div class="expand-container"><p class="expand-control-text">Usage Examples</p><div class="expand-content"><p local-id="099a0d5b-69f9-46cd-8559-632dfb697f13">Usage example 1:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver wsadmins -add -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
+</div>
+</div><p local-id="2b6bfbca-b86d-4d6c-9630-7b6abe0ed2a7">Usage example 2:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver wsadmins -add -cert wsadmin.pe</code></div>
+</div>
+</div></div></div></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="3d38b170-d15c-4b70-ad2e-6aa9cd0365e2">wsadmins -remove</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="d442a519-be03-4f5a-ab45-9d799b2c89df">Removes an administrator from the list of authorized administrators.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="2c016fa7-b6a3-4637-9aa0-266669b5a702">wsadmins -allowany</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="c8667221-3952-40f9-a8a2-361a8dcd4ed2">Specifies whether any administrator with a certificate accepted by the web server/proxy is authorized or not. When set (true) it overrides the WSADMINS global property. Takes an optional boolean parameter, if left out sets to true (allow all). This can be used for initial setup.</p></div>
+</div>
+</div>
+</div>
+<hr local-id="9eb3ef89-e9b9-4c8b-b83a-82426fa8c797"><h2 local-id="5a89d9d3-77fb-4fd8-9f3e-81a99860c33b" id="AdminCLI-AuditorCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Auditor-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Auditor Commands</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="3e2fc802-4d25-4b95-aaf5-b63532fe13b1"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="8a482ad0-cf01-4c4f-bc24-cc2040137963"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="1595f3a0-db4d-45f9-a472-b55d4d711080">wsauditors -list</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="2b4a6732-187c-4b33-926b-6039161b322b">Lists auditor certificates (certificate serial number and issuer DN) for administrators authorized to use the Admin Web Service interface to query the audit log of SignServer.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="3359122f-24d0-4d66-85eb-2ffd76744f5b">wsauditors -add</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="cdcd359d-0641-4e0c-b255-5765608d4b72">Authorizes an auditor to use the Admin Web Service interface by certificate serial number (given in hexadecimal) and issuer DN.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="f037a963-cd19-4e9f-a263-61a07997e148">wsauditors -remove</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="6df22b8d-2e48-492f-8e79-ca0cdaa4beb4">Removes an auditor from the list of authorized administrators.</p></div>
+</div>
+</div>
+</div>
+<hr local-id="574711d2-91de-4b46-a9e1-d8f3548d6569"><h2 local-id="52466aef-1ff4-46d4-87ef-e8a5499418c9" id="AdminCLI-ArchiveAuditorCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Archive-Auditor-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Archive Auditor Commands</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="aa75192a-f8a6-47c0-b44b-7f291ec8df02"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="f74ef9b3-c7b8-4768-b8ac-dc72ecd33f48"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="e97c853c-68f1-4ad4-9819-dd6ef3dfd365">wsarchiveauditors -list</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="3c3f56a5-4170-4049-b86e-dd7ec5ff9ba6">Lists archive auditor certificates (certificate serial number and issuer DN) for auditors authorized to use the Admin Web Service interface to query the archive of SignServer.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="208483e9-c45a-49bf-95c6-375ea362f614">wsarchiveauditors -add</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="1ce64c3e-83ab-4ecd-84f4-addb69fa62be">Authorizes an auditor, by specifying a certificate serial number (in hexadecimal) and issuer DN, to use the Admin Web Service interface for querying the archive.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="9d62a5e5-f337-4132-b239-d5712f313a6b">wsarchiveauditors -remove</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="6c591ab7-0c9c-406d-a810-74bc0a7c4208">Removes an auditor from the list of authorized archive auditors.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="9187bacb-1a40-4bbe-a1c4-5088f0091feb">auditlog -query</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="66680ad4-9f71-479c-ad13-ed2552e5d261">Query the CESeCore audit log.</p><p local-id="b792b58c-4fa5-44f2-b972-be862ac8bee7">Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver auditlog -query -limit &lt;number&gt; [-criteria </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-header]</code></div>
+</div>
+</div><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="a21d7f5a-3947-45ef-a038-0a604c205be9" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="bce14502-b09d-457c-a893-1a979d1a5391"><th colspan="1" rowspan="1" data-local-id="6229c77a-0c34-454d-b643-6f8fa06589c6" class="confluenceTh"><p local-id="eb59da01-6087-4d23-b723-eeb3927532f9"><strong>Option</strong></p></th><th colspan="1" rowspan="1" data-local-id="79cb35a7-5c1a-44b6-bc7e-612eb679e2f0" class="confluenceTh"><p local-id="33b19b0e-9dc4-42dc-9c28-755ec598923a"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="bc5b14f0-57b0-43f8-9902-0fe41233bbf0"><td colspan="1" rowspan="1" data-local-id="80b16b72-f46c-4a64-8dc6-616639a74d9b" class="confluenceTd"><p local-id="f686d18d-405b-4c4d-91a0-79a0b5b2a4b3">-limit</p></td><td colspan="1" rowspan="1" data-local-id="f04e4ada-7dde-4ef1-9aa1-18c4ac4d1e12" class="confluenceTd"><p local-id="579d9f15-0149-4601-8724-f8efb4626677">Sets the maximum number of rows matched. Required to avoid putting too much load on the server.</p></td></tr><tr data-local-id="aedee18a-200e-404e-8477-d4741db9fbdd"><td colspan="1" rowspan="1" data-local-id="acd40d76-d5b9-4f18-8654-a09a3ab04fda" class="confluenceTd"><p local-id="50483ca0-fc23-42d7-b7cb-5c3b1ef2431b">&lt;field&gt;</p></td><td colspan="1" rowspan="1" data-local-id="0ebd5154-86a3-4a32-a470-01a1fdfae637" class="confluenceTd"><p local-id="344ed643-701a-4782-8cb5-42779acdb7f1">&nbsp;Field name from the audit log: <strong>additionalDetails</strong>, <strong>authToken</strong>, <strong>customId</strong>, <strong>eventStatus</strong>, <strong>eventType</strong>, <strong>module</strong>, <strong>nodeId</strong>, <strong>searchDetail1</strong>, <strong>searchDetail2</strong>, <strong>sequenceNumber</strong>, <strong>service</strong>, <strong>timeStamp</strong>.</p></td></tr><tr data-local-id="fdc86e76-a919-4106-b7e0-b0169aaa6037"><td colspan="1" rowspan="1" data-local-id="e3a7be73-9a1f-4c4d-babd-8ffa6894e4ef" class="confluenceTd"><p local-id="8dde7e86-9590-4881-af0d-3de72b81bc01">&lt;op&gt;</p></td><td colspan="1" rowspan="1" data-local-id="95cbe57e-ed76-40f3-9a64-15db7a68ca34" class="confluenceTd"><p local-id="e34f6269-3c48-4476-a4f2-0ddc2f42d8b4">&nbsp;Relational operator: <strong>GT</strong>, <strong>GE</strong>, <strong>LT, LE</strong>, <strong>EQ</strong>, <strong>NEQ, LIKE, NULL</strong>, <strong>NOTNULL</strong>.</p></td></tr><tr data-local-id="56c3b172-30e8-4614-aa1e-955af0205fec"><td colspan="1" rowspan="1" data-local-id="fcd8c3b7-3b14-4698-b438-f7cc4023742e" class="confluenceTd"><p local-id="210f919f-03e6-4a77-8d3a-284b2a742915">-from</p></td><td colspan="1" rowspan="1" data-local-id="227a740c-0af3-4e9d-acc7-c1423ba297a8" class="confluenceTd"><p local-id="0c1a3f5f-ea28-4764-9afa-8de600626206">Lower index in search result (0-based).</p></td></tr><tr data-local-id="cb5abda0-9ee5-492c-bf5c-dfb21f025bca"><td colspan="1" rowspan="1" data-local-id="903c7a5d-3d96-4b0c-b2f1-8485c221137a" class="confluenceTd"><p local-id="264d0254-440d-455a-8b79-694dae32711e">-header</p></td><td colspan="1" rowspan="1" data-local-id="35085557-8bf9-4984-a3a5-16f6b25e0536" class="confluenceTd"><p local-id="53f2fbd3-d38f-4929-bf17-2542aa58ab1c">Outputs a column header before the results.</p></td></tr></tbody></table></div><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="59e824b1-811a-415e-a0bf-daa44cb32ed8">If <strong>databaseprotection.enableverify</strong> is enabled at the server side, the signature of each row displayed is verified. If the verification fails for any of the rows matching the search criteria, an error message is displayed. The error message contains information about the first row that failed.</p></div></div></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="efadc7fd-0bb5-43cd-953e-94d012135bc9">querytokenentries</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="58c17425-7cd0-4765-bec9-81047cd850da">Queries the entries (key alias, certificates etc) in a CryptoToken. If no limit is given, all entries are queried and printed (10 at a time). You can specify to start query from an index in the result. Search conditions can be added to only search for entries with certain key aliases.</p><p local-id="5a0d6ad2-98a1-45d7-be2c-a15371cdf843">Usage:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signserver querytokenentries -token &lt;</code><code class="functions">id</code><code class="plain"> or name&gt; -limit &lt;number&gt; [-criteria  </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-</code><code class="functions">v</code><code class="plain">]</code></div>
+</div>
+</div><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="55bfeada-246d-406c-ace6-d9c3cc2c7e8a" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="83cd288a-0536-41f6-b801-829649857a3e"><th colspan="1" rowspan="1" data-local-id="8f7a4d83-7a11-46ee-a3b9-9226c8a1036a" class="confluenceTh"><p local-id="d5beb852-c5c2-408d-9390-c1b6af2b71d9"><strong>Option</strong></p></th><th colspan="1" rowspan="1" data-local-id="ed8f0004-c078-4141-a111-4c0182246935" class="confluenceTh"><p local-id="ff84837a-a61b-4840-a6bc-4bd4356e59d5"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="8ec047f5-c303-48a4-847a-6826541b3f2e"><td colspan="1" rowspan="1" data-local-id="72ac1708-0d0b-4226-a729-cb923fbbec19" class="confluenceTd"><p local-id="c829559f-8cba-487e-955c-46051b09802c">-limit</p></td><td colspan="1" rowspan="1" data-local-id="b055a30b-33b7-4b70-9eda-2d9378aaffa4" class="confluenceTd"><p local-id="3237084a-66a3-4133-b083-0267dacb7ffd">&nbsp;Sets the maximum number of rows matched. Required to avoid putting too much load on the server.</p></td></tr><tr data-local-id="4269bc32-78e7-4041-bf65-4ddb3f587145"><td colspan="1" rowspan="1" data-local-id="4edd0502-6db8-4379-9556-eb4350c82cf9" class="confluenceTd"><p local-id="006451f8-a67a-42d7-a9fb-316398e034b0">&lt;field&gt;</p></td><td colspan="1" rowspan="1" data-local-id="d3b2eefa-7bd5-404b-855b-69cfe0ebec29" class="confluenceTd"><p local-id="21a895fa-f966-418b-861a-d825bb41a956">Field name from the token: <strong>alias</strong>.</p></td></tr><tr data-local-id="ae2de00f-5f59-4de6-b458-782961f8d880"><td colspan="1" rowspan="1" data-local-id="d0ea102a-5d79-455f-bf2b-7c256aa77e16" class="confluenceTd"><p local-id="cc5d7d75-5406-41fa-b41b-25812c2e366c">&lt;op&gt;</p></td><td colspan="1" rowspan="1" data-local-id="8235e87a-5dbc-4ef6-90e1-40008344792c" class="confluenceTd"><p local-id="cfba4fdf-f146-4045-8627-99237b0495be">Relational operator: <strong>EQ</strong>, <strong>NEQ</strong> or <strong>LIKE</strong>.</p></td></tr><tr data-local-id="80054847-9469-4cf9-b9c8-fddfa316cd20"><td colspan="1" rowspan="1" data-local-id="d37f8969-a7bc-4fa7-9c55-60bcb4c91573" class="confluenceTd"><p local-id="3fbbb549-913d-4d02-aae3-49b0ccf92783">-v</p></td><td colspan="1" rowspan="1" data-local-id="754d65e7-f3bc-4fad-84b6-88fa805c243c" class="confluenceTd"><p local-id="40f6da25-d974-40e1-8a98-b8f34279cb3d">&nbsp;Means verbose and if given, the output also includes type, as well as any certificates or additional information available in each entry.</p></td></tr></tbody></table></div></div>
+</div>
+</div>
+</div>
+<hr local-id="92d91b04-1547-404c-b04f-1f4a90a84d61"><h2 local-id="a2ab5d84-c700-47ba-9418-01e88aa86ff8" id="AdminCLI-PeerSystemsCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Peer-Systems-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Peer Systems Commands</span></h2><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="a7260b9a-6624-443e-b4ea-4d006e226af5"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="a5ffcf35-3860-4efb-9f10-c7026c55c7a7"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="cc7defa3-7760-45d9-9f00-c585a7d73433">wspeersystems -list</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="2343c843-86b4-4d06-a4a5-ac289c3ee564">Lists certificates (certificate serial number and issuer DN) for peer systems (i.e. EJBCA) authorized to use the <a href="Peer_Systems.html" data-linked-resource-id="371000778" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="371000778" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000778/Peer+Systems" data-scroll-link-target-source-id="371000778">Peer Systems</a> interface to query available key bindings and perform certificate renewal/rekeying.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="aa99ca9c-461d-4663-8d72-48d2fed3bc0a">wspeersystems -add</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="734141cc-9ff6-49b5-a439-7b7229dd237a">Authorizes a peer system to use the Peer Systems interface by certificate serial number (given in hexadecimal) and issuer DN.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="e22d03df-ccd0-4beb-843e-45616083a4f3">wspeersystems -remove</p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="090ba469-1177-4691-8f16-31ce1da69b61">Removes a peer system from the list of authorized peer systems.</p></div>
+</div>
+</div>
+</div>
+<hr local-id="b1d2a591-1a0d-4399-80a2-6fbcc11ae6cb"><h2 local-id="c8a32f67-39aa-43a8-a91a-e4fc26821834" id="AdminCLI-StatusRepositoryCommands" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000510_AdminCLI-Status-Repository-Commands"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Status Repository Commands</span></h2><p local-id="9f030734-35bd-4ff2-8d63-3a41efba05d3">The status repository holds non-persistent local (per JVM) status information (properties) with optional expiration times. After the expiration time, the property is not returned. The value is also not preserved among server restarts.</p><p local-id="b5e02098-98f9-4763-ac53-f5df51755b2c"><span class="inline-comment-marker" data-ref="980e825a-8882-4b5b-b095-4ad6a682e174">The status repository can be controlled using following properties: </span></p><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="49131256-f96f-45e4-858f-6a2444c67c45"><strong>Command</strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="d3f9a048-b94e-425f-a251-dc3385eb3918"><strong>Description</strong></p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="00b828e5-5f93-4ae9-a456-3ef448f2e21f"><span class="inline-comment-marker" data-ref="980e825a-8882-4b5b-b095-4ad6a682e174">getstatusproperty</span></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="5c7cbe90-eb3f-4bbd-886b-fde3001f4ca2">Gets the value of the status property. Execute the getstatusproperty command with the property name.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="084c873f-c964-4398-8341-1bdb1c94c490"><span class="inline-comment-marker" data-ref="980e825a-8882-4b5b-b095-4ad6a682e174">getstatusproperties</span></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="c3ef470e-687d-4678-b702-39812fc880d5">Gets the value of all status properties and their expiration time.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p local-id="a27e529a-c189-44df-b5bf-581448b23427"><span class="inline-comment-marker" data-ref="980e825a-8882-4b5b-b095-4ad6a682e174">setstatusproperty</span></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p local-id="b8625819-1b42-4c95-a799-39d5ebe99d9a">Sets the status property TIMESOURCE0_INSYNC to <em>true.</em></p></div>
+</div>
+</div>
+</div>
+<p local-id="1a137531-120b-45b7-811a-e66c12af9c38">For more information, see <a href="Status_Repository.html" data-linked-resource-id="371000338" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="371000338" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000338/Status+Repository" data-scroll-link-target-source-id="371000338">Status Repository</a>.</p>
+<nav id="ht-post-nav">
+        <a href="Admin_Interfaces.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Admin Interfaces</span>
+        </a>
+
+        <a href="Admin_WS_Interface.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Admin WS Interface</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

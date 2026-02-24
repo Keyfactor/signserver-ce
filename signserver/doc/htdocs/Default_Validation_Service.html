@@ -1,0 +1,239 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000042">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:38.967+0000">
+    <meta name="exp-page-id" content="371000042">
+    <meta name="exp-page-title" content="Default Validation Service">
+    <meta name="exp-page-version" content="7">
+    <meta name="exp-page-scroll-page-id" content="8b4a5b73cc60c4686f01fb2b20eaa74a">
+    <meta name="exp-page-created" content="2017-12-15T15:52:11.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-19T13:56:47.133+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Default Validation Service</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="80060d9555868f8608f667852194e3e53b9534f30dd1bcf6fea135ed8283cc6b"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="DefaultValidationService-top" pageid="371000042" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000042" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Validation_Service_Framework.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Validation Service Framework</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Default_Validation_Service.html" target="_self" aria-current="page">Default Validation Service</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-18f8548408f01d2d44ef6042139801d0b4fe883626df7c79cd5fdda4942b9f0a"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Default Validation Service</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <h2 local-id="df9adade-5f73-42e8-910c-e0aee1a5b46c" id="DefaultValidationService-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000042_DefaultValidationService-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="4584565a-6b5a-430a-9973-6deeda32ebb1">The&nbsp;Default Validation Service has a set of Validators. A Validator is responsible for checking&nbsp;the validity against one or more issuers, using for example CRL check or OCSP, or by checking a database.</p><p local-id="33c69b85-e467-47f0-b473-93ffde91cb5e">The Default Validation Service supports validations to be cached for some or all issuers for a specified amount of time. If not configured otherwise, the validation service uses the <code>DefaultX509CertTypeChecker</code> that determines the certificate type from the key usage in the certificate.</p><p local-id="5c770ef1-3eb6-4399-bf86-bc24c56cc10b">Key Encipherment and Digital Signature indicates an <em>IDENTIFICATION</em> type, and Non-reputation and/or Digital Signature indicates <em>ELECTRONIC_SIGNATURE</em>.</p><p local-id="7258d287-6ce3-4140-b318-dd434a03abe4">The validation specific Web Service can be used for platform independent client calls. The Web Service WSDL file is located at the URL:</p><p local-id="8cc7c5e8-b89f-40c7-aab8-45b6a9df9ad5"><code>http://&lt;hostname&gt;:8080/signserver/validationws/validationws?wsdl</code></p><p local-id="631f2c9e-5bd3-424c-a879-02499fbc67a6">The file contains two calls:</p><ul local-id="97fded6d-5c34-45b5-91db-83f82d3da421"><li local-id="80714478-f9a7-43a8-b4cc-8f587950538d"><p local-id="efded155-c43a-4da1-ad8a-e0ceb18afbc6">isValid:&nbsp; Performs the validation check.</p></li><li local-id="a71f0e07-bf7d-4f12-af41-e26185702d0d"><p local-id="eaee0dff-5eda-44c1-8aed-426586b1d18b">getStatus: Checks the health of the node and its underlying systems. Can be used by clients for monitoring or implementing redundancy.</p></li></ul><h2 local-id="a044e813-a1c1-473f-9fa5-989d734c5bf5" id="DefaultValidationService-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000042_DefaultValidationService-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><p local-id="91cef0b7-49aa-4757-992a-f9243e56964b">The following property types can be configured with the DefaultValidationService:</p><ul local-id="242c33e9-010c-48dc-aca2-1f346e0b13ae"><li local-id="356ad9d6-035b-4aea-8ac2-901aa1060cf0"><p local-id="039edc8a-4458-4c50-84af-8db9afd5d434"><a href="Default_Validation_Service.html#DefaultValidationService-general-prop" data-scroll-target-source-id="371000042" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000042/Default+Validation+Service#src-371000042_DefaultValidationService-general-prop" data-scroll-link-target-source-id="371000042">General Properties</a>: Apply for the service and all configured Validators.</p></li><li local-id="0a55557b-01f3-4ba2-a914-9d33b9ced4de"><p local-id="ffb84678-ba85-4945-8972-ff4cfdd9d4e0"><a href="Default_Validation_Service.html#DefaultValidationService-validator-prop" data-scroll-target-source-id="371000042" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000042/Default+Validation+Service#src-371000042_DefaultValidationService-validator-prop" data-scroll-link-target-source-id="371000042">Validator Properties</a>: Only apply for a specific Validator.</p></li><li local-id="8f6e9177-aa3e-4c6e-93c6-74dca352dc3d"><p local-id="88d72cb8-55f2-49d8-8dc5-0ca8b2ba2c3b">Issuer Properties: Only apply for an issuer configured in a specific Validator.</p></li></ul><h3 local-id="6f40f146-4766-41f0-9590-4125a90bd173" id="DefaultValidationService-GeneralPropertiesgeneral-prop" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="DefaultValidationService-general-prop"></span><span class="confluence-anchor-link" id="general-prop"></span><span class="confluence-anchor-link" id="src-371000042_DefaultValidationService-General-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">General Properties</span></h3><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="c53cd84b-b33d-4bf3-a6fd-8320b2bc5e27" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 15.6579%;"><col span="1" style="width: 28.4211%;"><col span="1" style="width: 55.9211%;"></colgroup><thead><tr data-local-id="e5c8f8a0-29da-4aae-b2ec-f96f17929a03"><th colspan="1" rowspan="1" data-local-id="d1f68add-641c-4274-a8c8-5e977dccb0ba" class="confluenceTh"><p local-id="bdc0dd45-b3e0-4c3e-a97b-8606abbf561b"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="5b2353ac-8939-43eb-846e-43900fae039d" class="confluenceTh"><p local-id="ca143947-21a5-43fb-a76c-25c7e305d3cf"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="6dadc6b4-39d6-4972-ae4c-5097f402d32b" class="confluenceTh"><p local-id="62228d98-d4e4-4c6f-aafc-73734c245946"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="0953d415-c49d-4dc8-b24c-46f779deb2eb"><td colspan="1" rowspan="1" data-local-id="ee93e9e6-a759-48ce-8f9a-8bc22e364c90" class="confluenceTd"><p local-id="8622f48a-6393-47eb-98db-ad3f00d63390">CACHEDISSUERS&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="0832605d-931c-4fec-9ba3-5854fd3805ba" class="confluenceTd"><p local-id="28246ba5-a2bf-4164-aa2e-8a28f456d277">Not set</p></td><td colspan="1" rowspan="1" data-local-id="b452cfad-0867-4838-9b3e-7a72955f1e90" class="confluenceTd"><p local-id="cbf36889-fbed-4f59-b784-3bf0d1f35e32">(Optional) Specifies a ';' separated list of issuer names (usually issuer DNs). No validation is cached if unset.</p></td></tr><tr data-local-id="d05d6ffd-4400-43f7-af2e-87d94c0f3f40"><td colspan="1" rowspan="1" data-local-id="91b0fc2c-d5e6-4011-a866-6b1bfdabea2c" class="confluenceTd"><p local-id="387217c4-3bea-4e2b-8943-649ac86f51ef">CERTTYPECHECKER&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="d8449e0d-bc1c-4bc4-ac52-f6d68def6884" class="confluenceTd"><p local-id="862e1816-a40d-420f-8dda-7f75d545cbe3"><em>org.signserver.validationservice.server.DefaultX509CertTypeChecker-</em></p></td><td colspan="1" rowspan="1" data-local-id="108cafe7-61fe-4204-9f16-8669d191fcb9" class="confluenceTd"><p local-id="70e4ba0a-68fb-4967-9cb0-d80c30380d78">(Optional) Specifies the certificate type checker used to determine the type of certificate. </p></td></tr><tr data-local-id="030bd61b-9401-4fea-98e6-6c80df0fe61b"><td colspan="1" rowspan="1" data-local-id="db04cc69-d243-4060-b92f-acb4e0598544" class="confluenceTd"><p local-id="b9cedd94-b316-4ed2-b1ad-56dfb80534bd">TIMEINCACHE&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="e197da8d-bec0-4461-9df6-6e474ab0c5a3" class="confluenceTd"><p local-id="aaf5d5ee-c4af-48cc-8e51-8bc3321e9d40"><em>10 seconds</em></p></td><td colspan="1" rowspan="1" data-local-id="fb6bb401-efaf-42dc-bc39-e47ce543c729" class="confluenceTd"><p local-id="f39f120d-c97b-46ee-8604-321f71da4854">(Optional) Specifies the time in seconds that a certificate validation should be cached. </p></td></tr></tbody></table></div><h3 local-id="331b89e4-8ff0-4dd6-80af-b33d964bb57a" id="DefaultValidationService-ValidatorPropertiesvalidator-prop" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="DefaultValidationService-validator-prop"></span><span class="confluence-anchor-link" id="validator-prop"></span><span class="confluence-anchor-link" id="src-371000042_DefaultValidationService-Validator-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Validator Properties</span></h3><p local-id="2d9dddb4-9220-41e0-bc28-5699e14de836">Validator properties are specified using the prefix of <code>validator&lt;validatorId&gt;.</code> or <code>val&lt;validatorId&gt;.</code>, were&nbsp;<code>&lt;validatorId&gt;</code> is an integer between 1 and 255. For example, to specify the type of a Validator with an ID of 1:</p><div class="scroll-code scroll-highlighted-code-block" data-language="text" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">val1.classpath=some.classpath.SomeClass</code></div>
+</div>
+</div><p local-id="d39ab3f0-25d2-4027-9baa-44ccd366dd3c">This Validator is initialized with all its Validator specific properties, (with&nbsp;<code>val&lt;id&gt;.</code> prefix removed), as well as the general ones.</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="476e47dc-6e46-4d03-9001-c7a3f89442de" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 16.5125%;"><col span="1" style="width: 83.4875%;"></colgroup><thead><tr data-local-id="6e254e3c-627a-4f4a-a09b-42d0d0456771"><th colspan="1" rowspan="1" data-local-id="676dad15-526a-4017-baa2-0dbff2bb0d90" class="confluenceTh"><p local-id="c5ff00e9-c282-49ce-9fec-76b1484c4525"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="119965f8-ca82-4ca8-8752-62f7022ea3bf" class="confluenceTh"><p local-id="7e64a0c8-c148-48e0-a664-5bd460d66a0f"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="25da023f-a4a7-472a-a964-2e54ab67eb68"><td colspan="1" rowspan="1" data-local-id="cd152300-47f3-46d7-96e3-09754875d8d8" class="confluenceTd"><p local-id="18b1b892-e514-4e16-a58f-c9c79b96bb1d">CLASSPATH&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="f857be70-5207-4202-b9c9-774fbda00171" class="confluenceTd"><p local-id="5d238c4d-f9f5-4768-9e4e-07289d2cd6fb">Specifies the fully-qualified class name of the Validator that should be used. Required for each configured Validator.</p><p local-id="d80ff282-f3d4-413f-9c39-ec74ad36ef61">Issuer properties<em>:</em>&nbsp;Issuer properties are specified as&nbsp;<code>val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;</code>, where <code>issuer id</code> is a positive integer between 1 and 255. All generic and Validator specific properties (with the given Validator id) will also be propagated to the specific issuer configuration.</p><p local-id="696061d9-d0e2-4b83-af98-0d120498bb09"><code>CERTCHAIN</code>: The certificate path of the CA certificates used to verify the certificate. Should be an appended BASE64 string. Required for each configured issuer.</p></td></tr></tbody></table></div><h2 local-id="44f5f13e-9c71-437a-89f7-89c9be8a0aca" id="DefaultValidationService-ExampleConfigurationofaValidationService:" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000042_DefaultValidationService-Example-Configuration-of-a-Validation-Service:"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Example Configuration of a Validation Service:</span></h2><div class="scroll-code scroll-highlighted-code-block" data-language="text" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain"># Set up the worker -&gt; validation service wrapper</code></div>
+<div class="line"><code class="plain">WORKER1.IMPLEMENTATION_CLASS=org.signserver.validationservice .server.ValidationServiceWorker</code></div>
+<div class="line"><code class="plain">#Uncomment and set class path to custom validation service, otherwise is default #used.</code></div>
+<div class="line"><code class="plain">#WORKER1.TYPE=</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain"># Name of Service (Optional)</code></div>
+<div class="line"><code class="plain">WORKER1.NAME=ValidationService1</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain"># Define TestCA2 and TestCA3 as a cached for 15 seconds, TestCA1 is Not cached.</code></div>
+<div class="line"><code class="plain">WORKER1.CACHEDISSUERS=CN=TestCA2;CN=TestCA3</code></div>
+<div class="line"><code class="plain">WORKER1.TIMEINCACHE=15</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain"># Define a validator in charge of issuer TestCA1 and TestCA2</code></div>
+<div class="line"><code class="plain">WORKER1.VAL1.CLASSPATH=&lt;Class path to some validator&gt;</code></div>
+<div class="line"><code class="plain">WORKER1.VAL1.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....</code></div>
+<div class="line"><code class="plain">WORKER1.VAL1.ISSUER2.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain"># Define a validator in charge of issuer TestCA3</code></div>
+<div class="line"><code class="plain">WORKER1.VAL2.CLASSPATH=&lt;Class path to some validator&gt;</code></div>
+<div class="line"><code class="plain">WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Validation_Service_Framework.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Validation Service Framework</span>
+        </a>
+
+        <a href="Certificate_Validators.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Certificate Validators</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

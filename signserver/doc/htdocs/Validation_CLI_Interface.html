@@ -1,0 +1,230 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000050">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:39.410+0000">
+    <meta name="exp-page-id" content="371000050">
+    <meta name="exp-page-title" content="Validation CLI Interface">
+    <meta name="exp-page-version" content="7">
+    <meta name="exp-page-scroll-page-id" content="c526ae58aa1099326adc0f90174df8c7">
+    <meta name="exp-page-created" content="2018-01-25T15:08:14.000+0000">
+    <meta name="exp-page-last-modified" content="2025-11-26T08:51:16.916+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Validation CLI Interface</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="cadb06325f075b986d7d79a988001f6cf4a619b656a97673646a962045b7a4fb"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ValidationCLIInterface-top" pageid="371000050" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000050" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Validation_Service_Framework.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Validation Service Framework</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Validation_CLI_Interface.html" target="_self" aria-current="page">Validation CLI Interface</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-1d447912329c9bb8389e050d1db121127c95d0fa1b9da5c85c6f9f7184c97ec2"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Validation CLI Interface</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="f198c7a1-072e-4852-b5c8-977882b2b3ed">A Java CLI tool can be used to check the validity of a certificate from scripts. The tool supports a clustered SignServer installation using the "Use first host that response OK" policy.</p><p local-id="a64150bd-026d-44a6-980f-492a66499c23">When compiling, make sure that <code>validationclient.enabled</code> is set to <em>true</em> in the build properties. The client is <code>lib/SignServer-Client-ValidationCLI.jar.</code></p><p local-id="5faa5dce-f0c3-4f19-8cd2-c02bfd9bb229">Use the client with:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin/signclient validatecertificate &lt;options&gt;</code></div>
+</div>
+</div><p local-id="30961549-ef12-4496-b19d-f375c7e59518">The following options are available: </p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="bcf58e9d-5819-417d-83e6-6a6a3a5eb4f7" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 23.2895%;"><col span="1" style="width: 76.7105%;"></colgroup><thead><tr data-local-id="9f349033-8ff3-4386-8164-1bf804092c81"><th colspan="1" rowspan="1" data-local-id="743ca021-2eee-4b9e-bf25-5c6535f356f0" class="confluenceTh"><p local-id="90710e82-ba5c-4de1-89e0-6991564d3bd2"><strong>Required</strong></p></th><th colspan="1" rowspan="1" data-local-id="3fdaae49-8c74-4837-a779-acda0b8e64ad" class="confluenceTh"><p local-id="df63ac7f-8324-4727-9dc3-66db56c3d6ad"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="e4756bc4-e146-403c-abf7-cbe1c5491682"><td colspan="1" rowspan="1" data-local-id="8baf13c8-eff2-4cf6-81e2-71dadfcd25d0" class="confluenceTd"><p local-id="a0889683-9b37-4654-b2d0-f635db1cf120">-cert &lt;cert-file&gt;</p></td><td colspan="1" rowspan="1" data-local-id="ad6f31db-28ba-4da2-b9ed-d8af3dd2b30a" class="confluenceTd"><p local-id="887ad790-9d04-4e17-aae7-c3c5b86bb5cc">Path to certificate file (DER or PEM). Required.</p></td></tr><tr data-local-id="cc818e02-1c12-4e45-a9d6-591635bff556"><td colspan="1" rowspan="1" data-local-id="f33ca733-dcf8-413a-837c-5d4191cb812a" class="confluenceTd"><p local-id="61ecfa12-0647-4c73-9d44-6d8f032b7837">-hosts &lt;hosts&gt;</p></td><td colspan="1" rowspan="1" data-local-id="c239bdbb-1c98-4435-adc5-4ddc5039b89b" class="confluenceTd"><p local-id="bdc4d67e-e871-4746-b31d-bee7bc43b088">A comma-separated string containing the hostnames of the validation service nodes. For example,&nbsp; 'host1.someorg.org,host2.someorg.org'. Required.</p></td></tr><tr data-local-id="086abb53-1e35-428b-8037-598b398cc49d"><td colspan="1" rowspan="1" data-local-id="ad1f4377-e7a4-47db-9ffb-89e645adf8ac" class="confluenceTd"><p local-id="71210ce5-9028-4afa-a48f-8e4ccefc7ed3">-service &lt;service-name&gt;</p></td><td colspan="1" rowspan="1" data-local-id="2473dd6a-807d-45c0-abd2-4f20820545d7" class="confluenceTd"><p local-id="6786cf74-ff53-4058-bf3d-9c5b6284eca6">The name or ID of the validation service to process request. Required.</p></td></tr><tr data-local-id="cc07bb8d-dfab-4f73-b95f-80fb491ebca6"><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="84b38c5b-47e9-459c-aae2-324e3411a221" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="97e3797b-29cc-430c-bc66-fe07ed765969"><strong>Optional</strong></p></td><td colspan="1" rowspan="1" data-highlight-colour="#f4f5f7" data-local-id="52e303ca-0551-4c7b-b965-2eb0a532e138" class="confluenceTd" style="background-color:#f4f5f7;"><p local-id="4aeabb22-65e2-4e1f-a199-92279f6e5796"><strong>Description</strong></p></td></tr><tr data-local-id="05ab77f1-d028-4ff3-a452-90e71ebed336"><td colspan="1" rowspan="1" data-local-id="982a5286-a2d2-49ab-a7ee-b805dd31e015" class="confluenceTd"><p local-id="ac9854f8-6272-4675-a210-f784a38db20f">-certpurposes &lt;certpurposes&gt;</p></td><td colspan="1" rowspan="1" data-local-id="f88fbf47-5ed7-4b54-884e-7b84300e4008" class="confluenceTd"><p local-id="e5e5112c-0e86-4d21-8d17-bf8d14607ec0">A comma-separated string containing requested certificate purposes.</p></td></tr><tr data-local-id="06deb1ea-4f9f-4259-867c-196e12bf23b9"><td colspan="1" rowspan="1" data-local-id="80b54559-c083-4b1a-966e-da550756881d" class="confluenceTd"><p local-id="d6736a2a-e2b6-435e-94ac-d6bfe8bf7f59">-der</p></td><td colspan="1" rowspan="1" data-local-id="46eea174-a8f3-4569-b681-ccb006b71ff2" class="confluenceTd"><p local-id="9afa3f96-109f-42a1-914a-1aa7bddf4e2a">Certificate is in DER format.</p></td></tr><tr data-local-id="23e68758-7079-4491-993a-43c24f040824"><td colspan="1" rowspan="1" data-local-id="160c96ed-0dc5-4959-88e4-c92c5efef4c4" class="confluenceTd"><p local-id="f5f75ed0-0250-4861-9f51-fe876e84d9a3">-help</p></td><td colspan="1" rowspan="1" data-local-id="f8a2f8ff-5bbe-432a-8ab8-a47256cd469d" class="confluenceTd"><p local-id="b37a342d-1388-44f8-8d6b-7bba0b7a0962">Displays this information.</p></td></tr><tr data-local-id="7f9197ca-771b-481e-81b8-ef5e52c9e566"><td colspan="1" rowspan="1" data-local-id="a9533f05-7203-4404-a033-846148d68fa0" class="confluenceTd"><p local-id="ab6ca30a-4630-43d3-8b88-c1d614ae40eb">-pem</p></td><td colspan="1" rowspan="1" data-local-id="b5720daa-bc63-4260-ba09-7ab4b7552f26" class="confluenceTd"><p local-id="da225790-d842-418d-958e-8fed29a97d6a">Certificate is in PEM format. (Default)</p></td></tr><tr data-local-id="2b9a1ecb-b3a1-4025-ae88-f3ea79ba8303"><td colspan="1" rowspan="1" data-local-id="1525ba8c-3073-446a-bdfe-7401d1edb87b" class="confluenceTd"><p local-id="09f867bd-22c1-44ad-b04a-3f49e28c920e">-port &lt;port&gt;</p></td><td colspan="1" rowspan="1" data-local-id="cda57c0e-81dc-4da1-9b6b-a6ac8602fd5b" class="confluenceTd"><p local-id="4135742a-6e2a-4f62-9008-6efad8777bd3">Remote port of service. (Default is 8080 or 8442 for SSL)</p></td></tr><tr data-local-id="9160622b-f5dd-41c2-b91c-7732b8a94d5e"><td colspan="1" rowspan="1" data-local-id="123ce364-0991-436d-b183-de0099da8709" class="confluenceTd"><p local-id="6fae3ebd-073a-4619-ae14-386fc14ba022">-silent</p></td><td colspan="1" rowspan="1" data-local-id="855cb80f-f258-47d7-a887-5679f194a543" class="confluenceTd"><p local-id="b9a280a8-0991-4498-97a2-3a85a17ac4a8">Does not produce any output. Only returns a value.</p></td></tr><tr data-local-id="70ec69d7-1deb-4393-bb37-5772e7f3310f"><td colspan="1" rowspan="1" data-local-id="79a14cea-b01d-4a8d-b1d4-297955988092" class="confluenceTd"><p local-id="56c9ed24-c615-4dd6-9d45-07d65bbb7eb9">-truststore &lt;jks-file&gt;</p></td><td colspan="1" rowspan="1" data-local-id="38e4d4b8-7fd2-4bfc-97b3-ef68aa6f3d6c" class="confluenceTd"><p local-id="a3954f8d-6741-462e-a023-852ab196aba6">Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)</p></td></tr><tr data-local-id="716f3df6-234f-4268-ba36-7aaf04b14967"><td colspan="1" rowspan="1" data-local-id="ec089d2f-0b36-4f53-ac65-fd4caab828eb" class="confluenceTd"><p local-id="1e52dafe-211a-4219-be3a-009fa1f53ac7">-truststorepwd &lt;password&gt;</p></td><td colspan="1" rowspan="1" data-local-id="f4a44acd-89e7-474d-99b7-79dd6117536e" class="confluenceTd"><p local-id="49881d75-dca2-4695-a644-2366fae13998">Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)</p></td></tr></tbody></table></div><p local-id="1567e741-cd5f-4425-b140-c3f261877f8d">The following return values are used:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">-</code><code class="value">2</code><code class="plain"> : Error happened during execution</code></div>
+<div class="line"><code class="plain">-</code><code class="value">1</code><code class="plain"> : Bad arguments</code></div>
+<div class="line"><code class="value">0</code><code class="plain"> : Certificate is valid</code></div>
+<div class="line"><code class="value">1</code><code class="plain"> : Certificate is revoked</code></div>
+<div class="line"><code class="value">2</code><code class="plain"> : Certificate is not yet valid</code></div>
+<div class="line"><code class="value">3</code><code class="plain"> : Certificate has expired</code></div>
+<div class="line"><code class="value">4</code><code class="plain"> : Certificate does not verify</code></div>
+<div class="line"><code class="value">5</code><code class="plain"> : CA Certificate has been revoked</code></div>
+<div class="line"><code class="value">6</code><code class="plain"> : CA Certificate is not yet valid</code></div>
+<div class="line"><code class="value">7</code><code class="plain"> : CA Certificate has expired</code></div>
+<div class="line"><code class="value">8</code><code class="plain"> : Certificate has no valid certificate purpose</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Certificate_Validators.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Certificate Validators</span>
+        </a>
+
+        <a href="Timed_Services.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Timed Services</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

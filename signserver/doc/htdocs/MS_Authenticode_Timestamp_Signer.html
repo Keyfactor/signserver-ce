@@ -1,0 +1,217 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999905">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:29.718+0000">
+    <meta name="exp-page-id" content="370999905">
+    <meta name="exp-page-title" content="MS Authenticode Timestamp Signer">
+    <meta name="exp-page-version" content="17">
+    <meta name="exp-page-scroll-page-id" content="84e979c715b50465cd7e797b4d5454cc">
+    <meta name="exp-page-created" content="2018-01-05T16:21:44.000+0000">
+    <meta name="exp-page-last-modified" content="2026-02-23T15:02:03.395+0000">
+    <meta name="exp-page-labels" content="timestamp">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>MS Authenticode Timestamp Signer</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="3c7c4a67cd25981c58642ba8030240a72ee102300c6c6352d1e0c36cc83fe5a5"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="MSAuthenticodeTimestampSigner-top" pageid="370999905" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999905" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Signers</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Timestamp_Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Timestamp Signers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="MS_Authenticode_Timestamp_Signer.html" target="_self" aria-current="page">MS Authenticode Timestamp Signer</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-606847675673c9eca9d9e1e37a6d7d0287711f8fd0194772a9ed0e6fb6459424"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">MS Authenticode Timestamp Signer</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="a18a7e2d-e8bb-4ee4-b08d-482503d48c59">The MS Authenticode Timestamp Signer is compatible with the Microsoft Authenticode Time Stamping code signing.</p><blockquote local-id="35c92fef7986"><p local-id="bc0008d1-1bcf-4f51-bf1e-a9a559695a31">Fully qualified class name: <strong>org.signserver.server.signers.tsa.MSAuthCodeTimeStampSigner</strong>.</p></blockquote><h2 local-id="0ac4dfc4-aaa1-4119-ac77-d6d53ae34c53" id="MSAuthenticodeTimestampSigner-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999905_MSAuthenticodeTimestampSigner-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="d666a256-d23b-4c9d-a536-e348ad292b5e"><span class="inline-comment-marker" data-ref="df082b2e-348d-4ac5-a80d-890b445a00b6">By default, the MS SignTool expects a MS Authenticode Timestamp Signer. Though you can set the TSA as </span><em><span class="inline-comment-marker" data-ref="df082b2e-348d-4ac5-a80d-890b445a00b6">Authenticode</span></em><span class="inline-comment-marker" data-ref="df082b2e-348d-4ac5-a80d-890b445a00b6">, this is the legacy format and not preferable. Instead, set the TSA to use </span><em><span class="inline-comment-marker" data-ref="df082b2e-348d-4ac5-a80d-890b445a00b6">RFC#3161</span></em><span class="inline-comment-marker" data-ref="df082b2e-348d-4ac5-a80d-890b445a00b6">. See <a href="Timestamp_Signer.html" data-linked-resource-id="370999946" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="370999946" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999946/Timestamp+Signer" data-scroll-link-target-source-id="370999946">Timestamp Signer</a> for more information.</span></p></div></div><p local-id="7bc702ce-bf05-40b8-8a3b-bc5a4a29145a">In the MS SignTool, use the  <code>/t</code> flag to specify the URL of the MS Authenticode Timestamp server.</p><p local-id="2a2e2b64-88bf-448e-b216-de40ee067b30">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><p local-id="53386585-7028-4564-b5b8-d39e3b6508c1">For information on the interfaces this Worker can be called through, see <a href="Supported_Interfaces_by_Worker.html" data-linked-resource-id="1886322694" data-linked-resource-version="37" data-linked-resource-type="page" data-scroll-target-source-id="1886322694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1886322694/Supported+Interfaces+by+Worker" data-scroll-link-target-source-id="1886322694">Supported Interfaces by Worker</a>.</p><h2 local-id="1ccc16d0-768e-4efe-b5d8-2339f204313b" id="MSAuthenticodeTimestampSigner-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999905_MSAuthenticodeTimestampSigner-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="df61a258-631a-4774-bb5c-d28a6b9405ff" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 33.4444%;"><col span="1" style="width: 7.7778%;"><col span="1" style="width: 58.7778%;"></colgroup><thead><tr data-local-id="48d5a0be-68d2-4fa0-b6b0-dc7cdd57a825"><th colspan="1" rowspan="1" data-local-id="c80c3b63-3d13-4872-96b1-b4afde7c1d3c" class="confluenceTh"><p local-id="80f91bb5-83f1-4d09-8ee4-fac15111d2eb"><strong>Property </strong></p></th><th colspan="1" rowspan="1" data-local-id="47adeba8-25c6-4442-9058-9b224be67d98" class="confluenceTh"><p local-id="349582b0-7d20-40b6-9e15-f77d61bf7060"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="cbd36e1c-a433-4c5d-96f3-aae7151fa9de" class="confluenceTh"><p local-id="3c9d55f6-aba7-4b98-8e85-7c6e8169d3a7"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="f26ba821-79fa-42ae-a7b7-6ff96261ffbd"><td colspan="1" rowspan="1" data-local-id="bf6efff7-3610-4af5-9b66-861e31c8793d" class="confluenceTd"><p local-id="df5cf035-2095-44f5-86fc-0c5282ae5abf">INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="935c0820-9d86-4e9c-8fed-9ad003dd1aae" class="confluenceTd"><p local-id="74fbf3bd-8380-4590-8fa2-aacdda21a091"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="1f4972dd-e3ea-4c0e-9c65-b53b986569ae" class="confluenceTd"><p local-id="14867dbc-7a0a-469e-8799-e01142b775ca">(Optional) Specifies if the signing certificate attribute (id-aa-signingCertificate) [RFC2634] should be included in the response.</p></td></tr><tr data-local-id="693f8006-4e7d-4304-a949-6b9af0176e5a"><td colspan="1" rowspan="1" data-local-id="ac692bf6-d15b-4deb-a18a-7ec9f18b6901" class="confluenceTd"><p local-id="eca6c03d-6472-448a-8539-517d967ec083">SIGNATUREALGORITHM</p></td><td colspan="1" rowspan="1" data-local-id="5e99c2a0-2b2d-4778-9328-4156311f277a" class="confluenceTd"><p local-id="2f5e49e3-c231-4c24-97bb-81f36c2136ea"><em>SHA256withRSA</em></p></td><td colspan="1" rowspan="1" data-local-id="d0cfad3f-81c8-4182-ab08-efa1c70a3379" class="confluenceTd"><p local-id="41957853-a092-44ab-878d-f035b00c06b3">Property specifying the algorithm used to sign the timestamp.</p></td></tr><tr data-local-id="b810468a-8ead-4063-a1d0-657f4d526ea2"><td colspan="1" rowspan="1" data-local-id="a502db64-92f9-4f49-adf3-5ea4f5c5cf49" class="confluenceTd"><p local-id="78f28627-f922-4f1c-bb9b-070658e36b8a">TIMESOURCE&nbsp;</p></td><td colspan="1" rowspan="1" data-local-id="68f41a71-9297-4cc8-92ba-802b29560a01" class="confluenceTd"><p local-id="1f37cb09-a84f-49ad-8aee-a51fbafbaefb">None</p></td><td colspan="1" rowspan="1" data-local-id="8768f5c3-ed56-4feb-a75d-dffbbd679d02" class="confluenceTd"><p local-id="95863849-27e9-499f-9f82-9670ad27de86">(Optional) Property containing the fully qualified name of the class implementing the ITimeSource that should be used. This property has the same values as for the&nbsp;<a href="Timestamp_Signer.html" data-linked-resource-id="370999946" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="370999946" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999946/Timestamp+Signer" data-scroll-link-target-source-id="370999946">Timestamp Signer</a>.</p></td></tr></tbody></table></div><h2 local-id="9c424397-1fc4-4df8-b289-50a38c80e15a" id="MSAuthenticodeTimestampSigner-Howto" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999905_MSAuthenticodeTimestampSigner-Howto"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Howto</span></h2><p local-id="dcdebabf-087f-4d4d-aebe-20658a5d20ca">There is a howto about testing Authenticode signing available in <strong>doc/howtos/test_ms_authcode.txt</strong>.</p><h2 local-id="5e5f527b-3eff-4a64-a698-6377bc4649e2" id="MSAuthenticodeTimestampSigner-CertificateRequirements" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999905_MSAuthenticodeTimestampSigner-Certificate-Requirements"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Certificate Requirements</span></h2><ul local-id="6ca2d61e-86c8-403c-b307-e870444660c7"><li local-id="5d457e16-9995-45bf-a6f5-d57140f68c5b"><p local-id="ef3b00cf-294d-4111-979a-cf9738df9dc6">A timestamp signer certificate must have the extended key usage extension present and marked as critical.</p></li><li local-id="96f5821c-b090-4d15-8c8f-e05d7f006bd2"><p local-id="4cbcb229-e298-401c-9ce3-457ac53efc7a">The extended key usage extension must contain the timeStamping key purpose ID and only that one.<br clear="none"><br clear="none"></p></li></ul>
+<nav id="ht-post-nav">
+        <a href="Extended_Time_Stamp_Signer.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Extended Time Stamp Signer</span>
+        </a>
+
+        <a href="DNS_Zone_File_Signers.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>DNS Zone File Signers</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

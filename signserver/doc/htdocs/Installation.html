@@ -1,0 +1,208 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="2290221124">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-02-24T09:24:46.724+0000">
+    <meta name="exp-page-id" content="2290221124">
+    <meta name="exp-page-title" content="Installation">
+    <meta name="exp-page-version" content="6">
+    <meta name="exp-page-scroll-page-id" content="2b689af1700f086ac8accf1c3530b4d5">
+    <meta name="exp-page-created" content="2026-02-11T12:37:38.326+0000">
+    <meta name="exp-page-last-modified" content="2026-02-11T14:34:00.194+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Installation</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="baafb3f6d1580bf33e8d4f3b2119d760b35da75bc0b9104364afbf5748684bb7"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="Installation-top" pageid="2290221124" class="flex flex-col" data-confluence-editor-version="v2">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=2290221124" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Installation.html" target="_self" aria-current="page">Installation</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-5dd5c32ca65579b5d1333990530e7c1211aa297b8c7313a77f87e79b777e37ec"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Installation</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="ee350ec82875">This page provides a high-level overview of the available SignServer deployment types and directs you to the installation instructions for each option.</p><h2 local-id="72c03b15-f359-40df-ae45-cf6f07823ea2" id="Installation-SignServerInstallationOverview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2290221124_Installation-SignServer-Installation-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignServer Installation Overview</span></h2><p local-id="eb7ad3a34718">SignServer supports multiple deployment types to accommodate different operational, security, and infrastructure requirements. The following lists deployment types and links to the relevant prerequisites and installation and/or deployment instructions.</p><div class="table-wrap"><table data-table-width="740" data-layout="center" data-local-id="adb75283-3757-4407-9d4f-9fcd34d053ef" data-table-display-mode="default" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 35.4533%;"><col span="1" style="width: 64.5467%;"></colgroup><tbody><tr data-local-id="2f59c219-d2fd-4500-82f1-9cd86f895993"><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="2d439ac1-0183-4ffc-b812-29be28388eaa" class="confluenceTd" style="background-color:#ffffff;"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image" alt="image-20260211-125644.png" width="245" src="_scroll_external/attachments/52b38e31a5bc/image-20260211-125644.png"></span><p local-id="db9526845922">&nbsp;</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="3d670774-5ca3-4632-a795-2da95cffeffe" class="confluenceTd" style="background-color:#ffffff;"><p local-id="38782bab2bfe"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-software/latest/installation" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-software/latest/installation" data-scroll-link-local="false">Install SignServer Software Stack</a></p></td></tr><tr data-local-id="d7580f48-5c94-4d40-9244-98d3a18a9a77"><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="bc31356b-81a5-44d8-b489-8949593af0ed" class="confluenceTd" style="background-color:#ffffff;"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image" alt="image-20260211-125353.png" width="213" src="_scroll_external/attachments/cbf492aa3f9c/image-20260211-125353.png"></span><p local-id="4c755b31dda4">&nbsp;</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="c12c6aa3-bf5b-41d8-8b52-1fec65534536" class="confluenceTd" style="background-color:#ffffff;"><p local-id="1d677b6b2c19"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/signserver-cloud-aws-launch-guide" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/signserver-cloud-aws-launch-guide" data-scroll-link-local="false">Launch SignServer Cloud AWS</a></p><p local-id="0ddf95723cc0"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/signserver-cloud-azure-launch-guide" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/signserver-cloud-azure-launch-guide" data-scroll-link-local="false">Launch SignServer Cloud Azure</a></p></td></tr><tr data-local-id="02ae4b48-4e0a-47ba-9d59-25c102a9eb38"><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="bde2023e-821a-421e-bba2-189d46f1035a" class="confluenceTd" style="background-color:#ffffff;"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image" alt="image-20260211-125530.png" width="243" src="_scroll_external/attachments/074330057f5c/image-20260211-125530.png"></span><p local-id="89898582ca21">&nbsp;</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="25fc1e2c-70aa-4194-b525-fbab26cb5e5c" class="confluenceTd" style="background-color:#ffffff;"><p local-id="f7b37a15425b"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/software-appliance/latest/signserver/installation" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/software-appliance/latest/signserver/installation" data-scroll-link-local="false">Install SignServer Software Appliance</a></p></td></tr><tr data-local-id="7e16262d-6a05-477b-93ea-3f2ccb8e92a9"><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="e35a5ded-d4dd-4030-ae8e-f9ad84937f52" class="confluenceTd" style="background-color:#ffffff;"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image" alt="image-20260211-125607.png" width="245" src="_scroll_external/attachments/7deaec45570f/image-20260211-125607.png"></span><p local-id="8b9fac2c1add">&nbsp;</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="0f39c57b-c132-4ad9-a4ee-9c8002ce41b6" class="confluenceTd" style="background-color:#ffffff;"><p local-id="e0186f32c7cb"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/hardwareappliance/latest/signserver/installation" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/hardwareappliance/latest/signserver/installation" data-scroll-link-local="false">Install SignServer Hardware Appliance</a></p></td></tr><tr data-local-id="dffc64b4-3617-498d-943a-7e9990ba6a8f"><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="e3a371e9-f64e-4e9c-8f70-f07f5aae2c47" class="confluenceTd" style="background-color:#ffffff;"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image" alt="image-20260211-125818.png" width="243" src="_scroll_external/attachments/121fe48dc3a8/image-20260211-125818.png"></span><p local-id="a8bb78290aa7">&nbsp;</p></td><td colspan="1" rowspan="1" data-highlight-colour="#ffffff" data-local-id="f9bc98e8-d323-4eff-a1ad-1ff9d91fd8ba" class="confluenceTd" style="background-color:#ffffff;"><p local-id="ed26ae5d7971"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/container/latest/signserver/deployment" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/container/latest/signserver/deployment" data-scroll-link-local="false">Deploy SignServer Container Set</a></p></td></tr></tbody></table></div><h2 local-id="f8d30990-a088-4466-b8ab-3ac1a311ea5a" id="Installation-UpgradingSignServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2290221124_Installation-Upgrading-SignServer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Upgrading SignServer</span></h2><p local-id="4c3ee508ae48">For generic information about upgrading a SignServer deployment type, see <a href="Upgrade_SignServer.html" data-linked-resource-id="370999421" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999421" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999421/Upgrade+SignServer" data-scroll-link-target-source-id="370999421">Upgrade SignServer</a>.</p><h2 local-id="3978ecbd4766" id="Installation-ConfiguringApplicationServer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2290221124_Installation-Configuring-Application-Server"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configuring Application Server</span></h2><p local-id="95e04de689d5">For installation and configuration of your application server, see <a href="Application_Server_WildFly_32+_&amp;_JBoss_EAP_8.html" data-linked-resource-id="2288681105" data-linked-resource-version="2" data-linked-resource-type="page" data-scroll-target-source-id="2288681105" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2288681105/Application+Server+WildFly+32+JBoss+EAP+8" data-scroll-link-target-source-id="2288681105">Application Server WildFly 32+ &amp; JBoss EAP 8</a>.</p>
+<nav id="ht-post-nav">
+        <a href="Library_Manifest.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Library Manifest</span>
+        </a>
+
+        <a href="Upgrade_SignServer.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Upgrade SignServer</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

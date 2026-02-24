@@ -9,16 +9,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" href="_scroll_external/attachments/e415105eb31a/ssdocs">
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2025-11-12T12:32:44.684+0000">
+    <meta name="exp-export-timestamp" content="2026-02-24T09:25:54.961+0000">
     <meta name="exp-page-id" content="371000334">
     <meta name="exp-page-title" content="SignServer Authentication and Authorization">
-    <meta name="exp-page-version" content="5">
+    <meta name="exp-page-version" content="6">
     <meta name="exp-page-scroll-page-id" content="4fc6f2c35ab1b218a0e2591ea289a414">
     <meta name="exp-page-created" content="2017-04-11T09:48:22.000+0000">
-    <meta name="exp-page-last-modified" content="2025-09-02T08:01:42.964+0000">
+    <meta name="exp-page-last-modified" content="2025-11-17T10:55:26.555+0000">
     <meta name="exp-page-labels" content="format">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -31,7 +31,7 @@
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
     <meta name="exp-version-description" content="">
-    <meta name="exp-version-date" content="2024-02-17T13:18:25Z">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
     <meta name="exp-variant-id" content="">
     <meta name="exp-variant-name" content="">
     <meta name="exp-variant-description" content="">
@@ -83,7 +83,7 @@
 </script>
     <title>SignServer Authentication and Authorization</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="9c5dd9ee5b6f487508d03a6c7d1a22eb4398c2a6e10c893c5594c053ab9d4886"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b65d2df4cb0d6007e2faa3fbc5f96d2f79f71df078384747de82bb6a776948cf"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
     <body id="SignServerAuthenticationandAuthorization-top" pageid="371000334" class="flex flex-col" data-confluence-editor-version="v2">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
@@ -94,7 +94,7 @@
 <header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
     <div class="header__navigation--logo">
         <a href="SignServer_Documentation.html">
-            <img src="_scroll_external/attachments/e415105eb31a/ssdocs" alt="SignServer Documentation" title="SignServer Documentation">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
         </a>
     </div>
         <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
@@ -142,7 +142,7 @@
                     <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="SignServer_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Reference</a>
+                    <a href="Configuration_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Configuration Reference</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
                 <a href="SignServer_Authentication_and_Authorization.html" target="_self" aria-current="page">SignServer Authentication and Authorization</a>
@@ -152,29 +152,72 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-2459304388901603de99599ccca35d1ad1a739c4f4fc09a2c7124acff19696e8"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">SignServer Authentication and Authorization</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-922edbb5919fd6a502b7e8da04a28b129e45f367464685abaddc66477ebd421e"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">SignServer Authentication and Authorization</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>In SignServer, client authentication/authorization can be configured per worker and&nbsp;occurs in different components as the request comes in:</p><h2 id="SignServerAuthenticationandAuthorization-ReverseHTTPproxy" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Reverse-HTTP-proxy"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Reverse HTTP proxy</span></h2><p>Optionally before SignServer and the application server a reverse proxy could be put in place for instance to perform the authentication.</p><p>The reverse proxy (i.e. Apache HTTP Server or Nginx) can be configured to perform the authentication and pass along the already authenticated information to the application server using for instance an AJP Connector. For information on how to configure a reverse proxy, see <a href="SignServer_Integration.html" data-linked-resource-id="370999560" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="370999560" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999560/SignServer+Integration" data-scroll-link-target-source-id="370999560">SignServer Integration</a>.</p><h2 id="SignServerAuthenticationandAuthorization-ServletContainer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Servlet-Container"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Servlet Container</span></h2><p>Provided the by application server is the servlet container (web server) that first receives the HTTP request.</p><p>The Servlet container provides the remote IP address and all the HTTP headers sent by the client (and/or) any proxy in front of it.</p><p>If configured, the Servlet container may require TLS client certificate authentication and is in that case performing the TLS authentication and then provides the authenticated certificate.</p><h2 id="SignServerAuthenticationandAuthorization-SignServerServlet" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-SignServer-Servlet"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignServer Servlet</span></h2><p>The Servlet in SignServer receives the request and gathers all relevant information to pass along to the next component called "Process Session".</p><h2 id="SignServerAuthenticationandAuthorization-SignServerProcessSession" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-SignServer-Process-Session"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignServer Process Session</span></h2><p>Before processing the request, it invokes the Authorizer that has been configured for the requested worker. If the Authorizer allows the request it is further processed, otherwise the processing stops. </p><h2 id="SignServerAuthenticationandAuthorization-AuthorizerImplementation" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Authorizer-Implementation"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Authorizer Implementation</span></h2><p>The configured Authorizer implementation decides if the request should be allowed or not given the provided information. The Authorizer could also consult its configuration and possibly external systems as well.</p><p>Examples of Authorizers:</p><ul><li><p><strong>ListBasedAddressAuthorizer - </strong>Uses white or blacklists for the remote (IP) addresses to authorize.</p></li><li><p><strong>ClientCertAuthorizer - </strong>Checks that the certificate serial number and issuer DN from the provided client certificate is available in this workers whitelist.</p></li><li><p><strong>UsernamePasswordAuthorizer - </strong>Checks that the username/password provided in the HTTP Basic Authentication HTTP header matches one of those configured for this worker.</p></li><li><p><strong>UsernameAuthorizer - </strong>Same as the previous but this one could be used in a set up where the user is already authorized by the reversed proxy. The provided user name is simply accepted and used further on.<br clear="none">The reversed proxy could use modules for Active Directory / LDAP authentication or anything else that in the end provides a user name to be passed on to SignServer.</p></li></ul><p>All available Authorizers are listed on the <a href="Authorizers.html" data-linked-resource-id="371000209" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000209" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000209/Authorizers" data-scroll-link-target-source-id="371000209">Authorizers</a> page.</p>
+                        
+<p>In SignServer, client authentication/authorization can be configured per worker and&nbsp;occurs in different components as the request comes in.</p><h2 id="SignServerAuthenticationandAuthorization-ReverseHTTPproxy" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Reverse-HTTP-proxy"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Reverse HTTP proxy</span></h2><p>Optionally, before SignServer and the application server, a reverse proxy could be put in place for instance to perform the authentication.</p><p>The reverse proxy, such as Apache HTTP Server or Nginx, can be configured to perform the authentication and pass along the already authenticated information to the application server using for instance an AJP Connector. For information on how to configure a reverse proxy, see <a href="Interfaces.html" data-linked-resource-id="370999560" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999560" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999560/Interfaces" data-scroll-link-target-source-id="370999560">SignServer Integration</a>.</p><h2 id="SignServerAuthenticationandAuthorization-ServletContainer" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Servlet-Container"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Servlet Container</span></h2><p>Provided by application server, the servlet container (web server) first receives the HTTP request.</p><p>The Servlet container provides the remote IP address and all the HTTP headers sent by the client (and/or) to any proxy in front of it.</p><p>If configured, the Servlet container may require TLS client certificate authentication. In this case, the Servlet container is performing the TLS authentication and then provides the authenticated certificate.</p><h2 id="SignServerAuthenticationandAuthorization-SignServerServlet" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-SignServer-Servlet"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignServer Servlet</span></h2><p>The Servlet in SignServer receives the request and gathers all relevant information to pass along to the next component called "Process Session".</p><h2 id="SignServerAuthenticationandAuthorization-SignServerProcessSession" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-SignServer-Process-Session"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">SignServer Process Session</span></h2><p>Before processing the request, it invokes the Authorizer that has been configured for the requested worker. If the Authorizer allows the request it is further processed, otherwise the processing stops. </p><h2 id="SignServerAuthenticationandAuthorization-AuthorizerImplementation" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Authorizer-Implementation"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Authorizer Implementation</span></h2><p>The configured Authorizer implementation decides if the request should be allowed or not given the provided information. The Authorizer could also consult its configuration and possibly external systems as well.</p><h3 id="SignServerAuthenticationandAuthorization-ExamplesofAuthorizers:" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000334_SignServerAuthenticationandAuthorization-Examples-of-Authorizers:"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Examples of Authorizers:</span></h3><div class="contentLayout2">
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p><a href="Client_Certificate_Authorizer.html" data-linked-resource-id="371000217" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000217" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000217/Client+Certificate+Authorizer" data-scroll-link-target-source-id="371000217">ClientCertAuthorizer</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p>Checks that the certificate serial number and issuer DN from the provided client certificate is available in this workers whitelist.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p><a href="List_Based_Address_Authorizer.html" data-linked-resource-id="371000233" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="371000233" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000233/List+Based+Address+Authorizer" data-scroll-link-target-source-id="371000233">ListBasedAddressAuthorizer</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p>Uses white or blacklists for the remote (IP) addresses to authorize.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p><a href="Username_Authorizer.html" data-linked-resource-id="371000225" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="371000225" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000225/Username+Authorizer" data-scroll-link-target-source-id="371000225">UsernameAuthorizer</a><strong> </strong></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p>Same as the previous but this one could be used in a set up where the user is already authorized by the reversed proxy. The provided user name is simply accepted and used further on.<br clear="none">The reversed proxy could use modules for Active Directory / LDAP authentication or anything else that in the end provides a user name to be passed on to SignServer.</p></div>
+</div>
+</div>
+<div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
+<div class="cell aside" data-type="aside">
+<div class="innerCell">
+<p><a href="Username_Password_Authorizer.html" data-linked-resource-id="371000221" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000221" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000221/Username+Password+Authorizer" data-scroll-link-target-source-id="371000221">UsernamePasswordAuthorizer</a></p></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<p>Checks that the username/password provided in the HTTP Basic Authentication HTTP header matches one of those configured for this worker.</p></div>
+</div>
+</div>
+</div>
+<p>All available Authorizers are listed on the <a href="Authorizers.html" data-linked-resource-id="371000209" data-linked-resource-version="4" data-linked-resource-type="page" data-scroll-target-source-id="371000209" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000209/Authorizers" data-scroll-link-target-source-id="371000209">Authorizers</a> page.</p>
 <nav id="ht-post-nav">
-        <a href="Worker_Log.html" class="ht-post-nav-prev">
+        <a href="Worker_Logger.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Worker Log</span>
+            <span>Worker Logger</span>
         </a>
 
-        <a href="Developer_Reference.html" class="ht-post-nav-next">
+        <a href="SignServer_TimeMonitor_Application.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Developer Reference</span>
+            <span>SignServer TimeMonitor Application</span>
         </a>
 </nav>
                     </div>

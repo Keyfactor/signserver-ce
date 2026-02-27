@@ -102,7 +102,6 @@ public class SystemLoggingLinuxTest extends ModulesTestCase {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                LOG.info(line);
                 if (line.contains(searchFirstString)) {
                     if (searchSecondString == null) {
                         return true;

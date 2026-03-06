@@ -371,7 +371,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param line The command line to read from
      */
     private void parseCommandLine(final CommandLine line)
-        throws IllegalCommandArgumentsException, CommandFailureException {
+        throws IllegalCommandArgumentsException, CommandFailureException, FileNotFoundException {
         if (line.hasOption(WORKERNAME)) {
             workerName = line.getOptionValue(WORKERNAME, null);
         }
@@ -702,10 +702,12 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param outFile directory
      * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
-    protected boolean runBatch(TransferManager manager, final File inFile, final File outFile, final BufferedInputStream stdinStream) {
+    protected boolean runBatch(TransferManager manager, final File inFile, final File outFile, final BufferedInputStream stdinStream) throws IOException {
         final byte[] bytes;
         final long size;
-        
+        File currentInfile = inFile;
+        File tmpFile = null;
+
         Map<String, Object> requestContext = new HashMap<>();
         if (data != null) {
             bytes = data.getBytes();
@@ -721,26 +723,38 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             bytes = null;
             size = inFile.length();
         } else {
-            byte[] tmpBytes;
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                final byte[] buf = new byte[4096];
+            tmpFile = File.createTempFile("temp",".tmp");
+            requestContext.put("FILENAME", tmpFile.getName());
+
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                final byte[] buffer = new byte[4096];
+                long written = 0;
                 int read;
-                while ((read = stdinStream.read(buf)) != -1) {
-                    baos.write(buf, 0, read);
+                while ((read = stdinStream.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                    written += read;
                 }
-                tmpBytes = baos.toByteArray();
-                if (tmpBytes.length == 0) {
+                out.flush();
+                if (written == 0) {
                     LOG.error("Nothing available on standard input.");
                     return false;
                 }
-                size = tmpBytes.length;
+                currentInfile = tmpFile;
+                size = written;
+                bytes = null;
             } catch (IOException ex) {
                 LOG.error("Failed to read data from standard input: " + ex.getMessage(), ex);
                 return false;
             }
-            bytes = tmpBytes;
         }
-        return runFile(manager, requestContext, inFile, bytes, size, outFile);
+        try {
+            return runFile(manager, requestContext, currentInfile, bytes, size, outFile);
+        } finally {
+            if (tmpFile != null && !tmpFile.delete()) {
+                tmpFile.deleteOnExit();
+                LOG.warn("Failed to delete temp file immediately: " + tmpFile);
+            }
+        }
     }
     
     private void initFileSpecificHandlerFactory()
@@ -1196,6 +1210,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             return 0;
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
     
@@ -1225,7 +1241,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Sending " + file + "...");
                 }
-                runBatch(producer, file, new File(outDir, file.getName()), null);
+                try {
+                    runBatch(producer, file, new File(outDir, file.getName()), null);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace(id + ": No more work.");

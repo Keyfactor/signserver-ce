@@ -13,10 +13,8 @@
 package org.signserver.client.cli;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.Signature;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -1753,6 +1751,35 @@ public class DocumentSignerTest extends ModulesTestCase {
         } // NOPMD
     }
 
+    /**
+     * Tests that temporary files created via signclient -stdin flag with PlainSigner are properly removed.
+     */
+    @Test
+    public void test25VerifyNoTempFilesLeftFromStandardInput_LargeFile() throws Exception {
+        LOG.info("test25VerifyNoTempFilesLeftFromStandardInput_LargeFile");
+        byte[] plainText = generateAsciiBytes(400);
+        InputStream originalIn = System.in;
+        try {
+            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE, "514572800");
+            // Need to wait for three seconds to pass the Global Configuration cache time.
+            Thread.sleep(3000);
+            System.setIn(new ByteArrayInputStream(plainText));
+            byte[] signatureBytes = execute("signdocument", "-workername", "TestPlainSigner", "-stdin");
+            Signature signature = Signature.getInstance("SHA256withRSA", "BC");
+            signature.initVerify(getCurrentWorkerSession().getSignerCertificate(new WorkerIdentifier(WORKERID8)));
+            signature.update(plainText);
+            assertTrue("consistent signature", signature.verify(signatureBytes));
+
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
+            System.setIn(originalIn);
+            assertEquals(0,listTempFiles("temp"));
+        }
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");
@@ -1760,6 +1787,17 @@ public class DocumentSignerTest extends ModulesTestCase {
         for (int workerId : WORKERS) {
             removeWorker(workerId);
         }
+    }
+
+    /**
+     * Helper to list the temp files in the tmp directory.
+     * @param prefix
+     * @return
+     */
+    private long listTempFiles(String prefix) {
+        File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+        File[] files = tmpDir.listFiles((dir, name) -> name.startsWith(prefix));
+        return files == null ? 0 : files.length;
     }
 
     private byte[] execute(String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {

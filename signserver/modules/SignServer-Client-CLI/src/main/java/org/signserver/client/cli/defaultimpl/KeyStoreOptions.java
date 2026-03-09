@@ -652,6 +652,10 @@ public class KeyStoreOptions {
         return keystoreType;
     }
 
+    public Provider getProvider() {
+        return keystore.getProvider();
+    }
+
     public void setKeystoreType(KeystoreType keystoreType) {
         this.keystoreType = keystoreType;
     }

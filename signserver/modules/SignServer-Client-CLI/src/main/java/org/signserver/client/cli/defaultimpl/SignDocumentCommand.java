@@ -1037,7 +1037,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                                workerId,
                                                                signatureAlgorithm,
                                                                privateKey,
-                                                               signCertChain);
+                                                               signCertChain,
+                                                               keyStoreOptions.getProvider());
 
             } catch (KeyStoreException | SignedRequestException |
                      NoSuchAlgorithmException | UnrecoverableKeyException |

@@ -1298,7 +1298,7 @@ public class WorkerResource {
     @POST
     @Path("{idOrName}/process")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
     @Parameter(
             name = "X-Keyfactor-Requested-With",
             in = ParameterIn.HEADER,
@@ -1311,92 +1311,8 @@ public class WorkerResource {
             responseDescription = "The response data"
     )
     @APIResponse(
-            responseCode = "400",
-            description = "Bad request from the client",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.ErrorMessage400.class)
-            )
-    )
-    @APIResponse(
-            responseCode = "403",
-            description = "Access is forbidden!",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.ErrorMessage403.class)
-            )
-    )
-    @APIResponse(
-            responseCode = "404",
-            description = "No such worker",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.ErrorMessage404.class)
-            )
-    )
-    @APIResponse(
-            responseCode = "500",
-            description = "The server were unable to process the request. See server-side logs for more details.",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.ErrorMessage500.class)
-            )
-    )
-    @APIResponse(
-            responseCode = "503",
-            description = "Crypto Token not available",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorMessage.ErrorMessage503.class)
-            )
-    )
-    @Operation(
-            summary = "Submit data for processing",
-            description = "Required role: set by AUTHTYPE in worker \n\n"
-                    + "Submit data/document/file for processing such as for "                    
-                    + "instance signing and get back the result (i.e. signature)."
-    )
-    public Response processByFormDataReturnJson(
-            @Parameter(
-                    description = "Worker Id or name of the worker",
-                    example = "ExampleSigner1"
-            )
-            @PathParam("idOrName") final String idOrName,
-            @Context final HttpServletRequest httpServletRequest,
-            @RequestBody(
-                    description = "The request",
-                    required = true,
-                    content = @Content(
-                    mediaType = MediaType.MULTIPART_FORM_DATA,
-                    schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.STRING, format = "binary")})
-            )) final List<EntityPart> entityParts) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
-
-        // The following check must be the first line in REST public methods (note: admin operations has a different one)
-        auth.checkCustomHeader(httpServletRequest);
-
-        // User needs to put "application/json" in Accept header to get to this method.
-        // Using wildcard to get here is not allowed. This is so we can support other media types in the future without breaking clients.
-        final String acceptHeader = httpServletRequest.getHeader("Accept");
-        if (acceptHeader == null || !acceptHeader.contains(MediaType.APPLICATION_JSON)) {
-            return Response.status(Response.Status.NOT_ACCEPTABLE.getStatusCode(), "Specify application/json in Accept header").build();
-        }
-        
-        return processByFormData(idOrName, entityParts, httpServletRequest, true);
-    }
-    
-    @POST
-    @Path("{idOrName}/process")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces({MediaType.APPLICATION_OCTET_STREAM})
-    @Parameter(
-            name = "X-Keyfactor-Requested-With",
-            in = ParameterIn.HEADER,
-            required = true,
-            description = "This protects SignServer REST endpoints from being maliciously invoked from administrator machines by clickjacking or CSRF methods."
-    )
-    @APIResponse(
             responseCode = "200",
-            description = "The response data",
+            description = "The response data with application/json as example. For application/octet-stream, a signed file is returned.",
             content = @Content(
                     mediaType = MediaType.APPLICATION_OCTET_STREAM
             )
@@ -1426,6 +1342,14 @@ public class WorkerResource {
             )
     )
     @APIResponse(
+            responseCode = "406",
+            description = "Not Acceptable",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorMessage.ErrorMessage406.class)
+            )
+    )
+    @APIResponse(
             responseCode = "500",
             description = "The server were unable to process the request. See server-side logs for more details.",
             content = @Content(
@@ -1447,7 +1371,7 @@ public class WorkerResource {
                     + "Submit data/document/file for processing such as for "                    
                     + "instance signing and get back the result (i.e. signature)."
     )
-    public Response processByFormDataReturnFile(
+    public Response processByFormData(
             @Parameter(
                     description = "Worker Id or name of the worker",
                     example = "ExampleSigner1"
@@ -1459,13 +1383,19 @@ public class WorkerResource {
                     required = true,
                     content = @Content(
                     mediaType = MediaType.MULTIPART_FORM_DATA,
-                    schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.STRING, format = "binary")})
+                    schema = @Schema(type = SchemaType.OBJECT, properties = {@SchemaProperty(name = "file", type = SchemaType.OBJECT)})
             )) final List<EntityPart> entityParts) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {
 
         // The following check must be the first line in REST public methods (note: admin operations has a different one)
         auth.checkCustomHeader(httpServletRequest);
 
-        return processByFormData(idOrName, entityParts, httpServletRequest, false);
+        // Based on the Accept header in the request, the media type in the response will adapt to that.
+        // If wildcard (*/*) is set in the Accept header, the media type will default to json.
+        final String acceptHeader = httpServletRequest.getHeader("Accept");
+        if (acceptHeader == null || acceptHeader.isEmpty()) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE.getStatusCode(), "Specify MediaType in Accept header").build();
+        }
+        return processByFormData(idOrName, entityParts, httpServletRequest, (!acceptHeader.contains(MediaType.APPLICATION_OCTET_STREAM)));
     }
     
     private Response processByFormData(final String idOrName, List<EntityPart> entityParts, final HttpServletRequest httpServletRequest, boolean returnJson) throws RequestFailedException, InternalServerException, CryptoTokenOfflineException, IllegalRequestException, IOException {

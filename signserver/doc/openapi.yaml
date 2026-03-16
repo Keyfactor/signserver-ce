@@ -36,6 +36,13 @@ components:
           type: string
           examples:
           - Method not allowed.
+    ErrorMessage406:
+      type: object
+      properties:
+        error:
+          type: string
+          examples:
+          - Not Acceptable
     ErrorMessage409:
       type: object
       properties:
@@ -94,6 +101,15 @@ components:
           - USING_CLIENTSUPPLIED_HASH: "true"
             CLIENTSIDE_HASHDIGESTALGORITHM: SHA256
     ProcessResponse:
+      description: POJO that represents a process response.
+      type: object
+      properties:
+        data:
+          type: string
+          description: The resulting signed file
+          examples:
+          - document.pdf
+    ProcessResponse1:
       description: POJO that represents a process response.
       type: object
       properties:
@@ -170,7 +186,7 @@ components:
           type: string
 info:
   title: SignServer REST Interface
-  version: 1.4.0
+  version: 1.4.1
 paths:
   /signserver/rest/v1/workers:
     get:
@@ -364,8 +380,7 @@ paths:
               type: object
               properties:
                 file:
-                  format: binary
-                  type: string
+                  type: object
       responses:
         "400":
           description: Bad request from the client
@@ -403,8 +418,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProcessResponse"
-            application/octet-stream: {}
+                $ref: "#/components/schemas/ProcessResponse1"
+            application/octet-stream:
+              schema:
+                $ref: "#/components/schemas/ProcessResponse1"
+        "406":
+          description: Not Acceptable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage406"
   /signserver/rest/v1/workers/{id}:
     patch:
       summary: Submit data for update and delete worker properties

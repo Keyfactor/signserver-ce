@@ -48,6 +48,11 @@ public class ErrorMessage {
         @Schema(example = "Method not allowed.")
         private String error;
     }
+
+    public static class ErrorMessage406 {
+        @Schema(example = "Not Acceptable")
+        private String error;
+    }
     
     public static class ErrorMessage409 {
         @Schema(example = "Worker already exists.")

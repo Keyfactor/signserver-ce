@@ -457,10 +457,10 @@ public class RestWorkersTest extends ModulesTestCase {
                     .when()
                     .post(baseURL + "/workers/" + PDFSIGNER_WORKER_ID + "/process")
                     .then()
-                    .statusCode(406)
+                    .statusCode(200)
                     .extract().response();
 
-            assertEquals("Check response status code.", 406, response.statusCode());
+            assertEquals("Check response status code.", 200, response.statusCode());
         } finally {
             removeWorker(PDFSIGNER_WORKER_ID);
         }

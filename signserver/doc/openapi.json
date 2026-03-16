@@ -43,6 +43,15 @@
           }
         }
       },
+      "ErrorMessage406" : {
+        "type" : "object",
+        "properties" : {
+          "error" : {
+            "type" : "string",
+            "examples" : [ "Not Acceptable" ]
+          }
+        }
+      },
       "ErrorMessage409" : {
         "type" : "object",
         "properties" : {
@@ -113,6 +122,17 @@
         }
       },
       "ProcessResponse" : {
+        "description" : "POJO that represents a process response.",
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "string",
+            "description" : "The resulting signed file",
+            "examples" : [ "document.pdf" ]
+          }
+        }
+      },
+      "ProcessResponse1" : {
         "description" : "POJO that represents a process response.",
         "type" : "object",
         "properties" : {
@@ -210,7 +230,7 @@
   },
   "info" : {
     "title" : "SignServer REST Interface",
-    "version" : "1.4.0"
+    "version" : "1.4.1"
   },
   "paths" : {
     "/signserver/rest/v1/workers" : {
@@ -477,8 +497,7 @@
                 "type" : "object",
                 "properties" : {
                   "file" : {
-                    "format" : "binary",
-                    "type" : "string"
+                    "type" : "object"
                   }
                 }
               }
@@ -541,10 +560,24 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ProcessResponse"
+                  "$ref" : "#/components/schemas/ProcessResponse1"
                 }
               },
-              "application/octet-stream" : { }
+              "application/octet-stream" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProcessResponse1"
+                }
+              }
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorMessage406"
+                }
+              }
             }
           }
         }

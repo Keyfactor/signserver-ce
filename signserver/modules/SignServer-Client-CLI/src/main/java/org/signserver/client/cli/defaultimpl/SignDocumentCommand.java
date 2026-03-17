@@ -604,8 +604,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 throw new IllegalCommandArgumentsException("Must specify -outfile or -outdir when using -clientside");
             }
 
-            if (inFile == null && inDir == null) {
-                throw new IllegalCommandArgumentsException("Can only use -clientside with -infile or -indir");
+            if (inFile == null && inDir == null && stdinStream == null) {
+                throw new IllegalCommandArgumentsException("Can only use -clientside with -infile, -indir or -stdin");
             }
         } else {
             if (digestAlgorithm != null) {

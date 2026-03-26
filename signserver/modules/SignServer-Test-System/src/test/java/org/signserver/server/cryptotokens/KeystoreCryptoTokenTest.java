@@ -1372,4 +1372,43 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         workerSession.getCertificateRequest(new WorkerIdentifier(JKS_CRYPTO_TOKEN), certReqInfo, false, keyAlias + "-COMPOSITE");
     }
 
+    /**
+     * Test create and remove a composite key
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateAndRemoveCompositeKey() throws Exception {
+        LOG.info("testGenerateAndRemoveCompositeKey");
+        final String keyAlias = "q44c2048-COMPOSITE";
+        final String keyPQComponentAlias = "q44c2048-COMPQ";
+        final String keyPCComponentAlias = "q44c2048-COMPC";
+
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+            generateKey("COMPOSITE", "MLDSA44-RSA2048-PSS-SHA256", keyAlias);
+
+            // Check the composite key and components exist
+            Set<String> keyAliases = getKeyAliases(JKS_CRYPTO_TOKEN);
+            assertTrue("Composite key " + keyAlias + " found", keyAliases.contains(keyAlias));
+            assertTrue("Component key " + keyPCComponentAlias + " found", keyAliases.contains(keyPCComponentAlias));
+            assertTrue("Component key " + keyPQComponentAlias + " found", keyAliases.contains(keyPQComponentAlias));
+
+            // Remove the composite key
+            getWorkerSession().removeKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), keyAlias);
+
+            // Check the composite key and components removed
+            keyAliases = getKeyAliases(JKS_CRYPTO_TOKEN);
+            assertFalse("Composite key " + keyAlias + " not found", keyAliases.contains(keyAlias));
+            assertFalse("Component key " + keyPCComponentAlias + " not found", keyAliases.contains(keyPCComponentAlias));
+            assertFalse("Component key " + keyPQComponentAlias + " not found", keyAliases.contains(keyPQComponentAlias));
+
+        } catch (SignServerException ex) {
+            fail("Unexpected failure while testing composite key lifecycle: " + ex.getMessage());
+        } finally {
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
 }

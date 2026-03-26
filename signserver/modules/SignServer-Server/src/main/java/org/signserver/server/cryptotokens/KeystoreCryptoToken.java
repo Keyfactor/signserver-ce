@@ -612,7 +612,12 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     @Override
     public boolean removeKey(final String alias, final IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         final KeyStore keyStore = getKeyStore();
-        boolean result = CryptoTokenHelper.removeKey(this.delegator, alias);
+        boolean result;
+        if (composites.removeKey(alias, services)) {
+            return true;
+        } else {
+            result = CryptoTokenHelper.removeKey(this.delegator, alias);
+        }
         if (result) {
             OutputStream out = null;
             try {

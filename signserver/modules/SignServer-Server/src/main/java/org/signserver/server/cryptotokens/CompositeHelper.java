@@ -327,6 +327,42 @@ public class CompositeHelper {
             }
         }
 
+    /**
+     * Removes a composite key from the token by deleting its connected component keys.
+     * If the removal of the first component succeeds but the second component cannot be removed,
+     * the method throws a SignServerException to indicate that the composite key is unavailable or inconsistent state.
+     *
+     * @param alias    the alias of the composite key to remove
+     * @param services services for the implementations to use
+     * @return true if the key was removed, otherwise false
+     * @throws CryptoTokenOfflineException if the token is offline or not available
+     * @throws KeyStoreException           for keystore-related errors
+     * @throws SignServerException         if removal fails for one of the component keys
+     */
+    public boolean removeKey(final String alias, final IServices services) throws CryptoTokenOfflineException, SignServerException, KeyStoreException {
+        if (alias == null || (!alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX))) {
+            LOG.info("Key alias not for composite: " + alias);
+            return false;
+        }
+        final ICryptoTokenV4 token = getDelegate(services);
+        final String aliasComp1 = removeCompositeSuffix(alias) + KEYALIAS_COMPQ_SUFFIX;
+        final String aliasComp2 = removeCompositeSuffix(alias) + KEYALIAS_COMPC_SUFFIX;
+
+        boolean removed1 = token.removeKey(aliasComp1, services);
+        if (!removed1) {
+            LOG.warn("Failed to remove key: " + aliasComp1);
+            throw new SignServerException("Failed to remove key " + alias + " because the key component " + aliasComp1 + " could not be removed");
+        }
+
+        boolean removed2 = token.removeKey(aliasComp2, services);
+        if (!removed2) {
+            LOG.warn("Failed to remove key: " + aliasComp2);
+            throw new SignServerException("Failed to completely remove composite key " + alias + " because component key " + aliasComp2 + " could not be removed after removing component key " + aliasComp1 + ". The composite key will no longer be available.");
+        }
+
+        return true;
+    }
+
     public boolean generateKey(final String keyAlgorithm,
                             final String keySpec,
                             final String alias, final char[] authCode,

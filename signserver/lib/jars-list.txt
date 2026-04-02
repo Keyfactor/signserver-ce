@@ -14,6 +14,7 @@ d3c4c6b700c74ef8164bb15e549d939721b8f14fc0ff89fe19b220243bcfcbd8  ./ext/bcpkix-j
 82cf3a2af766c3bc874f6d36b9f20a8b99a8f09762dc776e8a227a45d8daaafb  ./ext/bcprov-jdk18on-1.83.jar;                          "Bouncy Castle"
 ee7d0eb4e74de70a735f7fb36b604dd5c6ad35720d50b914604db042114a0185  ./ext/bcutil-jdk18on-1.83.jar;                          "Bouncy Castle"
 7472e3961992c12a9fd4f6d67c21de4280abe18f292704dd49d7338289f8acf5  ./ext/byte-buddy-1.14.15.jar;                           "Hibernate dependencies"
+ca70c90a5d1ce1511880ce9c93d4ad22108f61111d3daf91eb52762b571bd179  ./ext/caffeine-3.2.3.jar;                               "Caffeine"
 781d97e959f14fd314202221d5488bf30900b8f2bb991046cbce53dd1c56b6ed  ./ext/cert-cvc-1.4.6.jar;                               "EJBCA"
 42963d07aa30ec1904d2625a36c8d9e1f18f3bdeaefae10e7319d50843f37e30  ./ext/cesecore-ce/cesecore-common-7.0.0.1signserver7.4.0.2.jar;  "CESeCore"
 f4d6b7bd5db37cf175b7846e58bbb90b93c3edd5d1f4cbcabc1f16d295c6e82b  ./ext/cesecore-ce/cesecore-ejb-7.0.0.1signserver7.4.0.2.jar;  "CESeCore"

@@ -12,6 +12,7 @@ package org.signserver.server.cryptotokens;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -99,7 +100,7 @@ public class CompositeHelper {
                 throws CryptoTokenOfflineException {
 
         if (alias == null || (!KEYALIAS_COMPOSITE_SUFFIX.equals(keyAliasSuffix) && !alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX))) {
-            LOG.info("Key alias not for composite: " + alias);
+            LOG.debug("Key alias not for composite: " + alias);
             return Optional.empty();
         }
 
@@ -220,7 +221,7 @@ public class CompositeHelper {
                 SignServerException {
 
             if (alias == null || (!KEYALIAS_COMPOSITE_SUFFIX.equals(keyAliasSuffix) && !alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX)) || alias.endsWith(KEYALIAS_COMPQ_SUFFIX) || alias.endsWith(KEYALIAS_COMPC_SUFFIX)) {
-                LOG.info("Key alias not for composite: " + alias);
+                LOG.debug("Key alias not for composite: " + alias);
                 return Optional.empty();
             }
             final ICryptoTokenV4 token = getDelegate(context.getServices());
@@ -373,7 +374,7 @@ public class CompositeHelper {
                    InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
 
         if (alias == null || (!KEYALIAS_COMPOSITE_SUFFIX.equals(keyAliasSuffix) && !alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX)) || alias.endsWith(KEYALIAS_COMPQ_SUFFIX) || alias.endsWith(KEYALIAS_COMPC_SUFFIX)) {
-            LOG.info("Key alias not for composite: " + alias);
+            LOG.debug("Key alias not for composite: " + alias);
             return false;
         }
         final ICryptoTokenV4 token = getDelegate(services);
@@ -555,6 +556,62 @@ public class CompositeHelper {
         return addOrFilterCompositeEntries(entries, entries, includeData);
     }
 
+
+    /**
+     * Method that returns a composite key pair, which allows the components of a composite key pair
+     * to be tested if a composite alias with the suffix "-COMPOSITE" is provided.
+     * @param keyStore
+     * @param alias
+     * @param authCode
+     * @param signatureProvider
+     * @return The composite key pair of the provided composite alias
+     */
+    public static Optional<KeyPair> getCompositeKeyPair(KeyStoreDelegator keyStore, String alias, char[] authCode, String signatureProvider) throws
+            CryptoTokenOfflineException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+
+        PrivateKey privateKey1 = null;
+        PrivateKey privateKey2 = null;
+
+        final String aliasComp1 = removeCompositeSuffix(alias) + KEYALIAS_COMPQ_SUFFIX;
+        privateKey1 = keyStore.aquirePrivateKey(aliasComp1, authCode);
+        final PublicKey publicKey1 = keyStore.getPublicKey(aliasComp1);
+        if (publicKey1 == null) {
+            return Optional.empty();
+        }
+        final String algComp1 = publicKey1.getAlgorithm();
+
+        final String aliasComp2 = removeCompositeSuffix(alias) + KEYALIAS_COMPC_SUFFIX;
+        privateKey2 = keyStore.aquirePrivateKey(aliasComp2, authCode);
+        final PublicKey publicKey2 = keyStore.getPublicKey(aliasComp2);
+        if (publicKey2 == null) {
+            return Optional.empty();
+        }
+        final String algComp2 = publicKey2.getAlgorithm();
+
+        if (!algComp1.startsWith("ML-DSA")) {
+            throw new CryptoTokenOfflineException("Unexpected PQC algorithm for composite: " + algComp1);
+        }
+
+        if (!"RSA".equalsIgnoreCase(algComp2) && !"EC".equalsIgnoreCase(algComp2) && !"Ed25519".equalsIgnoreCase(algComp2) && !"Ed448".equalsIgnoreCase(algComp2)) {
+            throw new CryptoTokenOfflineException("Unexpected classic algorithm for composite: " + algComp2);
+        }
+
+        String classicalSpec = getKeySpecification(publicKey2);
+        ASN1ObjectIdentifier compositeOID = getDefaultCompositeAlgorithm(algComp1, classicalSpec, algComp2).orElseThrow(() -> new CryptoTokenOfflineException("No default composite algorithm found"));
+
+        PrivateKey compositePrivateKey = CompositePrivateKey.builder(compositeOID)
+               .addPrivateKey(privateKey1, signatureProvider)
+               .addPrivateKey(privateKey2, signatureProvider)
+               .build();
+
+        PublicKey compositePublicKey = CompositePublicKey.builder(compositeOID)
+               .addPublicKey(publicKey1, signatureProvider)
+               .addPublicKey(publicKey2, signatureProvider)
+               .build();
+
+        return Optional.of(new KeyPair(compositePublicKey, compositePrivateKey));
+    }
+
     public List<TokenEntry> addOrFilterCompositeEntries(List<TokenEntry> allEntries, List<TokenEntry> initialEntries, boolean includeData) {
         List<TokenEntry> result = new ArrayList<>(initialEntries);
 
@@ -601,7 +658,7 @@ public class CompositeHelper {
         return result;
     }
 
-    private String removeCompositeSuffix(String alias) {
+    private static String removeCompositeSuffix(String alias) {
         if (alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX)) {
             alias = alias.substring(0, alias.length() - KEYALIAS_COMPOSITE_SUFFIX.length());
         }
@@ -621,7 +678,7 @@ public class CompositeHelper {
         return result;
     }
 
-    public boolean isCompositeAlias(String alias) {
+    public static boolean isCompositeAlias(String alias) {
         return alias.endsWith(KEYALIAS_COMPOSITE_SUFFIX) && !alias.endsWith(KEYALIAS_COMPQ_SUFFIX) && !alias.endsWith(KEYALIAS_COMPC_SUFFIX); // TODO support for composite crypto worker also
     }
 

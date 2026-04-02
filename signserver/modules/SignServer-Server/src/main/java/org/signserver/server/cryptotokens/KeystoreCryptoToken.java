@@ -13,6 +13,7 @@
 package org.signserver.server.cryptotokens;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.jcajce.CompositePrivateKey;
 import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
@@ -203,9 +204,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
      */
     private void readFromKeystore(final String authenticationcode, final IServices services)
             throws KeyStoreException, CertificateException,
-                   NoSuchProviderException, NoSuchAlgorithmException,
-                   IOException,
-                   UnrecoverableKeyException {
+            NoSuchProviderException, NoSuchAlgorithmException,
+            IOException,
+            UnrecoverableKeyException, CryptoTokenOfflineException {
         if (authenticationcode != null) {
             this.authenticationCode = authenticationcode.toCharArray();
         }
@@ -258,25 +259,57 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
         final String defaultKey = properties.getProperty(DEFAULTKEY);
         if (defaultKey != null) {
-            final KeyEntry entry = entries.get(defaultKey);
-            if (entry != null) {
-                entries.put(ICryptoTokenV4.PURPOSE_SIGN, entry);
-                entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
+            if (CompositeHelper.isCompositeAlias(defaultKey)) {
+                Optional<KeyPair> compositeKeyPair = CompositeHelper.getCompositeKeyPair(delegator, defaultKey, keystorepassword.toCharArray(),"BC");
+                if (compositeKeyPair.isPresent()) {
+                    KeyEntry entry = new KeyEntry();
+                    entry.setPrivateKey(compositeKeyPair.get().getPrivate());
+                    try {
+                        putAliasInEntries(entry);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    LOG.error("No key pair for composite with alias " + defaultKey);
+                }
             } else {
-                LOG.error("Not a private key for alias " + defaultKey);
+                final KeyEntry entry = entries.get(defaultKey);
+                if (entry != null) {
+                    entries.put(ICryptoTokenV4.PURPOSE_SIGN, entry);
+                    entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
+                } else {
+                    LOG.error("Not a private key for alias " + defaultKey);
+                }
             }
         }
 
         final String nextKey = properties.getProperty(NEXTKEY);
         if (nextKey != null) {
-            final KeyEntry entry = entries.get(nextKey);
-            if (entry != null) {
-                entries.put(ICryptoTokenV4.PURPOSE_NEXTKEY, entry);
+            if (CompositeHelper.isCompositeAlias(nextKey)) {
+                Optional<KeyPair> compositeNextKeyPair = CompositeHelper.getCompositeKeyPair(delegator, nextKey, keystorepassword.toCharArray(), "BC");
+                if (compositeNextKeyPair.isPresent()) {
+                    KeyEntry nextEntry = new KeyEntry();
+                    nextEntry.setPrivateKey(compositeNextKeyPair.get().getPrivate());
+                    try {
+                        putAliasInEntries(nextEntry);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    LOG.error("No key pair for composite with alias " + nextKey);
+                }
             } else {
-                LOG.error("Not a private key for alias " + defaultKey);
+                final KeyEntry entry = entries.get(nextKey);
+                if (entry != null) {
+                    entries.put(ICryptoTokenV4.PURPOSE_NEXTKEY, entry);
+                } else {
+                    LOG.error("Not a private key for alias " + defaultKey);
+                }
             }
         }
     }
+
+
     
     @Override
     public void activate(final String authenticationcode, final IServices services)
@@ -761,6 +794,11 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         if (!composites.releaseCryptoInstance(instance, context)) {
             // NOP
         }
+    }
+
+    private void putAliasInEntries(KeyEntry alias) {
+        entries.put(ICryptoTokenV4.PURPOSE_SIGN, alias);
+        entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, alias);
     }
 
     private static class KeyEntry {

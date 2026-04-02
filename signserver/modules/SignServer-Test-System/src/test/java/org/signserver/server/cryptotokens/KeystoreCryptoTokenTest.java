@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.security.auth.x500.X500Principal;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -37,6 +38,9 @@ import static junit.framework.TestCase.assertFalse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.iana.IANAObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -51,6 +55,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
@@ -64,6 +69,7 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.test.utils.builders.CertBuilder;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
@@ -1338,6 +1344,90 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             createCompositeKeyAndCSR("MLDSA65-ECDSA-brainpoolP256r1-SHA512", "q87cBP256r1");
             createCompositeKeyAndCSR("MLDSA87-ECDSA-brainpoolP384r1-SHA512", "q87cBP384r1");
 
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+
+    /**
+     * Test that a Composite key can be configured as a default key in the Crypto Token.
+     * @throws Exception
+     */
+    @Test
+    public void testSettingCompositeKeyAsDefaultKeyInCryptoToken() throws Exception {
+        LOG.info("testSettingCompositeKeyAsDefaultKeyInCryptoToken");
+
+        try {
+            setP12CryptoTokenProperties();
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            final WorkerIdentifier wi = new WorkerIdentifier(JKS_CRYPTO_TOKEN);
+            final String sigAlg = "MLDSA44-RSA2048-PSS-SHA256";
+
+            workerSession.generateSignerKey(wi,
+                    "COMPOSITE",
+                    sigAlg,
+                    "default-COMPOSITE",
+                    pin.toCharArray());
+
+            // Variables for CA creation
+            final String caDN = "CN=Test CA";
+
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("MLDSA44-RSA2048-PSS-SHA256",
+                    "CN=testCSRComboGenerateKey,C=SE", null);
+            final AbstractCertReqData reqData =
+                    (AbstractCertReqData) workerSession.getCertificateRequest(wi, certReqInfo, false, "default-COMPOSITE");
+            final PKCS10CertificationRequest csr =
+                    new PKCS10CertificationRequest(reqData.toBinaryForm());
+
+            // Generate key-pair for CA
+            final KeyPairGenerator kpg =
+                    KeyPairGenerator.getInstance(IANAObjectIdentifiers.id_MLDSA44_RSA2048_PSS_SHA256.getId(), "BC");
+
+            final KeyPair compKeyPair = kpg.generateKeyPair();
+
+            // Actual CA certificate creation
+            final long currentTime = System.currentTimeMillis();
+            final X509CertificateHolder caCertHolder = new CertBuilder()
+                    .setSelfSignKeyPair(new KeyPair(compKeyPair.getPublic(),
+                            compKeyPair.getPrivate()))
+                    .setNotBefore(new Date(currentTime - 120000))
+                    .setSignatureAlgorithm(sigAlg)
+                    .setIssuer(caDN)
+                    .setSubject(caDN)
+                    .build();
+
+            final X509CertificateHolder cert =
+                    new X509v3CertificateBuilder(new X500Name("CN=TestComposite Issuer"),
+                            BigInteger.ONE, new Date(),
+                            new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)),
+                            csr.getSubject(),
+                            csr.getSubjectPublicKeyInfo()).
+                            build(new JcaContentSignerBuilder(sigAlg).
+                                    setProvider("BC").build(compKeyPair.getPrivate()));
+
+            // Whole certificate chain, signer certificate and CA certificate
+            final X509Certificate[] chain =
+                    { new JcaX509CertificateConverter().getCertificate(cert),
+                            new JcaX509CertificateConverter().getCertificate(caCertHolder) };
+            final List<byte[]> encodedChain =
+                    List.of(chain[0].getEncoded(), chain[1].getEncoded());
+
+            workerSession.uploadSignerCertificate(JKS_CRYPTO_TOKEN, cert.getEncoded(),
+                    GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(JKS_CRYPTO_TOKEN,
+                    encodedChain,
+                    GlobalConfiguration.SCOPE_GLOBAL);
+
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "DEFAULTKEY",
+                     "default-COMPOSITE");
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "SIGNATUREALGORITHM",
+                    sigAlg);
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+            assertTrue("Token should be online" ,workerSession.isTokenActive(wi));
+        } catch (Exception ex) {
+            fail(ex.getMessage());
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(JKS_CRYPTO_TOKEN);

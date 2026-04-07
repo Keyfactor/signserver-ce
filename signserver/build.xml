@@ -178,8 +178,10 @@ Installation Guide for details.
 
     <!-- Create bundle with sample configs to display in the admin web. -->
     <target name="-pre-configure-ear" depends="-create-sample-configs-dist">
-        <!-- Load OIDC configuration -->
-        <property file="${conf}/oidc.properties" />
+        <!-- Load OIDC configurations -->
+        <available file="${conf}/container-oidc.properties" property="container.oidc.present"/>
+        <loadproperties srcFile="${conf}/container-oidc.properties" encoding="UTF-8" if:set="container.oidc.present"/>
+        <property file="${conf}/oidc.properties"/>
         <!-- Empty oidc.providerUrl if not set -->
         <property name="oidc.providerUri" value="" />
     </target>

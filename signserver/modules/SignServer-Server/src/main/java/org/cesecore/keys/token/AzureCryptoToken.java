@@ -91,7 +91,6 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
-
 /**
  * Class implementing a keystore on Azure Key Vault, using their REST API.
  * https://docs.microsoft.com/en-us/rest/api/keyvault/
@@ -109,9 +108,9 @@ public class AzureCryptoToken extends BaseCryptoToken {
 
     private static final Logger log = Logger.getLogger(AzureCryptoToken.class);
 
-    /** Authorization header, for a Key Vault 
+    /** Authorization header, for a Key Vault
      * It is possible to have multiple crypto tokens configured to multiple key vaults (with different names), because this is
-     * local to this instance of CryptoToken. 
+     * local to this instance of CryptoToken.
      */
     private String authorizationHeader;
     /** The same but for client secret */
@@ -128,7 +127,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
     /** This should be set when after creating this object to allow it to the key/cert for auth to Azure on init */
     private KeyAndCertFinder authKeyProvider = null;
 
-    /** We can make two types of requests, to different hosts/URLs, one is for the REST API requests 
+    /** We can make two types of requests, to different hosts/URLs, one is for the REST API requests
      * and the other for the authorization URL we need to go to if we don't have a valid authorizationHeader
      * In the init mentioned we set some default parameters on these
      */
@@ -145,10 +144,10 @@ public class AzureCryptoToken extends BaseCryptoToken {
      * Azure Key Vault name, key vault specific, this is the string that will be part of the REST call URI
      * If KEY_VAULT_NAME contains a dot, it's assumed to be the full FQDN, i.e. keyvault-name.vault.azure-eu.net
      *   Resulting URL: https://" + KEY_VAULT_NAME/
-     * If KEY_VAULT_NAME does not contains a dot, it's assumed to only be the hostname of a "default" azure FQDN, 
+     * If KEY_VAULT_NAME does not contains a dot, it's assumed to only be the hostname of a "default" azure FQDN,
      *   i.e KEY_VAULT_NAME=keyvault-name, and automatically appended at the end is ".vault.azure.net"
      *   Resulting URL: https://" + KEY_VAULT_NAME + ".vault.azure.net/
-     * 
+     *
      */
     public static final String KEY_VAULT_NAME = "keyVaultName";
 
@@ -162,7 +161,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
     public static final String KEY_VAULT_CLIENTID = "keyVaultClientID";
 
     /**
-     * Property for storing whether we will use app secret or an internal key binding when authenticating to Azure.  
+     * Property for storing whether we will use app secret or an internal key binding when authenticating to Azure.
      * This is a legacy setting - in versions 7.7.1 and up, we use the KEY_VAULT_AUTENTICATION_TYPE enumeration.
      */
     public static final String KEY_VAULT_USE_KEY_BINDING = "keyVaultUseKeyBinding";
@@ -179,14 +178,14 @@ public class AzureCryptoToken extends BaseCryptoToken {
     public static final String KEY_VAULT_KEY_BINDING = "keyVaultKeyBinding";
 
     /** Cache for key aliases, to speed things up so we don't have to make multiple REST calls all the time to list aliases and public keys
-     * We cache for a short time, 60 seconds to speed up GUI operations, but still allow for key generation on different nodes in a cluster, just leaving the 
-     * other node not knowing of the new key for 60 seconds 
+     * We cache for a short time, 60 seconds to speed up GUI operations, but still allow for key generation on different nodes in a cluster, just leaving the
+     * other node not knowing of the new key for 60 seconds
      */
     private KeyAliasesCache2 aliasCache = new KeyAliasesCache2();
 
     /**
-     * EJBCA uses a non-null activation code to indicate "should activate" is several places.  When using public key authentication, 
-     * there's no authentication code but we still want to be able to "activate" the token.  This value can be used as an 
+     * EJBCA uses a non-null activation code to indicate "should activate" is several places.  When using public key authentication,
+     * there's no authentication code but we still want to be able to "activate" the token.  This value can be used as an
      * "activation code" in those situations to indicate to the reader that this is a special case.
      */
     public static final String DUMMY_ACTIVATION_CODE = "azure-dummy-pin";
@@ -226,18 +225,18 @@ public class AzureCryptoToken extends BaseCryptoToken {
         if (authenticationTypeString == null) {
             return Boolean.parseBoolean(getProperties().getProperty(AzureCryptoToken.KEY_VAULT_USE_KEY_BINDING, "false"));
         }
-        
+
         // check the newer enumeration of authentication types
         return AzureAuthenticationType.valueOf(authenticationTypeString) == AzureAuthenticationType.KEY_BINDING;
     }
-    
+
     private boolean isKeyVaultUseManagedIdentity() {
         // if this is a 7.7 or earlier properties, this value won't be set
         final String authenticationTypeString = getProperties().getProperty(KEY_VAULT_AUTHENTICATION_TYPE);
         if (authenticationTypeString == null) {
             return false;
         }
-        
+
         return AzureAuthenticationType.valueOf(authenticationTypeString) == AzureAuthenticationType.MANAGED_IDENTITY;
     }
 
@@ -259,7 +258,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
     private static final Pattern aliasPattern = Pattern.compile("^[0-9a-zA-Z-]+$");
 
     /** Checks that an alias name confirms to the Key Vault requirements, ^[0-9a-zA-Z-]+$
-     * 
+     *
      * @param alias the alias name to check
      * @throws IllegalArgumentException in case the alias does not match ^[0-9a-zA-Z-]+$
      */
@@ -272,7 +271,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
     private static final Pattern aliasPatternPlusDot = Pattern.compile("^[0-9a-zA-Z-.]+$");
 
     /** Checks that a key vault name confirms to the Key Vault requirements, same as for an alias, plus dot (for when the full hostname is given).
-     * 
+     *
      * @param vaultName the vault name to check
      * @throws IllegalArgumentException in case the vault name does not match ^[0-9a-zA-Z-.]+$
      */
@@ -292,7 +291,6 @@ public class AzureCryptoToken extends BaseCryptoToken {
                 .setConnectionRequestTimeout(10000) // getting a connection should not take more than 10 seconds
                 .build();
         final HttpClientBuilder clientBuilder = HttpClients.custom()
-                .setConnectionTimeToLive(30, java.util.concurrent.TimeUnit.SECONDS)
                 .setDefaultRequestConfig(requestConfig)
                 // We are heavy users of multi threading, this sets 50 parallel connection per IP
                 .setMaxConnPerRoute(50)
@@ -326,9 +324,9 @@ public class AzureCryptoToken extends BaseCryptoToken {
 
         try {
             final String autoActivatePin = BaseCryptoToken.getAutoActivatePin(properties);
-            
-            // note that even if this Crypto Token is using key bindings for authentication, we still 
-            // set a "dummy" pin, since EJBCA relies on the existence of a pin to indicate that 
+
+            // note that even if this Crypto Token is using key bindings for authentication, we still
+            // set a "dummy" pin, since EJBCA relies on the existence of a pin to indicate that
             // auto-activation should take place.
             if (StringUtils.isNotEmpty(autoActivatePin)) {
                 activate(autoActivatePin.toCharArray());
@@ -367,7 +365,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
             try {
                 while (bar-- > 0) { // be sure to decrease every round
                     if (nextLink != null) {
-                        request = new HttpGet(nextLink);                        
+                        request = new HttpGet(nextLink);
                     }
                     try { // To close the response
                         response = azureHttpRequest(request);
@@ -405,7 +403,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
                                     if (log.isDebugEnabled()) {
                                         log.debug("Adding alias to cache: '" + alias);
                                     }
-                                    // Add a dummy public key, if there is not already a key in the existing cache for this alias, 
+                                    // Add a dummy public key, if there is not already a key in the existing cache for this alias,
                                     // if there is an existing then update with the real one to not break caching behavior
                                     final PublicKey oldKey = aliasCache.getEntry(alias.hashCode());
                                     if (oldKey != null) {
@@ -442,7 +440,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
                                 if (log.isDebugEnabled()) {
                                     log.debug("No key aliases in key vault");
                                 }
-                                bar = 0; // break out of the while loop 
+                                bar = 0; // break out of the while loop
                             }
                         } else {
                             // Error response (not HTTP 200)
@@ -490,6 +488,24 @@ public class AzureCryptoToken extends BaseCryptoToken {
             return new ArrayList<>(aliasCache.getAllNames());
         }
 
+    }
+
+    @Override
+    public Set<Long> getKeyUsagesFromKey(String arg0, boolean arg1, long... arg2) throws CryptoTokenOfflineException {
+        // Not implemented.
+        return new TreeSet<Long>();
+    }
+
+    @Override
+    public Set<Long> getKeyUsagesFromPrivateKey(String arg0) throws CryptoTokenOfflineException {
+        // Not implemented.
+        return new TreeSet<Long>();
+    }
+
+    @Override
+    public Set<Long> getKeyUsagesFromPublicKey(String arg0) throws CryptoTokenOfflineException {
+        // Not implemented.
+        return new TreeSet<Long>();
     }
 
     @Override
@@ -575,13 +591,13 @@ public class AzureCryptoToken extends BaseCryptoToken {
         if (StringUtils.isNotEmpty(alias)) {
             checkAliasName(alias);
             // validate that keySpec matches some of the allowed Azure Key Vault key types/lengths.
-            // Allow kty RSA-HSM or EC-HSM. RSA key_size or "crv" (P-256, P-384, P-521), 
+            // Allow kty RSA-HSM or EC-HSM. RSA key_size or "crv" (P-256, P-384, P-521),
             // {"kty": "RSA-HSM", "key-size": 2048, "attributes": {"enabled": true}}
             // {"kty": "EC-HSM", "crv": "P-256", "attributes": {"enabled": true}}
             final StringBuilder str = new StringBuilder("{\"kty\": ");
             final String formatCheckedKeySpec = KeyGenParams.getKeySpecificationNumeric(keySpec);
             // If it is pure numeric, it is an RSA key length
-            if (NumberUtils.isNumber(formatCheckedKeySpec)) {
+            if (NumberUtils.isCreatable(formatCheckedKeySpec)) {
                 String kty = "RSA-HSM";
                 if (getKeyVaultType().equals("standard")) {
                     kty = "RSA";
@@ -633,7 +649,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
                 if (response.getStatusLine().getStatusCode() != 200) {
                     throw new CryptoTokenOfflineException("Azure Crypto Token key generation failed, JSON response: " + json);
                 }
-                // Update client key aliases next time we want to use one, could be done without having to update the whole cache, 
+                // Update client key aliases next time we want to use one, could be done without having to update the whole cache,
                 // but might as well as we don't cache for too long anyhow
                 aliasCache.flush();
             } catch (CryptoTokenAuthenticationFailedException | IOException e) {
@@ -799,7 +815,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
                 }
                 return publicKey;
             } catch (CryptoTokenAuthenticationFailedException | IOException | ParseException | NoSuchAlgorithmException | InvalidKeySpecException
-                    | NoSuchProviderException e) {
+                     | NoSuchProviderException e) {
                 throw new CryptoTokenOfflineException(e);
             }
         } else {
@@ -810,25 +826,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
         }
     }
 
-    @Override
-    public Set<Long> getKeyUsagesFromKey(String arg0, boolean arg1, long... arg2) throws CryptoTokenOfflineException {
-        // Not implemented.
-        return new TreeSet<Long>();
-    }
-
-    @Override
-    public Set<Long> getKeyUsagesFromPrivateKey(String arg0) throws CryptoTokenOfflineException {
-        // Not implemented.
-        return new TreeSet<Long>();
-    }
-
-    @Override
-    public Set<Long> getKeyUsagesFromPublicKey(String arg0) throws CryptoTokenOfflineException {
-        // Not implemented.
-        return new TreeSet<Long>();
-    }
-    
-    /** 
+    /**
      * @param alias the key alias you want to access, or null if the key alias should be left out of the returned URL
      * @return a URL to access a key (without trailing /), i.e. https://vaultname.vault.azure.net/keys/alias, or if alias is null https://vaultname.vault.azure.net/keys
      */
@@ -847,17 +845,17 @@ public class AzureCryptoToken extends BaseCryptoToken {
     }
 
     /** Makes a REST API call to Azure, the REST call may need an authorizationToken, and if one does not exist (in this class) one is retrieved.
-     * This means that if a valid authorizationToken exists, only one HTTP request is made, but if no valid authorizationToken exists three HTTP 
+     * This means that if a valid authorizationToken exists, only one HTTP request is made, but if no valid authorizationToken exists three HTTP
      * request are made:
      * 1. First request - response is "unauthorized" and authorization URL is parsed from the response
      * 2. Authorization request - response is an authorizationToken which is set for further use
      * 3. The First request is tried again again, with the newly fetched authorizationToken
-     * 
+     *
      * Important that caller closes the response, use try-with-resource:
      *   try (CloseableHttpResponse response = azureHttpRequest(request)) {
      *    ...
      *   }
-     * 
+     *
      * @param request HttpRequestBase with the either GET or POST request
      * @return CloseableHttpResponse with the response, the caller is responsible for closing it, use try-with-resource
      * @throws CryptoTokenAuthenticationFailedException if authentication to Azure failed 401 or 400 returned, or no Bearer authorization_uri exists in the response input
@@ -873,7 +871,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
             final CloseableHttpResponse response = httpRequestWithAuthHeader(request);
             final int requestStatusCode = response.getStatusLine().getStatusCode();
             if (requestStatusCode == 401) {
-                log.info("Access denied calling Key Vault '" + getKeyVaultName()
+                log.debug("Access denied calling Key Vault '" + getKeyVaultName()
                         + "', trying to get authentication URI and fetch authorization token.");
                 // This call will close the response above as quick as possible
                 azureAuthorizationRequestFrom401Response(response);
@@ -888,8 +886,8 @@ public class AzureCryptoToken extends BaseCryptoToken {
     }
 
     /** makes a HTTP request using the httpClient CloseableHttpClient of this class
-     *  
-     * @param request 
+     *
+     * @param request
      * @return CloseableHttpResponse with the server response, the caller is responsible for closing it
      * @throws IOException in case HTTP request fails
      */
@@ -908,14 +906,14 @@ public class AzureCryptoToken extends BaseCryptoToken {
         return response;
     }
 
-    /** Looks for WWW-authenticate header in the response (which must be a 401 response from Azure) and makes a call to 
-     * this authentication URL to retrieve a new authorization bearer token. The received token is set in the class to be 
+    /** Looks for WWW-authenticate header in the response (which must be a 401 response from Azure) and makes a call to
+     * this authentication URL to retrieve a new authorization bearer token. The received token is set in the class to be
      * used by #httpRequestWithAuthHeader
-     * 
+     *
      * @param response CloseableHttpResponse, the response that was received as part of a 401 (access denied) response from Azure
      * @throws IOException unable to make HTTP requests or close HTTP responses
      * @throws CryptoTokenAuthenticationFailedException is authentication to Azure failed 401 or 400 returned, or no Bearer authorization_uri exists in the response input
-     * @throws ParseException if JSON response from Azure (response from authorization URI) can not be parsed 
+     * @throws ParseException if JSON response from Azure (response from authorization URI) can not be parsed
      */
     private void azureAuthorizationRequestFrom401Response(CloseableHttpResponse response)
             throws CryptoTokenAuthenticationFailedException, ParseException, IOException {
@@ -923,7 +921,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
         // Get bearer token (authentication token) from the response.
         final Header lastHeader = response.getLastHeader("WWW-Authenticate");
         log.debug("lastHeader = " + lastHeader);
-        // Close as soon as possible, we don't need this response, it's an "Error Response" for invalid_token 
+        // Close as soon as possible, we don't need this response, it's an "Error Response" for invalid_token
         response.close();
         final HeaderElement[] elements = lastHeader.getElements();
         String oauthServiceURL = null;
@@ -955,8 +953,8 @@ public class AzureCryptoToken extends BaseCryptoToken {
             throw new CryptoTokenAuthenticationFailedException(
                     "We did not find a 'Bearer authorization' uri in the WWW-Authenticate for a 401 response");
         }
-        final HttpRequestBase request = isKeyVaultUseManagedIdentity() 
-                ? createManagedIdentityTokenRequest(oauthResource) 
+        final HttpRequestBase request = isKeyVaultUseManagedIdentity()
+                ? createManagedIdentityTokenRequest(oauthResource)
                 : createOauthTokenPostRequest(oauthServiceURL, oauthResource);
         try (final CloseableHttpResponse authResponse = authHttpClient.execute(request)) {
             final int authStatusCode = authResponse.getStatusLine().getStatusCode();
@@ -990,13 +988,13 @@ public class AzureCryptoToken extends BaseCryptoToken {
 
     /**
      * Create an HTTP request that will request a Bearer token from the Azure Machine Identity URL.
-     * 
-     * @see <a 
+     *
+     * @see <a
      *  href="https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http">
      * How to use managed identities for Azure resources on an Azure VM to acquire an access token</a>
      * @see <a href="https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/tutorial-windows-vm-access-nonaad">
      * Tutorial: Use a Windows VM system-assigned managed identity to access Azure Key Vault</a>
-     * 
+     *
      * @param oauthServiceURL Base URL for Azure's OAuth2 Authorization Server
      * @param oauthResource The resource we're requesting access to
      * @return A POST request that can be sent to retrieve the bearer token
@@ -1007,9 +1005,9 @@ public class AzureCryptoToken extends BaseCryptoToken {
             // It should be OK to have that address hard-coded.  It's part of the Azure Managed Identity specification
             //@formatter:off
             final URI managedIdentityUrl = new URIBuilder("http://169.254.169.254/metadata/identity/oauth2/token")
-                .setParameter("api-version", "2018-02-01")
-                .setParameter("resource", oauthResource)
-                .build();
+                    .setParameter("api-version", "2018-02-01")
+                    .setParameter("resource", oauthResource)
+                    .build();
             //@formatter:on
             log.debug("Created managed identity url: " + managedIdentityUrl.toString());
             HttpGet httpGet = new HttpGet(managedIdentityUrl);
@@ -1022,7 +1020,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
 
     /**
      * Create an HTTP request that will request a Bearer token from Azure's Authorization Server (specified in oauthServiceUrl).
-     * 
+     *
      * @param oauthServiceURL Base URL for Azure's OAuth2 Authorization Server
      * @param oauthResource The resource we're requesting access to
      * @return A POST request that can be sent to retrieve the bearer token
@@ -1078,7 +1076,7 @@ public class AzureCryptoToken extends BaseCryptoToken {
 
     /**
      * Given the audience, client id, time-to-live and credentials, create JWT encoded as a string to send to an OAUTH2-enabled API.
-     * 
+     *
      * @param jwtAudience The URL we are authenticating to
      * @param clientId Our client ID
      * @param tokenLifetimeSeconds How long should this token be valid in seconds
@@ -1090,18 +1088,18 @@ public class AzureCryptoToken extends BaseCryptoToken {
      * @throws JOSEException Error formatting JWT
      */
     private static String getJwtString(String jwtAudience, String clientId, int tokenLifetimeSeconds, final PrivateKey key,
-            final X509Certificate certificate) throws CertificateEncodingException, NoSuchAlgorithmException, JOSEException {
+                                       final X509Certificate certificate) throws CertificateEncodingException, NoSuchAlgorithmException, JOSEException {
         final long time = System.currentTimeMillis();
         final JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().audience(Collections.singletonList(jwtAudience)).issuer(clientId)
                 .jwtID(UUID.randomUUID().toString()).notBeforeTime(new Date(time)).expirationTime(new Date(time + tokenLifetimeSeconds * 1000))
                 .subject(clientId).build();
 
         JWSHeader.Builder builder = new Builder(JWSAlgorithm.RS256);
-        List<com.nimbusds.jose.util.Base64> certs = new ArrayList<com.nimbusds.jose.util.Base64>();
+        List<com.nimbusds.jose.util.Base64> certs = new ArrayList<>();
         certs.add(new com.nimbusds.jose.util.Base64(java.util.Base64.getEncoder().encodeToString(certificate.getEncoded())));
         builder.x509CertChain(certs);
-        String certHash = java.util.Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest(certificate.getEncoded()));
-        builder.x509CertThumbprint(new Base64URL(certHash));
+        String certHash = java.util.Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-256").digest(certificate.getEncoded()));
+        builder.x509CertSHA256Thumbprint(new Base64URL(certHash));
         SignedJWT jwt = new SignedJWT(builder.build(), claimsSet);
         jwt.sign(new RSASSASigner(key));
         String jwtString = jwt.serialize();

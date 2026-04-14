@@ -21,26 +21,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.cesecore.internal.CommonCache;
 
 /**
  * Object and name to id lookup cache base implementation.
- * 
+ *
  * Note that this type of cache is not optimized for short-lived objects, but
  * will prevent memory leaks to some extent through checking for stale data
  * during updates.
- * 
+ *
  * @version $Id$
  */
 public abstract class CommonCacheBase2<T> implements CommonCache<T> {
-    
+
     private class CacheEntry {
         long lastUpdate;
         final int digest;
@@ -53,14 +46,14 @@ public abstract class CommonCacheBase2<T> implements CommonCache<T> {
             this.object = object;
         }
     }
-    
+
     private static final Logger log = Logger.getLogger(CommonCacheBase2.class);
     protected Map<Integer, CacheEntry> cache = new HashMap<>();
     protected Map<String, Integer> nameToIdMap = new HashMap<>();
 
     /** @return how long to cache objects in milliseconds. */
     protected abstract long getCacheTime();
-    
+
     /** @return the maximum allowed time an object may reside in the cache before it is purged. 0 means live forever. */
     protected abstract long getMaxCacheLifeTime();
 
@@ -141,7 +134,7 @@ public abstract class CommonCacheBase2<T> implements CommonCache<T> {
             return false;
         }
     }
-    
+
     @Override
     public void updateWith(int id, int digest, String name, T object) {
         final Integer key = id;
@@ -161,18 +154,18 @@ public abstract class CommonCacheBase2<T> implements CommonCache<T> {
             }
         }
     }
-    
+
     @Override
     public String getName(int id) {
         final CacheEntry entry = getCacheEntry(id);
         return entry != null ? entry.name : null;
     }
-    
+
     /** @return cache entry for the requested key or null */
     private CacheEntry getCacheEntry(final Integer key) {
         return cache.get(key);
     }
-    
+
     /** Set or remove cache entry. */
     private void setCacheEntry(final Integer key, final CacheEntry cacheEntry) {
         final Map<Integer, CacheEntry> cacheStage = new HashMap<>();
@@ -181,7 +174,7 @@ public abstract class CommonCacheBase2<T> implements CommonCache<T> {
         final long staleCutOffTime = System.currentTimeMillis()-maxCacheLifeTime;
         synchronized (this) {
             // Process all entries except for the one that will change
-            for (final Map.Entry<Integer,CacheEntry> entry : cache.entrySet()) {
+            for (final Entry<Integer,CacheEntry> entry : cache.entrySet()) {
                 final Integer currentId = entry.getKey();
                 if (!key.equals(currentId)) {
                     final CacheEntry currentCacheEntry = entry.getValue();
@@ -218,28 +211,28 @@ public abstract class CommonCacheBase2<T> implements CommonCache<T> {
         final Map<String, Integer> nameToIdMapStage = new HashMap<>();
         replaceCache(cacheStage, nameToIdMapStage);
     }
-    
+
     @Override
     public void replaceCacheWith(List<Integer> keys) {
         Map<Integer, CacheEntry> cacheStage = new HashMap<>();
         Map<String, Integer> nameToIdMapStage = new HashMap<>();
-        
+
         for(Integer key : keys) {
             CacheEntry entry = cache.get(key);
             cacheStage.put(key, entry);
-            
+
             String name = entry.name;
             nameToIdMapStage.put(name, nameToIdMap.get(name));
         }
-        
+
         replaceCache(cacheStage, nameToIdMapStage);
     }
-    
+
     private void replaceCache(Map<Integer, CacheEntry> cacheStage, Map<String, Integer> nameToIdMapStage) {
         synchronized (this) {
             cache = cacheStage;
             nameToIdMap = nameToIdMapStage;
         }
     }
-    
+
 }

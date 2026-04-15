@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import com.keyfactor.util.keys.KeyAttestation;
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.common.DuplicateAliasException;
@@ -177,7 +180,22 @@ public interface ICryptoTokenV4 {
             QueryException,
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter;
-    
+
+    /**
+     * Returns an HSM vendor specific key attestation.
+     * By default, classes implementing this interface will throw a org.signserver.common.OperationUnsupportedException.
+     * @param alias Name of the key to get an attestation for
+     * @param services Implementations for the crypto token to use
+     * @return The vendor specific key attestation
+     * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
+     * @throws CryptoTokenAuthenticationFailedException with error message if authentication to tokens fail
+     * @throws OperationUnsupportedException If crypto token implementation does not have support for retrieving key attestations
+     * @throws NoSuchAliasException If the key does not exist in the HSM
+     */
+    default KeyAttestation getKeyAttestation(String alias, IServices services) throws CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException, OperationUnsupportedException, NoSuchAliasException {
+        throw new OperationUnsupportedException("This crypto token implementation does not have support for key attestation.");
+    }
+
     /**
      * Acquire a crypto instance in order to perform crypto operations during
      * a limited scope.

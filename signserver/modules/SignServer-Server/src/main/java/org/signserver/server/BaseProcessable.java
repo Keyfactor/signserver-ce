@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
+import com.keyfactor.util.keys.KeyAttestation;
 import jakarta.persistence.EntityManager;
 import java.security.cert.X509Certificate;
 
@@ -1126,6 +1128,20 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 throw new CryptoTokenOfflineException("Crypto token unavailable");
             }
             return token.searchTokenEntries(startIndex, max, qc, includeData, params, services);
+        } catch (SignServerException ex) {
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + ex.getMessage());
+            throw new CryptoTokenOfflineException(ex);
+        }
+    }
+
+    @Override
+    public KeyAttestation getKeyAttestation(String alias, IServices services) throws CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException, OperationUnsupportedException, NoSuchAliasException {
+        try {
+            final ICryptoTokenV4 token = getCryptoToken(services);
+            if (token == null) {
+                throw new CryptoTokenOfflineException("Crypto token unavailable");
+            }
+            return token.getKeyAttestation(alias, services);
         } catch (SignServerException ex) {
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + ex.getMessage());
             throw new CryptoTokenOfflineException(ex);

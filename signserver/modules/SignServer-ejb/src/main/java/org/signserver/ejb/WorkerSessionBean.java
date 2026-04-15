@@ -23,6 +23,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
+import com.keyfactor.util.keys.KeyAttestation;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJB;
@@ -621,6 +623,32 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
         
         return exportedProps;
+    }
+
+    @Override
+    public KeyAttestation getKeyAttestation(WorkerIdentifier signerId, String alias) throws InvalidWorkerIdException, CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException, NoSuchWorkerException, OperationUnsupportedException, NoSuchAliasException {
+        return getKeyAttestation(new AdminInfo("CLI user", null, null), signerId, alias);
+    }
+
+    @Override
+    public KeyAttestation getKeyAttestation(AdminInfo adminInfo, WorkerIdentifier signerId, String alias) throws InvalidWorkerIdException, CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException, NoSuchWorkerException, OperationUnsupportedException, NoSuchAliasException {
+        IWorker worker = workerManagerSession.getWorker(signerId);
+        if (!(worker instanceof IProcessable)) {
+            throw new InvalidWorkerIdException(
+                    "Worker exists but isn't a signer.");
+        }
+        IProcessable signer = (IProcessable) worker;
+        final WorkerConfig config = worker.getConfig();
+
+        final KeyAttestation keyAttestation = signer.getKeyAttestation(alias, servicesImpl);
+
+        final HashMap<String, Object> auditMap = new HashMap<>();
+        auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, config));
+        auditMap.put(AdditionalDetailsTypes.KEY_ATTESTATION_VENDOR.name(), keyAttestation.getVendor());
+        auditLog(adminInfo, SignServerEventTypes.KEYATTESTATION, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, signerId, auditMap);
+
+        return keyAttestation;
     }
     
     @Override

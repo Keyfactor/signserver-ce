@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.testutils;
 
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
+import com.keyfactor.util.keys.KeyAttestation;
 import io.restassured.http.Method;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -37,12 +39,12 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.NoSuchAliasException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerExistsException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
@@ -255,6 +257,11 @@ public class WorkerSessionRest implements WorkerSessionRemote {
     @Override
     public Collection<KeyTestResult> testKey(WorkerIdentifier signerId, String alias, char[] authCode) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public KeyAttestation getKeyAttestation(WorkerIdentifier signerId, String alias) throws InvalidWorkerIdException, CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException, NoSuchWorkerException, OperationUnsupportedException, NoSuchAliasException {
+        return workerSessionEjb.getKeyAttestation(signerId,  alias);
     }
 
     @Override

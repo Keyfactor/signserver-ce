@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
+import com.keyfactor.util.keys.KeyAttestation;
 import org.signserver.common.*;
 
 import java.math.BigInteger;
@@ -42,6 +44,24 @@ public interface WorkerSession {
      * @throws InvalidWorkerIdException in case the worker does not exist
      */
     WorkerStatus getStatus(WorkerIdentifier wi) throws InvalidWorkerIdException;
+
+    /**
+     * Returns an HSM vendor specific key attestation.
+     * @param signerId Id of the signer
+     * @param alias Name of the key to get an attestation for
+     * @return The vendor specific key attestation
+     * @throws InvalidWorkerIdException In case the worker ID is not existing
+     * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
+     * @throws CryptoTokenAuthenticationFailedException with error message if authentication to tokens fail
+     * @throws NoSuchWorkerException If worker not found
+     * @throws OperationUnsupportedException If crypto token implementation does not have support for retrieving key attestations
+     * @throws NoSuchAliasException If the key does not exist in the HSM
+     */
+    default KeyAttestation getKeyAttestation(final WorkerIdentifier signerId, String alias)
+            throws InvalidWorkerIdException, CryptoTokenOfflineException,
+            CryptoTokenAuthenticationFailedException, NoSuchWorkerException, OperationUnsupportedException, NoSuchAliasException {
+        throw new OperationUnsupportedException("This crypto token implementation does not have support for key attestation.");
+    }
 
     /**
      * Returns if the associated crypto token is active or not.

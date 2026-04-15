@@ -64,7 +64,10 @@ public enum SignServerEventTypes implements EventType {
     RELOAD_WORKER_CONFIG,
     
     /** Logged when a timed service has run. */
-    TIMED_SERVICE_RUN;
+    TIMED_SERVICE_RUN,
+
+    /** Logged for events when a key attestation is requested */
+    KEYATTESTATION;
     
    @Override
    public boolean equals(EventType value) {

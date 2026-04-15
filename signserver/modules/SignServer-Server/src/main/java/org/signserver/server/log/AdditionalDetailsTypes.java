@@ -42,6 +42,9 @@ public enum AdditionalDetailsTypes {
      */
     CRYPTOTOKEN,
 
+    /** Key attestation vendor */
+    KEY_ATTESTATION_VENDOR,
+
     TESTRESULTS,
     
     CERTIFICATE,

@@ -19,6 +19,9 @@ import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import com.keyfactor.util.keys.token.CryptoTokenAuthenticationFailedException;
+import com.keyfactor.util.keys.KeyAttestation;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -121,6 +124,20 @@ public interface IProcessable extends IWorker {
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException;
 
     /**
+     * Returns an HSM vendor specific key attestation.
+     * @param alias Name of the key to get an attestation for
+     * @param services Implementations for the crypto token to use
+     * @return The vendor specific key attestation
+     * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
+     * @throws CryptoTokenAuthenticationFailedException with error message if authentication to tokens fail
+     * @throws OperationUnsupportedException If crypto token implementation does not have support for retrieving key attestations
+     * @throws NoSuchAliasException If the key does not exist in the HSM
+     */
+    default KeyAttestation getKeyAttestation(String alias, IServices services) throws CryptoTokenOfflineException, CryptoTokenAuthenticationFailedException, OperationUnsupportedException, NoSuchAliasException {
+        throw new OperationUnsupportedException("Not supported yet.");
+    }
+
+    /**
      * Generate key.
      * 
      * @param keyAlgorithm
@@ -134,7 +151,7 @@ public interface IProcessable extends IWorker {
      * @throws NoSuchAlgorithmException
      * @throws InvalidAlgorithmParameterException
      * @throws UnsupportedCryptoTokenParameter
-     * @see ICryptoTokenV4#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices) 
+     * @see ICryptoTokenV4#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices)
      */
     void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services) throws
             CryptoTokenOfflineException,

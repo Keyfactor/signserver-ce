@@ -15,26 +15,54 @@ package org.signserver.cli;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.pkcs.Attribute;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.cesecore.util.CertTools;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertArrayEquals;
 import org.signserver.client.cli.defaultimpl.TimeStampCommand;
 import org.signserver.testutils.CLITestHelper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.BeforeClass;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerIdentifier;
+import static org.signserver.testutils.ModulesTestCase.getSignServerHome;
+import org.signserver.testutils.TestUtils;
 
 /**
  * Class used to test the basic aspects of the SignServer CLI such
@@ -54,9 +82,35 @@ public class SignServerCLITest extends ModulesTestCase {
     private static final int WORKERID2 = 1000;
     private static final String TESTTSID = String.valueOf(WORKERID2);
 
+    private static final int CRYPTO_WORKER_ID = 2000;
+    private static final String CRYPTO_WORKER_NAME = "TestP12CryptoWorker";
+    
     private CLITestHelper cli = getAdminCLI();
     private CLITestHelper clientCLI = getClientCLI();
 
+    private static File keystore;
+    private static KeyStore ks;
+
+    @BeforeClass
+    public static void setUpKeyStore() throws Exception {
+        ks = KeyStore.getInstance("pkcs12");
+        char[] password = "foo123".toCharArray();
+
+        ks.load(null, password);
+
+        // Store away the keystore.
+        keystore = new File(getSignServerHome(), "tmp/CLITest.p12");
+        try (FileOutputStream fos = new FileOutputStream(keystore)) {
+            ks.store(fos, password);
+        }
+
+        SignServerUtil.installBCProviderIfNotAvailable();
+    }
+
+    @AfterClass
+    public static void removeKeyStore() throws Exception {
+        keystore.delete();
+    }
 
     @Test
     public void test01BasicSetup() throws Exception {
@@ -1011,6 +1065,473 @@ public class SignServerCLITest extends ModulesTestCase {
     	removeWorker(getSignerIdPDFSigner1());
 
     	assertTrue("FILENAME property is not logged", found);
+    }
+
+    /**
+     * Helper method checking if a SubjectPublicKeyInfo instance specifies
+     * explicit ECC parameters.
+     *
+     * @param spki
+     * @return true if explicit
+     */
+    private boolean isSubjectPublicKeyInfoExplicit(final SubjectPublicKeyInfo spki) {
+        final ASN1Sequence seq1 = ASN1Sequence.getInstance(spki.toASN1Primitive());
+        final ASN1Sequence seq2 = ASN1Sequence.getInstance(seq1.getObjectAt(0));
+
+        final ASN1ObjectIdentifier oid =
+                ASN1ObjectIdentifier.getInstance(seq2.getObjectAt(0));
+
+        assertEquals("oid", new ASN1ObjectIdentifier("1.2.840.10045.2.1"),
+                     oid);
+        final ASN1Encodable encodable = seq2.getObjectAt(1);
+
+        try {
+            ASN1Sequence.getInstance(encodable);
+
+            /* assume the explicit curve paramaters are present when the second
+             * object in the sequence can be parsed as an ASN1Sequence
+            */
+            return true;
+        } catch (IllegalArgumentException e) {
+            try {
+                ASN1ObjectIdentifier.getInstance(encodable);
+ 
+                return false;
+            } catch (IllegalArgumentException ex) {
+                fail("Unknown object in subject public key info: " +
+                     ex.getMessage());
+                throw ex;
+            }
+        }
+    }
+
+    /**
+     * Helper method asserting a returned CSR
+     *
+     * @param csr
+     * @param expectedSubjectDN
+     * @param expectedSigAlg
+     * @param expectedKey the key alias of the key from the keystore that
+     *                    the CSR should be issued for
+     * @param expectedEmails array of expected e-mail address SAN extension
+     *                       requests, if null expect no extension request
+     *                       attribute
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws InvalidKeyException 
+     */
+    private void assertCSR(final JcaPKCS10CertificationRequest csr,
+                           final String expectedSubjectDN,
+                           final ASN1ObjectIdentifier expectedSigAlg,
+                           final String expectedKey,
+                           final String[] expectedEmails)
+            throws FileNotFoundException, IOException, NoSuchAlgorithmException,
+                   CertificateException, KeyStoreException, InvalidKeyException {
+        assertEquals("Expected subject DN", expectedSubjectDN,
+                     csr.getSubject().toString());
+        assertEquals("Signature algorithm", expectedSigAlg,
+                     csr.getSignatureAlgorithm().getAlgorithm());
+
+        ks.load(new FileInputStream(keystore), "foo123".toCharArray());
+
+        final Certificate cert = ks.getCertificate(expectedKey);
+        final PublicKey expectedPk = cert.getPublicKey();
+        final PublicKey csrPk = csr.getPublicKey();
+        
+        assertArrayEquals("Matching key", expectedPk.getEncoded(),
+                          csrPk.getEncoded());
+        
+        if (expectedEmails == null) {
+            /* assert no extension request attribute is present when no
+             * e-mail SANs where requested
+             */
+            final Attribute[] extRequestAttributes =
+                csr.getAttributes(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest);
+
+            assertEquals("Extension request attribute", 0,
+                         extRequestAttributes.length);
+        } else {
+            TestUtils.assertCSREmailSanAttributes(csr, expectedEmails);
+        }
+    }
+
+    /**
+     * Test generating a CSR using the default key for the crypto worker.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRDefaultKey() throws Exception {
+        LOG.info(">test01GenerateCSRDefaultKey");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withRSA", csrOut.getAbsolutePath());
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                    new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            assertCSR(csr, "CN=Test",
+                      PKCSObjectIdentifiers.sha256WithRSAEncryption,
+                      "defaultkey", null);
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test generating a CSR explicitly specifying a key other than the default
+     * key for the crypto worker.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSROtherKey() throws Exception {
+        LOG.info(">test01GenerateCSROtherKey");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "otherkey",
+                                                 "foo123".toCharArray());
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withRSA", csrOut.getAbsolutePath(),
+                        "-alias", "otherkey");
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                    new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            assertCSR(csr, "CN=Test",
+                      PKCSObjectIdentifiers.sha256WithRSAEncryption,
+                      "otherkey", null);
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "otherkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test generating a CSR using the next key defined by the NEXTCERTSIGNKEY
+     * worker property on the crypto worker and using the -nextkey option.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRNextKey() throws Exception {
+        LOG.info(">test01GenerateCSRNextKey");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "nextkey",
+                                                 "foo123".toCharArray());
+            getWorkerSession().setWorkerProperty(CRYPTO_WORKER_ID,
+                                                 "NEXTCERTSIGNKEY", "nextkey");
+            getWorkerSession().reloadConfiguration(CRYPTO_WORKER_ID);
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withRSA", csrOut.getAbsolutePath(),
+                        "-nextkey");
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                    new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            assertCSR(csr, "CN=Test",
+                      PKCSObjectIdentifiers.sha256WithRSAEncryption,
+                      "nextkey", null);
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "nextkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test generating a CSR specifying one requested SAN extension with
+     * e-mail address.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSROneEmailSan() throws Exception {
+        LOG.info(">test01GenerateCSROneEmailSan");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withRSA", csrOut.getAbsolutePath(),
+                        "-email", "user@example.com");
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                    new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            assertCSR(csr, "CN=Test",
+                      PKCSObjectIdentifiers.sha256WithRSAEncryption,
+                      "defaultkey", new String[] { "user@example.com" });
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test generating a CSR specifying two requested SAN extensions with
+     * e-mail address.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSTwoEmailSans() throws Exception {
+        LOG.info(">test01GenerateCSTwoEmailSans");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "RSA", "2048",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withRSA", csrOut.getAbsolutePath(),
+                        "-email", "user@example.com",
+                        "-email", "email@domain.ut");
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                    new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            assertCSR(csr, "CN=Test",
+                      PKCSObjectIdentifiers.sha256WithRSAEncryption,
+                      "defaultkey", new String[] { "user@example.com", 
+                                                   "email@domain.ut" });
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test generating a CSR for an EC key not specifying to use explicit
+     * ECC parameters.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRDefaultECNoExplicitEccKey() throws Exception {
+        LOG.info(">test01GenerateCSRDefaultECNoExplicitEccKey");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "ECDSA", "secp256r1",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withECDSA", csrOut.getAbsolutePath());
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                    new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            assertCSR(csr, "CN=Test",
+                      new ASN1ObjectIdentifier("1.2.840.10045.4.3.2"),
+                      "defaultkey", null);
+            assertFalse("No explicit ECC parameters",
+                        isSubjectPublicKeyInfoExplicit(csr.getSubjectPublicKeyInfo()));
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test generating a CSR for an EC specifying to use explicit ECC
+     * parameters.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRDefaultECExplicitEccKey() throws Exception {
+        LOG.info(">test01GenerateCSRDefaultECExplicitEccKey");
+        try {
+            final File csrOut = File.createTempFile("csr", ".p10");
+
+            addP12DummySigner(CRYPTO_WORKER_ID,  CRYPTO_WORKER_NAME, keystore,
+                              "foo123", "defaultkey");
+            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                                 "ECDSA", "secp256r1",
+                                                 "defaultkey",
+                                                 "foo123".toCharArray());
+            
+            cli.execute("generatecertreq",
+                        String.valueOf(CRYPTO_WORKER_ID),
+                        "CN=Test", "SHA256withECDSA", csrOut.getAbsolutePath(),
+                        "-explicitecc");
+
+            final String csrString =
+                    FileUtils.readFileToString(csrOut, StandardCharsets.US_ASCII);
+            final JcaPKCS10CertificationRequest csr =
+                new JcaPKCS10CertificationRequest(CertTools.getCertificateRequestFromPem(csrString));
+
+            /* don't call assertCSR on this, as the public key instance
+             * returned from JcaPKCS10CertificationRequest seems to include
+             * the curve parameters, so it's not identical to the public key
+             * obtained from token
+             */
+            assertTrue("Explicit ECC parameters",
+                       isSubjectPublicKeyInfoExplicit(csr.getSubjectPublicKeyInfo()));
+        } finally {
+            getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_WORKER_ID),
+                                         "defaultkey");
+            removeWorker(CRYPTO_WORKER_ID);
+        }
+    }
+
+    /**
+     * Test that giving no required arguments gives an error message about
+     * missing arguments.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRMissingArguments() throws Exception {
+        final int retCode = cli.execute("generatecertreq");
+
+        assertEquals("Return code", -1, retCode);
+        assertPrinted("Missing arguments", cli.getOut(), "Missing arguments");
+    }
+
+    /**
+     * Test that giving only worker ID gives an error message about
+     * missing arguments.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRMissingArgumentsNoSigAlg() throws Exception {
+        final int retCode = cli.execute("generatecertreq",
+                                        String.valueOf(CRYPTO_WORKER_ID));
+
+        assertEquals("Return code", -1, retCode);
+        assertPrinted("Missing arguments", cli.getOut(), "Missing arguments");
+    }
+
+    /**
+     * Test that giving only worker ID and signature algorithn gives an error
+     * message about missing arguments.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRMissingArgumentsNoDN() throws Exception {
+        final int retCode = cli.execute("generatecertreq",
+                                        String.valueOf(CRYPTO_WORKER_ID),
+                                        "SHA256withRSA");
+
+        assertEquals("Return code", -1, retCode);
+        assertPrinted("Missing arguments", cli.getOut(), "Missing arguments");
+    }
+
+    /**
+     * Test that giving only worker ID, signature algorithm, and subject DN
+     * (missing output filename) gives an error message about missing arguments.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRMissingArgumentsNoOutfile() throws Exception {
+        final int retCode = cli.execute("generatecertreq",
+                                        String.valueOf(CRYPTO_WORKER_ID),
+                                        "SHA256withRSA",
+                                        "CN=TestSigner");
+
+        assertEquals("Return code", -1, retCode);
+        assertPrinted("Missing arguments", cli.getOut(), "Missing arguments");
+    }
+
+    /**
+     * Test that giving both -alias and -nextkey gives an error message about
+     * conflicting arguments.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test01GenerateCSRBothAliasAndNextkey() throws Exception {
+        final int retCode = cli.execute("generatecertreq",
+                                        String.valueOf(CRYPTO_WORKER_ID),
+                                        "SHA256withRSA",
+                                        "CN=TestSigner",
+                                        "/tmp/csr.p10",
+                                        "-alias", "userkey",
+                                        "-nextkey");
+
+        assertEquals("Return code", -1, retCode);
+        assertPrinted("Conflicting arguments", cli.getOut(),
+                      "Can not specify -alias with -nextkey");
     }
 
     @Test

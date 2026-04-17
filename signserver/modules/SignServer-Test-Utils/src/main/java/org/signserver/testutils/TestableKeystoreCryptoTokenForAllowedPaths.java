@@ -15,6 +15,7 @@ package org.signserver.testutils;
 
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -27,6 +28,9 @@ public class TestableKeystoreCryptoTokenForAllowedPaths extends KeystoreCryptoTo
 
     @Override
     protected Set<Path> getAllowedKeystorePaths() {
-        return Set.of(Path.of("/"));
+        try {
+            return Set.of(Path.of(ModulesTestCase.getSignServerHome().getAbsolutePath()).normalize());
+        } catch (FileNotFoundException ignored) {}
+        return Set.of();
     }
 }

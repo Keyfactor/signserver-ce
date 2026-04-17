@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -823,7 +824,7 @@ public class ReadOnlyWorkersTest extends ModulesTestCase {
      */
     private void addDummyWorker() throws IOException, UnexpectedCommandFailureException {
         Properties properties = new Properties();
-        final File workerPropertiesFile = new File("/tmp/testAddWorkerViaAdminCLI-" + System.currentTimeMillis() + ".properties");
+        final File workerPropertiesFile = File.createTempFile("testAddWorkerViaAdminCLI-" + System.currentTimeMillis(), ".properties");
         properties.put("WORKER" + READ_ONLY_WORKER + ".NAME", "ReadOnlyWorkersTest-" + System.currentTimeMillis());
         properties.put("WORKER" + READ_ONLY_WORKER + ".TYPE", "PROCESSABLE");
         try (FileOutputStream fos = new FileOutputStream(workerPropertiesFile)) {

@@ -63,7 +63,7 @@ public class SetPropertiesCommandTest {
     private final String ISSUER_VALUE_TWO = "CN\\=DSS Sub CA 11,OU\\=Testing,O\\=SignServer,C\\=SE";
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         try {
             // Setup multiple workers with client cert authorization
             Properties props = new Properties();
@@ -86,10 +86,9 @@ public class SetPropertiesCommandTest {
             props.put("WORKER" + WORKER_ID[2] + ".AUTHCLIENT1.ISSUER.TYPE", ISSUER_TYPE_ONE);
 
             // Create properties file from declared properties above
-            final String filePathAndName = "/tmp/test-" + System.currentTimeMillis() + ".properties";
-            try (FileOutputStream os = new FileOutputStream(filePathAndName)) {
+            propertiesFile = File.createTempFile("test-" + System.currentTimeMillis() + ".properties", null);
+            try (FileOutputStream os = new FileOutputStream(propertiesFile)) {
                 props.store(os, null);
-                propertiesFile = new File(filePathAndName);
             }
         } catch (IOException e) {
             fail("Unexpected exception: " + e.getClass().getName());

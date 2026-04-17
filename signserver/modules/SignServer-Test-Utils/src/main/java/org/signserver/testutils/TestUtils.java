@@ -29,13 +29,12 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.spec.EdECPoint;
-import java.security.spec.EdECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.NamedParameterSpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -43,23 +42,25 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.IssuerSerial;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
-import org.bouncycastle.eac.jcajce.JcaPublicKeyConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.math.ec.rfc8032.Ed25519;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.client.cli.defaultimpl.AliasKeyManager;
 import static org.junit.Assert.*;
@@ -311,5 +312,48 @@ public class TestUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Assert a CSR contains extension requests for the given subject alternative
+     * name e-mail addresses.
+     *
+     * @param csr
+     * @param expectedEmails Array of expected e-mail addresses
+     */
+    public static void assertCSREmailSanAttributes(final PKCS10CertificationRequest csr,
+                                             final String[] expectedEmails) {
+        final org.bouncycastle.asn1.pkcs.Attribute[] extRequestAttributes =
+                csr.getAttributes(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest);
+
+        assertEquals("Extension request attribute", 1, extRequestAttributes.length);
+
+        final ASN1Encodable[] attributeValues =
+                extRequestAttributes[0].getAttributeValues();
+        final Set<String> foundEmails = new HashSet<>();
+
+        for (final ASN1Encodable value : attributeValues) {
+            final Extensions extensions =
+                    Extensions.getInstance(value);
+
+            final Extension extension =
+                    extensions.getExtension(Extension.subjectAlternativeName);
+            final ASN1Encodable parsedValue = extension.getParsedValue();
+            final ASN1Sequence seq = ASN1Sequence.getInstance(parsedValue);
+
+            for (final ASN1Encodable v : seq) {
+                final GeneralName gn = GeneralName.getInstance(v);
+
+                assertEquals("Expected GeneralName tag", GeneralName.rfc822Name,
+                             gn.getTagNo());
+
+                foundEmails.add(gn.getName().toString());
+            }
+        }
+
+        assertEquals("Expected number of e-mail SANs",
+                         expectedEmails.length, foundEmails.size());
+        assertTrue("All expected e-mail addresses found",
+                   foundEmails.containsAll(Arrays.asList(expectedEmails)));
     }
 }

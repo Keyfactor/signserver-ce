@@ -30,8 +30,17 @@ import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
+import java.util.LinkedList;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.Attribute;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.ExtensionsGenerator;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.RenewalUtils;
 import org.signserver.server.cesecore.certificates.util.AlgorithmConstants;
@@ -201,6 +210,23 @@ public class CSRBulkBean extends BulkBean {
         this.requestSigner = requestSigner;
     }
 
+    private ASN1Set getEmailSanAttribute(final List<String> emailAddresses) throws IOException {
+        final ExtensionsGenerator eg = new ExtensionsGenerator();
+        
+        for (final String emailAddress : emailAddresses) {
+            final GeneralName g = new GeneralName(GeneralName.rfc822Name,
+                                                  emailAddress);
+            final GeneralNames gn = new GeneralNames(g);
+            eg.addExtension(Extension.subjectAlternativeName, false, gn);
+        }
+
+        final Attribute a =
+                new Attribute(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest,
+                              new DERSet(eg.generate()));
+
+        return ASN1Set.getInstance(new DERSet(a).getEncoded());
+    }
+    
     @SuppressWarnings("UseSpecificCatch") // We really want to catch all sorts of exceptions
     public void generateAction() throws AdminNotAuthorizedException {
         //FacesMessage errorMessage = new FacesMessage("Test error");
@@ -216,7 +242,22 @@ public class CSRBulkBean extends BulkBean {
                         = new PKCS10CertReqInfo();
                 certReqInfo.setSignatureAlgorithm(worker.signatureAlgorithm);
                 certReqInfo.setSubjectDN(worker.dn);
-                certReqInfo.setAttributes(null);
+                
+                if (!worker.emailSans.isEmpty()) {
+                    final List<String> emailAddresses = new LinkedList<>();
+
+                    for (final CSRWorkerSan emailSan : worker.emailSans) {
+                        final String address = emailSan.address;
+
+                        if (!StringUtils.isEmpty(address)) {
+                            emailAddresses.add(address);
+                        }
+                    }
+
+                    if (!emailAddresses.isEmpty()) {
+                        certReqInfo.setAttributes(getEmailSanAttribute(emailAddresses));
+                    }
+                }
 
                 final AbstractCertReqData reqData = getWorkerSessionBean()
                         .getPKCS10CertificateRequestForAlias(loginBean.getAdminPrincipal(), worker.getId(),
@@ -277,7 +318,51 @@ public class CSRBulkBean extends BulkBean {
 
         context.responseComplete();
     }
+    
+    public static class CSRWorkerSan {
+        private final CSRWorker worker;
+        private String address;
+        private String addressesToBeAdded = "1";
+        private boolean last;
+        private String errorMessage;
 
+        public CSRWorkerSan(final CSRWorker worker) {
+            this.worker = worker;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(final String address) {
+            this.address = address;
+        }
+
+        public String getAddressesToBeAdded() {
+            return addressesToBeAdded;
+        }
+
+        public void setAddressesToBeAdded(String addressesToBeAdded) {
+            this.addressesToBeAdded = addressesToBeAdded;
+        }
+
+        public boolean isLast() {
+            return last;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setLast(boolean last) {
+            this.last = last;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+    }
+    
     public static class CSRWorker extends Worker {
 
         private String alias;
@@ -292,6 +377,7 @@ public class CSRBulkBean extends BulkBean {
         private final boolean fixedAlias;
         private boolean selectSignatureAlgorithmFromList = true;
         private List<SelectItem> signatureAlgorithmMenuValues;
+        private List<CSRWorkerSan> emailSans;
 
         public CSRWorker(int id, boolean exists, String name, Properties config, String alias, String signatureAlgorithm, String dn, int rowIndex, boolean fixedAlias) {
             super(id, exists, name, config);
@@ -353,6 +439,24 @@ public class CSRBulkBean extends BulkBean {
             this.dn = dn;
         }
 
+        public List<CSRWorkerSan> getEmailSans() {
+            if (emailSans == null) {
+                // create empty item
+                emailSans = new ArrayList<>();
+
+                final CSRWorkerSan item = new CSRWorkerSan(this);
+
+                item.last = true;
+                emailSans.add(item);
+            }
+
+            return emailSans;
+        }
+
+        public void setEmailSans(final List<CSRWorkerSan> emailSans) {
+            this.emailSans = emailSans;
+        }
+        
         public byte[] getPemFile() {
             return pemFile;
         }
@@ -464,6 +568,53 @@ public class CSRBulkBean extends BulkBean {
 
         public void setFileSuffix(String fileSuffix) {
             this.fileSuffix = fileSuffix;
+        }
+
+        public void addAddressAction() throws AdminNotAuthorizedException {
+            CSRWorkerSan lastItem = emailSans.get(emailSans.size() - 1);
+
+            int addressesToBeAddedInteger = -1;
+
+            try {
+                addressesToBeAddedInteger =
+                        Integer.parseInt(lastItem.getAddressesToBeAdded());
+
+                if (addressesToBeAddedInteger < 1) {
+                    lastItem.setLast(true);
+                    lastItem.setErrorMessage("Number of rows to be added must be > 0");
+                } else if (addressesToBeAddedInteger > 99) {
+                    lastItem.setLast(true);
+                    lastItem.setErrorMessage("Number of rows to be added must be < 100");
+                } else {
+                    
+
+                    if (!emailSans.isEmpty()) {
+                        for (CSRWorkerSan item : emailSans) {
+                            item.setLast(false);
+                            item.setErrorMessage(null);
+                        }
+                    }
+
+                    for (int i = 1; i <= addressesToBeAddedInteger; i++) {
+                        final CSRWorkerSan item = new CSRWorkerSan(this);
+
+                        if (i == addressesToBeAddedInteger) {
+                            item.setLast(true);
+                        }
+                        emailSans.add(item);
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                lastItem.setLast(true);
+                lastItem.setErrorMessage("Number of rows to be added must be a number > 0");
+            }
+        }
+        
+        public void removeAddressAction() {
+            if (emailSans.size() > 1) {
+                emailSans.remove(emailSans.size() - 1);
+                emailSans.get(emailSans.size() - 1).setLast(true);
+            }
         }
 
     }

@@ -38,6 +38,9 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -48,6 +51,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.CertTools;
@@ -480,6 +484,24 @@ public class CryptoTokenHelper {
                     builder = new JcaPKCS10CertificationRequestBuilder(CertTools.stringToBcX500Name(reqInfo.getSubjectDN()), publicKey);
                 }
                 final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
+
+                final ASN1Set attributes;
+
+                if (reqInfo.getBase64Attributes() != null) {
+                    attributes = ASN1Set.getInstance(Base64.decode(reqInfo.getBase64Attributes()));
+                } else {
+                    attributes = reqInfo.getAttributes();
+                }
+
+                if (attributes != null) {
+                    for (final ASN1Encodable encodable : attributes) {
+                        final Attribute attr = Attribute.getInstance(encodable);
+   
+                        builder.addAttribute(attr.getAttrType(),
+                                             attr.getAttributeValues());
+                    }
+                }
+                
                 pkcs10 = builder.build(contentSigner);
                 retval = new Pkcs10CertReqData(pkcs10);
             } catch (IOException | OperatorCreationException | NoSuchAlgorithmException | NoSuchProviderException e) {

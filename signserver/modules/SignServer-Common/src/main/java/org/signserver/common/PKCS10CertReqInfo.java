@@ -29,6 +29,7 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
     private String signatureAlgorithm;
     private String subjectDN;
     private ASN1Set attributes;
+    private String base64Attributes;
     private X500Name subjectDNObject;
 
     /** No-arg constructor used by JAXB. **/
@@ -82,8 +83,16 @@ public class PKCS10CertReqInfo implements ISignerCertReqInfo {
         return attributes;
     }
 
+    public String getBase64Attributes() {
+        return base64Attributes;
+    }
+
     public void setAttributes(ASN1Set attributes) {
         this.attributes = attributes;
+    }
+
+    public void setBase64Attributes(String base64Attributes) {
+        this.base64Attributes = base64Attributes;
     }
 
     public void setSignatureAlgorithm(String signatureAlgorithm) {

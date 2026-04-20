@@ -90,6 +90,11 @@ public class ClientSideHashingHelper {
                     acceptedHashDigestAlgorithms.add(alg);
                 }
             }
+            if (StringUtils.isNotBlank(config.getProperty("SIGNATUREALGORITHM"))) {
+                if (config.getProperty("SIGNATUREALGORITHM").startsWith("ML-DSA")) {
+                    acceptedHashDigestAlgorithms.add(algFinder.find("SHAKE256"));
+                }
+            }
         }
 
 

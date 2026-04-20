@@ -36,9 +36,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import jakarta.persistence.EntityManager;
 import java.io.StringWriter;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jcajce.spec.CompositeSignatureSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.operator.ContentSigner;
@@ -66,6 +68,7 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
+
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 import org.signserver.server.HashDigestUtils;
 import static org.signserver.server.cryptotokens.ICryptoTokenV4.PARAM_INCLUDE_DUMMYCERTIFICATE;
@@ -286,7 +289,7 @@ public class PlainSigner extends BaseSigner {
 
             final String sigAlg = getSignatureAlgorithm(requestContext, publicKey);
             String sigAlgUpperCase = sigAlg.toUpperCase(Locale.ENGLISH);
-            final byte[] signedbytes;
+            byte[] signedbytes = new byte[0];
 
             if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
                 String clientSideHashAlgorithm = clientSideHelper.getClientSideHashAlgorithmName(requestContext);
@@ -309,9 +312,13 @@ public class PlainSigner extends BaseSigner {
                 final byte[] data = requestData.getAsByteArray();
                 final byte[] dataToSign;
 
-                // check that the digest is of the expected length
-                if (!HashDigestUtils.isSuppliedHashDigestLengthValid(clientSideHashAlgorithm,
-                                                                     data.length)) {
+                // The length of External Mu should always be 64 bytes
+                if (sigAlgUpperCase.startsWith("ML-DSA")) {
+                    if (data.length != 64) {
+                        throw new IllegalRequestException("The length of External Mu is incorrect and should be 64 bytes.");
+                    }
+                    // check that the digest is of the expected length
+                } else if (!HashDigestUtils.isSuppliedHashDigestLengthValid(clientSideHashAlgorithm, data.length)) {
                     throw new IllegalRequestException("Input length doesn't match hash digest algorithm specified through request metadata");
                 }
 
@@ -322,6 +329,11 @@ public class PlainSigner extends BaseSigner {
                     }
                     PSSParameterSpec params = new PSSParameterSpec(clientSideHashAlgorithm, "MGF1", new MGF1ParameterSpec(clientSideHashAlgorithm), saltLength, 1);
                     signature.setParameter(params);
+                } else if (sigAlgUpperCase.startsWith("MLDSA")) { // Composite case
+                    CompositeSignatureSpec params = new CompositeSignatureSpec(true);
+                    signature.setParameter(params);
+                } else if (sigAlgUpperCase.startsWith("ML-DSA")) { // ML-DSA-EXTERNAL-MU case
+                    signature = Signature.getInstance("ML-DSA-EXTERNAL-MU", crypto.getProvider());
                 }
 
                 if (sigAlgUpperCase.startsWith("NONEWITHRSA")) {
@@ -355,7 +367,8 @@ public class PlainSigner extends BaseSigner {
             } else {
                 try (final InputStream in = requestData.getAsInputStream()) {
                     // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
-                    if (sigAlgUpperCase.startsWith("NONEWITH")) { 
+                    // Additional special case for client supplied ML-DSA ExternalMu formated data is to be signed
+                    if (sigAlgUpperCase.startsWith("NONEWITH") || sigAlgUpperCase.equalsIgnoreCase("ML-DSA-EXTERNAL-MU")) {
                         // We need PSS params for this
                         if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
                             throw new IllegalRequestException("NONEwithRSAandMGF1 is not supported without the request metadata properties for client-side hashing");
@@ -404,12 +417,13 @@ public class PlainSigner extends BaseSigner {
                 }
             }
 
-            out.write(signedbytes);
+            byte[] finalSignedbytes = signedbytes;
+            out.write(finalSignedbytes);
 
             logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, new Loggable() {
                 @Override
                 public String toString() {
-                    return Base64.toBase64String(signedbytes);
+                    return Base64.toBase64String(finalSignedbytes);
                 }
             });
 

@@ -13,28 +13,48 @@
 package org.signserver.client.cli;
 
 import java.io.*;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
@@ -89,6 +109,8 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /** Worker ID for CMS Signer to use with sign client standard input */
     private static final int WORKERID9 = 6679;
+    /** Worker ID for Plain Signer to use with sign client standard input */
+    private static final int WORKERID10 = 6680;
 
 
     private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
@@ -96,7 +118,7 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     private String dss10KeyStorePath;
 
-    private static final int[] WORKERS = new int[]{WORKERID, WORKERID2, WORKERID3, WORKERID4, WORKERID5, WORKERID7, WORKERID8, WORKERID9};
+    private static final int[] WORKERS = new int[]{WORKERID, WORKERID2, WORKERID3, WORKERID4, WORKERID5, WORKERID7, WORKERID8, WORKERID9, WORKERID10};
 
     private static File signserverhome;
 
@@ -144,6 +166,8 @@ public class DocumentSignerTest extends ModulesTestCase {
         // Worker 9 (Used for CMS signer sign client standard input)
         addSigner("org.signserver.module.cmssigner.CMSSigner", WORKERID9, "TestCMSSigner", true);
 
+        // Worker 10 (Used for External Mu plain signatures)
+        addSigner("org.signserver.module.cmssigner.PlainSigner", WORKERID10, "ExternalMuPlainSigner", true);
     }
 
     @Test
@@ -1023,6 +1047,98 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     /**
+     * Tests sign and verify a file using ML-DSA External Mu via sign client in file with plain signer.
+     */
+    @Test
+    public void test02signAndVerifyMLDSAExternalMuPlainSingerFromInFile() throws Exception {
+        LOG.info("test02signAndVerifyMLDSAExternalMuPlainSingerFromInFile");
+        File inFile = null;
+        File outFile = null;
+        WorkerIdentifier wi = new WorkerIdentifier(WORKERID10);
+        try {
+            workerSession.generateSignerKey(wi, "ML-DSA", "ML-DSA-44", "MLDSAExtMuTestKey", "foo123".toCharArray());
+            // Variables for CA creation
+            final String caDN = "CN=Test CA";
+
+            // Generate CSR
+            final PKCS10CertReqInfo certReqInfo =
+                    new PKCS10CertReqInfo("ML-DSA-44",
+                            "CN=LillaMy", null);
+            final AbstractCertReqData reqData =
+                    (AbstractCertReqData) workerSession.getCertificateRequest(wi, certReqInfo, false, "MLDSAExtMuTestKey");
+
+            final PKCS10CertificationRequest csr =
+                    new PKCS10CertificationRequest(reqData.toBinaryForm());
+
+            // Generate key-pair for CA
+            final KeyPairGenerator kpg =
+                    KeyPairGenerator.getInstance(String.valueOf(NISTObjectIdentifiers.id_ml_dsa_44), "BC");
+            final KeyPair keyPair = kpg.generateKeyPair();
+            PublicKey pubKey = keyPair.getPublic();
+
+            // Actual CA certificate creation
+            final long currentTime = System.currentTimeMillis();
+            final X509CertificateHolder caCertHolder = new CertBuilder()
+                    .setSelfSignKeyPair(new KeyPair(keyPair.getPublic(),
+                            keyPair.getPrivate()))
+                    .setNotBefore(new Date(currentTime - 120000))
+                    .setSignatureAlgorithm("ML-DSA-44")
+                    .setIssuer(caDN)
+                    .setSubject(caDN)
+                    .build();
+
+            final X509CertificateHolder cert =
+                    new X509v3CertificateBuilder(new X500Name("CN=LillaMy Issuer"),
+                            BigInteger.ONE, new Date(),
+                            new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)),
+                            csr.getSubject(),
+                            csr.getSubjectPublicKeyInfo()).
+                            build(new JcaContentSignerBuilder("ML-DSA-44").
+                                    setProvider("BC").build(keyPair.getPrivate()));
+
+            // Whole certificate chain, signer certificate and CA certificate
+            final X509Certificate[] chain =
+                    { new JcaX509CertificateConverter().getCertificate(cert),
+                            new JcaX509CertificateConverter().getCertificate(caCertHolder) };
+            final List<byte[]> encodedChain =
+                    List.of(chain[0].getEncoded(), chain[1].getEncoded());
+
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(WORKERID10, cert.getEncoded(),
+                    GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKERID10,
+                    encodedChain,
+                    GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.setWorkerProperty(WORKERID10, "DEFAULTKEY", "MLDSAExtMuTestKey");
+            workerSession.setWorkerProperty(WORKERID10, "CLIENTSIDEHASHING", "TRUE");
+            workerSession.setWorkerProperty(WORKERID10, "SIGNATUREALGORITHM", "ML-DSA-44");
+            workerSession.setWorkerProperty(WORKERID10, "ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256, SHA-512");
+            workerSession.reloadConfiguration(WORKERID10);
+            Thread.sleep(3000);
+            inFile = File.createTempFile("test.xml", null);
+            FileUtils.writeStringToFile(inFile, "<tag/>");
+            outFile = new File(inFile.getParentFile(), inFile.getName() + "-signed");
+            String res = new String (execute("signdocument", "-workername", "ExternalMuPlainSigner",
+                    "-clientside", "-infile", inFile.getAbsolutePath(), "-outfile", outFile.getAbsolutePath(),
+                    "-filetype", "MLDSAExtMu", "-publickey", Base64.toBase64String(pubKey.getEncoded())));
+            Signature signature = Signature.getInstance("ML-DSA-44", "BC");
+            signature.initVerify(workerSession.getSignerCertificate(wi));
+            assertFalse("not containing signature tag: "
+                    + res, res.contains("<tag><Signature"));
+            assertNotNull("No result", res);
+        } catch (Exception ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            workerSession.removeKey(wi, "MLDSAExtMuTestKey");
+            removeWorker(WORKERID10);
+            FileUtils.deleteQuietly(inFile);
+            FileUtils.deleteQuietly(outFile);
+        }
+    }
+
+    /**
      * Test for the "-pdfpassword" argument.
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
      */
@@ -1614,6 +1730,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 "-workername", "TestXMLSigner1",
                 "-data", "\"<root/>\"",
                 "-protocol", "REST",
+                "-keyalias", "signer00001",
                 "-port", String.valueOf(getPrivateHTTPSPort()),
                 "-truststore", TestUtils.getDefaultTruststoreFile().getAbsolutePath(), "-truststorepwd", TestUtils.getDefaultTruststorePassword(),
                 "-keystore", dss10KeyStorePath, "-keystorepwd", "foo123"

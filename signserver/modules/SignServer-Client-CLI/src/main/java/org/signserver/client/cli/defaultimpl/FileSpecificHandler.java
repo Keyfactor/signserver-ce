@@ -13,8 +13,11 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+
 import org.signserver.common.IllegalRequestException;
 
 /**
@@ -67,7 +70,7 @@ public interface FileSpecificHandler extends AutoCloseable {
      * @throws IOException typically in case of issues reading the input file or writing to the output file
      * @throws IllegalRequestException for example: if file is already signed
      */
-    InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, NoSuchProviderException, IOException, IllegalRequestException;
+    InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, NoSuchProviderException, IOException, IllegalRequestException, SignatureException, InvalidKeyException;
     
     /**
      * Phase 2: Finalize the output file by embedding the provided signature.

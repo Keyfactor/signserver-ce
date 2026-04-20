@@ -13,6 +13,9 @@
 package org.signserver.module.cmssigner;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -29,12 +32,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import static junit.framework.TestCase.assertTrue;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.bouncycastle.jcajce.MLDSAProxyPrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
@@ -44,6 +50,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.signserver.testutils.ModulesTestCase.getSignServerHome;
+
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
@@ -87,6 +95,7 @@ public class PlainSignerUnitTest {
     private static MockedCryptoToken tokenSLH_DSA_SHAKE_192S;
     private static MockedCryptoToken tokenSLH_DSA_SHAKE_256S;
     private static MockedCryptoToken tokenML_DSA_44;
+    private static PublicKey tokenML_DSA_44_pubKey;
     private static MockedCryptoToken tokenML_DSA_65;
     private static MockedCryptoToken tokenML_DSA_87;
     private static MockedCryptoToken tokenRSA_noCert;
@@ -747,6 +756,110 @@ public class PlainSignerUnitTest {
         SimplifiedResponse resp = sign(plainText, tokenML_DSA_44, createConfig("ML-DSA-44"));
         assertSignedAndVerifiable(plainText, "ML-DSA-44", tokenML_DSA_44, resp);
     }
+
+    /**
+     * Test creating External Mu from a pdf file and signing it using an ML-DSA-44 key-pair.
+     */
+    @Test
+    public void testExternalMuSigning_MLDSA_44() throws Exception {
+        LOG.info("testExternalMuSigning_MLDSA_44");
+
+        final File file = new File(getSignServerHome(),
+                "res" + File.separator + "test" + File.separator + "ok.pdf");
+
+        byte [] fileInByteArray = FileUtils.readFileToByteArray(file);
+
+        byte[] mu = createMu(file, tokenML_DSA_44.getPublicKey(1));
+
+        SimplifiedResponse resp = sign(mu, tokenML_DSA_44, createConfig("ML-DSA-EXTERNAL-MU"));
+        assertSignedAndVerifiable(fileInByteArray, "ML-DSA", tokenML_DSA_44, resp);
+    }
+
+    /** Test creating External Mu from an exe file and signing it using an ML-DSA-65 key-pair.
+     */
+    @Test
+    public void testExternalMuSigning_MLDSA_65() throws Exception {
+        LOG.info("testExternalMuSigning_MLDSA_65");
+
+        final File file = new File(getSignServerHome(),
+                "res" + File.separator + "test" + File.separator + "HelloPE.exe");
+
+        byte [] fileInByteArray = FileUtils.readFileToByteArray(file);
+
+        byte[] mu = createMu(file, tokenML_DSA_65.getPublicKey(1));
+
+        SimplifiedResponse resp = sign(mu, tokenML_DSA_65, createConfig("ML-DSA-EXTERNAL-MU"));
+        assertSignedAndVerifiable(fileInByteArray, "ML-DSA", tokenML_DSA_65, resp);
+    }
+
+    /** Test creating External Mu from an MSI file and signing it using an ML-DSA-87 key-pair.
+     */
+    @Test
+    public void testExternalMuSigning_MLDSA_87() throws Exception {
+        LOG.info("testExternalMuSigning_MLDSA_87");
+
+        final File file = new File(getSignServerHome(),
+                "res" + File.separator + "test" + File.separator + "sample.msi");
+
+        byte [] fileInByteArray = FileUtils.readFileToByteArray(file);
+
+        byte[] mu = createMu(file, tokenML_DSA_87.getPublicKey(1));
+
+        SimplifiedResponse resp = sign(mu, tokenML_DSA_87, createConfig("ML-DSA-EXTERNAL-MU"));
+        assertSignedAndVerifiable(fileInByteArray, "ML-DSA", tokenML_DSA_87, resp);
+    }
+
+    /**
+     * Test creating an External Mu and signing it using clientside hashing
+     */
+    @Test
+    public void TestClientSideHashingEnabledExternalMuSigning() throws Exception {
+        LOG.info("TestClientSideHashingEnabledExternalMuSigning");
+
+        final File file = new File(getSignServerHome(),
+                "res" + File.separator + "test" + File.separator + "ok.pdf");
+
+        byte [] fileInByteArray = FileUtils.readFileToByteArray(file);
+
+        byte[] mu = createMu(file, tokenML_DSA_44.getPublicKey(1));
+
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata.getInstance(requestContext).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(requestContext).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHAKE256");
+
+        SimplifiedResponse resp = sign(mu, tokenML_DSA_44, createConfig("ML-DSA-EXTERNAL-MU", null, null, true, "SHAKE256"), requestContext);
+        assertSignedAndVerifiable(fileInByteArray, "ML-DSA", tokenML_DSA_44, resp);
+    }
+
+    /** Test signing client provided External Mu with an ML-DSA-44 key-pair.
+     */
+    @Test
+    public void testProvidedExternalMuSigning_MLDSA_44() throws Exception {
+        LOG.info("testProvidedExternalMuSigning_MLDSA_44");
+
+        final File file = new File(getSignServerHome(),
+                "res" + File.separator + "test" + File.separator + "signer00005.mu");
+        byte [] mu = FileUtils.readFileToByteArray(file);
+
+        SimplifiedResponse resp = sign(mu, tokenML_DSA_44, createConfig("ML-DSA-EXTERNAL-MU"));
+        assertSignedAndVerifiable(mu, "ML-DSA-EXTERNAL-MU", tokenML_DSA_44, resp);
+    }
+
+    private byte[]  createMu(File fileName, PublicKey pubKey) throws Exception {
+        Signature muSig = Signature.getInstance("ML-DSA-CALCULATE-MU", BouncyCastleProvider.PROVIDER_NAME);
+        muSig.initSign(new MLDSAProxyPrivateKey(pubKey));
+
+        try (final InputStream fIn = new FileInputStream(fileName)) {
+            final byte[] buffer = new byte[4096];
+            int n;
+            while (-1 != (n = fIn.read(buffer))) {
+                muSig.update(buffer, 0, n);
+            }
+        }
+
+        return muSig.sign();
+    }
+
 
     /**
      * Test signing using an ML-DSA-65 key-pair.

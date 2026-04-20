@@ -14,14 +14,17 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import jakarta.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -47,6 +51,7 @@ import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
+
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.ROUND_ROBIN_LOAD_BALANCING;
 import org.signserver.common.RequestContext;
@@ -158,6 +163,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option LOAD_BALANCING. */
     public static final String LOAD_BALANCING = "loadbalancing";
+
+    /** Option PUBLIC_KEY. */
+    public static final String PUBLIC_KEY = "publickey";
     
     /** The command line options. */
     private static final Options OPTIONS;
@@ -242,6 +250,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("TIMEOUT_DESCRIPTION"));
         OPTIONS.addOption(LOAD_BALANCING, true,
                 TEXTS.getString("LOAD_BALANCING_DESCRIPTION"));
+        OPTIONS.addOption(PUBLIC_KEY, true,
+                TEXTS.getString("PUBLICKEY_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -315,7 +325,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private int timeOutLimit;    
     private boolean useLoadBalancing;
     private String loadBalancing;
-    
+    private String publicKey;
+
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /** Meta data parameters passed in */
@@ -464,6 +475,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (line.hasOption(CLIENTSIDE)) {
             clientside = true;
         }
+
+        if (line.hasOption(PUBLIC_KEY)) {
+            publicKey = line.getOptionValue(PUBLIC_KEY, null);
+        }
         
         if (line.hasOption(DIGESTALGORITHM)) {
             digestAlgorithm = line.getOptionValue(DIGESTALGORITHM);
@@ -501,6 +516,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         if (line.hasOption(FILETYPE)) {
             fileType = line.getOptionValue(FILETYPE);
+            if (fileType.equalsIgnoreCase("MLDSAExtMu")) {
+                digestAlgorithm = "SHAKE256";
+            }
         }
 
         timeOutString = line.getOptionValue(TIMEOUT);      
@@ -709,6 +727,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         File tmpFile = null;
 
         Map<String, Object> requestContext = new HashMap<>();
+
         if (data != null) {
             bytes = data.getBytes();
             size = bytes.length;
@@ -843,7 +862,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         try {
             OutputStream outStream = null;
-
+            if (!StringUtils.isEmpty(publicKey)) {
+                requestContext.put("PUBLICKEY", publicKey);
+            }
             try (final FileSpecificHandler handler =
                     inFile != null ?
                     createFileSpecificHandler(handlerFactory, signerFactory,
@@ -894,6 +915,13 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 cleanUpOutputFileOnFailure = true;
             } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                 LOG.error("Digest algorithm not supported: " + digestAlgorithm);
+                success = false;
+                cleanUpOutputFileOnFailure = true;
+            } catch (InvalidKeyException | SignatureException e) {
+                LOG.error("Unable to create a signature based on the provided public key: " + e.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("There was an issue with the provided public key.", e);
+                }
                 success = false;
                 cleanUpOutputFileOnFailure = true;
             } finally {

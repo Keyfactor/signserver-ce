@@ -129,38 +129,6 @@ public class CompositeHelper {
                     throw new CryptoTokenOfflineException("Unexpected classic algorithm for composite: " + crypto2.getPublicKey().getAlgorithm());
                 }
 
-                // Get OID for composites with ECDSA brainpool (To be removed with BC 1.84 upgrade)
-                if ("EC".equalsIgnoreCase(algComp2) && certReqInfo.getSignatureAlgorithm().contains("brainpool")) {
-                    String signatureAlgorithm = certReqInfo.getSignatureAlgorithm();
-                    ASN1ObjectIdentifier algOid;
-                    if (signatureAlgorithm.equalsIgnoreCase("MLDSA65-ECDSA-brainpoolP256r1-SHA512")) {
-                        algOid = IANAObjectIdentifiers.id_MLDSA65_ECDSA_brainpoolP256r1_SHA512;
-                    } else if (signatureAlgorithm.equalsIgnoreCase("MLDSA87-ECDSA-brainpoolP384r1-SHA512")) {
-                        algOid = IANAObjectIdentifiers.id_MLDSA87_ECDSA_brainpoolP384r1_SHA512;
-                    } else {
-                        throw new IllegalArgumentException("Unexpected classic algorithm for composite: " + algComp2);
-                    }
-
-                    return compositeBuilder(certReqInfo, algOid, crypto1, crypto2, explicitEccParameters);
-
-                    // Get OID for omposites with EdDSA (To be removed with BC 1.84 upgrade)
-                } else if ("Ed25519".equalsIgnoreCase(algComp2) || "Ed448".equalsIgnoreCase(algComp2)) {
-                    String signatureAlgorithm = certReqInfo.getSignatureAlgorithm();
-                    ASN1ObjectIdentifier algOid;
-                    if (signatureAlgorithm.equalsIgnoreCase("MLDSA44-Ed25519-SHA512")) {
-                        algOid = IANAObjectIdentifiers.id_MLDSA44_Ed25519_SHA512;
-                    } else if (signatureAlgorithm.equalsIgnoreCase("MLDSA65-Ed25519-SHA512")) {
-                        algOid = IANAObjectIdentifiers.id_MLDSA65_Ed25519_SHA512;
-                    } else if (signatureAlgorithm.equalsIgnoreCase("MLDSA87-Ed448-SHAKE256")) {
-                        algOid = IANAObjectIdentifiers.id_MLDSA87_Ed448_SHAKE256;
-                    } else {
-                        throw new IllegalArgumentException("Unexpected classic algorithm for composite: " + algComp2);
-                    }
-
-                    return compositeBuilder(certReqInfo, algOid, crypto1, crypto2, explicitEccParameters);
-
-                }
-
                 CompositePublicKey compPublicKey = CompositePublicKey.builder(certReqInfo.getSignatureAlgorithm())
                 .addPublicKey(crypto1.getPublicKey(), "BC")
                 .addPublicKey(crypto2.getPublicKey(), "BC")
@@ -171,6 +139,7 @@ public class CompositeHelper {
                 .build();
 
                 return Optional.of(CryptoTokenHelper.genCertificateRequest(certReqInfo, compPrivateKey, "BC", compPublicKey, explicitEccParameters));
+
             } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
                 throw new CryptoTokenOfflineException(ex);
             } catch (NoSuchAliasException ex) {
@@ -189,27 +158,6 @@ public class CompositeHelper {
         }
     }
 
-    /**
-     * Method that creates a CSR for composites that are not mapped in Bouncy Castle 1.83.
-     * Should be removed when BC is upgraded and this is no longer needed.
-     * @param certReqInfo
-     * @param algorithmOid
-     * @param crypto1
-     * @param crypto2
-     * @param explicitEccParameters
-     * @return certificate request data
-     */
-    private Optional<ICertReqData> compositeBuilder(PKCS10CertReqInfo certReqInfo, ASN1ObjectIdentifier algorithmOid, ICryptoInstance crypto1, ICryptoInstance crypto2, boolean explicitEccParameters) {
-        CompositePublicKey compositePublicKey = CompositePublicKey.builder(algorithmOid)
-                .addPublicKey(crypto1.getPublicKey(), "BC")
-                .addPublicKey(crypto2.getPublicKey(), "BC").build();
-        CompositePrivateKey compositePrivateKey = CompositePrivateKey.builder(algorithmOid)
-                .addPrivateKey(crypto1.getPrivateKey(), crypto1.getProvider())
-                .addPrivateKey(crypto2.getPrivateKey(), crypto2.getProvider())
-                .build();
-
-        return Optional.ofNullable(CryptoTokenHelper.genCertificateRequest(certReqInfo, compositePrivateKey, "BC", compositePublicKey, explicitEccParameters));
-    }
     public Optional<ICryptoInstance> acquireCryptoInstance(final String alias,
                                                      final Map<String, Object> params,
                                                      final RequestContext context) throws

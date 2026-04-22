@@ -41,6 +41,11 @@ public class ClientCLI extends CommandLineInterface {
      * @param args command line arguments
      */
     public static void main(String[] args) throws UnexpectedCommandFailureException {
+        // Use 64 as default for max_cons_depth
+        if (System.getProperty("org.bouncycastle.asn1.max_cons_depth") == null) {
+            System.setProperty("org.bouncycastle.asn1.max_cons_depth", "64");
+        }
+
         ClientCLI adminCLI = new ClientCLI();
         System.exit(adminCLI.execute(args));
     }

@@ -140,6 +140,10 @@ public class StartupSingletonBean {
         System.setProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema", "com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory");
         LOG.info("Current  schema property:      " + System.getProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema"));
 
+        // Set max con depth for ASN1InputStream in BC to 64 if it is not set already
+        if (System.getProperty("org.bouncycastle.asn1.max_cons_depth") == null) {
+            System.setProperty("org.bouncycastle.asn1.max_cons_depth", "64");
+        }
       
         // EJBCA / CESeCore / KFC startup configuration
 

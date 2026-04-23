@@ -143,7 +143,21 @@
                                 </h:inputText>
                                 <span class="errorMessage"><h:message for="dn"/></span>
                             </h:column>
-
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['E_Mail_Addresses']}"/>
+                                </f:facet>
+                                
+                                <h:dataTable id="table2" value="#{item.emailSans}" var="emailItem" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                                    <h:column>
+                                        <h:inputText id="email" value="#{emailItem.address}" size="10"/>
+                                        <h:commandButton class="buttonNeutral" value="-" action="#{item.removeAddressAction()}" rendered="#{emailItem.last}"/> 
+                                        <h:inputText id="keysToBeGenerated" value="#{emailItem.addressesToBeAdded}" maxlength="2" size="2" rendered="#{emailItem.last}"/>
+                                        <h:commandButton class="buttonNeutral" value="+" action="#{item.addAddressAction()}" rendered="#{emailItem.last}"/>
+                                        <span class="errorMessage"><h:outputText value="#{emailItem.errorMessage}"/></span>
+                                    </h:column>
+                                </h:dataTable>
+                            </h:column>
                             <h:column>
                                 <f:facet name="header">
                                     <h:outputText value="#{text['Result']}" />

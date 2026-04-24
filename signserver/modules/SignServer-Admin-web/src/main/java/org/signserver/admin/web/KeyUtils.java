@@ -45,7 +45,7 @@ public class KeyUtils {
             AlgorithmConstants.SIGALG_MLDSA87_RSA4096_PSS_SHA512, AlgorithmConstants.SIGALG_MLDSA44_ECDSA_P256_SHA256,
             AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P256_SHA512, AlgorithmConstants.SIGALG_MLDSA65_ECDSA_P384_SHA512,
             AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P384_SHA512, AlgorithmConstants.SIGALG_MLDSA87_ECDSA_P521_SHA512,
-            AlgorithmConstants.SIGALG_MLDSA44_ED25519_SHA512, AlgorithmConstants.SIGALG_MLDSA65_ED25519_SHA512,
+            AlgorithmConstants.SIGALG_MLDSA44_Ed25519_SHA512, AlgorithmConstants.SIGALG_MLDSA65_Ed25519_SHA512,
             AlgorithmConstants.SIGALG_MLDSA65_ECDSA_brainpoolP256r1_SHA512, AlgorithmConstants.SIGALG_MLDSA87_ECDSA_brainpoolP384r1_SHA512,
             AlgorithmConstants.SIGALG_MLDSA87_Ed448_SHAKE256 };
     // list of curves to prioritize to the top of the selectable list for convenience

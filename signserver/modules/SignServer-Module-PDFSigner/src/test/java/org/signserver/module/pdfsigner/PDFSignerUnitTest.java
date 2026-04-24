@@ -335,7 +335,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                     requestData, responseData);
 
             final SignatureResponse response = (SignatureResponse)
-                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), Optional.empty(), request, new RequestContext(true));
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), Optional.empty(), Optional.empty(), request, new RequestContext(true));
             assertEquals("requestId", 100, response.getRequestID());
 
             Certificate signercert = response.getSignerCertificate();
@@ -358,7 +358,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 CloseableWritableData responseData = createResponseData(true)
             ) {
             processSession.process(createAdminInfo(),
-                    new WorkerIdentifier(WORKER1), Optional.empty(),
+                    new WorkerIdentifier(WORKER1), Optional.empty(), Optional.empty(),
                     new SignatureRequest(200, requestData, responseData),
                     new RequestContext(true));
             fail("Should have thrown exception");
@@ -372,7 +372,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             ) {
             processSession.process(
                     createAdminInfo(),
-                    new WorkerIdentifier(WORKER1), Optional.empty(),
+                    new WorkerIdentifier(WORKER1), Optional.empty(), Optional.empty(),
                     new SignatureRequest(200, requestData, responseData),
                     new RequestContext(true));
             fail("Should have thrown exception");
@@ -386,7 +386,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             ) {
             processSession.process(
                     createAdminInfo(),
-                    new WorkerIdentifier(WORKER1), Optional.empty(),
+                    new WorkerIdentifier(WORKER1), Optional.empty(), Optional.empty(),
                     new SignatureRequest(200, requestData, responseData),
                     new RequestContext(true));
             fail("Should have thrown exception");
@@ -400,7 +400,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             ) {
             processSession.process(
                     createAdminInfo(),
-                    new WorkerIdentifier(WORKER1), Optional.empty(),
+                    new WorkerIdentifier(WORKER1), Optional.empty(), Optional.empty(),
                     new SignatureRequest(200, requestData, responseData),
                     new RequestContext());
             fail("Should have thrown exception");
@@ -2392,7 +2392,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                     requestData, responseData);
 
             final SignatureResponse response = (SignatureResponse)
-                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1),Optional.empty(), request, new RequestContext(true));
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1),Optional.empty(), Optional.empty(), request, new RequestContext(true));
             assertEquals("requestId", 100, response.getRequestID());
 
             Certificate signercert = response.getSignerCertificate();
@@ -2584,7 +2584,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 CloseableWritableData responseData = createResponseData(true)
             ) {
             final Response response =
-                    processSession.process(createAdminInfo(), new WorkerIdentifier(workerId), Optional.empty(),
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(workerId), Optional.empty(), Optional.empty(),
                             new SignatureRequest(200, requestData, responseData),
                             context);
             assertNotNull(response);

@@ -94,8 +94,8 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                             + name + ")");
                 } else {
                     response = requestContext.getServices().get(DispatcherProcessSessionLocal.class).process(new AdminInfo("Client user", null, null), 
-                            new WorkerIdentifier(workerName), Optional.ofNullable((String) requestContext.get("certId")), signRequest,
-                            nextContext);
+                            new WorkerIdentifier(workerName), Optional.ofNullable((String) requestContext.get("certId")),
+                            Optional.ofNullable((String) requestContext.get("publicKeyId")), signRequest, nextContext);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Dispatched to worker: "
                                 + workerName + " (" + id + ")");

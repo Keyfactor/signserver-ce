@@ -105,15 +105,15 @@ class WorkerProcessImpl {
     /**
      * @see WorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    public Response process(WorkerIdentifier wi, Optional<String> certId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return process(new AdminInfo("Client user", null, null), wi, certId, request, requestContext);
+    public Response process(WorkerIdentifier wi, Optional<String> certId, Optional<String> publicKeyId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return process(new AdminInfo("Client user", null, null), wi, certId, publicKeyId, request, requestContext);
     }
 
     /**
      * @see WorkerSessionLocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi, Optional<String> certId,
-            final Request request, final RequestContext requestContext)
+                            Optional<String> publicKeyId, final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
 

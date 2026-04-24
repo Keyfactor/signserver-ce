@@ -561,7 +561,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             switch (processType) {
                 case signDocument: {
                     final Response response = processSession.process(new AdminInfo("Client user", null, null), wi,
-                            Optional.empty(), new SignatureRequest(requestId, data, responseData), context);
+                            Optional.empty(), Optional.empty(), new SignatureRequest(requestId, data, responseData), context);
 
                     Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
                     if (responseFileName instanceof String) {
@@ -594,7 +594,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 }
                 case validateDocument: {
                     final DocumentValidationResponse validationResponse = (DocumentValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
-                                Optional.empty(), new DocumentValidationRequest(requestId, data), context);
+                                Optional.empty(), Optional.empty(), new DocumentValidationRequest(requestId, data), context);
 
                     responseText = validationResponse.isValid() ? "VALID" : "INVALID";
 
@@ -619,7 +619,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
                         final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
                         final CertificateValidationResponse certValidationResponse = (CertificateValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
-                                        Optional.empty(), new CertificateValidationRequest(cert, certPurposes), context);
+                                        Optional.empty(), Optional.empty(), new CertificateValidationRequest(cert, certPurposes), context);
 
                         final Validation validation = certValidationResponse.getValidation();
 

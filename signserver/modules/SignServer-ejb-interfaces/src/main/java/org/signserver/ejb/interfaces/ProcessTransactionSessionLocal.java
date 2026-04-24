@@ -48,7 +48,7 @@ public interface ProcessTransactionSessionLocal {
      * @throws CryptoTokenOfflineException
      * @throws SignServerException
      */
-    Response processWithTransaction(final AdminInfo info, WorkerIdentifier wi, Optional<String> certId, Request request,
+    Response processWithTransaction(final AdminInfo info, WorkerIdentifier wi, Optional<String> certId, Optional<String> publicKeyId, Request request,
                                     RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;

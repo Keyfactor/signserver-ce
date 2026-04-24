@@ -124,7 +124,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
         } else {
             try {
                 response = getWorkerSession(requestContext).process(new AdminInfo("Client user", null, null),
-                        new WorkerIdentifier(workerName), Optional.empty(), signRequest,
+                        new WorkerIdentifier(workerName), Optional.empty(), Optional.empty(), signRequest,
                         nextContext);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Dispatched to worker: "

@@ -206,7 +206,7 @@ public class CompositeTimeStampSignerUnitTest extends ModulesTestCase {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
 
             processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
-                    Optional.empty(), signRequest, new MockedRequestContext(services));
+                    Optional.empty(), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             return new TimeStampResponse(responseData.toReadableData().getAsInputStream());
         }

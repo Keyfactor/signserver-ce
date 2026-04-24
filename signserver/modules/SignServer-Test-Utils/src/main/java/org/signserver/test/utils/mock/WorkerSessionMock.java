@@ -286,7 +286,7 @@ public class WorkerSessionMock implements WorkerSessionLocal,
 
     @Override
     public Response process(final AdminInfo adminInfo, WorkerIdentifier workerId,
-                            Optional<String> certId, Request request,
+                            Optional<String> certId, Optional<String> publicKeyId, Request request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         lastRequestContext = requestContext;

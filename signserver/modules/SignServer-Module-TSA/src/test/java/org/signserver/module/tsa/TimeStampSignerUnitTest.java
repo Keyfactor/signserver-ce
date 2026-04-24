@@ -361,7 +361,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
             processSession.process(new AdminInfo("Client user", null, null),
-                    new WorkerIdentifier(WORKER2), Optional.empty(), signRequest, new MockedRequestContext(services));
+                    new WorkerIdentifier(WORKER2), Optional.empty(), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             final TimeStampResponse timeStampResponse = new TimeStampResponse(responseData.toReadableData().getAsByteArray());
             timeStampResponse.validate(timeStampRequest);
@@ -436,7 +436,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
 
             processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
-                    Optional.empty(), signRequest, new MockedRequestContext(services));
+                    Optional.empty(), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             return new TimeStampResponse(responseData.toReadableData().getAsInputStream());
         }

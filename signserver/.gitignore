@@ -132,6 +132,7 @@ dist-*/
 /lib/ext/cesecore-ejb-*
 /lib/ext/cesecore-interfaces-*
 /lib/ext/cesecore-readme.*
+/lib/ext/caffeine-*
 /lib/ext/jna-*
 /lib/ext/jnr-ffi-*
 /lib/ext/apksig-*

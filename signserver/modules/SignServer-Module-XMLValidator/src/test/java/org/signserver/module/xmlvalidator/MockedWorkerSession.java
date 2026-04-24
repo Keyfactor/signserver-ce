@@ -42,7 +42,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 public class MockedWorkerSession implements ProcessSessionLocal, InternalProcessSessionLocal {
 
     @Override
-    public Response process(AdminInfo admin, WorkerIdentifier workerId, Optional<String> certId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response process(AdminInfo admin, WorkerIdentifier workerId, Optional<String> certId, Optional<String> publicKeyId, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         CertificateValidationRequest vr = (CertificateValidationRequest) request;
         String[] validPurposes = new String[] { ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE };
 

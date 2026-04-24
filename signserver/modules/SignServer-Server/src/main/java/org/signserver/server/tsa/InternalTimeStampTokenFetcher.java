@@ -94,7 +94,7 @@ public class InternalTimeStampTokenFetcher {
             }
 
             session.process(new AdminInfo("Client user", null, null),
-                    wi, Optional.empty(), new SignatureRequest(hashCode(), requestData, responseData), context);
+                    wi, Optional.empty(), Optional.empty(), new SignatureRequest(hashCode(), requestData, responseData), context);
 
             final byte[] respBytes = responseData.toReadableData().getAsByteArray();
             TimeStampResponse response = new TimeStampResponse(respBytes);

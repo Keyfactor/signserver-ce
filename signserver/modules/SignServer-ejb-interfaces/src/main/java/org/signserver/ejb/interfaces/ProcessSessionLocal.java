@@ -49,7 +49,7 @@ public interface ProcessSessionLocal {
      * during process.
      */
     Response process(final AdminInfo info, WorkerIdentifier wi, Optional<String> certId,
-                     Request request, RequestContext requestContext)
+                     Optional<String> publicKeyId, Request request, RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
 }

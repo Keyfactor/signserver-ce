@@ -410,14 +410,14 @@ public class CompositeHelper {
                 keySpec2 = "P-521";
                 break;
             }
-            case "MLDSA44-ED25519-SHA512": {
+            case "MLDSA44-Ed25519-SHA512": {
                 keyAlgorithm1 = "ML-DSA";
                 keySpec1 = "ML-DSA-44";
                 keyAlgorithm2 = "EdDSA";
                 keySpec2 = "Ed25519";
                 break;
             }
-            case "MLDSA65-ED25519-SHA512": {
+            case "MLDSA65-Ed25519-SHA512": {
                 keyAlgorithm1 = "ML-DSA";
                 keySpec1 = "ML-DSA-65";
                 keyAlgorithm2 = "EdDSA";

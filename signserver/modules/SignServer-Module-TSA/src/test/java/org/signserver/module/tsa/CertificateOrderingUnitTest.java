@@ -117,7 +117,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
 
-            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), Optional.empty(), signRequest, new MockedRequestContext(services));
+            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), Optional.empty(), Optional.empty(), signRequest, new MockedRequestContext(services));
 
             return responseData.toReadableData().getAsByteArray();
         }

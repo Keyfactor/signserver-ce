@@ -138,15 +138,15 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
 
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-                            Optional<String> certId, final Request request, final RequestContext requestContext)
+                            Optional<String> certId, Optional<String> publicKeyId, final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
         if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
             // use separate transaction bean to avoid deadlock
-            return dispatcherProcessTransSession.processWithTransaction(adminInfo, wi, certId, request, requestContext);
+            return dispatcherProcessTransSession.processWithTransaction(adminInfo, wi, certId, publicKeyId, request, requestContext);
         } else {
-            return processImpl.process(adminInfo, wi, certId, request, requestContext);
+            return processImpl.process(adminInfo, wi, certId, publicKeyId, request, requestContext);
         }
     }
 

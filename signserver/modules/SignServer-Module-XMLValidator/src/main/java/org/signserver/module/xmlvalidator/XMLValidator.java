@@ -189,7 +189,7 @@ public class XMLValidator extends BaseValidator {
             try {
                 LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);
                 response = getProcessSession(requestContext).process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(validationServiceWorker),
-                        Optional.empty(), vr, new RequestContext());
+                        Optional.empty(), Optional.empty(), vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {

@@ -1126,7 +1126,7 @@ public class AdminWS {
                     req2 = new LegacyRequest(req);
                 }
 
-                Response resp = processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), req2, requestContext);
+                Response resp = processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), Optional.empty(), req2, requestContext);
 
                 ProcessResponse processResponse;
                 if (resp instanceof SignatureResponse) {

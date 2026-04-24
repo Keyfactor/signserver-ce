@@ -95,6 +95,7 @@ public class ProcessTransactionSessionBean implements ProcessTransactionSessionL
     public Response processWithTransaction(final AdminInfo info,
             final WorkerIdentifier wi,
             Optional<String> certId,
+            Optional<String> publicKeyId,
             final Request request,
             final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
@@ -102,7 +103,7 @@ public class ProcessTransactionSessionBean implements ProcessTransactionSessionL
             LOG.debug(">process in transaction: " + wi);
         }
 
-        return processImpl.process(info, wi, certId, request, requestContext);
+        return processImpl.process(info, wi, certId, publicKeyId, request, requestContext);
     }
 
 }

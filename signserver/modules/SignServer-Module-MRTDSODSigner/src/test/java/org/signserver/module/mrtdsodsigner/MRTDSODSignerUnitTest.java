@@ -618,7 +618,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         
         try (CloseableWritableData responseData = ModulesTestCase.createResponseData(false)) {
             SODResponse res = (SODResponse) processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
-                    Optional.empty(), new SODRequest(requestId, dataGroups, null, null, responseData),
+                    Optional.empty(), Optional.empty(), new SODRequest(requestId, dataGroups, null, null, responseData),
                     context);
             assertNotNull(res);
             assertEquals(requestId, res.getRequestID());

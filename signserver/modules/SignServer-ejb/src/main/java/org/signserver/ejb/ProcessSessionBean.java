@@ -235,7 +235,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             }
             
             ProcessResponse result;
-            Response response = process(wi, Optional.empty(), req2, remoteContext, servicesImpl);
+            Response response = process(wi, Optional.empty(), Optional.empty(), req2, remoteContext, servicesImpl);
             
             if (response instanceof SODResponse) {
                 SODResponse sigResp = (SODResponse) response;
@@ -298,7 +298,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
     }
     
-    private Response process(WorkerIdentifier wi, Optional<String> certId, Request request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    private Response process(WorkerIdentifier wi, Optional<String> certId, Optional<String> publicKeyId, Request request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         // Create a new RequestContext at server-side
         final RequestContext requestContext = new RequestContext(true);
 
@@ -322,7 +322,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
 
         // Put services
         requestContext.setServices(servicesImpl);
-        return process(new AdminInfo("Client user", null, null), wi, certId, request, requestContext);
+        return process(new AdminInfo("Client user", null, null), wi, certId, publicKeyId, request, requestContext);
     }
     
     
@@ -330,7 +330,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-                            Optional<String> certId, final Request request, final RequestContext requestContext)
+                            Optional<String> certId, Optional<String> publicKeyId, final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
@@ -340,9 +340,9 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         
         if (SessionUtils.needsTransaction(workerManagerSession, wi, servicesImpl)) {
             // use separate transaction bean to avoid deadlock
-            return processTransSession.processWithTransaction(adminInfo, wi, certId, request, requestContext);
+            return processTransSession.processWithTransaction(adminInfo, wi, certId, publicKeyId, request, requestContext);
         } else {
-            return processImpl.process(adminInfo, wi, certId, request, requestContext);
+            return processImpl.process(adminInfo, wi, certId, publicKeyId, request, requestContext);
         }
     }
 

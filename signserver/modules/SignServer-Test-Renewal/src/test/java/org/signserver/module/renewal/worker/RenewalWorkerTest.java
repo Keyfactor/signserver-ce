@@ -625,7 +625,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             SignatureResponse response
                     = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
+                        new WorkerIdentifier(6110), Optional.empty(), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }
@@ -661,7 +661,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             SignatureResponse response
                     = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
+                        new WorkerIdentifier(6110), Optional.empty(), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
         }
@@ -697,7 +697,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             SignatureResponse response
                     = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
+                        new WorkerIdentifier(6110), Optional.empty(), Optional.empty(), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }

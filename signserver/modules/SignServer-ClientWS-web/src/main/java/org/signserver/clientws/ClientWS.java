@@ -159,7 +159,7 @@ public class ClientWS {
             }
             
 
-            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), workerIdentifier, Optional.empty(), req, requestContext);
+            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), workerIdentifier, Optional.empty(), Optional.empty(), req, requestContext);
 
             if (resp instanceof SignatureResponse) {
                 final SignatureResponse signResponse = (SignatureResponse) resp;
@@ -271,7 +271,7 @@ public class ClientWS {
             final SODRequest req = new SODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
             final Response resp = getProcessSession().process(
                     new AdminInfo("CLI user", null, null),
-                    WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), req, requestContext
+                    WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), Optional.empty(), req, requestContext
             );
 
             if (resp instanceof SODResponse) {

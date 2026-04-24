@@ -291,7 +291,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                     dataGroups, ldsVersion, unicodeVersion, responseData);
 
                 response = (SODResponse) getProcessSession().process(new AdminInfo("Client user", null, null),
-                        wi, Optional.empty(), signRequest, context);
+                        wi, Optional.empty(), Optional.empty(), signRequest, context);
 
                 if (response.getRequestID() != requestId) {
                     LOG.error("Response ID " + response.getRequestID()

@@ -1230,7 +1230,7 @@ public class WorkerResource {
 
             AdminInfo adminInfo = new AdminInfo("REST user", null, null);
 
-            final org.signserver.common.data.Response resp = processSession.process(adminInfo, workerIdentifier, Optional.empty(), req, requestContext);
+            final org.signserver.common.data.Response resp = processSession.process(adminInfo, workerIdentifier, Optional.empty(), Optional.empty(), req, requestContext);
 
             if (resp instanceof SignatureResponse) {
                 final SignatureResponse signatureResponse = (SignatureResponse) resp;

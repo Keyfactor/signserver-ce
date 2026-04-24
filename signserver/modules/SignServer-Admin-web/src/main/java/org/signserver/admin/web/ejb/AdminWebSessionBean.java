@@ -427,7 +427,7 @@ public class AdminWebSessionBean {
                     req2 = new LegacyRequest(req);
                 }
 
-                Response resp = process.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), req2, requestContext);
+                Response resp = process.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), Optional.empty(), Optional.empty(), req2, requestContext);
     
                 ProcessResponse processResponse;
                 if (resp instanceof SignatureResponse && responseData != null) {

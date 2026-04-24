@@ -129,6 +129,9 @@
 # Default: false
 #module.signerstatusreport.enabled=false
 
+# Module P11NG
+# Default: false
+#p11ng.common.enabled=true
 
 # -------------- Client Configurations -----------------------------------------
 #

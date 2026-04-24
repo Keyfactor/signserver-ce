@@ -31,7 +31,7 @@
 "Jackson";                    "Apache 2.0";                                    "https://github.com/FasterXML/";                        "Dependency of Java JWT";              "No.";
 "Jakarta EE";                 "Eclipse Public License";                        "https://jakarta.ee";                                   "Core dependency";                     "No";
 "Java JWT";                   "Apache 2.0";                                    "https://java.jsonwebtoken.io";                         "Used by the JwtAuthorizer";           "No.";
-"Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "No.";
+"Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used for producing Authenticode signatures";  "Yes, repackaged so we can have two versions of Jsign at the same time.";
 "Keyfactor Commons";          "Proprietary";                                   "None";                                                 "Internal";                            ;
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";
 "Nimbus Jose";                "Apache 2.0";                                    "https://connect2id.com/products/nimbus-jose-jwt" ;     "Used by AzureKeyVaultCryptoToken" ;   "No." ;

@@ -127,6 +127,8 @@ e5ca43b49deca1ad818b2572f0af4d902370205089bdcd15d5dbb6095d17416b  ./ext/jjwt-jac
 b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0  ./ext/jna-5.17.0.jar;                                   "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
 6353bff935a23bdfe5b1f81742f0d55aead532d2930d5c32399f19fb33ff6fcd  ./ext/jsign-core-5.0.jar;                               "Jsign"
+16068fe3bc324598453e90f3f5a27704b8c33a456c6d4e7e621e15404db631da  ./ext/jsign-core-7.4-signserver7.jar;                   "Jsign"
+715709459b818b90832ba085dd981256026026980c45e50d53ef33a08c7c6c5a  ./ext/jsign-crypto-7.4-signserver7.jar;                 "Jsign"
 1c1597e4d42a0b45ee6e0010f0e2375d16031b3828b03353839ef73783659898  ./ext/json-path-5.5.0.jar;                              "REST-Assured"
 108045c9675ebf6d6ec4d8dcc331693f9b944ac7c87de52dccff2c55e8dfa6f1  ./ext/json-simple-1.1.1.jar;                            "json-simple"
 7b1a61507950ea67b3d6b11437ee37fad9db06f855c92c25c08aee074c757395  ./ext/log4j-1.2-api-2.25.4.jar;                         "Log4j"

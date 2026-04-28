@@ -1,0 +1,261 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000322">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-04-28T12:21:49.889+0000">
+    <meta name="exp-page-id" content="371000322">
+    <meta name="exp-page-title" content="Log4j Audit Log">
+    <meta name="exp-page-version" content="12">
+    <meta name="exp-page-scroll-page-id" content="bf11eeb0984edb68e3ec1f85f59f150c">
+    <meta name="exp-page-created" content="2020-01-16T13:50:11.000+0000">
+    <meta name="exp-page-last-modified" content="2026-03-19T12:09:11.204+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Log4j Audit Log</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="5e67ba28151e3e3e2f3be4e1927a374f72dfc90bc46302b8c077eedee92395d3"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="Log4jAuditLog-top" pageid="371000322" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000322" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Configuration_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Configuration Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Logging.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Logging</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Log4j_Audit_Log.html" target="_self" aria-current="page">Log4j Audit Log</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-51a96814b13f0fdc5c9eed56da76ce01ca6e20c971d9a7faf1b7f338a5fc5ca6"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Log4j Audit Log</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="31c8b556b320"><span class="inline-comment-marker" data-ref="436f5c79-feda-4c72-a22f-8262b5475568">When using <a href="Admin_CLI.html" data-linked-resource-id="371000510" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI" data-scroll-link-target-source-id="371000510">Admin CLI</a> or <a href="Admin_WS_Interface.html" data-linked-resource-id="370999665" data-linked-resource-version="12" data-linked-resource-type="page" data-scroll-target-source-id="370999665" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999665/Admin+WS+Interface" data-scroll-link-target-source-id="370999665">Admin WS</a> interfaces, you can configure Log4j for audit logging in the <a href="Application_Server_WildFly_32+_&amp;_JBoss_EAP_8.html" data-linked-resource-id="2288681105" data-linked-resource-version="3" data-linked-resource-type="page" data-scroll-target-source-id="2288681105" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2288681105/Application+Server+WildFly+32+JBoss+EAP+8" data-scroll-link-target-source-id="2288681105">Application Server</a>. </span></p><p local-id="3a9a25d5253d">The following can be edited in <strong>JBOSS_HOME/standalone/configuration/standalone.xml</strong>:</p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">&lt;</code><code class="keyword">subsystem</code><code class="plain"> </code><code class="color1">xmlns</code><code class="plain">=</code><code class="string">"urn:jboss:domain:logging:1.2"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    ...</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">periodic</code><code class="plain">-rotating-file-handler </code><code class="color1">name</code><code class="plain">=</code><code class="string">"SignServer"</code><code class="plain"> </code><code class="color1">autoflush</code><code class="plain">=</code><code class="string">"true"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">formatter</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">            &lt;</code><code class="keyword">pattern</code><code class="plain">-formatter </code><code class="color1">pattern</code><code class="plain">=</code><code class="string">"%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;/</code><code class="keyword">formatter</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">file</code><code class="plain"> </code><code class="color1">relative-to</code><code class="plain">=</code><code class="string">"jboss.server.log.dir"</code><code class="plain"> </code><code class="color1">path</code><code class="plain">=</code><code class="string">"signserver.log"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">suffix</code><code class="plain"> </code><code class="color1">value</code><code class="plain">=</code><code class="string">".yyyy-MM-dd"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">append</code><code class="plain"> </code><code class="color1">value</code><code class="plain">=</code><code class="string">"true"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">    &lt;/</code><code class="keyword">periodic</code><code class="plain">-rotating-file-handler&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">periodic</code><code class="plain">-rotating-file-handler </code><code class="color1">name</code><code class="plain">=</code><code class="string">"SignServer_audit"</code><code class="plain"> </code><code class="color1">autoflush</code><code class="plain">=</code><code class="string">"true"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">formatter</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">            &lt;</code><code class="keyword">pattern</code><code class="plain">-formatter </code><code class="color1">pattern</code><code class="plain">=</code><code class="string">"%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;/</code><code class="keyword">formatter</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">file</code><code class="plain"> </code><code class="color1">relative-to</code><code class="plain">=</code><code class="string">"jboss.server.log.dir"</code><code class="plain"> </code><code class="color1">path</code><code class="plain">=</code><code class="string">"signserver_audit.log"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">suffix</code><code class="plain"> </code><code class="color1">value</code><code class="plain">=</code><code class="string">".yyyy-MM-dd"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">append</code><code class="plain"> </code><code class="color1">value</code><code class="plain">=</code><code class="string">"true"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">    &lt;/</code><code class="keyword">periodic</code><code class="plain">-rotating-file-handler&gt;</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">logger</code><code class="plain"> </code><code class="color1">category</code><code class="plain">=</code><code class="string">"org.signserver"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">level</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"DEBUG"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">            &lt;</code><code class="keyword">handler</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"SignServer"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;/</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;/</code><code class="keyword">logger</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">logger</code><code class="plain"> </code><code class="color1">category</code><code class="plain">=</code><code class="string">"org.ejbca"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">level</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"DEBUG"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">            &lt;</code><code class="keyword">handler</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"SignServer"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;/</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;/</code><code class="keyword">logger</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">logger</code><code class="plain"> </code><code class="color1">category</code><code class="plain">=</code><code class="string">"org.cesecore"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">level</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"DEBUG"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">            &lt;</code><code class="keyword">handler</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"SignServer"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;/</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;/</code><code class="keyword">logger</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">logger</code><code class="plain"> </code><code class="color1">category</code><code class="plain">=</code><code class="string">"org.signserver.server.log.SignServerLog4jDevice"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">        &lt;</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">            &lt;</code><code class="keyword">handler</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"SignServer_audit"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">        &lt;/</code><code class="keyword">handlers</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;/</code><code class="keyword">logger</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    ...</code></div>
+<div class="line"><code class="plain">&lt;/</code><code class="keyword">subsystem</code><code class="plain">&gt;</code></div>
+</div>
+</div><h2 local-id="2c9ec454-6131-4dfb-8ea5-314ce577685a" id="Log4jAuditLog-MaskingSensitiveProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000322_Log4jAuditLog-Masking-Sensitive-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Masking Sensitive Properties</span></h2><p local-id="96068f2f4546">Masking of properties is applied to the audit log to reduce the risk of accidentally exposing sensitive data. </p><p local-id="5cecff1fc9d8">By default, the following properties are masked:</p><ul local-id="ad0ce686-dc84-485e-96bc-74e5efb18e7e"><li local-id="e9f0a41e-3c99-4ca6-aae6-f428aa751fda"><p local-id="ea012fd275b8">PIN</p></li><li local-id="99f20e51-252d-4037-aa07-098e70ccc28c"><p local-id="6076264d8dcb">KEYSTOREPASSWORD</p></li><li local-id="36c4b6d3-1646-4313-b477-79d1930cec53"><p local-id="cc71e1437da6">KEYDATA</p></li></ul><p local-id="8690a735700d">For more information and configuration options, see <a href="Common_Worker_Configuration.html#CommonWorkerConfiguration-Masking-Sensitive-Properties[inlineExtension]" data-linked-resource-id="370999727" data-linked-resource-version="46" data-linked-resource-type="page" data-scroll-target-source-id="370999727" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999727/Common+Worker+Configuration#src-370999727_CommonWorkerConfiguration-Masking-Sensitive-Properties[inlineExtension]" data-scroll-link-target-source-id="370999727">Masking Sensitive Properties</a>.</p>
+<nav id="ht-post-nav">
+        <a href="Debug_Log.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Debug Log</span>
+        </a>
+
+        <a href="System_Log.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>System Log</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

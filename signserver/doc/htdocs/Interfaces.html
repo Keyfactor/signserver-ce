@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2026-02-24T09:24:50.486+0000">
+    <meta name="exp-export-timestamp" content="2026-04-28T12:20:32.218+0000">
     <meta name="exp-page-id" content="370999560">
     <meta name="exp-page-title" content="Interfaces">
     <meta name="exp-page-version" content="39">
@@ -26,7 +26,8 @@
 
     <!-- Additional Meta Tags -->
     <meta name="exp-document-id" content="371111034">
-    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
     <meta name="exp-version-status" content="in-progress">
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
@@ -83,9 +84,9 @@
 </script>
     <title>Interfaces</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="6e06b07b455e287e80d0ee49a8fe7271bd95c85c43b1882e41e59f8941c58082"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="730c58007900ff467521326503503a742c263beb9aa9598392d5d206e1bcf19e"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="Interfaces-top" pageid="370999560" class="flex flex-col" data-confluence-editor-version="v2">
+    <body id="Interfaces-top" pageid="370999560" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -149,13 +150,13 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-e60642cdac9bb2dd59c1464113d1821cb839ce87dfa5da430bf779d2b0c93b82"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Interfaces</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b50ef086c07c9d499c36f9c9ece9277840849e78d087b8f492f66949826b7a4c"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Interfaces</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
                         
-<p local-id="0df3bbb2-2404-4041-b863-e2407561bb4d">This guide covers the available integration interfaces.</p><ul class="childpages-macro"><li><a href="Admin_Interfaces.html" data-linked-resource-id="1966931987" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="1966931987" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1966931987/Admin+Interfaces" data-scroll-link-target-source-id="1966931987">Admin Interfaces</a></li><li><a href="Client_Interfaces.html" data-linked-resource-id="371000506" data-linked-resource-version="27" data-linked-resource-type="page" data-scroll-target-source-id="371000506" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000506/Client+Interfaces" data-scroll-link-target-source-id="371000506">Client Interfaces</a></li><li><a href="Legacy_Interfaces.html" data-linked-resource-id="370999669" data-linked-resource-version="5" data-linked-resource-type="page" data-scroll-target-source-id="370999669" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999669/Legacy+Interfaces" data-scroll-link-target-source-id="370999669">Legacy Interfaces</a></li></ul><h2 local-id="80a3502c-9763-4a0c-978c-c71add5e7613" id="Interfaces-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999560_Interfaces-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="61e15ba0-214e-4339-aec7-2bdcd8629867"><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">SignServer exposes different integration points depending on role:</span></p><ul local-id="45d3df84-5e8a-4f8a-8347-d7b177e5d8b0"><li local-id="6cfefa0e-fd52-4563-92c3-7430f6a9fc62"><p local-id="512e2aac-7387-45f6-a6fe-1e422621da13"><strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Admin: </span></strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Administering the system (setting up workers, tokens, managing keys, querying audit log, and archive configuration).</span></p></li><li local-id="22781216-bf0b-4384-8bf9-3b12304831b1"><p local-id="23d353ad-3d41-4f1d-9a96-696e86bbe283"><strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Client: </span></strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Using the system to sign documents, code, or data.</span></p></li></ul><h2 local-id="7b69b482-e5c9-455a-b0ad-34be178cdee1" id="Interfaces-AdminInterfaces" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999560_Interfaces-Admin-Interfaces"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>Admin Interfaces</strong></span></h2><p local-id="5068d88a-f28e-414c-9fe2-eb86ecf50bbb">The administration interfaces are used to configure, manage, and monitor SignServer.</p><div class="contentLayout2">
+<p local-id="0df3bbb2-2404-4041-b863-e2407561bb4d">This guide covers the available integration interfaces.</p><ul class="childpages-macro"><li><a href="Admin_Interfaces.html" data-linked-resource-id="1966931987" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="1966931987" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1966931987/Admin+Interfaces" data-scroll-link-target-source-id="1966931987">Admin Interfaces</a></li><li><a href="Client_Interfaces.html" data-linked-resource-id="371000506" data-linked-resource-version="27" data-linked-resource-type="page" data-scroll-target-source-id="371000506" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000506/Client+Interfaces" data-scroll-link-target-source-id="371000506">Client Interfaces</a></li><li><a href="Legacy_Interfaces.html" data-linked-resource-id="370999669" data-linked-resource-version="6" data-linked-resource-type="page" data-scroll-target-source-id="370999669" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999669/Legacy+Interfaces" data-scroll-link-target-source-id="370999669">Legacy Interfaces</a></li></ul><h2 local-id="80a3502c-9763-4a0c-978c-c71add5e7613" id="Interfaces-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999560_Interfaces-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="61e15ba0-214e-4339-aec7-2bdcd8629867"><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">SignServer exposes different integration points depending on role:</span></p><ul local-id="45d3df84-5e8a-4f8a-8347-d7b177e5d8b0"><li local-id="6cfefa0e-fd52-4563-92c3-7430f6a9fc62"><p local-id="512e2aac-7387-45f6-a6fe-1e422621da13"><strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Admin: </span></strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Administering the system (setting up workers, tokens, managing keys, querying audit log, and archive configuration).</span></p></li><li local-id="22781216-bf0b-4384-8bf9-3b12304831b1"><p local-id="23d353ad-3d41-4f1d-9a96-696e86bbe283"><strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Client: </span></strong><span class="inline-comment-marker" data-ref="451192bb-94f6-4f64-92e2-e8193c5282e5">Using the system to sign documents, code, or data.</span></p></li></ul><h2 local-id="7b69b482-e5c9-455a-b0ad-34be178cdee1" id="Interfaces-AdminInterfaces" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999560_Interfaces-Admin-Interfaces"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><strong>Admin Interfaces</strong></span></h2><p local-id="5068d88a-f28e-414c-9fe2-eb86ecf50bbb">The administration interfaces are used to configure, manage, and monitor SignServer.</p><div class="contentLayout2">
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
@@ -169,7 +170,7 @@
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
-<p local-id="054dee11-8853-4e4d-899f-f5f0d7008ac6"><a href="Admin_CLI.html" data-linked-resource-id="371000510" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI" data-scroll-link-target-source-id="371000510">Admin CLI</a> (AdminCLI) </p></div>
+<p local-id="054dee11-8853-4e4d-899f-f5f0d7008ac6"><a href="Admin_CLI.html" data-linked-resource-id="371000510" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="371000510" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000510/Admin+CLI" data-scroll-link-target-source-id="371000510">Admin CLI</a> (AdminCLI) </p></div>
 </div>
 <div class="cell normal" data-type="normal">
 <div class="innerCell">
@@ -179,7 +180,7 @@
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
-<p local-id="5bb7c8dd-0ef2-4846-9dd2-35576a3f6785"><a href="Admin_WS_Interface.html" data-linked-resource-id="370999665" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999665" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999665/Admin+WS+Interface" data-scroll-link-target-source-id="370999665">Admin Web Services</a> (WS)</p></div>
+<p local-id="5bb7c8dd-0ef2-4846-9dd2-35576a3f6785"><a href="Admin_WS_Interface.html" data-linked-resource-id="370999665" data-linked-resource-version="12" data-linked-resource-type="page" data-scroll-target-source-id="370999665" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999665/Admin+WS+Interface" data-scroll-link-target-source-id="370999665">Admin Web Services</a> (WS)</p></div>
 </div>
 <div class="cell normal" data-type="normal">
 <div class="innerCell">
@@ -189,7 +190,7 @@
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
-<p local-id="faa14b15-d52b-4393-b579-c6dd9c1a01fa"><a href="Admin_REST_Interface.html" data-linked-resource-id="370999584" data-linked-resource-version="41" data-linked-resource-type="page" data-scroll-target-source-id="370999584" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999584/Admin+REST+Interface" data-scroll-link-target-source-id="370999584">Admin REST Interface</a></p></div>
+<p local-id="faa14b15-d52b-4393-b579-c6dd9c1a01fa"><a href="Admin_REST_Interface.html" data-linked-resource-id="370999584" data-linked-resource-version="45" data-linked-resource-type="page" data-scroll-target-source-id="370999584" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999584/Admin+REST+Interface" data-scroll-link-target-source-id="370999584">Admin REST Interface</a></p></div>
 </div>
 <div class="cell normal" data-type="normal">
 <div class="innerCell">
@@ -199,7 +200,7 @@
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
-<p local-id="ecea91a9-27fa-4ff0-ac2c-19e6e6eb2efb"><a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="13" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a></p></div>
+<p local-id="ecea91a9-27fa-4ff0-ac2c-19e6e6eb2efb"><a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a></p></div>
 </div>
 <div class="cell normal" data-type="normal">
 <div class="innerCell">
@@ -231,7 +232,7 @@
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
-<p local-id="c0ad42f9-7722-4fe7-bf6d-20f954beb468"><span class="inline-comment-marker" data-ref="03bb116a-d11d-4de5-a0fb-44c64f647443"><a href="Signum_Agents.html" data-linked-resource-id="1845329962" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="1845329962" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1845329962/Signum+Agents" data-scroll-link-target-source-id="1845329962">Signum Agents</a> </span></p></div>
+<p local-id="c0ad42f9-7722-4fe7-bf6d-20f954beb468"><span class="inline-comment-marker" data-ref="03bb116a-d11d-4de5-a0fb-44c64f647443"><a href="Signum_Agents.html" data-linked-resource-id="1845329962" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="1845329962" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1845329962/Signum+Agents" data-scroll-link-target-source-id="1845329962">Signum Agents</a> </span></p></div>
 </div>
 <div class="cell normal" data-type="normal">
 <div class="innerCell">
@@ -261,7 +262,7 @@
 <div class="columnLayout two-left-sidebar" data-layout="two-left-sidebar">
 <div class="cell aside" data-type="aside">
 <div class="innerCell">
-<p local-id="5173693ef6cf"><a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="7" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564">Client HTTP Interface</a></p></div>
+<p local-id="5173693ef6cf"><a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564">Client HTTP Interface</a></p></div>
 </div>
 <div class="cell normal" data-type="normal">
 <div class="innerCell">
@@ -270,13 +271,13 @@
 </div>
 </div>
 <nav id="ht-post-nav">
-        <a href="Application_Server_WildFly_32+_&amp;_JBoss_EAP_8.html" class="ht-post-nav-prev">
+        <a href="Database_Setup.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Application Server WildFly 32+ &amp; JBoss EAP 8</span>
+            <span>Database Setup</span>
         </a>
 
         <a href="Admin_Interfaces.html" class="ht-post-nav-next">

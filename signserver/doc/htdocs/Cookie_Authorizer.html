@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2026-02-24T09:25:41.505+0000">
+    <meta name="exp-export-timestamp" content="2026-04-28T12:21:32.664+0000">
     <meta name="exp-page-id" content="371000241">
     <meta name="exp-page-title" content="Cookie Authorizer">
-    <meta name="exp-page-version" content="5">
+    <meta name="exp-page-version" content="7">
     <meta name="exp-page-scroll-page-id" content="ff5af7dbea60ae8d8b12d6fb4364a49a">
     <meta name="exp-page-created" content="2018-11-13T13:58:49.000+0000">
-    <meta name="exp-page-last-modified" content="2025-09-02T07:53:23.828+0000">
+    <meta name="exp-page-last-modified" content="2026-03-10T13:52:54.122+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -26,7 +26,8 @@
 
     <!-- Additional Meta Tags -->
     <meta name="exp-document-id" content="371111034">
-    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
     <meta name="exp-version-status" content="in-progress">
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
@@ -83,9 +84,9 @@
 </script>
     <title>Cookie Authorizer</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="ffffb0a1a800017a77cb08e09ef1eb837caf7ab719a169f393172b2e2f5f5cfb"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="4b2cd2453efee3d51ce0d616d0857f219f8996d6672bb772df1d8494e5ed1cb1"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="CookieAuthorizer-top" pageid="371000241" class="flex flex-col" data-confluence-editor-version="v2">
+    <body id="CookieAuthorizer-top" pageid="371000241" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,12 +159,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-87b10f379b6780eb05f9ea58b35f31717416415eafcaf4e923a24a163dea4ab7"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Cookie Authorizer</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-bf2d92f6d740342790eab69257cb7684b5339566c5241fa819ca9927d81a71a2"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Cookie Authorizer</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Cookies-based authentication.</p><p>AUTHTYPE=<strong>org.signserver.server.CookieAuthorizer</strong></p><p>The Cookie Authorizer can be used to authorize clients when SignServer is sitting behind an Apache HTTP Server or an Airlock Web Application Firewall (WAF). The client HTTP request may then include custom cookies with a client set prefix and a signature. The Cookie Authorizer enables logging the client cookies to the SignServer log, which can later be used for statistical analysis. The cookies are extracted by the Cookie Authorizer based on client specific business logic, and then parsed, analyzed and logged.</p><h2 id="CookieAuthorizer-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000241_CookieAuthorizer-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="8582873c-ca95-4309-97ed-c52c630461ad" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 18.9866%;"><col span="1" style="width: 81.0134%;"></colgroup><thead><tr><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Property</strong></p></th><th colspan="1" rowspan="1" class="confluenceTh"><p><strong>Description</strong></p></th></tr></thead><tbody><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>ALLOW_ANY</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Set to <em>true</em> to configure the Cookie Authorizer to accept all clients.</p></td></tr><tr><td colspan="1" rowspan="1" class="confluenceTd"><p>REQUEST_COOKIES_PREFIX</p></td><td colspan="1" rowspan="1" class="confluenceTd"><p>Specifies a prefix to display for incoming cookies in the SignServer log file.</p><p>Example: <code>REQUEST_COOKIES_PREFIX = ABC_</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>If the same prefix is already present in the cookies coming from the client, no additional prefix will be added when logging the cookie. This avoids that the cookie name overwrites an existing log field and prevents increasing the log file.</p></div></div></td></tr></tbody></table></div>
+                        <p local-id="44136c100e41">Cookies-based authentication.</p><blockquote local-id="49690dcc3d2a"><p local-id="6a65c64de955">Fully qualified class name: AUTHTYPE=<strong>org.signserver.server.CookieAuthorizer</strong></p></blockquote><p local-id="0231d5c50df6">The Cookie Authorizer can be used to authorize clients when SignServer is sitting behind an Apache HTTP Server or an Airlock Web Application Firewall (WAF). The client HTTP request may then include custom cookies with a client set prefix and a signature. The Cookie Authorizer enables logging the client cookies to the SignServer log, which can later be used for statistical analysis. The cookies are extracted by the Cookie Authorizer based on client specific business logic, and then parsed, analyzed and logged.</p><h2 local-id="7b7a5afeb5dc" id="CookieAuthorizer-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000241_CookieAuthorizer-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="8582873c-ca95-4309-97ed-c52c630461ad" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 18.9866%;"><col span="1" style="width: 81.0134%;"></colgroup><thead><tr data-local-id="d1e8f48a2420"><th colspan="1" rowspan="1" data-local-id="8f01b7c08657" class="confluenceTh"><p local-id="4cd84f245b39"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="2da62273f761" class="confluenceTh"><p local-id="6eb9d6cc6ab8"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="a2437c0b22d9"><td colspan="1" rowspan="1" data-local-id="e25486d00b86" class="confluenceTd"><p local-id="f7d9937e4bac">ALLOW_ANY</p></td><td colspan="1" rowspan="1" data-local-id="8a472ecfe050" class="confluenceTd"><p local-id="fd9a5e5f52af">Set to <em>true</em> to configure the Cookie Authorizer to accept all clients.</p></td></tr><tr data-local-id="93062037ad25"><td colspan="1" rowspan="1" data-local-id="67bd5dc4caf9" class="confluenceTd"><p local-id="e11eabc599e9">REQUEST_COOKIES_PREFIX</p></td><td colspan="1" rowspan="1" data-local-id="60895f1d70d8" class="confluenceTd"><p local-id="823c87c148a4">Specifies a prefix to display for incoming cookies in the SignServer log file.</p><p local-id="0c334136eae1">Example: <code>REQUEST_COOKIES_PREFIX = ABC_</code></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="0ebfffef1ce9">If the same prefix is already present in the cookies coming from the client, no additional prefix will be added when logging the cookie. This avoids that the cookie name overwrites an existing log field and prevents increasing the log file.</p></div></div></td></tr></tbody></table></div>
 <nav id="ht-post-nav">
         <a href="List_Based_Address_Authorizer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

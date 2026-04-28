@@ -1,0 +1,218 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="370999865">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-04-28T12:21:19.051+0000">
+    <meta name="exp-page-id" content="370999865">
+    <meta name="exp-page-title" content="Extended Timestamp Signer">
+    <meta name="exp-page-version" content="13">
+    <meta name="exp-page-scroll-page-id" content="0c8f09dbeefce16b41fbd4f9021f6412">
+    <meta name="exp-page-created" content="2017-12-01T10:44:06.000+0000">
+    <meta name="exp-page-last-modified" content="2026-03-19T10:49:59.650+0000">
+    <meta name="exp-page-labels" content="signserveree,timestamp">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Extended Timestamp Signer</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="75b05d42bae32abec8fa90320a3213474318f34f85417c76c31faf897ef145d0"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ExtendedTimestampSigner-top" pageid="370999865" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=370999865" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Workers_&amp;_Components.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Workers &amp; Components</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Signers</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Timestamp_Signers.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Timestamp Signers</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Extended_Timestamp_Signer.html" target="_self" aria-current="page">Extended Timestamp Signer</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-7e339f25e17ca70b736d7d5aea467cabc51f096412038a6e2592e03c939b4dd7"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Extended Timestamp Signer</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="aa7772ec09fa"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="e3d782e72e3e">The Extended Timestamp Signer, in addition to all features provided by the regular <a href="Timestamp_Signer.html" data-linked-resource-id="370999946" data-linked-resource-version="30" data-linked-resource-type="page" data-scroll-target-source-id="370999946" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999946/Timestamp+Signer" data-scroll-link-target-source-id="370999946">Timestamp Signer</a>, also supports including the qualified timestamp extension, as required by EU regulation 910/2014 specification.</p><blockquote local-id="e5fa9f74f05a"><p local-id="e681dae3df2f">Fully qualified class name: <strong>org.signserver.module.tsa.ExtendedTimeStampSigner</strong>.</p></blockquote><h2 local-id="893a8ab82fbb" id="ExtendedTimestampSigner-Overview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999865_ExtendedTimestampSigner-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Overview</span></h2><p local-id="2a2e2b64-88bf-448e-b216-de40ee067b30">To download a sample configuration file for this Worker, see <a href="Sample_Worker_Configurations.html" data-linked-resource-id="1902805041" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1902805041" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1902805041/Sample+Worker+Configurations" data-scroll-link-target-source-id="1902805041">Sample Worker Configurations</a>.</p><p local-id="53386585-7028-4564-b5b8-d39e3b6508c1">For information on the interfaces this Worker can be called through, see <a href="Supported_Interfaces_by_Worker.html" data-linked-resource-id="1886322694" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="1886322694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1886322694/Supported+Interfaces+by+Worker" data-scroll-link-target-source-id="1886322694">Supported Interfaces by Worker</a>.</p><h2 local-id="41019131f2ff" id="ExtendedTimestampSigner-AvailableProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999865_ExtendedTimestampSigner-Available-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Properties</span></h2><div class="table-wrap"><table data-table-width="1800" data-layout="default" data-local-id="4587383c-1a78-420f-8988-fbd78f481d09" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 25.7222%;"><col span="1" style="width: 7.7778%;"><col span="1" style="width: 66.5000%;"></colgroup><thead><tr data-local-id="38ae7df1aa26"><th colspan="1" rowspan="1" data-local-id="6c6e4223a9db" class="confluenceTh"><p local-id="1820da8949b6"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="c3f69a42c736" class="confluenceTh"><p local-id="c0423f5033e2"><strong>Default</strong></p></th><th colspan="1" rowspan="1" data-local-id="348765269be5" class="confluenceTh"><p local-id="be746d8e2227"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="935d6a31661c"><td colspan="1" rowspan="1" data-local-id="9b8d3dadb523" class="confluenceTd"><p local-id="49592ef08e83"><code>INCLUDE_QC_EXTENSION&nbsp;</code></p></td><td colspan="1" rowspan="1" data-local-id="0fe9fda98bc9" class="confluenceTd"><p local-id="04e950390b0e"><em>False</em></p></td><td colspan="1" rowspan="1" data-local-id="7103d0866a21" class="confluenceTd"><p local-id="984fb1939c37">Set this to <em>true</em> to enable including the qualified time stamping extension.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Timestamp_Signer_Algorithm_Support.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Timestamp Signer Algorithm Support</span>
+        </a>
+
+        <a href="MS_Authenticode_Timestamp_Signer.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>MS Authenticode Timestamp Signer</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

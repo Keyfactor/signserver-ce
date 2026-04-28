@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2026-02-24T09:26:00.798+0000">
+    <meta name="exp-export-timestamp" content="2026-04-28T12:20:31.954+0000">
     <meta name="exp-page-id" content="370999392">
     <meta name="exp-page-title" content="Database Setup">
-    <meta name="exp-page-version" content="10">
+    <meta name="exp-page-version" content="19">
     <meta name="exp-page-scroll-page-id" content="0ddd58e02b3b289b9a0fd3622cec675d">
     <meta name="exp-page-created" content="2024-01-23T10:08:02.000+0000">
-    <meta name="exp-page-last-modified" content="2026-02-19T08:30:09.187+0000">
+    <meta name="exp-page-last-modified" content="2026-03-17T14:05:11.070+0000">
     <meta name="exp-page-labels" content="signserver-software-only">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -26,7 +26,8 @@
 
     <!-- Additional Meta Tags -->
     <meta name="exp-document-id" content="371111034">
-    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
     <meta name="exp-version-status" content="in-progress">
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
@@ -83,9 +84,9 @@
 </script>
     <title>Database Setup</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="5a1e6d8be7e7f761f1cafe2d2ba1e9a19034faf9dd6235271861815dd4f57b03"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="4cd5ece05aeddc18eff99512f4abf71af1a6d49707fc6daf671d8481439686a7"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="DatabaseSetup-top" pageid="370999392" class="flex flex-col" data-confluence-editor-version="v2">
+    <body id="DatabaseSetup-top" pageid="370999392" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -142,7 +143,7 @@
                     <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
                 </li>
                 <li class="js-hide-until-loaded">
-                    <a href="Configuration_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Configuration Reference</a>
+                    <a href="Installation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Installation</a>
                 </li>
             <li class="breadcrumbs--active js-hide-until-loaded">
                 <a href="Database_Setup.html" target="_self" aria-current="page">Database Setup</a>
@@ -152,12 +153,12 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-b113ce30d14d4381cdea7246aee537d73348f2002dc58997b722d6b34142fc25"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Database Setup</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-e7106674f5e4dddd55ab1b3e67a37bf348e500c9d2e1b5d52547bd96b3a53781"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Database Setup</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p local-id="0477e909-3321-4c24-9b8f-cc5d22bf3c63">This section covers installing and configuring your database.</p><h2 local-id="36c1dcc2-6000-4e9d-b28b-f11677e33de0" id="DatabaseSetup-InstallDatabase" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999392_DatabaseSetup-Install-Database"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Install Database</span></h2><p local-id="80c837d9-71b2-4cd7-b196-0dc63fb41fb7">Depending on your setup, refer to information from your OS/Linux distribution or database vendor for instructions on how to install your database.</p><p local-id="88170050-585b-40c7-82f4-2097305759f5">For example, to install MariaDB in CentOS, run the following:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p local-id="0477e909-3321-4c24-9b8f-cc5d22bf3c63">This section covers installing and configuring your database. </p><p local-id="e50085f3dbac">For information on supported databases for each deployment, <span class="inline-comment-marker" data-ref="1a359f6c-284e-4de4-9a2a-3298df90728b">see <a href="Supported_Databases.html" data-linked-resource-id="2368307202" data-linked-resource-version="18" data-linked-resource-type="page" data-scroll-target-source-id="2368307202" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2368307202/Supported+Databases" data-scroll-link-target-source-id="2368307202">Supported Databases</a>.</span></p><h2 local-id="36c1dcc2-6000-4e9d-b28b-f11677e33de0" id="DatabaseSetup-InstallDatabase" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999392_DatabaseSetup-Install-Database"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Install Database</span></h2><p local-id="80c837d9-71b2-4cd7-b196-0dc63fb41fb7">Depending on your setup, refer to information from your OS/Linux distribution or database vendor for instructions on how to install your database.</p><p local-id="88170050-585b-40c7-82f4-2097305759f5">For example, to install MariaDB in CentOS, run the following:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">sudo yum install mariadb mariadb-server</code></div>
 </div>
 </div><h2 local-id="f2638501-3b39-457b-9442-714494256741" id="DatabaseSetup-ConfigureDatabase" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-370999392_DatabaseSetup-Configure-Database"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure Database</span></h2><p local-id="48529c5f-c4b6-4b5e-8562-f7cd4878ff3e">This covers the following information on configuring your database:</p><ul local-id="a08778b3-1520-49a0-bc6d-d96c25bb4fb4"><li local-id="dc12ed34-1f6c-45fd-a2c3-c2ed79e5919c"><p local-id="7514e4e8-c098-4a2c-8bdc-0888edfebfa6"><span class="inline-comment-marker" data-ref="a50cd5bd-d1ff-4792-bdcd-4dc26028fb0b"><a href="Database_Setup.html#DatabaseSetup-database-account" data-scroll-target-source-id="370999392" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999392/Database+Setup#src-370999392_DatabaseSetup-database-account" data-scroll-link-target-source-id="370999392">Database Account</a></span></p></li><li local-id="f7dff253-a79b-4828-92ba-d764bdc1eaae"><p local-id="81c7ab5b-c41b-4100-8a42-82d868acc412"><span class="inline-comment-marker" data-ref="a50cd5bd-d1ff-4792-bdcd-4dc26028fb0b"><a href="Database_Setup.html#DatabaseSetup-table-creation" data-scroll-target-source-id="370999392" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999392/Database+Setup#src-370999392_DatabaseSetup-table-creation" data-scroll-link-target-source-id="370999392">Table Creation and Indexes</a></span></p></li><li local-id="4ff7e092-81de-4cee-8c59-b86f2cfd2bc0"><p local-id="3e5525f0-78e1-4d10-a750-d246ae90e84e"><span class="inline-comment-marker" data-ref="a50cd5bd-d1ff-4792-bdcd-4dc26028fb0b"><a href="Database_Setup.html#DatabaseSetup-maria-db" data-scroll-target-source-id="370999392" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999392/Database+Setup#src-370999392_DatabaseSetup-maria-db" data-scroll-link-target-source-id="370999392">MariaDB binlog Format Configuration</a></span></p></li></ul><p local-id="aaf85e7c-f067-4505-ae87-1959e24cf0cb">For more information on application server-specific database configuration such as configuring a database driver, see&nbsp;<a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-software/latest/application-server-setup" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-software/latest/application-server-setup" data-scroll-link-local="false">Application Server Setup</a>.</p><h3 local-id="18075bfd-9056-475a-a61b-19d5ae56f328" id="DatabaseSetup-DatabaseAccountdatabase-account" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="DatabaseSetup-database-account"></span><span class="confluence-anchor-link" id="database-account"></span><span class="confluence-anchor-link" id="src-370999392_DatabaseSetup-Database-Account"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Database Account</span></h3><p local-id="057d014e-0b06-4b9d-839c-473fe3fa230b">Create a database and database user for SignServer. For more information, refer to documentation from the respective database vendor.</p><p local-id="69ef2596-537c-44a9-8248-99cc192ef359">For example for MariaDB something like the following could typically be used:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
@@ -177,22 +178,22 @@
 </div>
 </div>
 <nav id="ht-post-nav">
-        <a href="IDEs.html" class="ht-post-nav-prev">
+        <a href="Application_Server_WildFly_32+_&amp;_JBoss_EAP_8.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>IDEs</span>
+            <span>Application Server WildFly 32+ &amp; JBoss EAP 8</span>
         </a>
 
-        <a href="Troubleshooting.html" class="ht-post-nav-next">
+        <a href="Interfaces.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
                     <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Troubleshooting</span>
+            <span>Interfaces</span>
         </a>
 </nav>
                     </div>

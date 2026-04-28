@@ -1,0 +1,239 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371000306">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-04-28T12:21:50.711+0000">
+    <meta name="exp-page-id" content="371000306">
+    <meta name="exp-page-title" content="Worker Log">
+    <meta name="exp-page-version" content="14">
+    <meta name="exp-page-scroll-page-id" content="ac85d8f35e37098e69363993b932c100">
+    <meta name="exp-page-created" content="2019-07-11T10:03:16.000+0000">
+    <meta name="exp-page-last-modified" content="2026-03-12T09:14:35.268+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Worker Log</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="370232f657be0ed93b920ad340adeaa3e5be06869ef68d0c7e9eb6a92702ab29"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="WorkerLog-top" pageid="371000306" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371000306" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Configuration_Reference.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Configuration Reference</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Logging.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Logging</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Worker_Log.html" target="_self" aria-current="page">Worker Log</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-96e590af7895748e06e1081c755791eccf14f9c7b9a6f18147f3ecfc81cccf76"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Worker Log</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="129c992f-33a4-4be4-af72-f530a6849de5">Worker Loggers log each transaction handled by a worker and can be configured per worker.</p><p local-id="1a8401a1-1a94-4186-8fe5-2059f52facb2">By default, the All Fields Worker Logger is used, which logs all the available fields one after another, separated by semicolons.</p><p local-id="061c1a05-c6b4-4208-b4ea-471c724ec096">To configure the Worker Logger, set the&nbsp;<code>WORKERLOGGER</code>&nbsp;property to the fully qualified class name of the Worker Logger implementation in the respective worker configuration.</p><h2 local-id="eff85b41-87a3-4414-b504-b00241480478" id="WorkerLog-AllFieldsWorkerLoggerall" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="WorkerLog-all"></span><span class="confluence-anchor-link" id="all"></span><span class="confluence-anchor-link" id="src-371000306_WorkerLog-All-Fields-Worker-Logger"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">All Fields Worker Logger</span></h2><p local-id="2b5820be-4148-4520-9182-fad7b729316d">The All Fields Worker Logger is the default worker logger for most Workers. </p><blockquote local-id="91961a9f56e6"><p local-id="d27cedf991e0">Fully qualified class name: <strong>org.signserver.server.log.AllFieldsWorkerLogger</strong></p></blockquote><p local-id="cc3ec3a0aece">The All Fields Worker Logger be used during testing to find which fields a Worker logs, and may then be changed to the <a href="Worker_Log.html#WorkerLog-pattern" data-scroll-target-source-id="371000306" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000306/Worker+Log#src-371000306_WorkerLog-pattern" data-scroll-link-target-source-id="371000306">Pattern Worker Logger</a> to only log fields that are of interest.</p><p local-id="cf70df41-b8da-4462-ba24-3e6905067ecb">The <code>LOGLEVEL_DEFAULT</code> sets the level of the log output. The log levels are specified as the standard Log4j levels (FATAL, ERROR, WARNING, INFO, DEBUG, and TRACE) and default to the log level INFO if not set.</p><p local-id="eb32719446d2"><strong>Example Configuration</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger</code></div>
+<div class="line"><code class="plain">LOGLEVEL_DEFAULT=INFO</code></div>
+</div>
+</div><h2 local-id="11d8c675-abe3-45a2-a5f6-5f589d9a6a83" id="WorkerLog-SecurityEventsWorkerLogger" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000306_WorkerLog-Security-Events-Worker-Logger"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Security Events Worker Logger</span></h2><p local-id="c686701a-92fe-4a74-8ce0-649baf06c9b7">The Security Events Worker Logger uses the CESeCore Security Events Log and includes all fields in the additionalDetails fields in the audit log, except for the worker ID, which is mapped to searchDetail2. See <a href="Secure_Audit_Log.html" data-linked-resource-id="371000314" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="371000314" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000314/Secure+Audit+Log" data-scroll-link-target-source-id="371000314">CESeCore Security Events Log</a>.</p><blockquote local-id="c5c2f26f2ae6"><p local-id="d83fc2e53a09">Fully qualified class name: <strong>org.signserver.server.log.SecurityEventsWorkerLogge</strong>r</p></blockquote><p local-id="b4fe01b2-5cfb-43d8-9d1d-a3acc8d00a2b">The properties <code>LOGINCLUDEFIELDS</code> and <code>LOGEXCLUDEFIELDS</code> can be used to restrict the fields included in <code>additionalDetails</code> by explicitly setting a comma-separated list of field names.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="f2c320a8-c0b6-4ac4-bfd5-ba852f568bea">Only one of <code>LOGINCLUDEFIELDS</code> and <code>LOGEXCLUDEFIELDS</code> can be set at a time.</p></div></div><p local-id="780152779fbb"><strong>Example Configurations</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger</code></div>
+<div class="line"><code class="plain">LOGINCLUDEFIELDS=PROCESS_SUCCESS,WORKER_NAME,CLIENT_IP,XFORWARDEDFOR,CLIENT_AUTHORIZED,AUTHORIZED_USERNAME,REQUEST_LENGTH,EXCEPTION</code></div>
+</div>
+</div><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger</code></div>
+<div class="line"><code class="plain">LOGEXCLUDEFIELDS=RESPONSE_ENCODED,SIGNER_CERT_ISSUERDN</code></div>
+</div>
+</div><h2 local-id="0f18a8c2-ac69-4bda-bf78-ec4a3db2b701" id="WorkerLog-PatternWorkerLoggerpattern" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="WorkerLog-pattern"></span><span class="confluence-anchor-link" id="pattern"></span><span class="confluence-anchor-link" id="src-371000306_WorkerLog-Pattern-Worker-Logger"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Pattern Worker Logger</span></h2><p local-id="6fc51c43-23aa-4052-ad5f-e8cbc1426940">The <code>LOGLEVEL_DEFAULT</code> property has the same behavior as the <a href="Worker_Log.html#WorkerLog-all" data-scroll-target-source-id="371000306" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000306/Worker+Log#src-371000306_WorkerLog-all" data-scroll-link-target-source-id="371000306">All Fields Worker Logger</a>.</p><blockquote local-id="e8abfa022b4e"><p local-id="d991fd4735e4">Fully qualified class name: <strong>org.signserver.server.log.PatternWorkerLogger</strong></p></blockquote><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger</code></div>
+<div class="line"><code class="plain">LOGTIMEZONE=GMT</code></div>
+<div class="line"><code class="plain">LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z</code></div>
+<div class="line"><code class="plain">LOGPATTERN=\$\{(.+?)\}</code></div>
+<div class="line"><code class="plain">LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};</code></div>
+<div class="line"><code class="plain">LOGLEVEL_DEFAULT=INFO</code></div>
+</div>
+</div><h2 local-id="a4bdce75-cf39-4b8e-a6f3-80486660557d" id="WorkerLog-DefaultTimestampLogger" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000306_WorkerLog-Default-Timestamp-Logger"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Default Timestamp Logger</span></h2><p local-id="476e689e-6e3f-429f-8cf7-411b3df1b172">Pattern logger with a default log order suitable for logging timestamp requests. This logger is the default logger used by the <a href="Timestamp_Signer.html" data-linked-resource-id="370999946" data-linked-resource-version="30" data-linked-resource-type="page" data-scroll-target-source-id="370999946" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999946/Timestamp+Signer" data-scroll-link-target-source-id="370999946">Timestamp Signer</a>.</p><blockquote local-id="6d4251c9fabe"><p local-id="6f1d70817e63">Fully qualified class name: <strong>org.signserver.module.tsa.DefaultTimeStampLogger</strong></p></blockquote><h2 local-id="3b240edb-acf4-4d3b-aa7d-54f02f08205a" id="WorkerLog-CustomTimestampLogger1" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000306_WorkerLog-Custom-Timestamp-Logger-1"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="0ae5b19a-315f-40cd-af74-f4a241cf845e">Custom Timestamp Logger 1</span></span></h2><p local-id="66d0b7fd24dd">Worker logger that customizes the logging behavior for Time Stamping Authority (TSA) requests and responses, allowing for tailored audit logs.</p><blockquote local-id="950d25283d40"><p local-id="fd305a1480c8">Fully qualified class name: <strong>org.signserver.module.tsa.CustomTimeStampLogger1</strong></p></blockquote><h2 local-id="08decb9d-71eb-411d-bea0-3ee62deefb17" id="WorkerLog-FileWorkerLogger" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000306_WorkerLog-File-Worker-Logger"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">File Worker Logger</span></h2><p local-id="38543973-6f4a-49d8-9975-db49e8bb1711">Worker logger that writes the log values to a worker-specific log file. </p><blockquote local-id="f029411762ca"><p local-id="af35cd3e9af9">Fully qualified class name: <strong>org.signserver.server.log.FileWorkerLogger</strong></p></blockquote><p local-id="7fa7c189a97a">This logger logs all fields, similar to the AllFieldsWorkerLogger, and is mainly intended for use by unit tests, and is not thread safe.</p><p local-id="0e25e672ae0c"><strong>Example Configuration</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="xml" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.FileWorkerLogger</code></div>
+<div class="line"><code class="plain">LOG_FILE_PATH=/path/to/logfile</code></div>
+</div>
+</div><h2 local-id="8d337f2c-81a5-4f10-a0fc-2e5aa8dc0d5a" id="WorkerLog-NullWorkerLogger" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000306_WorkerLog-Null-Worker-Logger"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Null Worker Logger</span></h2><p local-id="935b7bbb-3198-4391-9478-f5a5218514a8">Worker logger that does not log anything.</p><blockquote local-id="193866894fea"><p local-id="29bfa773fcf0">Fully qualified class name: <strong>org.signserver.server.log.NullWorkerLogger</strong></p></blockquote><h2 local-id="71d17610-8a9f-4d48-8228-b7f6198040fc" id="WorkerLog-AvailableLogFields" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371000306_WorkerLog-Available-Log-Fields"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Available Log Fields</span></h2><p local-id="4ed1bbc5-c892-4908-95b0-56341733e0cd">The following lists some of the available log fields and is not a complete listing of all log events.</p><div class="table-wrap"><table data-table-width="1659" data-layout="full-width" data-local-id="80db4024-b9c1-4c67-8fc0-3263870427f9" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 17.6116%;"><col span="1" style="width: 82.3884%;"></colgroup><tbody><tr data-local-id="42a9f013-8565-4892-addd-73bdc22d1b50"><th colspan="2" rowspan="1" data-local-id="e6626d08-ccc4-446f-aad6-2622230f8a6c" class="confluenceTh"><p local-id="414c8698-14d5-4451-b0c2-f5369844c4e6"><strong>Generic</strong></p></th></tr><tr data-local-id="88cf4352-5fc7-411c-8a5a-e990cbebb468"><td colspan="1" rowspan="1" data-local-id="e076c49b-8bdf-4597-867d-baa76613ea7c" class="confluenceTd"><p local-id="9f729ec2-58f6-4e45-b8e6-6bf33c72861f">PROCESS_SUCCESS</p></td><td colspan="1" rowspan="1" data-local-id="8075f424-19b1-440e-89c3-01120f57d1fe" class="confluenceTd"><p local-id="d56adf35-25b5-48b9-85c9-959300fe3da3">Contains the value <em>true</em> if the request succeeded.</p></td></tr><tr data-local-id="8f62d485-9c9a-4e5a-91de-fa69bb697bb9"><td colspan="1" rowspan="1" data-local-id="c7c28995-a816-4c94-952a-e3efacd231e6" class="confluenceTd"><p local-id="7079567c-f18a-4d8e-9a9f-35aba66321cd">WORKER_ID</p></td><td colspan="1" rowspan="1" data-local-id="4354e412-45a2-4811-ac11-f2acb480da60" class="confluenceTd"><p local-id="de278765-96a0-421a-b774-b9a7f7568173">ID of the worker that processed the request.</p></td></tr><tr data-local-id="e43b504e-19ca-41f8-82e8-aaf0f74f43f6"><td colspan="1" rowspan="1" data-local-id="67a5f2b5-687c-45c4-98a1-850ffe039e00" class="confluenceTd"><p local-id="1433e56c-aef3-460c-a71e-595d3f1ac0e5">REQUEST_ID</p></td><td colspan="1" rowspan="1" data-local-id="8dc2ac3d-33ee-4f49-9ca1-38a8b95fdadb" class="confluenceTd"><p local-id="20d635f4-0e22-4bca-8fa2-d735aaecb6e2">ID of the request (usually a random number).</p></td></tr><tr data-local-id="c73af825-dc7f-4d79-a440-c4d356403850"><td colspan="1" rowspan="1" data-local-id="16674ef9-759d-40ca-9aed-02d890f9d6bf" class="confluenceTd"><p local-id="1e2485ad-6eb8-4e6f-9438-e83b8bb8a728">LOG_ID</p></td><td colspan="1" rowspan="1" data-local-id="f007f91b-7034-4d1d-be46-9a9b835742aa" class="confluenceTd"><p local-id="c3077f89-fc07-4842-901c-518d7d908a0c">A longer ID for the request (random number with dashes).</p></td></tr><tr data-local-id="92814545-6698-49be-ade7-db56567e3d87"><td colspan="1" rowspan="1" data-local-id="6b87a1aa-0d0e-4cc4-ad97-a4a1715ff8b8" class="confluenceTd"><p local-id="b91b0c66-3ec5-4043-929d-f648cb1d08f3">EXCEPTION</p></td><td colspan="1" rowspan="1" data-local-id="a4047be0-00ff-435f-bb4d-ce45287c3863" class="confluenceTd"><p local-id="b88af4d2-4716-4c0e-aa08-ee9c4f0317f8">Included only in case of a failure processing the request and in that case could contain an error message.</p></td></tr><tr data-local-id="93f99c95-30ef-4d85-b948-baa03bb8000f"><th colspan="2" rowspan="1" data-local-id="ffe271d8-86a2-43d5-81f8-70a3a048ed4c" class="confluenceTh"><p local-id="fa2f2fc3-bb50-4439-87b0-452d31b25c78"><strong>Signers</strong></p></th></tr><tr data-local-id="d4418085-b83d-4e11-8d77-0102492512c6"><td colspan="1" rowspan="1" data-local-id="36447599-c6b2-45b5-a2de-36bb9ac2853f" class="confluenceTd"><p local-id="a1f38245-a6b0-4000-b064-64be8a52c356">CRYPTOTOKEN</p></td><td colspan="1" rowspan="1" data-local-id="807d4cf5-073a-4823-848b-643c017a93a7" class="confluenceTd"><p local-id="bde1d535-fed4-4ae9-b215-ef49f5bee008">Name of the associated crypto worker which held the crypto token used when processing the request.</p></td></tr><tr data-local-id="046cd4f5-5153-4d78-b773-4ad3e97b0cb7"><th colspan="1" rowspan="1" data-local-id="59c44b6b-b968-4a0c-b3fe-258c806bb9f4" class="confluenceTh"><p local-id="48fd5bc2-3168-4777-b2ac-0fab373ff8c7"><strong>Other</strong></p></th><th colspan="1" rowspan="1" data-local-id="7ae9c770-32a2-488d-b68f-4b8413425d50" class="confluenceTh"><p local-id="ee2c4990-5be9-458b-96d8-1dc6328699ff"></p></th></tr><tr data-local-id="c746cdf5-df0c-442f-9cef-3ee289bfc088"><td colspan="1" rowspan="1" data-local-id="29c5aec0-a9d9-49a5-8655-8ab4b1bf5d9f" class="confluenceTd"><p local-id="eb4dfe52-d6dc-40a1-87d5-e61bcdf16c2b">XCUSTOM1</p></td><td colspan="1" rowspan="1" data-local-id="2680e209-30fa-43a7-8224-e1cec3ac0ac5" class="confluenceTd"><p local-id="55afa9b1-82f1-4489-8fc2-13dbd822dba4">Included if the HTTP request header <em>X-SignServer-Custom-1</em> is specified.</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Client_Log.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Client Log</span>
+        </a>
+
+        <a href="SignServer_Authentication_and_Authorization.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>SignServer Authentication and Authorization</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

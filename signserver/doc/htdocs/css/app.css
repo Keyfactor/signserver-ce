@@ -20788,7 +20788,7 @@ ul {
     margin: 10px 0 !important
 }
 
-[data-confluence-editor-version=v1] .panel {
+[data-confluence-deployment-type="DATACENTER"] .panel {
     border-style: solid;
     border-color: #dfe1e5
 }
@@ -25044,7 +25044,7 @@ html > body.vp-in-app-help--enabled #jsd-widget, html > body.vp-in-app-help--ena
     display: none
 }
 
-[data-confluence-editor-version=v2] span > img.confluence-embedded-image.scroll-v2-inline-image {
+[data-confluence-deployment-type="CLOUD"] span > img.confluence-embedded-image.scroll-v2-inline-image {
     height: 1.35em;
     transform: translateY(.27em);
     vertical-align: baseline

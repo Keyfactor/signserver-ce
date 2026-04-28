@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2026-02-24T09:25:43.543+0000">
+    <meta name="exp-export-timestamp" content="2026-04-28T12:21:34.833+0000">
     <meta name="exp-page-id" content="371000225">
     <meta name="exp-page-title" content="Username Authorizer">
-    <meta name="exp-page-version" content="5">
+    <meta name="exp-page-version" content="7">
     <meta name="exp-page-scroll-page-id" content="f35cf0f5f49966da6a653c69673dc700">
     <meta name="exp-page-created" content="2017-05-11T11:36:01.000+0000">
-    <meta name="exp-page-last-modified" content="2025-09-01T14:17:37.000+0000">
+    <meta name="exp-page-last-modified" content="2026-03-18T14:54:16.700+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -26,7 +26,8 @@
 
     <!-- Additional Meta Tags -->
     <meta name="exp-document-id" content="371111034">
-    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
     <meta name="exp-version-status" content="in-progress">
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
@@ -83,9 +84,9 @@
 </script>
     <title>Username Authorizer</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="c5f45f82d23fc281029138080c0232e924e75386f5c67fe75f2649177b43522f"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="158b68f199cb9dd5899ab457c2abea86ad447088fa26adf37ff482e591f0175b"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="UsernameAuthorizer-top" pageid="371000225" class="flex flex-col" data-confluence-editor-version="v2">
+    <body id="UsernameAuthorizer-top" pageid="371000225" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -158,12 +159,15 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-4df47276e8752ffc641902f6b5f5a390dd4d13ce1c4d7d58c583de9c412ad472"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Username Authorizer</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-3799f4048c19b44ca9c80033b3e5987c18fc337de8e1abdbf84ea1a3e6e3186f"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Username Authorizer</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>Username-based authentication.</p><p>AUTHTYPE=<strong>org.signserver.server.UsernameAuthorizer</strong></p><p>An Authorizer that can be used for instance if SignServer sits behind an Apache front-end which uses HTTP basic authentication. With this Authorizer the username is logged but the password is not checked as it is assumed to be checked by the front-end.</p><p>The Authorizer can be configured to either accept all usernames or only accept those usernames listed in one of its properties.</p><p>Form 1:</p><ul><li><p>ACCEPT_ALL_USERNAMES = <em>false </em>(default) and usernames are specified</p></li><li><p>ACCEPT_ALL_USERNAMES = <em>false</em></p></li><li><p>ACCEPT_USERNAMES = user1;user2;user3</p></li></ul><p>Form 2:</p><ul><li><p>ACCEPT_ALL_USERNAMES = <em>true</em> and no usernames are specified</p></li><li><p>ACCEPT_ALL_USERNAMES = <em>true</em></p></li></ul>
+                        <p local-id="9986b4326279">The Username Authorizer provides username-based authentication.</p><blockquote local-id="196d7c5d0bac"><p local-id="f73dd23118b2">Fully qualified class name: AUTHTYPE=<strong>org.signserver.server.UsernameAuthorizer</strong></p></blockquote><p local-id="9f192ee9126a">The Username Authorizer can be used if SignServer sits behind an Apache front-end which uses HTTP basic authentication. With this Authorizer, the username is logged but the password is not checked as it is assumed to be checked by the front-end.</p><p local-id="928800fb500b">The Username Authorizer can be configured to either accept all usernames or only accept those usernames listed in one of its properties.</p><div class="table-wrap"><table data-table-width="1800" data-layout="align-start" data-local-id="d7a7811f-8e62-4f08-9fa1-f5bccf3ddfba" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="e4c56f9cf5c7"><th colspan="1" rowspan="1" data-local-id="5665b43a1bc1" class="confluenceTh"><p local-id="ba9bba50c6b4"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="cdf29cb3ee4c" class="confluenceTh"><p local-id="a81623cf1f3a"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="ee731c491215"><td colspan="1" rowspan="1" data-local-id="d8b858d734cb" class="confluenceTd"><p local-id="6deceab2b3c1"><code>ACCEPT_ALL_USERNAMES</code></p></td><td colspan="1" rowspan="1" data-local-id="7ed64d24524a" class="confluenceTd"><p local-id="655befdca99d">If <em>false </em>(default), specify the usernames in <code>ACCEPT_USERNAMES</code>.</p><p local-id="a15373ed329e">If <em>true</em>, no usernames are specified.</p></td></tr><tr data-local-id="c437f9af3688"><td colspan="1" rowspan="1" data-local-id="796330457e4a" class="confluenceTd"><p local-id="914ee89d5f9d"><code>ACCEPT_USERNAMES</code></p></td><td colspan="1" rowspan="1" data-local-id="63c80653b826" class="confluenceTd"><p local-id="15c3ada7c6f3">If <code>ACCEPT_ALL_USERNAMES</code> is <em>false</em>, specify the allowed usernames.</p><p local-id="e25dac7c8e3e">Example: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">ACCEPT_USERNAMES = user1;user2;user3</code></div>
+</div>
+</div></td></tr></tbody></table></div>
 <nav id="ht-post-nav">
         <a href="JWT_Authorizer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

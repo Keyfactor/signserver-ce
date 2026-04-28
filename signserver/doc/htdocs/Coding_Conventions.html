@@ -12,13 +12,13 @@
     <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2026-02-24T09:25:59.710+0000">
+    <meta name="exp-export-timestamp" content="2026-04-28T12:21:55.817+0000">
     <meta name="exp-page-id" content="371000839">
     <meta name="exp-page-title" content="Coding Conventions">
-    <meta name="exp-page-version" content="5">
+    <meta name="exp-page-version" content="8">
     <meta name="exp-page-scroll-page-id" content="da117c94bf88273cbf2446fd75aa1391">
     <meta name="exp-page-created" content="2023-04-04T17:54:23.000+0000">
-    <meta name="exp-page-last-modified" content="2025-09-25T08:18:43.671+0000">
+    <meta name="exp-page-last-modified" content="2026-04-07T09:45:18.110+0000">
     <meta name="exp-page-labels" content="">
     <meta name="exp-page-context-keys" content="">
     <meta name="exp-space-key" content="SSDOCS">
@@ -26,7 +26,8 @@
 
     <!-- Additional Meta Tags -->
     <meta name="exp-document-id" content="371111034">
-    <meta name="exp-document-title" content="SignServer Documentation">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
     <meta name="exp-version-status" content="in-progress">
     <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
     <meta name="exp-version-name" content="Working version">
@@ -83,9 +84,9 @@
 </script>
     <title>Coding Conventions</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="6867f29721d8addaeb43bb81c7d853ad2deebdd061494c33140af185f667a56b"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="6eabdf434f1adb8ebc7ef50c89b4d721a5d1c2b800e679bd19fea8f1c424aed6"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="CodingConventions-top" pageid="371000839" class="flex flex-col" data-confluence-editor-version="v2">
+    <body id="CodingConventions-top" pageid="371000839" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -155,15 +156,15 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-ed98f58b6aebf5cdb85761c30c84f883888c0fe2ee5bb7635ca4efa94f32a977"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Coding Conventions</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-04cd2fc0520cffc79716c5141793db453dff2c81ed193bbb12526a407adb6549"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Coding Conventions</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
                     <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
-                        <p>SignServer loosely follows the Oracle <a class="external-link scroll-external-link" href="http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html" data-scroll-link-local="false">Code Conventions for the Java Programming Language</a>.<br clear="none"><br clear="none">Selection of rules:</p><ul><li><p>The code should be properly indented.</p></li></ul><ul><li><p>Spaces should be used for for indentation (not tabs). The IDEs can be configured to use spaces.</p></li></ul><ul><li><p>Opening curly brace, <code>{</code>, should not be on its own line. Example: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+                        <p local-id="96b8d4034db1">SignServer loosely follows the Oracle <a class="external-link scroll-external-link" href="http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html" data-scroll-link-local="false">Code Conventions for the Java Programming Language</a>.<br clear="none"><br clear="none">Selection of rules:</p><ul local-id="74708a166b93"><li local-id="65b80123883e"><p local-id="23777f892585">The code should be properly indented.</p></li></ul><ul local-id="d3b848887de7"><li local-id="fd25f9548423"><p local-id="feb9dc4a3f3e">Spaces should be used for for indentation (not tabs). The IDEs can be configured to use spaces.</p></li></ul><ul local-id="6eb8b58e5018"><li local-id="0fd525d2690a"><p local-id="5a25713d5b9f">Opening curly brace, <code>{</code>, should not be on its own line. Example: </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="keyword">if</code><code class="plain"> (</code><code class="keyword">true</code><code class="plain">) {</code></div>
 </div>
-</div></li><li><p>First sentence in Javadoc should end with a period: <code>.</code></p></li></ul>
+</div></li><li local-id="09c7a472214f"><p local-id="68426a97b744">First sentence in Javadoc should end with a period: <code>.</code></p></li></ul><h2 local-id="f1a62e00e8f3" id="CodingConventions-Auto-formatCodewithIntelliJ" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371000839_CodingConventions-Auto-format-Code-with-IntelliJ"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Auto-format Code with IntelliJ</span></h2><p local-id="9f489575e2d7">IntelliJ IDEA's built-in formatter can be configured to enforce Sun/Oracle Java code conventions automatically. For more information, see <a class="external-link scroll-external-link" href="https://www.jetbrains.com/help/idea/reformat-and-rearrange-code.html" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://www.jetbrains.com/help/idea/reformat-and-rearrange-code.html" data-scroll-link-local="false">IntelliJ&nbsp;IDEA: Reformat code</a>.</p><p local-id="a09cf38794df">In IntelliJ, you can adjust the settings under <strong>Settings → Editor → Code Style → Java</strong>. The sample formatting schema can be imported directly into IntelliJ to apply the expected style more easily.</p><p local-id="328f7f2e8566"><strong>Sample Schema:</strong></p><p class="media-group"><a href="_scroll_external/attachments/ce76ba8804ea/oracle_java_conventions_intellij.xml" data-linked-resource-id="2541781015" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="oracle_java_conventions_intellij.xml" data-nice-type="Text File" data-linked-resource-content-type="text/plain" data-linked-resource-container-id="371000839" data-linked-resource-container-version="8" class=" scroll-attachment-link" data-scroll-attachment-filename="oracle_java_conventions_intellij.xml" download="oracle_java_conventions_intellij.xml">oracle_java_conventions_intellij.xml</a></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="4a06f2c4eea3">The provided schema is unofficial and may not fully conform to Oracle's Java code conventions. It serves as a baseline and should be adjusted as needed.</p></div></div>
 <nav id="ht-post-nav">
         <a href="Automated_Tests.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

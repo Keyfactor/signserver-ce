@@ -1,0 +1,215 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="2368307202">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-04-28T12:20:27.004+0000">
+    <meta name="exp-page-id" content="2368307202">
+    <meta name="exp-page-title" content="Supported Databases">
+    <meta name="exp-page-version" content="18">
+    <meta name="exp-page-scroll-page-id" content="">
+    <meta name="exp-page-created" content="2026-03-02T14:16:42.960+0000">
+    <meta name="exp-page-last-modified" content="2026-04-02T07:43:39.324+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Supported Databases</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="876354eaa4731919099f7ef9aad3095c27af1689e91c9c877b8335d5360ca92f"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SupportedDatabases-top" pageid="2368307202" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=2368307202" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Introduction.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Introduction</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interoperability.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interoperability</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Supported_Databases.html" target="_self" aria-current="page">Supported Databases</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-165b2e99f3a268d368857f5ed4388ac3019fbc5b0d3b2004908914e5ac1ea35d"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Supported Databases</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="777a219d5330">The following databases are supported in SignServer, based on deployment.</p><p local-id="89d61fef6da1">For more information about the available deployments, see <a href="Installation.html" data-linked-resource-id="2290221124" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="2290221124" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2290221124/Installation" data-scroll-link-target-source-id="2290221124">Installation</a>.</p><div class="table-wrap"><table data-table-width="1057" data-layout="center" data-local-id="162e7074-d0c4-4f04-baee-eecdc992aeef" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 30.8420%;"><col span="1" style="width: 11.7313%;"><col span="1" style="width: 10.8798%;"><col span="1" style="width: 14.0965%;"><col span="1" style="width: 10.5014%;"><col span="1" style="width: 11.1637%;"><col span="1" style="width: 10.7852%;"></colgroup><thead><tr data-local-id="6f014018-b9ae-457f-b99f-1e5a3c7eaf94"><th colspan="1" rowspan="1" data-local-id="3c36ed07-3732-4950-a984-1aadfbe2bd89" class="confluenceTh"><p local-id="070f037e2685"><strong>Database</strong></p></th><th colspan="1" rowspan="1" data-local-id="3e298e54-efe3-4d1b-bc0e-1bce193cce19" class="confluenceTh"><p local-id="5cf867d27220" style="text-align: center;"><strong>Container</strong></p></th><th colspan="1" rowspan="1" data-local-id="01b2f60f-7c38-4986-a2e9-d900d5a6704d" class="confluenceTh"><p local-id="6d2af7839cef" style="text-align: center;"><strong>Software Stack</strong></p></th><th colspan="1" rowspan="1" data-local-id="531e9259-24ee-4ae2-9307-026c94aab9a9" class="confluenceTh"><p local-id="c827fb59da40" style="text-align: center;"><strong>Cloud Azure</strong></p></th><th colspan="1" rowspan="1" data-local-id="26084684b400" class="confluenceTh"><p local-id="1f2d61d64e58"><strong>Cloud AWS</strong></p></th><th colspan="1" rowspan="1" data-local-id="0dfe7b3c-91a5-4b2b-822e-54c4ef2d9abf" class="confluenceTh"><p local-id="8d9c3e2f00ca" style="text-align: center;"><strong>Software Appliance</strong></p></th><th colspan="1" rowspan="1" data-local-id="bdcae470-1c43-440e-997d-06798213a794" class="confluenceTh"><p local-id="0084860a778a" style="text-align: center;"><strong>Hardware Appliance</strong></p></th></tr></thead><tbody><tr data-local-id="e000637a-f929-47f5-a496-41f28fd59af0"><td colspan="1" rowspan="1" data-local-id="df556597-dfc3-42be-bc7d-2b9af15fe4d2" class="confluenceTd"><p local-id="efc839afd185"><span class="inline-comment-marker" data-ref="6234ff9c-63ca-4664-a00b-61ed8529a289">MariaDB 10 / MySQL 5.5</span></p></td><td colspan="1" rowspan="1" data-local-id="383457a2-3293-4ba3-a609-c5df44ff1973" class="confluenceTd"><p local-id="f95ea2b4d920" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="087e9ff7e0d9" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="06f7cd96-96bc-471a-a97c-9c028fea2f7e" class="confluenceTd"><p local-id="9cc6e2d88221" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="f9b12c805236" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="95f85e56-a436-409d-a3f4-36f2f51501b7" class="confluenceTd"><p local-id="e5869362f110" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="336146989c6c" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wiz-1" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wiz-1" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="6399df2e4071" class="confluenceTd"><p local-id="1e2796c0d802" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="c29c93fe2421" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wizar" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wizar" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="7fdc5d94-ad9d-44f5-99c6-7088819e1e4c" class="confluenceTd"><p local-id="1f2e08fd4fb6" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="8a9d9a3f8073" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-a-mariadb-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-a-mariadb-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="ac9bc55c-c765-4da2-a7c3-5d8297a30240" class="confluenceTd"><p local-id="1b713eb43a86" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="80121c6a67da" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-a-mariadb-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-a-mariadb-database" data-scroll-link-local="false">Doc link</a></p></td></tr><tr data-local-id="5f2f2022-4134-427f-9c6e-eb9fdf39ed23"><td colspan="1" rowspan="1" data-local-id="eca78ed6-46ea-4d01-9ca6-90df57b2aaed" class="confluenceTd"><p local-id="3c874ae7c543">PostgreSQL 10</p></td><td colspan="1" rowspan="1" data-local-id="585cb3fa-fa88-49c0-9009-ddae51df0933" class="confluenceTd"><p local-id="5a330c47633a" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="a05d9ef09f39" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="66c89262-3d25-4cd4-aee0-b333ae91001d" class="confluenceTd"><p local-id="ee003b5d94a1" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="f1801c66515f" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="2704ced1-2204-42d1-a607-6a0f3382801e" class="confluenceTd"><p local-id="75559a7da0af" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="c9e098ab6c4f" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wiz-1" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wiz-1" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="4f6596e1b84d" class="confluenceTd"><p local-id="83958c69377f" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="ebd74f6958b8" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wizar" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wizar" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="edb63503-82e0-4d1f-85ef-a38dbf7c5d0c" class="confluenceTd"><p local-id="c7e37f06e2d2" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="e7a7fde3b23f" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-a-postgresql-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-a-postgresql-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="95d0dc84-14cc-42bd-98d4-9d6ae7cf4f06" class="confluenceTd"><p local-id="0ba29164eeba" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="9ef3c34c9faf" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-a-postgresql-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-a-postgresql-database" data-scroll-link-local="false">Doc link</a></p></td></tr><tr data-local-id="73fc914d-697f-46fb-b9b0-32300080a816"><td colspan="1" rowspan="1" data-local-id="ee3a82d5-1732-40e8-9488-bcef65b72578" class="confluenceTd"><p local-id="ace28a23959d">Microsoft SQL Server or Azure SQL </p></td><td colspan="1" rowspan="1" data-local-id="54728ebd-867e-45df-916f-b4837f58c691" class="confluenceTd"><p local-id="ed39ae3b5a9d" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="9e8e3d48b144" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="21a2ec90-177c-4cae-ba25-4e4adad8ffd7" class="confluenceTd"><p local-id="815e1a5f7a2d" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="7a1f4e7118ed" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="b12d47ea-7d82-44ab-a221-126db7e70250" class="confluenceTd"><p local-id="c1449369e46f" style="text-align: center;"></p></td><td colspan="1" rowspan="1" data-local-id="99abfb0c99e5" class="confluenceTd"><p local-id="37e0f28c8a08"></p></td><td colspan="1" rowspan="1" data-local-id="7ad2500a-544a-4e3c-afaf-1346ff217fea" class="confluenceTd"><p local-id="c79868a9c415" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="7e5d4db97266" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-a-microsoft-sql-server" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-a-microsoft-sql-server" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="954f89e0-d96a-42d8-9877-6cac52b1fe71" class="confluenceTd"><p local-id="3b1bd82fa9f2" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="fc3e5f6ae76f" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-a-microsoft-sql-server" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-a-microsoft-sql-server" data-scroll-link-local="false">Doc link</a></p></td></tr><tr data-local-id="26d8b74b-620a-482c-87e9-e535c54fc809"><td colspan="1" rowspan="1" data-local-id="95170c21-7967-4dec-9d5f-ad72584c6345" class="confluenceTd"><p local-id="3fba8b60def4">Oracle 24</p></td><td colspan="1" rowspan="1" data-local-id="96357cdb-5b78-45da-ad57-015067edbdbd" class="confluenceTd"><p local-id="323d7d1677a3" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="710483034775" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/container/latest/signserver/connect-signserver-to-external-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="384fd55b-d10b-40ee-9666-b2a16c064ad7" class="confluenceTd"><p local-id="9b506a3f9db0" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="92325c3c5306" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-software/latest/wildfly-32-and-jboss-eap-8" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="8028f54d-7ae9-4638-a156-589dea40c700" class="confluenceTd"><p local-id="ffc633278a44" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="8ed7217f222a" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wiz-1" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wiz-1" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="764037ec9cf8" class="confluenceTd"><p local-id="4ade523c935f" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="2996460a1906" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wizar" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signserver-cloud/latest/configure-via-signserver-cloud-configuration-wizar" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="2864fbca-3a79-420f-a9f3-8f1173de4ff1" class="confluenceTd"><p local-id="411e04e2642e" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="f550d695f529" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-an-oracle-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/software-appliance/latest/ejbca/applications-configuring-an-oracle-database" data-scroll-link-local="false">Doc link</a></p></td><td colspan="1" rowspan="1" data-local-id="e85bff67-3dfc-4718-8be6-26e269f508a9" class="confluenceTd"><p local-id="14dcf172b860" style="text-align: center;"><img class="emoticon emoticon-tick scroll-document-image" src="_scroll_external/icons/41667a7548c2/check.png" width="16" height="16" alt="(tick)"></p><p local-id="ddb750721c78" style="text-align: center;"><a class="external-link scroll-external-link" href="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-an-oracle-database" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/hardwareappliance/latest/signserver/applications-configuring-an-oracle-database" data-scroll-link-local="false">Doc link</a></p></td></tr></tbody></table></div><p local-id="2d8830c953d9">For information about setting up databases, see <a href="Database_Setup.html" data-linked-resource-id="370999392" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999392" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999392/Database+Setup" data-scroll-link-target-source-id="370999392">Database Setup</a>.</p>
+<nav id="ht-post-nav">
+        <a href="Supported_Hardware_Security_Modules_(HSMs).html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Supported Hardware Security Modules (HSMs)</span>
+        </a>
+
+        <a href="Supported_Algorithms.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Supported Algorithms</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

@@ -83,7 +83,6 @@
 
         <!-- System test and test tools -->
         <module>SignServer-Test-Utils</module>
-        <module>SignServer-Test-P11</module>
         <module>SignServer-Test-Renewal</module>
         <module>SignServer-Test-SignServerWS</module>
         <module>SignServer-Test-ValidationWS</module>

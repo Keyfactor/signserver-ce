@@ -22,7 +22,12 @@ import java.util.ServiceLoader;
  */
 public final class CryptoServiceLocatorV2 {
 
-    public static Class<?> getCryptoTokenImplementationClass(boolean dbprot) {
+    private static final String SIGN_SERVER_LEGACY_PKCS11_CRYPTO_TOKEN_CLASS =
+            "org.signserver.server.cryptotokens.LegacyPKCS11CryptoToken";
+    private static final String CESECORE_LEGACY_PKCS11_CRYPTO_TOKEN_CLASS =
+            "org.cesecore.keys.token.LegacyPKCS11CryptoToken";
+
+    public static Class<?> getCryptoTokenImplementationClass(boolean dbprot) throws ClassNotFoundException {
         final Class<?> result;
         Iterator<P11ImplementationProvider> iterator = ServiceLoader.load(P11ImplementationProvider.class).iterator();
         if (iterator.hasNext()) {
@@ -33,9 +38,9 @@ public final class CryptoServiceLocatorV2 {
             }
         } else {
             if (!dbprot) {
-                result = org.signserver.server.cryptotokens.LegacyPKCS11CryptoToken.class;
+                result = Class.forName(SIGN_SERVER_LEGACY_PKCS11_CRYPTO_TOKEN_CLASS);
             } else {
-                result = org.cesecore.keys.token.LegacyPKCS11CryptoToken.class;
+                result = Class.forName(CESECORE_LEGACY_PKCS11_CRYPTO_TOKEN_CLASS);
             }
         }
         return result;

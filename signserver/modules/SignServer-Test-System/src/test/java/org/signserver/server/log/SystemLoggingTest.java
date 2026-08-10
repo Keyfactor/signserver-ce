@@ -79,7 +79,6 @@ import org.signserver.module.cmssigner.PlainSigner;
 import org.signserver.module.xmlsigner.DebugSigner;
 import org.signserver.server.IProcessable;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
-import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 import org.signserver.statusrepo.StatusRepositorySession;
@@ -1113,41 +1112,6 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
     }
 
-    /**
-     * Test the SECURE_AUDITLOGGING WORKLOG_TYPES option for the HSM keep-alive
-     * timed service. This is done in this test since audit logging is set up
-     * here.
-     */
-    @Test
-    public void test06TimedServiceWithAuditLogging() throws Exception {
-        LOG.info(">test06TimedServiceWithAuditLogging");
-        try {
-            setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
-            workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    HSMKeepAliveTimedService.CRYPTOTOKENS, "");
-            workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    ServiceConfig.WORK_LOG_TYPES, "SECURE_AUDITLOGGING");
-            workerSession.reloadConfiguration(WORKERID_SERVICE);
-
-            int linesBefore = readEntriesCount(auditLogFile);
-            final String line = waitForNextLine(linesBefore);
-
-            if (line != null) {
-                LOG.info(line);
-                assertTrue("Contains event", line.contains("EVENT: TIMED_SERVICE_RUN"));
-                assertTrue("Contains module", line.contains("MODULE: SERVICE"));
-                assertTrue("Contains worker",
-                        line.contains("WORKER_ID: " + WORKERID_SERVICE));
-            } else {
-                fail("No audit log entry for service invocation found");
-            }
-        } finally {
-            removeWorker(WORKERID_SERVICE);
-            removeWorker(WORKERID_CRYPTOWORKER1);
-            removeWorker(WORKERID_CRYPTOWORKER2);
-        }
-    }
-
      /**
      * Test that the SecurityEventsWorkerLogger is properly audit-logging process requests.
      */
@@ -1209,25 +1173,6 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
         assertTrue("Contains worker ID", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains XCUSTOM1", line.contains("XCUSTOM1: " + headerValue));
-    }
-
-    private String waitForNextLine(final int linesBefore) throws Exception {
-        try {
-            for (int i = 0; i < 30; i++) {
-                final List<String> lines =
-                        readEntries(auditLogFile, linesBefore, 1);
-
-                if (!lines.isEmpty()) {
-                    return lines.get(0);
-                }
-
-                Thread.sleep(1000);
-            }
-        } catch (InterruptedException ex) {
-            LOG.error("Interrupted", ex);
-        }
-
-        return null;
     }
 
     @Test

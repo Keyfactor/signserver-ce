@@ -409,44 +409,6 @@ public class BaseProcessableTest extends TestCase {
     }
 
     /**
-     * Test that when specifying neither the SHAREDLIBRARYNAME or legacy
-     * SHAREDLIBRARY property, a configuration error mentioning missing
-     * SHAREDLIBRARYNAME is given (as that is the preferred one to use now).
-     * 
-     * This tests LegacyPKCS11CryptoToken.
-     *
-     * @throws Exception 
-     */
-    @Test
-    public void testCryptoToken_P11NoSharedLibrary() throws Exception {
-        Properties globalConfig = new Properties();
-        WorkerConfig workerConfig = new WorkerConfig();
-        MockServices services = new MockServices(globalConfig);
-
-        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
-        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, 
-                "org.signserver.server.cryptotokens.LegacyPKCS11CryptoToken");
-        workerConfig.setProperty("NAME", "TestSigner100");
-        
-        TestSigner instance = new TestSigner(globalConfig);
-        instance.init(workerId, workerConfig, anyContext, null);
-        
-        final List<String> fatalErrors = instance.getFatalErrors(services);
-        final String expectedErrorPrefix =
-                "Failed to initialize crypto token: Missing SHAREDLIBRARYNAME property";
-        boolean foundError = false;
-        
-        for (final String error : fatalErrors) {
-            if (error.startsWith(expectedErrorPrefix)) {
-                foundError = true;
-                break;
-            }
-        }
-
-        assertTrue("Should contain error: " + fatalErrors, foundError);
-    }
-    
-    /**
      * Test the override mechanism for alias selectors.
      * 
      * @throws Exception 

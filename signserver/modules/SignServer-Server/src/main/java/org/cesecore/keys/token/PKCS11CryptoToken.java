@@ -44,6 +44,7 @@ import javax.crypto.NoSuchPaddingException;
 public class PKCS11CryptoToken implements CryptoToken {
 
     static final Logger LOG = Logger.getLogger(org.cesecore.keys.token.PKCS11CryptoToken.class);
+    private static final String LEGACY_PKCS11_CRYPTO_TOKEN_CLASS = "org.cesecore.keys.token.LegacyPKCS11CryptoToken";
     private final org.cesecore.keys.token.CryptoToken delegate;
 
     public PKCS11CryptoToken() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -54,7 +55,7 @@ public class PKCS11CryptoToken implements CryptoToken {
         if (usep11ngasp11 || usep11ngasp11dbCli) {
             implClass = CryptoServiceLocatorV2.getCryptoTokenImplementationClass(true);
         } else {
-            implClass = org.cesecore.keys.token.LegacyPKCS11CryptoToken.class;
+            implClass = Class.forName(LEGACY_PKCS11_CRYPTO_TOKEN_CLASS);
         }
         LOG.info("Using the following PKCS#11 implementation for database protection: " + implClass.getName());
         Object obj = implClass.newInstance();

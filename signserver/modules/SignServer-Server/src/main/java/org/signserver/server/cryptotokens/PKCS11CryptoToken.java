@@ -36,6 +36,7 @@ import javax.naming.NamingException;
 public class PKCS11CryptoToken extends BaseCryptoToken {
 
     static final Logger LOG = Logger.getLogger(org.signserver.server.cryptotokens.PKCS11CryptoToken.class);
+    private static final String LEGACY_PKCS11_CRYPTO_TOKEN_CLASS = "org.signserver.server.cryptotokens.LegacyPKCS11CryptoToken";
     private final ICryptoTokenV4 delegate;
 
     public PKCS11CryptoToken() throws ClassNotFoundException, InstantiationException, IllegalAccessException, NamingException {
@@ -46,7 +47,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         if (usep11ngasp11) {
             implClass = CryptoServiceLocatorV2.getCryptoTokenImplementationClass(false);
         } else {
-            implClass = org.signserver.server.cryptotokens.LegacyPKCS11CryptoToken.class;
+            implClass = Class.forName(LEGACY_PKCS11_CRYPTO_TOKEN_CLASS);
         }
         LOG.info("Using the following PKCS#11 provider: " + implClass.getName());
         Object obj = implClass.newInstance();

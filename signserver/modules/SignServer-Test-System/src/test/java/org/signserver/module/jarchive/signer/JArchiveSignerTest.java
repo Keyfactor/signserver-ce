@@ -55,6 +55,7 @@ import org.bouncycastle.tsp.TimeStampToken;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.FixMethodOrder;
@@ -70,6 +71,7 @@ import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.FixedTimeSource;
+import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -92,6 +94,9 @@ public class JArchiveSignerTest {
     private static final int TS_ID = 8908;
     private static final String TS_NAME = "TestTimeStampSigner";
 
+    private static final ModulesTestCase mt = new ModulesTestCase();
+    private static final CLITestHelper cli = mt.getAdminCLI();
+
     private static File executableFile;
 
     private static WorkerSessionRemote workerSession = getWorkerSessionS();
@@ -113,6 +118,7 @@ public class JArchiveSignerTest {
         RestAssured.config = RestAssured.config().sslConfig(new SSLConfig()
                 .keyStore(helper.getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12", "foo123")
                 .trustStore(helper.getSignServerHome().getAbsolutePath() + "/p12/truststore.jks", "changeit"));
+        Assert.assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("wsadmins", "-allowany"));
     }
 
     protected static WorkerSessionRemote getWorkerSessionS() {

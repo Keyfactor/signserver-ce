@@ -112,8 +112,12 @@ dist-*/
 /doc/sample-configs/managed-*.properties
 /doc/sample-configs/simple-cert-signer*.properties
 /doc/sample-configs/composite-*.properties
+/doc/sample-configs/azurekeyvault-crypto.properties
+/doc/sample-configs/pkcs11-crypto.properties
+/doc/sample-configs/hsmkeepalive.properties
 
 /res/test/test-zone-file-server-side-signer.properties
+/res/test/test-hsmkeepalive-configuration.properties
 
 /indir*/
 /jarsigner-test-files/

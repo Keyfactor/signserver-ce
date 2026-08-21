@@ -48,6 +48,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -56,6 +57,7 @@ import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
 import io.restassured.http.Method;
@@ -81,6 +83,7 @@ public class CMSSignerTest  {
     private final WorkerSession workerSession;
     private final ProcessSessionRemote processSession;
     private static final ModulesTestCase mt = new ModulesTestCase();
+    private static final CLITestHelper cli = mt.getAdminCLI();
 
     public CMSSignerTest() {
         mt.setUseRestWorkerSession(true);
@@ -143,6 +146,7 @@ public class CMSSignerTest  {
         RestAssured.config = RestAssured.config().sslConfig(new SSLConfig()
                 .keyStore(mt.getSignServerHome().getAbsolutePath() + "/res/test/dss10/dss10_admin1.p12", "foo123")
                 .trustStore(mt.getSignServerHome().getAbsolutePath() + "/p12/truststore.jks", "changeit"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("wsadmins", "-allowany"));
     }
 
     @AfterClass

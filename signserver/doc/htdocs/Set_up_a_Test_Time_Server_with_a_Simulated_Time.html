@@ -9,10 +9,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" href="_scroll_external/other/386c2b5a4c5f/download">
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
 
     <!-- Primary Meta Tags -->
-    <meta name="exp-export-timestamp" content="2026-04-28T12:21:52.883+0000">
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:30.731+0000">
     <meta name="exp-page-id" content="371000485">
     <meta name="exp-page-title" content="Set up a Test Time Server with a Simulated Time">
     <meta name="exp-page-version" content="5">
@@ -84,9 +84,9 @@
 </script>
     <title>Set up a Test Time Server with a Simulated Time</title>
 
-<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b4fe8385d631b2501c50e850a9980a10b9a33b9e40844b87bc8a81ad8af3423e"></head>
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="d56ec71bd82a5a7967dea214d9dd50ba7981e71c4dde89810d019d2731da0274"></head>
     <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
-    <body id="SetupaTestTimeServerwithaSimulatedTime-top" pageid="371000485" class="flex flex-col" data-confluence-editor-version="v2" data-confluence-deployment-type="CLOUD">
+    <body id="SetupaTestTimeServerwithaSimulatedTime-top" pageid="371000485" class="flex flex-col" data-confluence-deployment-type="CLOUD">
         <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
 
 
@@ -95,7 +95,7 @@
 <header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
     <div class="header__navigation--logo">
         <a href="SignServer_Documentation.html">
-            <img src="_scroll_external/other/386c2b5a4c5f/download" alt="SignServer Documentation" title="SignServer Documentation">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
         </a>
     </div>
         <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
@@ -159,7 +159,7 @@
     </div>
 </nav>
                     <!-- CSS class article__heading is deprecated and will be removed in the future -->
-                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-46340641a9213c1d34d569a10b14ef76273220513c784ba14784a827f7982432"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Set up a Test Time Server with a Simulated Time</span></span></h1>
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-d1ab1de27bc5e86c155ce9df48457359dfacd406d79ce835fe5922d85c7d0e68"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Set up a Test Time Server with a Simulated Time</span></span></h1>
                 </header>
                 <section class="page" id="content" role="main">
                     <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
@@ -170,14 +170,14 @@
 </div></li><li><p>Configure the server to use its own time by making sure the configuration only has the server "server 127.127.1.1" configured in /etc/ntp.conf.</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">$ sudo vi /etc/ntp.conf </code></div>
 </div>
-</div><p>For details on the driver, refer to <a class="external-link scroll-external-link" href="http://www.clock.org/ntp/driver1.html" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="http://www.clock.org/ntp/driver1.html" data-scroll-link-local="false">Undisciplined Local Clock. </a></p></li><li><p>As this time server has no connection with upstream timeservers or a GPS source, you need to manually configure the information about leap seconds:</p><ol start="1"><li><p>Download the NIST leap seconds file from <a class="external-link scroll-external-link" href="http://ftp.boulder.nist.gov/pub/time" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="http://ftp.boulder.nist.gov/pub/time" data-scroll-link-local="false">ftp.boulder.nist.gov/pub/time</a> (use FileZilla for download).</p></li><li><p>Copy the downloaded NIST leap seconds file to the server:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><p>For details on the driver, refer to <a shape="rect" href="http://www.clock.org/ntp/driver1.html" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="http://www.clock.org/ntp/driver1.html" data-scroll-link-local="false">Undisciplined Local Clock. </a></p></li><li><p>As this time server has no connection with upstream timeservers or a GPS source, you need to manually configure the information about leap seconds:</p><ol start="1"><li><p>Download the NIST leap seconds file from <a shape="rect" href="http://ftp.boulder.nist.gov/pub/time" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="http://ftp.boulder.nist.gov/pub/time" data-scroll-link-local="false">ftp.boulder.nist.gov/pub/time</a> (use FileZilla for download).</p></li><li><p>Copy the downloaded NIST leap seconds file to the server:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">$ sudo cp leap-seconds.list /var/lib/ntp/leap-seconds.list</code></div>
 </div>
 </div></li></ol></li><li><p>Configure NTPd to use the leap seconds file by editing /etc/ntp.conf and specifying the path to this file:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain"> $ sudo vi /etc/ntp.conf&nbsp;</code></div>
 <div class="line"><code class="plain"> leapfile </code><code class="string">"/etc/leap-seconds.list"</code><code class="plain">  </code></div>
 </div>
-</div><p>For more information on NTPd and the NIST leap second file, refer to <a class="external-link scroll-external-link" href="http://support.ntp.org/bin/view/Support/ConfiguringNTP#Section_6.14." rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="http://support.ntp.org/bin/view/Support/ConfiguringNTP#Section_6.14." data-scroll-link-local="false">Network Time Foundation's NTP Support Wiki&gt;Configuring NTP</a>.</p></li><li><p>Set the time you want to simulate, and then restart NTPd:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+</div><p>For more information on NTPd and the NIST leap second file, refer to <a shape="rect" href="http://support.ntp.org/bin/view/Support/ConfiguringNTP#Section_6.14." class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="http://support.ntp.org/bin/view/Support/ConfiguringNTP#Section_6.14." data-scroll-link-local="false">Network Time Foundation's NTP Support Wiki&gt;Configuring NTP</a>.</p></li><li><p>Set the time you want to simulate, and then restart NTPd:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
 <div class="line"><code class="plain">$ sudo date --utc --set </code><code class="string">"2015-06-30 23:30"</code><code class="plain"> </code></div>
 <div class="line"><code class="plain">$ sudo service ntpd restart</code></div>
 </div>
@@ -194,7 +194,7 @@
 <div class="line"><code class="plain">&nbsp;parent=</code><code class="value">1</code><code class="plain"> profile=</code><code class="string">"/usr/sbin/ntpd"</code><code class="plain"> name=</code><code class="string">"/etc/leap-seconds.list"</code><code class="plain"> pid=</code><code class="value">2224</code><code class="plain"> comm=</code><code class="string">"ntpd"</code></div>
 <div class="line"><code class="plain">&nbsp;requested_mask=</code><code class="string">"r"</code><code class="plain"> denied_mask=</code><code class="string">"r"</code><code class="plain"> fsuid=</code><code class="value">0</code><code class="plain"> ouid=</code><code class="value">0</code><code class="plain"> </code></div>
 </div>
-</div><p>Resolve by modifying Apparmor to allow NTPd to read this location, or place the file in a location that is already allowed. For more information, refer to <a class="external-link scroll-external-link" href="http://askubuntu.com/questions/571839/leapseconds-file-permission-denied" rel="nofollow" shape="rect" data-scroll-link-type="default" data-scroll-link-target="http://askubuntu.com/questions/571839/leapseconds-file-permission-denied" data-scroll-link-local="false">Leapseconds file: Permission denied</a>.</p></li></ul>
+</div><p>Resolve by modifying Apparmor to allow NTPd to read this location, or place the file in a location that is already allowed. For more information, refer to <a shape="rect" href="http://askubuntu.com/questions/571839/leapseconds-file-permission-denied" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="http://askubuntu.com/questions/571839/leapseconds-file-permission-denied" data-scroll-link-local="false">Leapseconds file: Permission denied</a>.</p></li></ul>
 <nav id="ht-post-nav">
         <a href="Logging_and_Monitoring.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">

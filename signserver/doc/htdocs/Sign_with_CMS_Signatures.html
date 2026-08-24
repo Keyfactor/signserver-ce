@@ -1,0 +1,244 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371001276">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:48.653+0000">
+    <meta name="exp-page-id" content="371001276">
+    <meta name="exp-page-title" content="Sign with CMS Signatures">
+    <meta name="exp-page-version" content="19">
+    <meta name="exp-page-scroll-page-id" content="3cfeda4d21fb559d8fe3b42b21430371">
+    <meta name="exp-page-created" content="2022-09-28T12:32:37.000+0000">
+    <meta name="exp-page-last-modified" content="2026-07-02T12:32:29.904+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Sign with CMS Signatures</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="df9ba28748e9395f0a707475b4f486a7ff06fef1ae3ac13254d0c3b591f400d4"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignwithCMSSignatures-top" pageid="371001276" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371001276" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Sign_with_CMS_Signatures.html" target="_self" aria-current="page">Sign with CMS Signatures</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-9c4a49e9f5ca06b5b82e8704433551db30a63e2d9c568f35633d8f6c0993d6e6"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Sign with CMS Signatures</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="1027979e-feba-4822-a1da-5c35d6ac5feb">The Cryptographic Message Syntax (CMS) format, based on PKCS#7, can sign arbitrary data similarly to the plain signature format. Many common signature formats use CMS internally, including Authenticode and JAR signing. The format is also useful standalone for signing firmware or release packages. Existing tools like OpenSSL can be used to verify CMS signatures in many cases.</p><p local-id="77cc4b003b2a">A CMS signature includes the signer certificate and can optionally embed a timestamp token from a Time-Stamping Authority (TSA) in <a shape="rect" href="https://tools.ietf.org/html/rfc3161" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://tools.ietf.org/html/rfc3161" data-scroll-link-local="false">RFC 3161</a> format. The signature can either encapsulate the content from the original document within it, or be produced as a detached signature stored in a separate file. The detached signature is generally more practical for code signing.</p><p local-id="67df6ad1a481">SignServer includes several CMS signer variants:</p><ul local-id="24a75ba1-43b5-4714-8e57-6f36b99c512c"><li local-id="60a379fb-4ad8-45f9-a281-254b2369325e"><p local-id="fd1d1d3c6852"><a href="CMS_Signer.html" data-linked-resource-id="370999849" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="370999849" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999849/CMS+Signer" data-scroll-link-target-source-id="370999849">CMS Signer</a>: Provides basic functionality.</p></li><li local-id="e38ca281-cc6a-443f-bfa9-5f3b7384316f"><p local-id="524750550c3c"><a href="Extended_CMS_Signer.html" data-linked-resource-id="370999861" data-linked-resource-version="28" data-linked-resource-type="page" data-scroll-target-source-id="370999861" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999861/Extended+CMS+Signer" data-scroll-link-target-source-id="370999861">Extended CMS Signer</a>: Adds timestamping support and other extended features. Recommended for most use cases.</p></li><li local-id="5bb2ee20-3c94-411f-8071-2ebac7b24e63"><p local-id="b7b3db61f517"><a href="JArchive_CMS_Signer.html" data-linked-resource-id="370999869" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999869" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999869/JArchive+CMS+Signer" data-scroll-link-target-source-id="370999869">JArchive CMS Signer</a>: A variant of the Extended CMS Signer with defaults suited for JAR signing. Intended for client-side hashing.</p></li><li local-id="217f0a00a7d5"><p local-id="2edca531d42e"><a href="APPX_CMS_Signer.html" data-linked-resource-id="370999821" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999821" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999821/APPX+CMS+Signer" data-scroll-link-target-source-id="370999821">APPX CMS Signer</a>: A variant for signing Microsoft APPX packages and bundles.</p></li><li local-id="c43c635276a9"><p local-id="0a320b9d06f2"><a href="MS_Authenticode_CMS_Signer.html" data-linked-resource-id="370999893" data-linked-resource-version="21" data-linked-resource-type="page" data-scroll-target-source-id="370999893" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999893/MS+Authenticode+CMS+Signer" data-scroll-link-target-source-id="370999893">MS Authenticode CMS Signer</a>: A variant producing Authenticode-compatible signatures for <code>.exe</code>, <code>.dll</code>, MSI, and <code>.cab</code> files.</p></li></ul><hr local-id="10f6550f0e75"><h2 local-id="c6f0573a-0faa-4ee7-836d-f188f1a213ef" id="SignwithCMSSignatures-CMSSignerConfigurationProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-CMS-Signer-Configuration-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">CMS Signer Configuration Properties</span></h2><p local-id="9531396f6977">The following properties are most relevant when configuring the CMS Signer:</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="7c6df511-e304-496f-a556-cec63712ba85" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 26.3158%;"><col span="1" style="width: 73.6842%;"></colgroup><thead><tr data-local-id="fa38deb0-bc53-4c56-9adf-74f8b671029a"><th colspan="1" rowspan="1" data-local-id="792343fd-0462-4411-a441-e100d685fa49" class="confluenceTh"><p local-id="149da810878b"><strong>Worker Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="fe381c1c-f246-4649-93f4-16d3356bb68f" class="confluenceTh"><p local-id="ed890226d1dd"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="992ae929-f224-4e6b-af83-733af76ca0f2"><td colspan="1" rowspan="1" data-local-id="e4edd355-b363-449f-9821-b00461a93728" class="confluenceTd"><p local-id="3026d4a1d27d"><code>SIGNATUREALGORITHM</code></p></td><td colspan="1" rowspan="1" data-local-id="a399371c-edb4-4524-9e58-a83092795d99" class="confluenceTd"><p local-id="318b7371f3d7">The algorithm used to sign the data. Example: <code>SHA256withRSA</code></p></td></tr><tr data-local-id="b5ba72b0-cbfe-4efd-9352-8b904dc9c8df"><td colspan="1" rowspan="1" data-local-id="9cf2c13d-88db-4d13-abff-fb6fe844cf37" class="confluenceTd"><p local-id="dbdb8bd75d35"><code>DETACHEDSIGNATURE</code></p></td><td colspan="1" rowspan="1" data-local-id="84ecfd23-62de-4ebc-a928-7c72ad50ee21" class="confluenceTd"><p local-id="2b08625fb0ec">Set to <code>true</code> to produce a detached signature where the content is not embedded in the signature file. Recommended for code signing.</p></td></tr><tr data-local-id="b1bc379e-33b0-4ea1-937e-3e8450a6568c"><td colspan="1" rowspan="1" data-local-id="670d9bf2-1c97-4f2b-b8a3-c3eef01ed1e8" class="confluenceTd"><p local-id="c4e3a975301b"><code>CLIENTSIDEHASHING</code></p></td><td colspan="1" rowspan="1" data-local-id="e585bf51-1b59-4baf-bb3d-b0db5d439fd8" class="confluenceTd"><p local-id="0340dc7f283b">Set to <code>true</code> if the input to the signer should be a hash of the content rather than the content itself. See <a href="Code_Signing_with_Client-side_Hashing.html" data-linked-resource-id="371001295" data-linked-resource-version="54" data-linked-resource-type="page" data-scroll-target-source-id="371001295" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371001295/Code+Signing+with+Client-side+Hashing" data-scroll-link-target-source-id="371001295">Code Signing with Client-side Hashing</a>.</p></td></tr></tbody></table></div><p local-id="0a9d2d9ed76c">For all available properties, refer to <a href="CMS_Signer.html" data-linked-resource-id="370999849" data-linked-resource-version="20" data-linked-resource-type="page" data-scroll-target-source-id="370999849" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999849/CMS+Signer" data-scroll-link-target-source-id="370999849">CMS Signer</a>  and <a href="Extended_CMS_Signer.html" data-linked-resource-id="370999861" data-linked-resource-version="28" data-linked-resource-type="page" data-scroll-target-source-id="370999861" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999861/Extended+CMS+Signer" data-scroll-link-target-source-id="370999861">Extended CMS Signer</a> .</p><hr local-id="5f82e84669f7"><h2 local-id="b67ffbc0-f31d-4fe6-9c50-3f142b14355d" id="SignwithCMSSignatures-SetuptheCMSSigner" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Set-up-the-CMS-Signer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Set up the CMS Signer</span></h2><p local-id="1b7747c18374">Follow the steps to add and configure an Extended CMS Signer:</p><h3 local-id="a755f324224c" id="SignwithCMSSignatures-Step1-AddandConfiguretheSigner" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Step-1---Add-and-Configure-the-Signer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 1 - Add and Configure the Signer</span></h3><ol start="1" local-id="395fa888-c12b-42a6-ad87-7d679a4af9fc"><li local-id="25bc4b48-bc79-46ce-9498-97a265734b0a"><p local-id="c6c815d7b40c">Open the <a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a> and got to the <a href="Workers_Page.html" data-linked-resource-id="371000522" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="371000522" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000522/Workers+Page" data-scroll-link-target-source-id="371000522">Workers</a> page.</p></li><li local-id="5201ab766cb4"><p local-id="9f9e212a7e7c">Click <strong>Add</strong>, and select <strong>From Template</strong>.</p></li><li local-id="b0c77bc6-5fe9-4260-8cf9-3cd04c2ec9e2"><p local-id="9c358a5bae1e">Choose <strong>extended_cms_signer.properties,</strong> and click <strong>Next</strong>.</p></li><li local-id="98640cb8-2a7f-45ca-9860-193d281d87fc"><p local-id="66d0605e00cb">Click<strong> Apply</strong>.</p></li><li local-id="e8bb9aa02b21"><p local-id="6d72a915421d">Select the Worker named <strong>ExtendedCMSSigner</strong> in the list.</p></li><li local-id="c8465fa3-3520-416d-a947-3035ad812a19"><p local-id="1ac87429f226">Click the <strong>Configuration</strong> tab and update the following properties:</p><ul local-id="74719dccbe76"><li local-id="891fb73e-629b-47c7-9ea4-3ef34ffd034e"><p local-id="8255ec1f0b42"><strong>NAME</strong>: Set a descriptive name for the worker.</p></li><li local-id="6e36e2bc-bb06-4413-a350-9d79f4bc2c7d"><p local-id="daedc97d10e3"><strong>CRYPTOTOKEN</strong>: set this to match your Crypto Token.</p></li></ul></li><li local-id="f699ce7e-e9e1-4d70-9f56-b7a6af58205f"><p local-id="3844f518cb84">Click the <strong>Status Summary</strong> tab, and click <strong>Renew Key</strong>.</p></li><li local-id="d21def84-1c37-4e11-8f69-cf861843af80"><p local-id="ca2aa6b2feb1">Select a <strong>Key Algorithm</strong> (for example, <code>RSA</code>) and <strong>Key Specification</strong> (for example, <code>2048</code>), and click <strong>Generate</strong>.</p></li></ol><h3 local-id="6f047c7940ea" id="SignwithCMSSignatures-Step2-GenerateaCSRandInstalltheCertificate" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Step-2---Generate-a-CSR-and-Install-the-Certificate"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 2 - Generate a CSR and Install the Certificate</span></h3><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="3529aa16367f">If you set the <a href="Common_Worker_Configuration.html" data-linked-resource-id="370999727" data-linked-resource-version="48" data-linked-resource-type="page" data-scroll-target-source-id="370999727" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999727/Common+Worker+Configuration" data-scroll-link-target-source-id="370999727">NOCERTIFICATES</a> property to <code>true</code>, the CMS Signer does not require a certificate. Skip this step and confirm the worker status is <strong>Active</strong>.</p></div></div><ol start="1" local-id="e4fc64919329"><li local-id="a1152fc796be"><p local-id="d18f75b312ab">Choose a <strong>Signature Algorithm</strong>, for example, <code>SHA256withRSA</code>, and enter a <strong>Subject DN</strong> for the certificate, for example, <code>CN=CMS Signer Test,O=My Company,C=SE</code>.</p></li><li local-id="9be70da8025a"><p local-id="9696c839ea44">Click <strong>Generate</strong>.</p></li><li local-id="34876bd0-e1a8-4f49-9005-4323695351d3"><p local-id="ec5e53e6e206">Click <strong>Download</strong> and save the CSR file.</p></li><li local-id="08f36cb0-abbe-4472-ab53-423997ab468d"><p local-id="9fe7431d2814">Submit the CSR to your Certificate Authority. The CA returns the signed certificate and any CA certificates in the chain.</p></li></ol><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="ee9ccdcdfb55">Before installing certificates in a production system, verify the Signer’s authorization settings. Once certificates are installed, the Signer is fully active and ready to accept signing requests.</p></div></div><ol start="5" local-id="cdd532f5788a"><li local-id="f16362abb468"><p local-id="6f8dfd39854f">Click <strong>Install certificates</strong>. Provide the Signer certificate first, then add the issuing CA certificates in order. Click <strong>Add</strong> for each certificate to append it to the chain.</p></li><li local-id="10e5a1e4-3426-4462-bad3-b4bf5df7ac81"><p local-id="5333f084472e">When all certificates are in the correct order, click <strong>Install</strong>.</p></li><li local-id="bdbee620-3884-49d7-9870-d7dadbfa4554"><p local-id="03a67d2064d3">Confirm the worker status is <strong>Active</strong>. If not, check the <strong>Status Summary</strong> page for errors.</p></li></ol><hr local-id="8ce75cbc5ce1"><h2 local-id="71094357-4bc1-4711-8753-c7b9e7042841" id="SignwithCMSSignatures-SignaFile" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Sign-a-File"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign a File</span></h2><p local-id="920aa0097936">You can submit files for signing using the <a href="Client_Web.html" data-linked-resource-id="1924661694" data-linked-resource-version="25" data-linked-resource-type="page" data-scroll-target-source-id="1924661694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1924661694/Client+Web" data-scroll-link-target-source-id="1924661694">Client Web</a>, the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>, or <a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564"><u>HTTP clients like cURL</u></a>.</p><h3 local-id="feebcd166bb1" id="SignwithCMSSignatures-UsingClientWeb" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Using-Client-Web"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using Client Web</span></h3><ol start="1" local-id="1bf61365-1249-43ce-a2c1-1952e156a698"><li local-id="f8f56553-1ca6-4a28-8af3-3296502a75fd"><p local-id="8f7482edd7b1">Go to the SignServer<strong> </strong>Client Web <strong>Generic </strong>page.</p></li><li local-id="75d27f46-8fbf-4650-ae73-104fa0a989bb"><p local-id="1bc7507173da">Scroll down to the <strong>Generic Signing Or Validation by File Upload</strong> section and specify your Worker name, for example <code>ExtendedCMSSigner</code>, in the <strong>Worker</strong> <strong>Name</strong> field.</p></li><li local-id="c6ae1a93-ecb3-476f-ab56-234bf6c5c140"><p local-id="efaaa4ad34d8">Click <strong>Choose File</strong>, select the file to create a detached signature for, such as <code>release.zip</code>.&nbsp;</p></li><li local-id="926dcc67c260"><p local-id="da86720b90d9">Click <strong>Submit</strong>.</p></li><li local-id="a8c53c2a-aa58-4279-8cee-08f313d9f614"><p local-id="a63d9ddf7716">Save the resulting signature file, for example, <code>release.zip.asc</code>.</p></li></ol><h3 local-id="be6b2304f9b8" id="SignwithCMSSignatures-UsingSignClient" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Using-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using SignClient</span></h3><p local-id="976995e61680">Send a signing request using the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625"><u>SignServer SignClient</u></a>:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin/signclient signdocument -workername CMSSigner1 -infile firmware.bin -outfile firmware.sig</code></div>
+</div>
+</div><p local-id="26ab1b401cd4">Where <code>workername</code> is the name of the Worker, <code>infile</code> is the path to the file to sign, and <code>outfile</code> is where the signature will be written to.</p><p local-id="46891ecd95b8">The SignClient can also run (as User)&nbsp;in batch mode, which processes all files in an input directory across parallel threads and writes results to an output directory:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin/signclient signdocument -workername CMSSigner1 -indir ./input/ -removefromindir -outdir ./output/ -threads </code><code class="value">10</code></div>
+</div>
+</div><h3 local-id="327b8d48a507" id="SignwithCMSSignatures-UsingcURL" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Using-cURL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using cURL</span></h3><p local-id="a0c9c9cecc3a">Replace <code>http://localhost:8080/</code> with the address of your server or appliance:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl -F </code><code class="string">"workerName=CMSSigner1"</code><code class="plain"> -F </code><code class="string">"file=@firmware.bin"</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/process &gt; firmware.sig</code></div>
+</div>
+</div><p local-id="8e434d6c80ab">The following shows the HTTP traffic between the browser and the server, and the resulting signature file response:</p><div class="contentLayout2">
+<div class="columnLayout two-equal" data-layout="two-equal">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-title-macro scroll-title-macro-type-figure"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image scroll-titled-element scroll-title-macro-link-target" alt="Showing the HTTP traffic between the browser and the server" width="500" src="_scroll_external/attachments/3ce353df9458/browserserver-http-traffic.jpg" id="674710b1-ffef-4577-ab48-487671105849"></span><div class="scroll-title-macro-caption scroll-title-after">HTTP traffic between the browser and the server</div></div></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-title-macro scroll-title-macro-type-figure"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image scroll-titled-element scroll-title-macro-link-target" alt="Response with the signature file" width="500" src="_scroll_external/attachments/184b8371306b/response-with-signature-file.jpg" id="72284f6c-e852-4336-b888-4730e82c9218"></span><div class="scroll-title-macro-caption scroll-title-after">Response with the signature file</div></div></div>
+</div>
+</div>
+</div>
+<hr local-id="25e561f3fc09"><h2 local-id="732cf8db-9744-48f2-996f-e805d83bf833" id="SignwithCMSSignatures-VerifytheSignature" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001276_SignwithCMSSignatures-Verify-the-Signature"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify the Signature</span></h2><p local-id="1b9d69aa56a4">For detached signatures, both the signature file and the original file are needed for verification. Use OpenSSL to verify a CMS detached signature:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">openssl cms -verify -in firmware.sig -inform DER -content firmware.bin -CAfile ca.pem &gt; /dev/</code><code class="keyword">null</code></div>
+</div>
+</div><ul local-id="7c85f0ea-35a2-459c-8420-d0e92c6e8780"><li local-id="67f51d8c-3cb0-4173-86c8-a06d20aafae0"><p local-id="8225f7957d8c"><code>-inform DER</code> specifies that the signature file is in binary (DER) format.</p></li><li local-id="caf16ee9-408a-4e54-b5e9-3e7a6c98cb85"><p local-id="e4aa4731c16e">The redirect to <code>/dev/null</code> suppresses the OpenSSL default behavior of printing the content of the signed file to stdout.</p></li></ul><p local-id="54c348365317">Replace <code>firmware.sig</code> and <code>firmware.bin</code> with your actual signature and content filenames, and <code>ca.pem</code> with your CA certificate file.</p><p local-id="5182b036-8ef1-47cc-9fe8-278dc1002599">For example, if a file called <code>software-release-1.0.zip</code> is provided to the CMS Signer, the detached signature obtained is now stored in a file called <code>software-release-1.0.zip.p7s.</code> </p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">openssl cms -verify -in software-release-</code><code class="value">1.0</code><code class="plain">.zip.p7s -inform DER -content software-release-</code><code class="value">1.0</code><code class="plain">.zip -CAfile ca.pem &gt; /dev/</code><code class="keyword">null</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Sign_with_Plain_Signatures.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with Plain Signatures</span>
+        </a>
+
+        <a href="Sign_with_OpenPGP_Signatures.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with OpenPGP Signatures</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

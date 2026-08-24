@@ -1,0 +1,540 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1981153323">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:24:09.656+0000">
+    <meta name="exp-page-id" content="1981153323">
+    <meta name="exp-page-title" content="Client REST Endpoints">
+    <meta name="exp-page-version" content="67">
+    <meta name="exp-page-scroll-page-id" content="d32c11148200556353082bd9ebbafb62">
+    <meta name="exp-page-created" content="2025-11-24T14:24:28.094+0000">
+    <meta name="exp-page-last-modified" content="2026-08-05T13:18:26.268+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Client REST Endpoints</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="2890f27adbf3da90bcc3ad34a302098c3306dc487da4e039ad8ffa1a9e82c6d4"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ClientRESTEndpoints-top" pageid="1981153323" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1981153323" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="REST_API_Interface.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">REST API Interface</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Client_REST_Endpoints.html" target="_self" aria-current="page">Client REST Endpoints</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-8da8161bfad380404b967abfbc418ef12242b1b495db526c9cb648330a2532ac"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Client REST Endpoints</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="667518a206bf">This page provides REST endpoint examples for the most common SignServer Client REST API use cases. For a complete reference of endpoints, parameters, and response fields, see <a href="REST_API_Interface.html" data-linked-resource-id="370999584" data-linked-resource-version="65" data-linked-resource-type="page" data-scroll-target-source-id="370999584" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999584/REST+API+Interface" data-scroll-link-target-source-id="370999584">REST API Interface</a>.</p><p local-id="dcfbf987e6ee">All examples show the endpoint path relative to the server root of a local SignServer installation at <code>http://localhost:8080</code>. Replace this with your server base URL in production. The examples are tool-agnostic and can be used with any HTTP client, such as cURL, Postman, Python, or JavaScript.</p><p local-id="a4862c534c90">All client requests require:</p><ul local-id="22f649aa-5465-4d96-8d6a-6905a45bd84a"><li local-id="490f0097-8d2b-49dd-a26e-b08e4adc86a0"><p local-id="197f45d30c82">The<strong> </strong><code>X-Keyfactor-Requested-With</code><strong> </strong>header with a non-empty value, for example <code>REST</code>.</p></li><li local-id="50c250e4-c245-417a-be69-4b2d912cae31"><p local-id="8e5989461cd5">The<strong> </strong><code>Content-Type</code><strong> </strong>header for requests with a body: <code>application/json</code> when sending data in a JSON body, or <code>multipart/form-data</code> when uploading files.</p></li></ul><p local-id="1a3e614f2ab9"><span class="inline-comment-marker" data-ref="6466e318-69fa-4f6a-b1b2-3246ebcab4ed">All signing responses return a JSON object with the fields described in <a href="REST_API_Interface.html#RESTAPIInterface-response_fields" data-linked-resource-id="370999584" data-linked-resource-version="65" data-linked-resource-type="page" data-scroll-target-source-id="370999584" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999584/REST+API+Interface#src-370999584_RESTAPIInterface-response_fields" data-scroll-link-target-source-id="370999584">Response Fields</a>. If </span>a request fails, SignServer returns an error message with the cause of the failure.</p><h2 local-id="aae131bea7a4" id="ClientRESTEndpoints-ClientRESTEndpointOverview" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-Client-REST-Endpoint-Overview"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Client REST Endpoint Overview</span></h2><div class="table-wrap"><table data-table-width="760" data-layout="default" data-local-id="16fb90e5-8905-4e3c-96b4-fd586efb5ab2" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="f611e277906b"><th colspan="1" rowspan="1" data-local-id="d0be219da637" class="confluenceTh"><p local-id="d47a95e07c30"><strong>Request</strong></p></th><th colspan="1" rowspan="1" data-local-id="f3b0f08a915f" class="confluenceTh"><p local-id="92faf5bc7e6f"><strong>Functionality</strong></p></th></tr></thead><tbody><tr data-local-id="69c038cc0a41"><td colspan="1" rowspan="1" data-local-id="afd4e274b009" class="confluenceTd"><p local-id="5add9002e891"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">post</span> <code>/workers/{idOrName}/process</code></p></td><td colspan="1" rowspan="1" data-local-id="e0a7e8101f39" class="confluenceTd"><p local-id="5eb70fb4278b">Sign arbitrary data.</p></td></tr><tr data-local-id="b636023ec87a"><td colspan="1" rowspan="1" data-local-id="93721180aa81" class="confluenceTd"><p local-id="601cb37e0b85"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">post</span> <code>/rest-managed/v1/workers/{idOrName}/certificates/{certId}/process</code></p></td><td colspan="1" rowspan="1" data-local-id="5c33368f69a1" class="confluenceTd"><p local-id="57760a5c8923">Sign data by providing a certificate ID.</p></td></tr><tr data-local-id="febd83772824"><td colspan="1" rowspan="1" data-local-id="b26debbd283a" class="confluenceTd"><p local-id="9831a6cc4b4b"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">post</span> <code>/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}/process</code></p></td><td colspan="1" rowspan="1" data-local-id="fb0e00e8417e" class="confluenceTd"><p local-id="65d087cd9459">Sign data by providing a Public Key ID.</p></td></tr><tr data-local-id="ce9ddec5bd8b"><td colspan="1" rowspan="2" data-local-id="93fa2b1cd79c" class="confluenceTd"><p local-id="efd4f2754566"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">post</span> <code>/workers/{idOrNAme}/process</code></p></td><td colspan="1" rowspan="1" data-local-id="2977782420fb" class="confluenceTd"><p local-id="72598d2a9595">Upload a file.</p></td></tr><tr data-local-id="0ee3982a7e50"><td colspan="1" rowspan="1" data-local-id="7bfc7581f367" class="confluenceTd"><p local-id="3ca1a42a53a9">Perform client-side hashing.</p></td></tr><tr data-local-id="e58dc15c3bc8"><td colspan="1" rowspan="1" data-local-id="d52d88740a9b" class="confluenceTd"><p local-id="44727b665df6"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-success">get</span> <code>/rest-managed/v1/workers/{IdOrName}/publickeys</code></p></td><td colspan="1" rowspan="1" data-local-id="2318a924cbfc" class="confluenceTd"><p local-id="8fec1131f53e">Get the public key from a specific Worker.</p></td></tr><tr data-local-id="3af270e1871d"><td colspan="1" rowspan="1" data-local-id="5952573c25c8" class="confluenceTd"><p local-id="f32c60dd5ba9"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-success">get</span> <code>/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}</code></p></td><td colspan="1" rowspan="1" data-local-id="af4940c4408f" class="confluenceTd"><p local-id="5392110d68c6">Get the public key from a specific Worker by public key ID.</p></td></tr><tr data-local-id="17681f4054e1"><td colspan="1" rowspan="1" data-local-id="720d4a3b7a62" class="confluenceTd"><p local-id="18374809ce36"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-success">get</span> <code>/rest-managed/v1/workers/publickeys</code></p></td><td colspan="1" rowspan="1" data-local-id="a30575544260" class="confluenceTd"><p local-id="6857c9cd3380">Get public keys from all Workers.</p></td></tr><tr data-local-id="c50138f3eaf6"><td colspan="1" rowspan="1" data-local-id="7d48c5f902d6" class="confluenceTd"><p local-id="2e810f3f28b2"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-success">get</span> <code>/rest-managed/v1/workers/{idOrName}/certificates</code></p></td><td colspan="1" rowspan="1" data-local-id="ea9c4f92c531" class="confluenceTd"><p local-id="d3f399119064">Get the certificate chain from a specified Worker.</p></td></tr><tr data-local-id="92161d438a08"><td colspan="1" rowspan="1" data-local-id="247d6ac147ce" class="confluenceTd"><p local-id="2d700fdcc073"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-success">get</span> <code>/rest-managed/v1/workers/{idOrName}/certificates/{certId}</code></p></td><td colspan="1" rowspan="1" data-local-id="bcedf2318857" class="confluenceTd"><p local-id="c60564317383">Get the certificate chain from a specified Worker by certificate ID.</p></td></tr><tr data-local-id="610a74a142a4"><td colspan="1" rowspan="1" data-local-id="fed8da77340b" class="confluenceTd"><p local-id="9a9baec7cf4a"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-success">get</span> <code>/rest-managed/v1/workers/certificates</code></p></td><td colspan="1" rowspan="1" data-local-id="36006f2b440c" class="confluenceTd"><p local-id="b21bae466510">Get certificate chains from all Workers.</p></td></tr></tbody></table></div><hr local-id="4e5aa770-8f32-47ff-a37b-3111757ab69e" data-layout="wide" data-width="760"><h2 local-id="8c9df9e5661e" id="ClientRESTEndpoints-SignData" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-Sign-Data"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign Data</span></h2><p local-id="c91424663b9b">Sign data using the following endpoints. You can also sign data by providing a certificate ID or by providing a Public Key ID.</p><h3 local-id="7c66ffa21a48" id="ClientRESTEndpoints-POST/workers/{idOrName}/process" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-POST-/workers/{idOrName}/process"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">POST /workers/{idOrName}/process</span></h3><p local-id="b167823affe8">Use this endpoint to sign arbitrary data. The request body is JSON. The <code>data</code> field accepts a plain string. If you need to send binary data, base64-encode it and set <code>"encoding": "BASE64"</code></p><p local-id="fa7418283af1">The following example signs data with a <a href="Plain_Signer.html" data-linked-resource-id="370999934" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="370999934" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999934/Plain+Signer" data-scroll-link-target-source-id="370999934">Plain Signer</a>:</p><p local-id="8717ee24889d"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">POST /signserver/rest/v1/workers/{idOrName}/process</code></div>
+</div>
+</div><p local-id="305f5ccd999e"><strong>Request Body</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"Sample Data!"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location --request POST </code><code class="string">'http://localhost:8080/signserver/rest/v1/workers/{idOrName}/process'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: X'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'Content-Type: application/json'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--data-raw '{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"Sample Data!"</code></div>
+<div class="line"><code class="plain">}'</code></div>
+</div>
+</div></div></div><p local-id="e795d3a4e434"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"archiveId"</code><code class="plain">:</code><code class="string">"12aab5dba45d5fbe538a1d210287ae4912df677b"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">:</code><code class="string">"P2TkMBhhwDGfu9OUarAf65Z2h2gkDYqiQGV6WPi+N6mdxxbi8g14k+BvCz47yhDAVD3D/bJhP+L5knYQ92rgfcf7AS2o2o7ppzCE0ZvEtY0mZHL/7GAe4ZnuK+8cqeK1kP9mY9/dIWsZelZb8LPLVsC/rdFBAW89LsGzvjw6mEK1Zle4JkkqM7K+c1bnOYWYaLxIXTgxgPz6i9ccMoYREUntZ0srf2rKcv1k1W0/kc8G0R3CjC8Hje/J+FpIAOtd89kG4nvqa/OPt8GqipnXAmPXpCOuDAvDsWEJL32x+QHqdkl4ixaeAxFWnougm/qL0MZF6KmYXXm/wXqTD2o6pA=="</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"metaData"</code><code class="plain">:{},</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"requestId"</code><code class="plain">:</code><code class="string">"1277380144"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"signerCertificate"</code><code class="plain">:</code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="4d72e87437a9"><span class="inline-comment-marker" data-ref="e6d91953-0fb1-4134-85be-8f86f941496f">If the request fails, SignServer returns an error message with the cause of the failure.</span></p><h3 local-id="8cd3abb296f7" id="ClientRESTEndpoints-POST/rest-managed/v1/workers/{idOrName}/certificates/{certId}/process" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-POST-/rest-managed/v1/workers/{idOrName}/certificates/{certId}/process"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">POST /rest-managed/v1/workers/{idOrName}/certificates/{certId}/process</span></h3><p local-id="2c61bcb5645a"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="b2d2b5329509">Use this endpoint to sign data by providing a certificate ID. SignServer takes the certificate ID and compares it to the signing certificate ID from <code>SIGNERCERTCHAIN</code> Worker property, or from the Crypto Token if <code>SIGNERCERTCHAIN</code> is not present. If the IDs match, SignServer proceeds with signing the data. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="18948e5e50cc">Certificate ID can be retrieved using the <a href="Client_REST_Endpoints.html#ClientRESTEndpoints-certificate-worker" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-certificate-worker" data-scroll-link-target-source-id="1981153323">Get Certificates endpoints</a>.</p></div></div><p local-id="230c9eb3dad0"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">POST /signserver/rest-managed/v1/workers/{idOrName}/certificates/{certId}/process</code></div>
+</div>
+</div><p local-id="0365ca2099ab"><strong>Request Body</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"Sample Data!"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/{id}/certificates/{certId}/process'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 0'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'Content-Type: application/json'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--data '{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"Sample Data!"</code></div>
+<div class="line"><code class="plain">}'</code></div>
+</div>
+</div></div></div><p local-id="c11db3cff811"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"archiveId"</code><code class="plain">: </code><code class="string">"67ab62c6638d6bfcf2e0f5535440abe324005aca"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"eG5Nql59LVOo1tW2C0VUp7LIdxvqbKr3wD7gGf7XHlW1WC/1wkHY6t8uxomUutg42RBuaKU3Qa0NJsI29j0veP+4ptBhaLVTX4x/pIQynaJm40Jv0+VRbP18pLsTYfVh9Xwnn1Jn5f5XKEsZkZHws2G1ycBMGVt/HDx3kV5qlv7tA6CVC+5x9s6a4wYR5AvrgFJAQa/TPU4NPHPBplDLZ5BpmqU0NuLoBpuc3NERi/kMco+tNLQ/awPmYYFYCB1/EDUb0euUt1gYQSH6BtmfTV825T6gClGiwvPFfYEx8GCntMxygfEr97qcVCl65kE/c2nXqqeWp7kzPml7F7SXlA=="</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"metaData"</code><code class="plain">: {},</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"requestId"</code><code class="plain">: </code><code class="string">"542982616"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"signerCertificate"</code><code class="plain">: </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="798c626374f1">If the request fails, SignServer returns an error message with the cause of the failure.</p><h3 local-id="861838b618d7" id="ClientRESTEndpoints-POST/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}/process" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-POST-/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}/process"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">POST /rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}/process</span></h3><p local-id="002aa4aa62c0"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="252e7c292cb9">Use this endpoint to sign data by providing a Public Key ID. SignServer takes the Public Key ID and compares it with the public key from the key specified in <code>DEFAULTKEY</code> Worker property. If the IDs match, SignServer proceeds with signing the data. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="d55030d17a59">Public Key ID can be retrieved using the <a href="Client_REST_Endpoints.html#ClientRESTEndpoints-public-key-worker" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-public-key-worker" data-scroll-link-target-source-id="1981153323">Get Public Key endpoint</a>.</p></div></div><p local-id="290133f5c756"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="none" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">POST /signserver/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}/process</code></div>
+</div>
+</div><p local-id="95da75463a46"><strong>Request Body</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"Sample Data!"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}/process'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 0'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'Content-Type: application/json'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--data '{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"hello"</code></div>
+<div class="line"><code class="plain">}'</code></div>
+</div>
+</div></div></div><p local-id="7f8b02cadbdf"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"archiveId"</code><code class="plain">: </code><code class="string">"501bfa7035914e75fdab360481f5e62d5e33f3af"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"eG5Nql59LVOo1tW2C0VUp7LIdxvqbKr3wD7gGf7XHlW1WC/1wkHY6t8uxomUutg42RBuaKU3Qa0NJsI29j0veP+4ptBhaLVTX4x/pIQynaJm40Jv0+VRbP18pLsTYfVh9Xwnn1Jn5f5XKEsZkZHws2G1ycBMGVt/HDx3kV5qlv7tA6CVC+5x9s6a4wYR5AvrgFJAQa/TPU4NPHPBplDLZ5BpmqU0NuLoBpuc3NERi/kMco+tNLQ/awPmYYFYCB1/EDUb0euUt1gYQSH6BtmfTV825T6gClGiwvPFfYEx8GCntMxygfEr97qcVCl65kE/c2nXqqeWp7kzPml7F7SXlA=="</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"metaData"</code><code class="plain">: {},</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"requestId"</code><code class="plain">: </code><code class="string">"863468954"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"signerCertificate"</code><code class="plain">: </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><p local-id="63cda4a8f3f3">If the request fails, SignServer returns an error message with the cause of the failure.</p><hr local-id="41c25522091e" data-layout="wide" data-width="760"><h2 local-id="2e06c57b8390" id="ClientRESTEndpoints-UploadaFile" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-Upload-a-File"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Upload a File</span></h2><h3 local-id="05012db86154" id="ClientRESTEndpoints-POST/workers/{idOrNAme}/process" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-POST-/workers/{idOrNAme}/process"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">POST /workers/{idOrNAme}/process</span></h3><p local-id="accac52aac5a">The following provides an example of uploading and signing a PDF using <code>multipart/form-data</code>, either using cURL or Postman.</p><p local-id="aea44ad38242">The following example uses a <a href="PDF_Signer.html" data-linked-resource-id="370999917" data-linked-resource-version="47" data-linked-resource-type="page" data-scroll-target-source-id="370999917" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999917/PDF+Signer" data-scroll-link-target-source-id="370999917">PDF Signer</a> and writes the signed output to <code>test_signed.pdf</code>. The PDF is password-protected, so the password is passed as request metadata.</p><p local-id="1d37fa8e7dc5"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">POST /signserver/rest/v1/workers/{idOrName}/process</code></div>
+</div>
+</div><p local-id="ca55900e461f"><strong>Request Headers</strong></p><p local-id="bc4f210853c3">Set the <code>Accept</code> header to <code>application/octet-stream</code>. This tells SignServer to return the signed file as binary output rather than a JSON response. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="c38928975731">The <code>Accept: application/octet-stream</code> header tells SignServer to return the signed file as binary output rather than a JSON response. Omit <code>--output</code> and the <code>Accept</code> header if your signer returns a JSON response.</p></div></div><p local-id="9e0592ded4e3"><strong><span class="inline-comment-marker" data-ref="47878803-ceb4-456d-a9ed-b822af64e4c2">Request Body</span></strong></p><p local-id="2174152d91f8">Set the following fields in the request body for uploading and signing a PDF using the <code>Content-Type</code><strong> </strong>header <code><span class="inline-comment-marker" data-ref="47878803-ceb4-456d-a9ed-b822af64e4c2">multipart/form-data</span></code>:</p><div class="table-wrap"><table data-table-width="760" data-layout="default" data-local-id="730553f8-2395-4864-930e-2840438022ed" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 33.3333%;"><col span="1" style="width: 9.3544%;"><col span="1" style="width: 57.3123%;"></colgroup><thead><tr data-local-id="626a8c1d-060b-442c-a22d-83f96d1a7693"><th colspan="1" rowspan="1" data-local-id="c1c4d60f-3fd1-42be-b06f-88958c1095f1" class="confluenceTh"><p local-id="ecd6543baafd"><strong>Form field</strong></p></th><th colspan="1" rowspan="1" data-local-id="0d8dd4ce-ad70-4ba9-8695-a2e54f7eec0a" class="confluenceTh"><p local-id="555f424fc6e3"><strong>Type</strong></p></th><th colspan="1" rowspan="1" data-local-id="bf4e8216-0778-4184-8a4b-896d33f15831" class="confluenceTh"><p local-id="a297fef17357"><strong>Value</strong></p></th></tr></thead><tbody><tr data-local-id="8e90df7f-0275-4fa1-b6ff-0cc9e265aed3"><td colspan="1" rowspan="1" data-local-id="a94e0047-03e9-442c-9445-5be2bf0ef510" class="confluenceTd"><p local-id="bbbeb8cc960b"><code>myfile</code></p></td><td colspan="1" rowspan="1" data-local-id="afe2e52f-dec0-4737-98cf-eadae971e171" class="confluenceTd"><p local-id="210e53d62ed8">File</p></td><td colspan="1" rowspan="1" data-local-id="4220ccad-82de-4e1d-b26e-4715210445fc" class="confluenceTd"><p local-id="997b55949ea8">The file to sign, for example <code>test.pdf</code>.</p></td></tr><tr data-local-id="178057d6-ba1a-48d9-907f-fb05e7a0195c"><td colspan="1" rowspan="1" data-local-id="7013239f-2c33-4752-8d61-83b59dfbd2c8" class="confluenceTd"><p local-id="0be052da36f9"><code>REQUEST_METADATA.pdfPassword</code></p></td><td colspan="1" rowspan="1" data-local-id="65343c55-3332-432e-9947-212bbffb3696" class="confluenceTd"><p local-id="c86be9e1a2ac">Text</p></td><td colspan="1" rowspan="1" data-local-id="3b864b24-af5c-410c-85c9-28af22456c3f" class="confluenceTd"><p local-id="2d95690f43af">The PDF password, if the PDF is password-protected. Additional request metadata properties can be provided the same way, prefixed with <code>REQUEST_MET</code></p></td></tr></tbody></table></div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --output test_signed.pdf --location --request POST </code><code class="string">'http://localhost:8080/signserver/rest/v1/workers/{idOrName}/process'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: REST'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'Accept: application/octet-stream'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--form </code><code class="string">'myfile=@"test.pdf"'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--form </code><code class="string">'REQUEST_METADATA.pdfPassword="foo123";type=multipart/form-data;charset=utf-8'</code></div>
+</div>
+</div></div></div><p local-id="119b28ddd658"><strong>Response</strong></p><p local-id="8d418b9e38ba">The response body contains the signed file as binary output. Save the response to a file, for example <code>test_signed.pdf</code>.</p><p local-id="51439998cf01">To verify the signed PDF, open it in a PDF reader that validates signatures, such as Adobe Acrobat.</p><hr local-id="9ff3bbbc-bb6b-43a2-bd2f-1f0d543cb33e" data-layout="wide" data-width="760"><h2 local-id="0acd0e40e363" id="ClientRESTEndpoints-Client-sideHashing" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-Client-side-Hashing"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Client-side Hashing</span></h2><h3 local-id="9382ac62395d" id="ClientRESTEndpoints-POST/workers/{idOrName}/process.1" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-POST-/workers/{idOrName}/process.1"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">POST /workers/{idOrName}/process</span></h3><p local-id="a965ce730411">Client-side hashing lets you compute the hash of your data locally and send only the hash to SignServer for signing. This is useful when you do not want to transmit the full artifact. For more information, see <a href="Client-side_Hashing.html" data-linked-resource-id="371000790" data-linked-resource-version="46" data-linked-resource-type="page" data-scroll-target-source-id="371000790" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000790/Client-side+Hashing" data-scroll-link-target-source-id="371000790">Client-side Hashing</a>. </p><p local-id="d15cdbe78c3c">The Worker must be configured to accept a hash as input by setting <code>CLIENTSIDEHASHING=TRUE</code>, or by allowing the client to specify if the input is the original file or a hash of it, by configuring <code>ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE</code>.</p><p local-id="5eba3ee935a7">The following properties must be provided as request metadata:</p><div class="table-wrap"><table data-table-width="760" data-layout="default" data-local-id="e99fa61f-ddc5-4eeb-8a96-4bb1187df636" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 42.8195%;"><col span="1" style="width: 57.1805%;"></colgroup><thead><tr data-local-id="593225ca-b07e-4c5d-bad5-86e101f51534"><th colspan="1" rowspan="1" data-local-id="dddf28b2-4821-42ec-9997-6acda832a5a0" class="confluenceTh"><p local-id="678a735f8985"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="780bac3b-4301-4b57-8e57-c124f045bf85" class="confluenceTh"><p local-id="0c0e1b53ac8e"><strong>Value</strong></p></th></tr></thead><tbody><tr data-local-id="cc38aa87-39f7-4972-adb9-6d7ff80521c0"><td colspan="1" rowspan="1" data-local-id="d376cb22-3e6b-48fc-b354-c110bde01373" class="confluenceTd"><p local-id="e7de3a1bec6b"><code>USING_CLIENTSUPPLIED_HASH</code></p></td><td colspan="1" rowspan="1" data-local-id="69bf3511-2009-47fd-9f66-5b105ce602e8" class="confluenceTd"><p local-id="a570ac078e12"><code>true</code></p></td></tr><tr data-local-id="a9c18ae7-f3a4-460c-8563-89666fb0c0bb"><td colspan="1" rowspan="1" data-local-id="eebc7231-ce06-4c68-a1d1-05d32dea0b32" class="confluenceTd"><p local-id="e834129dbd73"><code>CLIENTSIDE_HASHDIGESTALGORITHM</code></p></td><td colspan="1" rowspan="1" data-local-id="bae3d862-f10a-43f4-a058-22ef43fdf841" class="confluenceTd"><p local-id="69600b224b4c">The hash algorithm used to digest data, for example <code>SHA-256</code>. Must be listed in the Worker <code>ACCEPTED_HASH_DIGEST_ALGORITHMS</code> property.</p></td></tr></tbody></table></div><p local-id="c315f06b1153"><strong>Step 1 - Compute the Hash Locally</strong></p><p local-id="c5c5629e9433">For client-side hashing, the encoding of the data needs to be set to <code>BASE64</code>, and the data needs to be a base64-encoded binary.</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">  </code><code class="string">"encoding"</code><code class="plain">: </code><code class="string">"BASE64"</code></div>
+</div>
+</div><p local-id="2f172d8560b0">Example for formatting data:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="functions">echo</code><code class="plain"> -n </code><code class="string">"test"</code><code class="plain">| openssl sha256 -binary | base64</code></div>
+<div class="line"><code class="plain">8sobtsfpB9Btr+Roflefznazfk6Tt2BQItpS5szCb9I=</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ </code><code class="functions">echo</code><code class="plain"> </code><code class="string">"Sample"</code><code class="plain"> &gt; sample.txt</code></div>
+<div class="line"><code class="plain">$ openssl dgst -sha256 -out pre-computed-</code><code class="functions">hash</code><code class="plain">.bin -binary sample.txt</code></div>
+<div class="line"><code class="plain">$ base64 pre-computed-</code><code class="functions">hash</code><code class="plain">.bin</code></div>
+<div class="line"><code class="plain">47DEQpj8HBSa+</code><code class="plain">/TImW</code><code class="plain">+5JCeuQeRkm5NMpJWZG3hSuFU=</code></div>
+</div>
+</div></div></div><p local-id="53d5afe973dd"><strong>Step 2 - Send the Hash for Signing</strong></p><p local-id="c34629144335">Example of a request for a Signer using client-side hashing:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"metaData"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"USING_CLIENTSUPPLIED_HASH"</code><code class="plain">:</code><code class="string">"true"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"CLIENTSIDE_HASHDIGESTALGORITHM"</code><code class="plain">:</code><code class="string">"SHA256"</code></div>
+<div class="line"><code class="plain">  },</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"encoding"</code><code class="plain">: </code><code class="string">"BASE64"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"8sobtsfpB9Btr+Roflefznazfk6Tt2BQItpS5szCb9I="</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ curl --location --request POST </code><code class="string">'http://localhost:8080/signserver/rest/v1/workers/{idOrName}/process'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: X'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'Content-Type: application/json'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--data-raw '{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"metaData"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"CLIENTSIDE_HASHDIGESTALGORITHM"</code><code class="plain">: </code><code class="string">"SHA-256"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">        </code><code class="string">"USING_CLIENTSUPPLIED_HASH"</code><code class="plain">: </code><code class="string">"true"</code></div>
+<div class="line"><code class="plain">    },</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"data"</code><code class="plain">: </code><code class="string">"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"encoding"</code><code class="plain">: </code><code class="string">"BASE64"</code></div>
+<div class="line"><code class="plain">}'</code></div>
+</div>
+</div></div></div><p local-id="5a538a448d37">If the request is successful, SignServer returns status <code>200 OK</code> with the following response body:</p><div class="contentLayout2">
+<div class="columnLayout single" data-layout="single">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"archiveId"</code><code class="plain">:</code><code class="string">"bdce6dbdfeb4207979ac5047e000da6aaa1085ad"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"data"</code><code class="plain">:</code><code class="string">"Eb/2MbFLQR0kSJ0uUveIdP6qF8xwaphpHbm4yFZDM9NmekMl1TMvCEh7E9sipFTWfhC97b5BtOyQLH6tucwz8j9VD+b534uhvpkwTOjbSkDpAzgTsmfXLlzaOt8/X8/HbYpr+RTQQPXM2pGEc7s8OxqnQetAU7aadPXDHPN14C71oGTGVDn6tLMlSgOhPL2L3d8qKAlWlxEJPhInLA4BwyOuJ7X45dpJS2rO0sKRyHWS1T+z1cHf41hDvlTaX9xmYiYkNC9s0kwV4xwBNjGebs2I0vtHVT/99l47/sj/vCk191IDPupfrtAMHpBo3EMsuuLn0xbVkI0Tkil4Emrp6A=="</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"metaData"</code><code class="plain">:{},</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"requestId"</code><code class="plain">:</code><code class="string">"465995014"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">   </code><code class="string">"signerCertificate"</code><code class="plain">:</code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhcwDQYJKoZIhvcNAQELBQAwTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMTYwMzAzMDgyNTA0WhcNMzYwMjI3MDgyNTA0WjBKMRQwEgYDVQQDDAtzaWduZXIwMDAwMzEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCyFKqwwiHS2o4PO3zovqC+jGuIELnja1iAlg/hyrRp28mF6BOGVaKE6ZzbQIMmmICRz+EeqXN1W8gyCEh6T2qN3QvXTAF9mrrUI3hG4Xn/Davgsln8saRE0zt45yy47dPq5YofYJWWIdW/6qssiX+ApcPqthCQfkgraUSagS/Reqy0WT/A2lwKh147GB9+MxhheskQIPaKQasOpI7vGfzey+GnkHPsfU21irS2nC8uzv6hd0G6hNYUEmJtIh9/5WebMoMiGFq1sydTtZp7pJilfPyxrAkHXEwMUEEMcVlE/ISCoKMttnLMUT/F00cHesU4D2yNl6gcSjpMj4Q/iF+hAgMBAAGjfzB9MB0GA1UdDgQWBBQ2/WY3Ln7tdUmDrTyvtvSZwBg8YzAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFBxgQUremK3l1gOK6GaCqX6w8gKHMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAIUh6kkCMc0Fs6U+Sw6Ns0Yd28Fb5SM//nE6mq3mf1SD4lAyChVrFvlqMZJaqeJlkVeHc9E+KCE5bX1r2iGC8rnE9DuItI0pKMrgFt4cbSbDwgovnTrkiIhuqP2pjdhmrHtlLqZBR8e16c4xGSn6XWKJ8vPzx2AJl7MY3sY3Z4aPckBFNjG1lzH1inq5WM/+WaLghOQQngaXeU+SWpoAM7cUjB8Uyjf2Qr2GerI4AZZJMuC6BuvMdFMyXX78l7c9qmvK9Bre+SFKdtcMAgnglLzu0lyPHPwYL0R+pwc5dFOJipafxeqeHGpkZTXMsdMn6f1USRznlGbRWru68/XOOFU="</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+<p local-id="abb83117e552"><strong>Step 3 - Verify the Signature</strong></p><p local-id="3eef26027153">Example for verifying:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ </code><code class="functions">echo</code><code class="plain"> Eb</code><code class="plain">/2MbFLQR0kSJ0uUveIdP6qF8xwaphpHbm4yFZDM9NmekMl1TMvCEh7E9sipFTWfhC97b5BtOyQLH6tucwz8j9VD</code><code class="plain">+b534uhvpkwTOjbSkDpAzgTsmfXLlzaOt8</code><code class="plain">/X8/HbYpr</code><code class="plain">+RTQQPXM2pGEc7s8OxqnQetAU7aadPXDHPN14C71oGTGVDn6tLMlSgOhPL2L3d8qKAlWlxEJPhInLA4BwyOuJ7X45dpJS2rO0sKRyHWS1T+z1cHf41hDvlTaX9xmYiYkNC9s0kwV4xwBNjGebs2I0vtHVT</code><code class="plain">/99l47/sj/vCk191IDPupfrtAMHpBo3EMsuuLn0xbVkI0Tkil4Emrp6A</code><code class="plain">==</code></div>
+<div class="line"><code class="plain">    | base64 --decode &gt; sample.sig</code></div>
+<div class="line"><code class="plain">$ openssl dgst -signature sample.sig -verify plainsigner-pubkey.pem -SHA256 sample.txt</code></div>
+<div class="line"><code class="plain">Verified OK</code></div>
+</div>
+</div><p local-id="58feaf4a5d22">If the request fails, SignServer returns an error message with the cause of the failure.</p><hr local-id="f1299d27eef9" data-layout="wide" data-width="760"><h2 local-id="b86eed1328df" id="ClientRESTEndpoints-GetPublicKeyspublic-key-worker" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-public-key-worker"></span><span class="confluence-anchor-link" id="public-key-worker"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-Get-Public-Keys"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Get Public Keys </span></h2><p local-id="b33e0392fe16">Public keys can be retrieved:</p><ul local-id="5c07a621728d"><li local-id="0cde82b3faf6"><p local-id="fef053d7b375"><a href="Client_REST_Endpoints.html#ClientRESTEndpoints-specificWorker" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-specificWorker" data-scroll-link-target-source-id="1981153323">from a specific Worker</a></p></li><li local-id="9eb550ea6f59"><p local-id="20514756c938"><a href="Client_REST_Endpoints.html#ClientRESTEndpoints-specificWorkerpublicID" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-specificWorkerpublicID" data-scroll-link-target-source-id="1981153323">from a specific Worker by public key ID</a></p></li><li local-id="5a7ccca27ae1"><p local-id="de5c98eda9f2"><a href="Client_REST_Endpoints.html#ClientRESTEndpoints-allWorkerskeys" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-allWorkerskeys" data-scroll-link-target-source-id="1981153323">from all Workers</a></p></li></ul><h3 local-id="523f7a496049" id="ClientRESTEndpoints-GET/rest-managed/v1/workers/{IdOrName}/publickeysspecificWorker" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-specificWorker"></span><span class="confluence-anchor-link" id="specificWorker"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-GET-/rest-managed/v1/workers/{IdOrName}/publickeys"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">GET /rest-managed/v1/workers/{IdOrName}/publickeys</span></h3><p local-id="72941d77d643"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="aeb8f152f6de"><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225">Get the public key from a specific Worker. The key to retrieve is specified in the </span><code><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225">DEFAULTKEY</span></code><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225"> Worker property on the Worker</span>. To request a public key, the Worker must be configured with <code>CLIENT_VISIBLE</code> set to <code>true</code>.</p><p local-id="5a41dffa0a58"><strong>Request</strong></p><p local-id="e4be9e4bf1ae">Example of a request retrieving a public key from a Worker:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">GET /signserver/rest-managed/v1/workers/{idOrName}/publickeys</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/{idOrName}/publickeys'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 1'</code></div>
+</div>
+</div></div></div><p local-id="737206172d71"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"workerPublicKey"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"entries"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"keyType"</code><code class="plain">: </code><code class="string">"X.509"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/1/publickeys/38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"public key"</code><code class="plain">: </code><code class="string">"/workers/1/publickeys/38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200"</code></div>
+<div class="line"><code class="plain">          },</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"publicKey"</code><code class="plain">: </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"publicKeyId"</code><code class="plain">: </code><code class="string">"38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">      ],</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">  ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><h3 local-id="0548c4c65f4a" id="ClientRESTEndpoints-GET/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}specificWorkerpublicID" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-specificWorkerpublicID"></span><span class="confluence-anchor-link" id="specificWorkerpublicID"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-GET-/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">GET /rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}</span></h3><p local-id="829ef223a289"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="8537f1d73051"><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225">Get the public key from a specific Worker by public key ID. The key to retrieve is specified in the </span><code><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225">DEFAULTKEY</span></code><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225"> Worker property on the Worker</span>. To request a public key, the Worker must be configured with <code>CLIENT_VISIBLE</code> set to <code>true</code>.</p><p local-id="3a30fb6eab06"><strong>Request</strong></p><p local-id="c33359c8d1b3">Example of a request retrieving a Public Key from a Worker by Public Key ID:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">GET /signserver/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/{idOrName}/publickeys/{publicKeyId}'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 1'</code></div>
+</div>
+</div></div></div><p local-id="d7b7d6103f84"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">  </code><code class="string">"workerPublicKey"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    {</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"entries"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"keyType"</code><code class="plain">: </code><code class="string">"X.509"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/1/publickeys/38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"public key"</code><code class="plain">: </code><code class="string">"/workers/1/publickeys/38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200"</code></div>
+<div class="line"><code class="plain">          },</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"publicKey"</code><code class="plain">: </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">          </code><code class="string">"publicKeyId"</code><code class="plain">: </code><code class="string">"38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">      ],</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">      </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">  ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><h3 local-id="c20c69c83fd3" id="ClientRESTEndpoints-GET/rest-managed/v1/workers/publickeysallWorkerskeys" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-allWorkerskeys"></span><span class="confluence-anchor-link" id="allWorkerskeys"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-GET-/rest-managed/v1/workers/publickeys"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">GET /rest-managed/v1/workers/publickeys</span></h3><p local-id="583f6d2e694c"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="b951006e4fd8"><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225">Get public keys from all Workers. The keys to retrieve are specified in the </span><code><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225">DEFAULTKEY</span></code><span class="inline-comment-marker" data-ref="48be00da-3a8d-441e-8950-c038c2fcb225"> Worker property on the Workers. </span>The Workers must be configured with <code>CLIENT_VISIBLE</code> set to <code>true</code>.</p><p local-id="2a429882b58d"><strong>Request</strong></p><p local-id="7cffd801a326">Example of a request retrieving all public keys:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">GET /signserver/rest-managed/v1/workers/publickeys</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/publickeys'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 1'</code></div>
+</div>
+</div></div></div><p local-id="fc3a70603f18"><strong>Response</strong></p><p local-id="e1754b300e99">Example of response where two Workers have the <code>CLIENT_VISIBLE</code> Worker property set to <code>true</code>:</p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"workerPublicKey"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"entries"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">                {</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"keyType"</code><code class="plain">: </code><code class="string">"X.509"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">                        </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/1/publickeys/38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                        </code><code class="string">"public key"</code><code class="plain">: </code><code class="string">"/workers/1/publickeys/38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200"</code></div>
+<div class="line"><code class="plain">                    },</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"publicKey"</code><code class="plain">: </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"publicKeyId"</code><code class="plain">: </code><code class="string">"38a45dca26a72034547985b7ef07376e1bd8c38225b7cb864a90843456991200"</code></div>
+<div class="line"><code class="plain">                }</code></div>
+<div class="line"><code class="plain">            ],</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">        },</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"entries"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">                {</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"keyType"</code><code class="plain">: </code><code class="string">"PGP"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">                        </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/2/publickeys/b3b97913343031fd10b8fa1d5d9df87cbe92a3806ef0fcee53c655339d286e3a/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                        </code><code class="string">"public key"</code><code class="plain">: </code><code class="string">"/workers/2/publickeys/b3b97913343031fd10b8fa1d5d9df87cbe92a3806ef0fcee53c655339d286e3a"</code></div>
+<div class="line"><code class="plain">                    },</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"publicKey"</code><code class="plain">: </code><code class="string">"mQENBFbX9OABCACyFKqwwiHS2o4PO3z..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                    </code><code class="string">"publicKeyId"</code><code class="plain">: </code><code class="string">"b3b97913343031fd10b8fa1d5d9df87cbe92a3806ef0fcee53c655339d286e3a"</code></div>
+<div class="line"><code class="plain">                }</code></div>
+<div class="line"><code class="plain">            ],</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"2"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"OpenPGPSigner"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">    ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><hr local-id="53cff6d1-88f3-4c56-889b-1d8aa21379d0" data-layout="wide" data-width="760"><h2 local-id="d4b3bdcbb513" id="ClientRESTEndpoints-GetCertificatescertificate-worker" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-certificate-worker"></span><span class="confluence-anchor-link" id="certificate-worker"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-Get-Certificates"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Get Certificates</span></h2><p local-id="fcdcf0f603a3">Certificates can be retrieved:</p><ul local-id="3af5c092-9387-46b9-99df-16b28aaeb207"><li local-id="f84097b8-2883-42f8-8fcd-1a5422337166"><p local-id="d6c8cfa64b8c"><a href="Client_REST_Endpoints.html#ClientRESTEndpoints-specificWorker2" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-specificWorker2" data-scroll-link-target-source-id="1981153323">from a specific Worker</a></p></li><li local-id="dc93e5b5-3154-4825-bb71-76a2f483a785"><p local-id="780120c916ae"><a href="Client_REST_Endpoints.html#ClientRESTEndpoints-specificWorkerpublicID2" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-specificWorkerpublicID2" data-scroll-link-target-source-id="1981153323">from a specific Worker by certificate ID</a></p></li><li local-id="05ba1348-e4dd-488a-ae1f-c5e19a638ba0"><p local-id="b028c10307f1"><a href="Client_REST_Endpoints.html#ClientRESTEndpoints-allWorkerscerts" data-scroll-target-source-id="1981153323" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1981153323/Client+REST+Endpoints#src-1981153323_ClientRESTEndpoints-allWorkerscerts" data-scroll-link-target-source-id="1981153323">from all Workers</a></p></li></ul><p local-id="728346fd1328">To be able to request one or more certificates, the Worker must be configured with <code>CLIENT_VISIBLE</code> set to <code>true</code>.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="e943fd4dd91f"><span class="inline-comment-marker" data-ref="1f2394e1-b042-4f09-a5cb-8627c94e3d98">Endpoints resolve the certificate chain using the following order of precedence:</span></p><ol start="1" local-id="bb4b851c-fc76-41e8-bfde-53c1c3e50791"><li local-id="1523590b-e8e9-40d1-a4b3-3e03c8b0861a"><p local-id="e7d0d39f6907">If the Worker has a <code>SIGNERCERTCHAIN</code> property configured, the endpoint returns that chain exclusively. Certificates stored in the Crypto Token are ignored.</p></li><li local-id="94ec9041-a7da-46c2-aae5-534e461c3c46"><p local-id="ca6aefb24f60">If <code>SIGNERCERTCHAIN</code> is not present in the Worker configuration, the endpoint falls back to retrieving the certificate chain directly from the token (HSM), based on the key referenced by <code>DEFAULTKEY</code>.</p></li></ol></div></div><h3 local-id="61995902ebbf" id="ClientRESTEndpoints-GET/rest-managed/v1/workers/{idOrName}/certificatesspecificWorker2" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-specificWorker2"></span><span class="confluence-anchor-link" id="specificWorker2"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-GET-/rest-managed/v1/workers/{idOrName}/certificates"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">GET /rest-managed/v1/workers/{idOrName}/certificates</span></h3><p local-id="fdb778957e00"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="9c1bce2356d9">This endpoint <span class="inline-comment-marker" data-ref="3645662c-b318-4dd6-96e1-cb698f302de4">retrieves the certificate chain from a specified Worker</span>. </p><p local-id="51a683dcbdef"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">GET /signserver/rest-managed/v1/workers/{idOrName}/certificates</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/{idOrName}/certificates'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 1'</code></div>
+</div>
+</div></div></div><p local-id="d967b00756ef"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"workerCertificate"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"base64CertChain"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIEfjCCAmagAwIBAgIINRnImL/vDX4..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIFfzCCA2egAwIBAgIIMk1BOK8CwTw..."</code></div>
+<div class="line"><code class="plain">            ],</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"certId"</code><code class="plain">: </code><code class="string">"95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/1/certificates/95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"certificate"</code><code class="plain">: </code><code class="string">"/workers/1/certificates/95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2"</code></div>
+<div class="line"><code class="plain">            },</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">    ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><h3 local-id="9e0d45a2c01e" id="ClientRESTEndpoints-GET/rest-managed/v1/workers/{idOrName}/certificates/{certId}specificWorkerpublicID2" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-specificWorkerpublicID2"></span><span class="confluence-anchor-link" id="specificWorkerpublicID2"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-GET-/rest-managed/v1/workers/{idOrName}/certificates/{certId}"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">GET /rest-managed/v1/workers/{idOrName}/certificates/{certId} </span></h3><p local-id="1c206da043d4"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="a03615cca775">This endpoint <span class="inline-comment-marker" data-ref="3645662c-b318-4dd6-96e1-cb698f302de4">retrieves the certificate chain from a specified Worker by certificate ID</span>.</p><p local-id="669bde0b4f72"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">GET /signserver/rest-managed/v1/workers/{idOrName}/certificates/{certId}</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/{idOrName}/certificates/{certId}'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 1'</code></div>
+</div>
+</div></div></div><p local-id="48766d813926"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"workerCertificate"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"base64CertChain"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIEfjCCAmagAwIBAgIINRnImL/vDX4..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIFfzCCA2egAwIBAgIIMk1BOK8CwTw..."</code></div>
+<div class="line"><code class="plain">            ],</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"certId"</code><code class="plain">: </code><code class="string">"95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/1/certificates/95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"certificate"</code><code class="plain">: </code><code class="string">"/workers/1/certificates/95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2"</code></div>
+<div class="line"><code class="plain">            },</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">    ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div><h3 local-id="3ef2b14c5867" id="ClientRESTEndpoints-GET/rest-managed/v1/workers/certificatesallWorkerscerts" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ClientRESTEndpoints-allWorkerscerts"></span><span class="confluence-anchor-link" id="allWorkerscerts"></span><span class="confluence-anchor-link" id="src-1981153323_ClientRESTEndpoints-GET-/rest-managed/v1/workers/certificates"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">GET /rest-managed/v1/workers/certificates</span></h3><p local-id="caf5650436e4"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="549d93f1a541">This endpoint retrieves certificate chains from all Workers.</p><p local-id="0e388df356a5"><strong>Request</strong></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">GET /signserver/rest-managed/v1/workers/certificates</code></div>
+</div>
+</div><div class="expand-container"><p class="expand-control-text">cURL Example</p><div class="expand-content"><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl --location </code><code class="string">'http://localhost:8080/signserver/rest-managed/v1/workers/certificates'</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">--header </code><code class="string">'X-Keyfactor-Requested-With: 1'</code></div>
+</div>
+</div></div></div><p local-id="7a4e9361d498"><strong>Response</strong></p><div class="scroll-code scroll-highlighted-code-block" data-language="json" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"workerCertificate"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">        {</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"base64CertChain"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIDlzCCAn+gAwIBAgIIOdPbElQbJhc..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIEfjCCAmagAwIBAgIINRnImL/vDX4..."</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"MIIFfzCCA2egAwIBAgIIMk1BOK8CwTw..."</code></div>
+<div class="line"><code class="plain">            ],</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"certId"</code><code class="plain">: </code><code class="string">"95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"links"</code><code class="plain">: {</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"process"</code><code class="plain">: </code><code class="string">"/workers/1/certificates/95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2/process"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">                </code><code class="string">"certificate"</code><code class="plain">: </code><code class="string">"/workers/1/certificates/95bf59ae3f23515f36e02e9a97e41331dfb87dee355460774a24e4d4880688e2"</code></div>
+<div class="line"><code class="plain">            },</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerId"</code><code class="plain">: </code><code class="string">"1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">            </code><code class="string">"workerName"</code><code class="plain">: </code><code class="string">"PlainSigner"</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">    ]</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Admin_REST_Endpoints.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Admin REST Endpoints</span>
+        </a>
+
+        <a href="Legacy_Interfaces.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Legacy Interfaces</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,235 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="1771831298">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:50.171+0000">
+    <meta name="exp-page-id" content="1771831298">
+    <meta name="exp-page-title" content="Sign with RPM Signatures">
+    <meta name="exp-page-version" content="33">
+    <meta name="exp-page-scroll-page-id" content="29540e9f0e98d873c05de3bf7f095997">
+    <meta name="exp-page-created" content="2025-09-03T09:25:53.578+0000">
+    <meta name="exp-page-last-modified" content="2026-07-02T12:33:51.375+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Sign with RPM Signatures</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b4e40341501c0ddfb1f30e6e3f3c915e57a2b2b92ed3a3b33ec80118ae91520a"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignwithRPMSignatures-top" pageid="1771831298" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=1771831298" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Sign_with_RPM_Signatures.html" target="_self" aria-current="page">Sign with RPM Signatures</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-9863dd9890729d6e25c793f710d6d781e13722228b12d114680d73ca323516f8"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Sign with RPM Signatures</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="18c86c6d-d5fc-428d-aff8-dbaaaf45c36b"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="3cad426d3f41">Instead of a dedicated RPM package Signer, SignServer leverages <a href="OpenPGP_Signer.html" data-linked-resource-id="370999909" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999909" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999909/OpenPGP+Signer" data-scroll-link-target-source-id="370999909">OpenPGP Signer</a> or <a href="OpenPGP_Plain_Signer.html" data-linked-resource-id="370999913" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999913" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999913/OpenPGP+Plain+Signer" data-scroll-link-target-source-id="370999913">OpenPGP Plain Signer</a> to generate signatures and <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> to integrate those signatures into the RPM signing workflow.</p><p local-id="8789a292-e897-444e-b375-035c0e61a868">The <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> is a script that wraps <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a> and behaves like a <code>gpg</code> (GnuPG) command, allowing the standard <code>rpm-sign</code> tool to use <code>signwrapper-gpg</code> instead of <code>gpg</code>. Because RPM embeds signatures directly inside the package file, this scheme requires some logic on the client side: preparing the file, hashing it, and inserting the resulting signature into the RPM data structure. </p><p local-id="c7516fc5-cd2f-4c5b-b7dc-3385875e0953">Both Signers use OpenPGP public keys instead of X.509 certificates. The public key can instead be obtained from the Worker's status output. Additionally, the Generate CSR functionality lets you associate a User ID with the key and store it in the <code>PGPPUBLICKEY</code> property. When using RSA keys for RPM signing, this step is required to produce the correct key type.</p><p local-id="9836686e-eb1b-47b2-8d85-ad9984b38f7b">For more information on signing RPM packages with GPG, refer to the <a shape="rect" href="https://access.redhat.com/articles/3359321" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://access.redhat.com/articles/3359321" data-scroll-link-local="false">Red Hat Documentation</a>.</p><hr local-id="6d8741c92abf"><h2 local-id="4efa7c58b7ac" id="SignwithRPMSignatures-Prerequisite:OpenPGPSignerConfigured" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Prerequisite:-OpenPGP-Signer-Configured"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Prerequisite: OpenPGP Signer Configured</span></h2><p local-id="87ba6673e7da">In the <a href="Set_up_OpenPGP_Signer.html" data-linked-resource-id="370999530" data-linked-resource-version="24" data-linked-resource-type="page" data-scroll-target-source-id="370999530" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999530/Set+up+OpenPGP+Signer" data-scroll-link-target-source-id="370999530">Set up OpenPGP Signer</a>, follow the steps to configure a <a href="OpenPGP_Signer.html" data-linked-resource-id="370999909" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999909" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999909/OpenPGP+Signer" data-scroll-link-target-source-id="370999909">OpenPGP Signer</a> or <a href="OpenPGP_Plain_Signer.html" data-linked-resource-id="370999913" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999913" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999913/OpenPGP+Plain+Signer" data-scroll-link-target-source-id="370999913">OpenPGP Plain Signer</a>, add User ID and certification, and generate a revocation certificate.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="e17ba35b86b4">Use the <a href="OpenPGP_Plain_Signer.html" data-linked-resource-id="370999913" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999913" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999913/OpenPGP+Plain+Signer" data-scroll-link-target-source-id="370999913">OpenPGP Plain Signer</a> if you want client-side hashing. For details on required parameters, see <a shape="rect" href="https://scroll-mig-test.scroll.site/signserver/working-version/openpgpplain-signer" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://scroll-mig-test.scroll.site/signserver/working-version/openpgpplain-signer" data-scroll-link-local="false">OpenPGP Plain Signer</a> and the <a shape="rect" href="https://scroll-mig-test.scroll.site/signserver/working-version/code-signing-client-side-hashing#Signing-RPM-packages" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://scroll-mig-test.scroll.site/signserver/working-version/code-signing-client-side-hashing#Signing-RPM-packages" data-scroll-link-local="false">Signing RPM Packages</a> section of the client-side hashing page.</p></div></div><hr local-id="9be5f5e6-4377-47ef-add5-cf4265ff9e1a"><h2 local-id="ea37489f-dd18-4b20-a133-fdb13079b5a6" id="SignwithRPMSignatures-SetupRPMforSigningusingSignWrapper-GPG" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Set-up-RPM-for-Signing-using-SignWrapper-GPG"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Set up RPM for Signing using SignWrapper-GPG</span></h2><p local-id="1fad24b36bba">The SignServer <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> replaces the <code>gpg</code> (GnuPG) command in the RPM signing workflow by routing requests through <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>. Three components need to be configured: the RPM tool, SignWrapper-GPG itself, and SignClient.</p><h3 local-id="bec969eccb3d" id="SignwithRPMSignatures-ConfigureRPMTool" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Configure-RPM-Tool"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure RPM Tool</span></h3><p local-id="25f17ea0976b">For the user that will run the <code>rpm</code> command, create or update <code>.rpmmacros</code> in the user home directory:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">%_signature gpg</code></div>
+<div class="line"><code class="plain">%_gpg_name &lt;Signer name&gt;</code></div>
+<div class="line"><code class="plain">%__gpg /opt/signserver/bin/signwrapper-gpg</code></div>
+</div>
+</div><p local-id="1f8f4f73-e693-4c17-a4d8-23a4d9745b29">The <code>%_gpg_name</code> should have the name of the configured OpenPGP Signer or OpenPGP Plain Signer.</p><p local-id="1e112e3f-a6b8-4ded-9beb-b1fd93f348b2">The <code>%__gpg</code> should contain the path to the <code>signwrapper-gpg</code>.</p><h3 local-id="599659f23bc9" id="SignwithRPMSignatures-ConfigureSignWrapper-GPG" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Configure-SignWrapper-GPG"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure SignWrapper-GPG</span></h3><p local-id="d618f44441fc">SignWrapper-GPG needs to know where SignClient is located. If <code>signwrapper-gpg</code> is not kept in the SignClient folder, set one of the following environment variables:</p><ul local-id="2d5aee0a-3292-49c3-a010-5e25c7697652"><li local-id="d4721612-4f67-49b8-9feb-4a82c77e5614"><p local-id="eca1ef70d7af"><code>SIGNCLIENT_CMD</code>: Set to the full path of the <code>bin/signserver</code> script, or</p></li><li local-id="77edd8f6-75f4-4968-8f56-7d1d4968661d"><p local-id="982475acabab"><code>SIGNCLIENT_HOME</code> or <code>SIGNSERVER_HOME</code>: Set to the root folder of the SignClient distribution.</p></li></ul><h3 local-id="01b5bff78f2d" id="SignwithRPMSignatures-ConfigureSignClient" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Configure-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure SignClient</span></h3><p local-id="a1ab511b67f9">Set the following environment variables so SignWrapper-GPG can connect to your SignServer instance:</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="8f7f23be-6575-4f8f-9f57-901cc9c9dec9" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 22.6316%;"><col span="1" style="width: 77.3684%;"></colgroup><thead><tr data-local-id="f166d28f890a"><th colspan="1" rowspan="1" data-local-id="c43f7cfb2b87" class="confluenceTh"><p local-id="d214b4762d02"><strong>Variable</strong></p></th><th colspan="1" rowspan="1" data-local-id="f27cf44b6463" class="confluenceTh"><p local-id="9c0279e31032"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="e557ebb617aa"><td colspan="1" rowspan="1" data-local-id="bef426aff515" class="confluenceTd"><p local-id="436f8947c084"><code>SIGNCLIENT_HOSTS</code></p></td><td colspan="1" rowspan="1" data-local-id="71b194dfb5db" class="confluenceTd"><p local-id="865003c39a0c">Value for the <code>-hosts HOSTS</code> SignClient parameter is the hostname or IP-address of the SignServer host or a comma separated list of hosts. </p><p local-id="7882260f9dd4">Example: <code>signserver1.example.com</code></p></td></tr><tr data-local-id="568f7c3863de"><td colspan="1" rowspan="1" data-local-id="c0e44b75cc79" class="confluenceTd"><p local-id="fe5872213848"><code>SIGNCLIENT_PORT</code></p></td><td colspan="1" rowspan="1" data-local-id="643f87146304" class="confluenceTd"><p local-id="10f753c505a8">Value for the <code>-port PORT</code> SignClient parameter is the TCP port on the SignServer host to use. </p><p local-id="60836fe21f1b">Example: <code>8080</code></p></td></tr><tr data-local-id="34077a78d19c"><td colspan="1" rowspan="1" data-local-id="486b9de56d5b" class="confluenceTd"><p local-id="43c3caf21060"><code>SIGNCLIENT_PARAMS</code></p></td><td colspan="1" rowspan="1" data-local-id="5636877a843c" class="confluenceTd"><p local-id="127c3ecf0346">(Optional) Value for any extra parameters to put on the SignClient command line. </p><p local-id="e1d9414960f0">Example: <code>-truststore TRUSTSTORE -truststorepwd PWD</code></p></td></tr></tbody></table></div><p local-id="13b67f09f043">If using the <a href="OpenPGP_Plain_Signer.html" data-linked-resource-id="370999913" data-linked-resource-version="17" data-linked-resource-type="page" data-scroll-target-source-id="370999913" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999913/OpenPGP+Plain+Signer" data-scroll-link-target-source-id="370999913">OpenPGP Plain Signer</a> with client-side hashing, the <code>SIGNCLIENT_PARAMS</code> variable is required. <br clear="none">Example of <code>SIGNCLIENT_PARAMS</code> usage for client-side hashing:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">export SIGNCLIENT_PARAMS=</code><code class="string">"-clientside -digestalgorithm SHA-256 -extraoption KEY_ID=&lt;Key ID&gt; -extraoption KEY_ALGORITHM=1 -extraoption RESPONSE_FORMAT=BINARY -extraoption DETACHED_SIGNATURE=true -filetype PGP"</code></div>
+</div>
+</div><p local-id="43f48b3086fb">For more details on the command, see <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a>.</p><hr local-id="13655e10-5157-4952-ad15-906ad292f09b"><h2 local-id="5b6d21d8-f579-4c71-886a-7b1f9dde738a" id="SignwithRPMSignatures-SignanRPMPackage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Sign-an-RPM-Package"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign an RPM Package</span></h2><p local-id="183bd090-900e-465c-92c0-0c5de5337277">The standard RPM tool is used to request signing by using the <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> and <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>.</p><p local-id="e7e6f82f0381">With the RPM tool configured to use SignWrapper-GPG, sign a package using the standard <code>rpm</code> command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">rpm --addsign release.rpm</code></div>
+</div>
+</div><p local-id="5336e70a-c4b3-426f-9bca-5b0187ac5f3f">When the command completes, the <code>release.rpm</code> contains the embedded signature.</p><hr local-id="20bc4716-0ec6-4bd0-a22e-dcda1880f78b"><h2 local-id="cc08ccd9-1799-4bf5-8eb7-5fe70293203f" id="SignwithRPMSignatures-VerifytheSignature" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-Verify-the-Signature"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify the Signature</span></h2><p local-id="245acaf2-7464-475d-b335-a7373da04664">Use the RPM tool to verify the signature. </p><p local-id="6fcdc256978b">If the Signer's public key is not yet imported into RPM, import it first:</p><ol start="1" local-id="e8ff2fb4f375"><li local-id="bb30bd9c3f5e"><p local-id="7fdc04fba03f">Save the public key (from <code>PGPPUBLICKEY</code> property) as <code>signer001-pub.asc</code>.</p></li><li local-id="7674edfe-b560-418a-9a13-8f863bf20776"><p local-id="533fec8f-9e65-4335-b393-5d3a7f74f6df"><span class="inline-comment-marker" data-ref="8736c6b6-5a01-42b3-93ee-b47302bdace8">Import the key to RPM:</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ rpm --</code><code class="keyword">import</code><code class="plain"> signer001-pub.asc</code></div>
+</div>
+</div></li></ol><p local-id="d681041c-ea4c-4ce2-89f3-b9ab4d058b28">Verify the signature:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ rpm --checksig release.rpm</code></div>
+</div>
+</div><p local-id="71e4e5a8-5fee-4ac2-aa24-9a2f67f37689">To retrieve more details about the signature, including the algorithm and key ID:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">rpm -qp --qf </code><code class="string">'%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{(none)}|}|\n'</code><code class="plain"> release.rpm</code></div>
+</div>
+</div><hr local-id="f5869d93-b587-4c54-b5cc-c37c58546915"><h2 local-id="b6100573a8ab" id="SignwithRPMSignatures-(Optional)DistributethePublicKey" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-1771831298_SignwithRPMSignatures-(Optional)-Distribute-the-Public-Key"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">(Optional) Distribute the Public Key</span></h2><p local-id="f12e9b6eee60">The OpenPGP public key can be published to online key servers or distributed to clients by other means.</p>
+<nav id="ht-post-nav">
+        <a href="Sign_with_OpenPGP_Signatures.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with OpenPGP Signatures</span>
+        </a>
+
+        <a href="Sign_with_Debsigs.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with Debsigs</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

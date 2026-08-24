@@ -1,0 +1,228 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371001251">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:51.996+0000">
+    <meta name="exp-page-id" content="371001251">
+    <meta name="exp-page-title" content="Sign with JAR Signatures">
+    <meta name="exp-page-version" content="15">
+    <meta name="exp-page-scroll-page-id" content="b3710b0fb9114d4f8891ca4563220df6">
+    <meta name="exp-page-created" content="2022-11-10T07:57:28.000+0000">
+    <meta name="exp-page-last-modified" content="2026-07-02T12:34:42.953+0000">
+    <meta name="exp-page-labels" content="command">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Sign with JAR Signatures</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="755f98b74b22ae2f47344f0af4621512d67b9cbfb43d55c660a7e1b0ef3dd30a"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignwithJARSignatures-top" pageid="371001251" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371001251" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Sign_with_JAR_Signatures.html" target="_self" aria-current="page">Sign with JAR Signatures</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-32fa9eb997242201198b376429c8385aa408aac711c14d3e0ffe4df0cbb41e1f"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Sign with JAR Signatures</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="255487f0-9904-4796-8ea1-cf940750ad8c">The Java Archive (JAR) format is used to package Java applications and libraries. SignServer signs JAR files using the <a href="JArchive_Signer.html" data-linked-resource-id="370999873" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999873" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999873/JArchive+Signer" data-scroll-link-target-source-id="370999873">JArchive Signer</a>, which embeds a CMS signature directly into the archive. Signed JAR files can optionally include a timestamp from a TSA using the <a shape="rect" href="https://tools.ietf.org/html/rfc3161" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://tools.ietf.org/html/rfc3161" data-scroll-link-local="false">RFC 3161</a> format.</p><hr local-id="ff1768452a54"><h2 local-id="c2697147-5090-4724-a252-acc0d881c399" id="SignwithJARSignatures-JArchiveSignerConfigurationProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-JArchive-Signer-Configuration-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">JArchive Signer Configuration Properties</span></h2><p local-id="3319c7007295">The following properties are most relevant when configuring the JArchive Signer:</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="ee508c0d-d17e-4c0d-a149-7b65c7daad42" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 26.0526%;"><col span="1" style="width: 73.9474%;"></colgroup><thead><tr data-local-id="c66d6617-13b7-4888-b92d-d2fa8ec8b71c"><th colspan="1" rowspan="1" data-local-id="2e6cf5b0-be87-46b4-a3ee-70757cf0402c" class="confluenceTh"><p local-id="6360c59e776b"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="7d260f3a-ad16-4d82-8f26-a7aaf78ec340" class="confluenceTh"><p local-id="bd28fd650f15"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="38eadd73-72c3-430b-8ace-cec657551a17"><td colspan="1" rowspan="1" data-local-id="d06fd629-45b3-411f-af59-04b9722d3589" class="confluenceTd"><p local-id="958e965aa1ec"><code>DIGESTALGORITHM</code></p></td><td colspan="1" rowspan="1" data-local-id="dce3df44-85d5-4ae2-a666-688ee6e410f5" class="confluenceTd"><p local-id="62995e237904">Algorithm for the digest of the file entries and the manifest. Example: <code>SHA-256</code></p></td></tr><tr data-local-id="d9486b56-c055-4c21-a780-082fe7bb1cd0"><td colspan="1" rowspan="1" data-local-id="d0f94fcd-88e5-4010-b80d-2de1cdb91663" class="confluenceTd"><p local-id="de27cfdb2490"><code>KEEPSIGNATURE</code></p></td><td colspan="1" rowspan="1" data-local-id="cc54cd1f-be92-40c5-8115-e253c728a395" class="confluenceTd"><p local-id="42f3c15da5a1">Set to <code>true</code> to preserve any existing signature files in the JAR.</p></td></tr><tr data-local-id="0cfd4ea0-24e2-44e3-8962-88c36dd514a0"><td colspan="1" rowspan="1" data-local-id="2ea164f5-259b-469c-adfa-0de7d3fc0a86" class="confluenceTd"><p local-id="45b89a1322e0"><code>REPLACESIGNATURE</code></p></td><td colspan="1" rowspan="1" data-local-id="85b6d1dc-8c2c-43c7-bfd2-da69f0ab8a48" class="confluenceTd"><p local-id="75508b35a5ee">Set to <code>true</code> to overwrite an existing signature with the same name instead of failing with an error.</p></td></tr><tr data-local-id="e1adf00e-ed8a-4bdc-9ce7-6f5541e10db7"><td colspan="1" rowspan="1" data-local-id="b4f080c2-77f0-486f-8c3a-ab958c97a837" class="confluenceTd"><p local-id="b261471e1f48"><code>SIGNATUREALGORITHM</code></p></td><td colspan="1" rowspan="1" data-local-id="f5ae3300-3a0e-4b6d-ac33-1a2fd74e5292" class="confluenceTd"><p local-id="2d9681c51be0">The algorithm used to sign the data. Example: <code>SHA256withRSA</code></p></td></tr><tr data-local-id="41524798-713a-4a3e-87da-88e3344fad4f"><td colspan="1" rowspan="1" data-local-id="d50ad5f9-68e4-40c5-8134-134ddd565240" class="confluenceTd"><p local-id="cd6574660905"><code>SIGNATURE_NAME_TYPE</code></p></td><td colspan="1" rowspan="1" data-local-id="4ad23d4a-2499-4ded-8b50-b99555ab7f68" class="confluenceTd"><p local-id="67e4ccae734b">The source of the signature name. <code>VALUE</code> uses the value of <code>SIGNATURE_NAME_VALUE</code>. <code>KEYALIAS</code> uses the alias of the signing key. </p><p local-id="b4b22c3d38f1">Example: <code>KEYALIAS</code>.</p></td></tr><tr data-local-id="9d50d29b-2d40-4bfd-8aac-f349a5c63cba"><td colspan="1" rowspan="1" data-local-id="b3ad264d-4f99-42ef-ace1-6d7cf52308a4" class="confluenceTd"><p local-id="0e28ca914b35"><code>TSA_URL</code></p></td><td colspan="1" rowspan="1" data-local-id="cab8edce-f2b1-458b-9973-f77556ea80a5" class="confluenceTd"><p local-id="5d1c58b82289">URL of an external TSA to use for timestamping. Example: <code>https://tsa.example.com/authenticode</code></p></td></tr><tr data-local-id="39b77a6f-bea8-4056-8f6f-b52901910fa2"><td colspan="1" rowspan="1" data-local-id="c4aa6abf-8174-4641-bf6e-e7e8c9d6cd8a" class="confluenceTd"><p local-id="c9e23afa2950"><code>TSA_WORKER</code></p></td><td colspan="1" rowspan="1" data-local-id="9e3038fd-6411-4eb7-b18c-994f9ec9e8c7" class="confluenceTd"><p local-id="6f85e3688ec0">Worker ID or name of an internal timestamp Signer within the same SignServer instance. Example: <code>TimeStampSigner1</code></p></td></tr><tr data-local-id="1686aea6-7d15-44f9-b551-e4f7b2e38de0"><td colspan="1" rowspan="1" data-local-id="687f43f5-0be4-4f9a-9384-ea02eaa734b3" class="confluenceTd"><p local-id="b0860bb5438d"><code>ZIPALIGN</code></p></td><td colspan="1" rowspan="1" data-local-id="048e10c7-d811-4f01-bdc8-3a603a96c8be" class="confluenceTd"><p local-id="583c8ae33412">Set to <code>true</code> to align each file entry's data to a 4-byte offset. Use this for Android apps.</p></td></tr></tbody></table></div><p local-id="5c03357cc701">For all available properties, see <a href="JArchive_Signer.html" data-linked-resource-id="370999873" data-linked-resource-version="11" data-linked-resource-type="page" data-scroll-target-source-id="370999873" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999873/JArchive+Signer" data-scroll-link-target-source-id="370999873">JArchive Signer</a>.</p><hr local-id="26a65a49-cd47-4f21-ad5e-eabd55b16f39"><h2 local-id="72d3edd2-5686-42c6-91e4-b8c03158dc01" id="SignwithJARSignatures-SetuptheJARSigner" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Set-up-the-JAR-Signer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Set up the JAR Signer</span></h2><h3 local-id="04202faa1fdb" id="SignwithJARSignatures-Step1–AddandConfiguretheSigner" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Step-1-–-Add-and-Configure-the-Signer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 1 – Add and Configure the Signer</span></h3><ol start="1" local-id="6bd868a5-19e0-4fbf-8d2f-75ea1d60a5b9"><li local-id="ccd43910-3eea-4c4b-8020-0bb4f8eca678"><p local-id="d0e5ff39-2f63-4c29-92d4-592417db12db">Open the <a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a>, and go to the <a href="Workers_Page.html" data-linked-resource-id="371000522" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="371000522" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000522/Workers+Page" data-scroll-link-target-source-id="371000522">Workers</a> page.</p></li><li local-id="3244e0bbd495"><p local-id="014b7440bc4a">Click <strong>Add</strong>, and select <strong>From Template</strong>.</p></li><li local-id="99020229-a8dd-4a50-9045-aedb7d1093ea"><p local-id="fc022713-1ec9-4c40-bbc8-16b47b6ec3f0">Choose <strong>jarchive_signer.properties,</strong> and click <strong>Next</strong>.</p></li><li local-id="cf225ee4-6820-4d6e-bf9a-07140df67332"><p local-id="38653bee1b64">Click<strong> Apply</strong>.</p></li><li local-id="cb327292-1b5a-4713-8d00-fe122623dd11"><p local-id="4c6bc03220f1">Select the Worker named <strong>JArchiveSigner</strong> in the list.</p></li><li local-id="a32d92ea-037b-4a45-b37e-9c5752fab9f7"><p local-id="0c41e60d2408">Click the <strong>Configuration</strong> tab and update the following properties:</p><ul local-id="e79ac81f-977a-4e3e-8b69-8b119b792e68"><li local-id="b5965ebb-8ac2-4afe-bc4b-a16d18665f45"><p local-id="6a318c4d7c11"><strong>NAME</strong>: Set a descriptive name for the worker.</p></li><li local-id="88564be9-5765-4b89-afd1-f307373aa803"><p local-id="b8ee332511bf"><strong>CRYPTOTOKEN</strong>: set this to match your Crypto Token.</p></li></ul></li><li local-id="e5bb7525-9f9f-46d1-9e43-6d732452810a"><p local-id="f1423edf7d9e">Click the <strong>Status Summary</strong> tab, and click <strong>Renew Key</strong>.</p></li><li local-id="69e68eb9-b1a0-4558-ab38-30204cb16ca8"><p local-id="d96d95d7dc76">Select a <strong>Key Algorithm</strong> (for example, <code>RSA</code>) and <strong>Key Specification</strong> (for example, <code>2048</code>), and click <strong>Generate</strong>.</p></li></ol><h3 local-id="6f047c7940ea" id="SignwithJARSignatures-Step2-GenerateaCSRandInstalltheCertificate" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Step-2---Generate-a-CSR-and-Install-the-Certificate"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 2 - Generate a CSR and Install the Certificate</span></h3><ol start="1" local-id="88bccd46-b7f4-48b3-941e-defe84a6b690"><li local-id="b6eb261c-ad01-4e8e-91c6-8a896c3ae2f9"><p local-id="fa6ae7b7d7ed">Choose a <strong>Signature Algorithm</strong>, for example, <code>SHA256withRSA</code>, and enter a <strong>Subject DN</strong> for the certificate, for example, <code>CN=JAR Signer Test,O=My Company,C=SE</code>.</p></li><li local-id="e3dcd98d-5358-4d62-9ddc-7aaeaf40abe8"><p local-id="5f62bddd03f8">Click <strong>Generate</strong>.</p></li><li local-id="ad717924-47f2-4014-95fb-627ce23b3b0b"><p local-id="64a9a31f6dd0">Click <strong>Download</strong> and save the CSR file.</p></li><li local-id="a3bd91a7-2c74-47d0-a7cb-d2567780bc25"><p local-id="779d438eea53">Submit the CSR to your Certificate Authority. The CA returns the signed certificate and any CA certificates in the chain.</p></li></ol><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="bcf73139cd0c">Before installing certificates in a production system, verify the authorization settings of the Signer. Once certificates are installed, the Signer is fully active and ready to accept signing requests.</p></div></div><ol start="5" local-id="e32fccad-c931-4f16-8565-fb37b536a048"><li local-id="9110e855-c880-45c7-bf47-12b2c7dd7b47"><p local-id="dd2e103f657b">Click <strong>Install certificates</strong>. Provide the Signer certificate first, then add the issuing CA certificates in order. Click <strong>Add</strong> for each certificate to append it to the chain.</p></li><li local-id="bcf80603-3455-4351-baba-ddfb5bf0bf77"><p local-id="73d379189bdd">When all certificates are in the correct order, click <strong>Install</strong>.</p></li><li local-id="0091ab81-3c06-4e42-99cd-49081ab2b4c3"><p local-id="945e47b4f2ba">Confirm the Worker status is <strong>Active</strong>. If not, check the <strong>Status Summary</strong> page for errors.</p></li></ol><hr local-id="bedf075bf800"><h2 local-id="554d760e4333" id="SignwithJARSignatures-SignaJARFile" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Sign-a-JAR-File"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign a JAR File</span></h2><p local-id="ca7d6a8079bb">You can submit files for signing using the <a href="Client_Web.html" data-linked-resource-id="1924661694" data-linked-resource-version="25" data-linked-resource-type="page" data-scroll-target-source-id="1924661694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1924661694/Client+Web" data-scroll-link-target-source-id="1924661694">Client Web</a>, the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>, or <a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564"><u>HTTP clients like cURL</u></a>.</p><p local-id="c476c1624e68">You can download a sample JAR to test with: <a shape="rect" href="https://download.primekey.com/docs/SignServer-Enterprise-Cloud/latest/sample_signing_files/helloworld.jar" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://download.primekey.com/docs/SignServer-Enterprise-Cloud/latest/sample_signing_files/helloworld.jar" data-scroll-link-local="false">helloworld.jar</a></p><h3 local-id="feebcd166bb1" id="SignwithJARSignatures-UsingClientWeb" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Using-Client-Web"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using Client Web</span></h3><ol start="1" local-id="52cd2ca9-a3e7-45cd-9a53-f0d79ba337cc"><li local-id="a23fd4cf-e293-4f22-855c-28bfd003c7a5"><p local-id="ff8ac1e982f1">Go to the SignServer<strong> </strong>Client Web <strong>Generic </strong>page.</p></li><li local-id="c705e3fd-9f84-470b-ac92-ea71200cc794"><p local-id="aab849645625">Scroll down to the <strong>Generic Signing Or Validation by File Upload</strong> section and specify your Worker name, for example <code>JArchiveSigner</code>, in the <strong>Worker</strong> <strong>Name</strong> field.</p></li><li local-id="b6b7302b-d312-466e-a171-c9e9e8d2191d"><p local-id="b0dd23ee9a4f">Click <strong>Choose File</strong>, select your JAR file, for example, <code>helloworld.jar</code>.</p></li><li local-id="df0252fe2270"><p local-id="fedb15f65212">Click <strong>Submit</strong>.</p></li><li local-id="48b8e14b-c84b-40c0-b5ca-60be6c069d0e"><p local-id="d27ebe285dea">Save the returned signed JAR file.</p></li></ol><h3 local-id="be6b2304f9b8" id="SignwithJARSignatures-UsingSignClient" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Using-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using SignClient</span></h3><p local-id="ac1ed21de217">Send a signing request using the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625"><u>SignServer SignClient</u></a>:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin</code><code class="plain">/signclient</code><code class="plain"> signdocument -workername JArchiveSigner -infile helloworld.jar -outfile helloworldsigned.jar</code></div>
+</div>
+</div><p local-id="ac6b83b1a1c7">Where <code>workername</code> is your Worker name, <code>infile</code> is the path to the unsigned JAR, and <code>outfile</code> is where the signed JAR will be written.</p><h3 local-id="327b8d48a507" id="SignwithJARSignatures-UsingcURL" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Using-cURL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using cURL</span></h3><p local-id="fc5e3b541a66">Replace <code>http://localhost:8080/</code> with the address of your server or appliance:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl -F </code><code class="string">"workerName=JArchiveSigner"</code><code class="plain"> -F </code><code class="string">"file=@helloworld.jar"</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">  http:</code><code class="comments">//localhost:8080/signserver/process &gt; helloworld-signed.jar</code></div>
+</div>
+</div><hr local-id="00369fe1b423"><h2 local-id="5900c683-2b1a-4add-bbc1-8856142c99d4" id="SignwithJARSignatures-VerifytheSignature" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001251_SignwithJARSignatures-Verify-the-Signature"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify the Signature</span></h2><p local-id="8d57b1397e28">Use the <code>jarsigner</code> tool, included in the Java Development Kit (JDK), to verify a signed JAR file.</p><p local-id="bd704f7d-1908-4b22-859b-429a21765594">After installing the JDK, execute the command as a user, with the path to the signed file:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">jarsigner -verify -strict helloworld-signed.jar</code></div>
+</div>
+</div><p local-id="5ee5ade7-8641-4a8e-b974-2ff19c0ff100">To also display the signing certificates and additional details, add the <code>-verbose -certs</code> options:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">jarsigner -verify -strict -verbose -certs helloworld-signed.jar</code></div>
+</div>
+</div>
+<nav id="ht-post-nav">
+        <a href="Sign_Git_Commits.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign Git Commits</span>
+        </a>
+
+        <a href="Sign_with_Authenticode_Signatures.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with Authenticode Signatures</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

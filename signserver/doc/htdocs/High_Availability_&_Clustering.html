@@ -1,0 +1,212 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="2744057874">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:23:37.007+0000">
+    <meta name="exp-page-id" content="2744057874">
+    <meta name="exp-page-title" content="High Availability &amp; Clustering">
+    <meta name="exp-page-version" content="16">
+    <meta name="exp-page-scroll-page-id" content="eeb5db376ef721d37676b92e40fbedf1">
+    <meta name="exp-page-created" content="2026-05-22T12:53:56.467+0000">
+    <meta name="exp-page-last-modified" content="2026-07-08T08:32:38.697+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>High Availability &amp; Clustering</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="f5ed7aa498c239f5743e15c6c2e1bf4d51b615f4336721e3920ec73b829ec323"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="HighAvailability&amp;Clustering-top" pageid="2744057874" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=2744057874" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Introduction.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Introduction</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="High_Availability_&amp;_Clustering.html" target="_self" aria-current="page">High Availability &amp; Clustering</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-7beb550da845e181738d4ff33ec7fb33e0d8b22e6986fe50fe52060b001574a2"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">High Availability &amp; Clustering</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="f582636d90a1"><span class="inline-comment-marker" data-ref="1f38b143-a101-44b8-ae2e-b08c3884123a">To meet availability requirements, redundancy must be factored in to ensure that the failure of a single instance does not result in downtime, or if multiple nodes are wanted for performance reasons.</span></p><p local-id="6829d5218237">The following are two of the <span class="inline-comment-marker" data-ref="8c885540-4ea8-4a11-997d-d910fe9dc184">redundancy models that SignServer supports:</span></p><ul local-id="ca512f2d-dd00-42e3-bd43-0550205a8bfd"><li local-id="207c8428-54e3-4d05-b07e-d4818975498d"><p local-id="5ff583860532"><a href="High_Availability_&amp;_Clustering.html#HighAvailability&amp;Clustering-independent" data-scroll-target-source-id="2744057874" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2744057874/High+Availability+Clustering#src-2744057874_HighAvailability&amp;Clustering-independent" data-scroll-link-target-source-id="2744057874">Option 1: Completely Independent Nodes</a></p></li><li local-id="762d9e98-6af2-4c0d-8e15-d1b31259edde"><p local-id="d35d4d72926e"><a href="High_Availability_&amp;_Clustering.html#HighAvailability&amp;Clustering-shared" data-scroll-target-source-id="2744057874" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2744057874/High+Availability+Clustering#src-2744057874_HighAvailability&amp;Clustering-shared" data-scroll-link-target-source-id="2744057874">Option 2: Shared Database (Clustered Nodes)</a></p></li></ul><p local-id="4f1ea61183a0">The choice between the two approaches is essentially a trade-off between <strong>isolation and resilience</strong> with independent nodes versus <strong>operational convenience and performance</strong> with shared database clustering.</p><hr local-id="e6c30da2d7c6"><h2 local-id="726048660cdc" id="HighAvailability&amp;Clustering-LoadBalancingConsiderations" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-2744057874_HighAvailability&amp;Clustering-Load-Balancing-Considerations"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Load Balancing Considerations</span></h2><p local-id="d11072b6fc1e">A load balancer can be put in front of client APIs in order to distribute the load between the different nodes, or the clients, such as <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>, could be given the hostnames of multiple nodes it could choose to send the requests to.</p><p local-id="a4080364d201">When a load balancer is placed in front of multiple SignServer nodes:</p><ul local-id="b08f38f1-c6e6-4b4f-a27f-c622087819c8"><li local-id="e15cb03b-a338-495c-92e5-75b9f677c0dd"><p local-id="dc660d644603">Sticky web connections (session affinity) must be used, as <a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a> sessions can experience issues if routed to a different node mid-session. This does not apply to client signing APIs, which are stateless.</p></li><li local-id="ed1f2097-7be1-4c24-9563-4fbec54f6e72"><p local-id="b4daa2ce6557">All nodes must have access to the same Workers, ensuring any node can handle any incoming client request.</p></li><li local-id="8a198ca8-288e-486b-b625-06539dea2c70"><p local-id="9ca730ccab53">If nodes share key material, HSM clustering may also be required.</p></li></ul><p local-id="c592ddb21e55">Health monitoring, such as <a href="Health_Check.html" data-linked-resource-id="371000342" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="371000342" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000342/Health+Check" data-scroll-link-target-source-id="371000342">SignServer Health Check</a>, can be to monitor the system and is useful for clusters, as it can be checked by load balancers to determine if a node should be active in the cluster (healthy), or taken out of the cluster (unhealthy).</p><hr local-id="0a9f80b93070"><h2 local-id="f53ca7b01616" id="HighAvailability&amp;Clustering-Option1:CompletelyIndependentNodesindependent" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="HighAvailability&amp;Clustering-independent"></span><span class="confluence-anchor-link" id="independent"></span><span class="confluence-anchor-link" id="src-2744057874_HighAvailability&amp;Clustering-Option-1:-Completely-Independent-Nodes"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Option 1: Completely Independent Nodes</span></h2><p local-id="d831194305ef">Redundancy can be achieved by setting up multiple, completely independent SignServer nodes. That means each node has their own SignServer instance, database instance, and HSM.</p><p local-id="68e954f11406"><strong>Pros</strong></p><ul local-id="c5182e8f-fd80-45f2-955d-ef3c5079a8cc"><li local-id="0fbaf28f-c939-43d5-8b03-e0a79563dfbe"><p local-id="26d7b0b265af">Highest reliability and least risk of the issues of one node affecting others.</p></li><li local-id="896561ea-b409-45b9-83b7-2fc623907124"><p local-id="515dcce6b434">Simplest failure isolation.</p></li></ul><p local-id="27e942654dd8"><strong>Cons</strong></p><ul local-id="aaa7b692-8936-49ad-8702-8cb6e4607e5b"><li local-id="87dcc762-fa67-4671-940f-472b49157068"><p local-id="974ff62bd77e">Administrative overhead as the configuration must be applied individually on each node.</p></li><li local-id="440398fa-cad4-41ca-be4f-b18f045cb1a5"><p local-id="b97d6ace396d">Each node must have identical worker configurations available to clients.</p></li></ul><p local-id="a0420c87bde6"><strong>Key Considerations</strong></p><ul local-id="4fa3b89b-e969-45f9-bb07-836e9b185e08"><li local-id="1ad59cc3-1bbc-42c6-b59a-ac1b153e5d9a"><p local-id="fe0c3a2a67ff">For small deployments, manual <a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a> access per node is possible. For larger ones, applying the same Worker configurations across instances is preferred.</p></li></ul><h2 local-id="c2aa1b1f2036" id="HighAvailability&amp;Clustering-Option2:SharedDatabase(ClusteredNodes)shared" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="HighAvailability&amp;Clustering-shared"></span><span class="confluence-anchor-link" id="shared"></span><span class="confluence-anchor-link" id="src-2744057874_HighAvailability&amp;Clustering-Option-2:-Shared-Database-(Clustered-Nodes)"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Option 2: Shared Database (Clustered Nodes)</span></h2><p local-id="eb979c315561">Multiple SignServer nodes connect to the same highly available shared database and HSM. </p><p local-id="c977c0b37de9"><strong>Pros</strong></p><ul local-id="e764d699-05f9-4a5c-859b-f3946c09f7ff"><li local-id="8bd6f905-71b2-49dd-a96c-fa108809a521"><p local-id="5f9b419c77de">Key management operations only need to be performed once.</p></li><li local-id="0b6b29d6-18ce-4692-a9fc-f75be859e342"><p local-id="687149483521">Configuration is centrally stored and accessible from all nodes.</p></li><li local-id="93c752d8-2a2f-4254-9d0b-65941a48b41e"><p local-id="6e1b5b11c54f">Higher performance potential.</p></li></ul><p local-id="9edfa793a205"><strong>Cons</strong></p><ul local-id="75441ffc-ac3f-474f-a71d-d77a7ddfd795"><li local-id="2d29db18-5513-42bd-8c51-b9c584b49ece"><p local-id="b5d3d28d4f0b">A problem with the shared database or HSM can affect all nodes simultaneously.</p></li><li local-id="dda6b206-b903-4495-9150-baaf020e1eea"><p local-id="54b71c27a8a5">If automatic configuration reload is not set in the <a href="Deploy-time_Configuration.html" data-linked-resource-id="370999711" data-linked-resource-version="41" data-linked-resource-type="page" data-scroll-target-source-id="370999711" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999711/Deploy-time+Configuration" data-scroll-link-target-source-id="370999711">Deploy-time Configuration</a>, the configuration changes stored in the database are not automatically applied and a manual <strong>Reload from Database…</strong> must be triggered on each node.</p></li></ul><p local-id="d525c8ef9bf2"><strong>Key Considerations</strong></p><ul local-id="e0bb3f50-f4d4-4c6a-be4e-77a47850383b"><li local-id="14ee935e-e6de-4daf-a9ec-97669ff3890a"><p local-id="c634a2417dfb">Each instance connects to the same HSM slot/token, either through a remote Network HSM or a locally clustered/replicated HSM.</p></li><li local-id="81ecc27d-431d-4d7c-b7fd-b8edfb52744e"><p local-id="c8367db55a49">Sticky web connections are recommended when load balancing, as <a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a> sessions can experience issues if switched between nodes.</p></li><li local-id="58cf5c2e92b0"><p local-id="1540160140c7">It is important the node clocks remain synchronized to ensure consistency across distributed operations.  When automatic configuration reload is enabled, a maximum clock skew of 10 seconds is assumed, requiring all nodes to stay within this tolerance to maintain correctness and reliability. </p></li></ul><p local-id="841add70b78d">For special considerations when it comes to a shared database, see <a href="Supported_Databases.html#SupportedDatabases-Multiple-SignServer-Nodes-Sharing-the-Same-Database" data-linked-resource-id="2368307202" data-linked-resource-version="27" data-linked-resource-type="page" data-scroll-target-source-id="2368307202" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2368307202/Supported+Databases#src-2368307202_SupportedDatabases-Multiple-SignServer-Nodes-Sharing-the-Same-Database" data-scroll-link-target-source-id="2368307202">Supported Databases#Multiple-SignServer-Nodes-Sharing-the-Same-Database</a>.</p><hr local-id="9ad70697eab1"><h2 local-id="bd2e3ea8377d" id="HighAvailability&amp;Clustering-ComparisonSummary" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2744057874_HighAvailability&amp;Clustering-Comparison-Summary"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Comparison Summary</span></h2><div class="table-wrap"><table data-table-width="760" data-layout="default" data-local-id="262e4959-575b-4ab6-ae78-67ea82548c9f" class="confluenceTable" style=" width: 100%;"><thead><tr data-local-id="36d51822-e2c3-42a0-a493-e283cc1d53fb"><th colspan="1" rowspan="1" data-local-id="3f929ad9-76f6-4923-b9cf-84c40568923d" class="confluenceTh"><p local-id="3c8d81f4c295"></p></th><th colspan="1" rowspan="1" data-local-id="396052bc-8917-4a0b-8334-1bb4635f0d09" class="confluenceTh"><p local-id="895ee6289c56"><strong>Independent Nodes</strong></p></th><th colspan="1" rowspan="1" data-local-id="926a6549-399b-4012-af70-c36b5207fdcc" class="confluenceTh"><p local-id="816dfcb195bc"><strong>Shared Database Clustering</strong></p></th></tr></thead><tbody><tr data-local-id="308d1b09-3d28-4c85-891c-0e9cc74e3b0b"><td colspan="1" rowspan="1" data-local-id="ef000bc0-b2f1-48c2-9055-0656e4a5c062" class="confluenceTd"><p local-id="1a0db051e3a1"><strong>Performance</strong></p></td><td colspan="1" rowspan="1" data-local-id="168f6c75-49cc-442b-a295-d4dac57c1d96" class="confluenceTd"><p local-id="1c240b5bf83f">Standard</p></td><td colspan="1" rowspan="1" data-local-id="c7c61065-603a-460e-a6a2-900153f9c4ed" class="confluenceTd"><p local-id="b8046deadc6e"><span class="inline-comment-marker" data-ref="8ff9b1c1-94ce-4734-9a86-4e0530545def">Scalable (higher performance potential)</span></p></td></tr><tr data-local-id="1b22302b-82b1-4f8e-b0e6-da73d3f3e8a9"><td colspan="1" rowspan="1" data-local-id="b00a966e-dc55-47c7-b430-0eb547689b7c" class="confluenceTd"><p local-id="50bf7085f43d"><strong>Operational Overhead</strong></p></td><td colspan="1" rowspan="1" data-local-id="8a4943dc-3ab4-4874-8312-87879266de22" class="confluenceTd"><p local-id="ee4d3b4807fe">Higher (configuration applied per node)</p></td><td colspan="1" rowspan="1" data-local-id="63d44ca0-38f5-4c88-af4d-dd47fe1a0ab6" class="confluenceTd"><p local-id="eba47e2a1362">Lower (centralized configuration)</p></td></tr><tr data-local-id="bdc7252a-917d-4a84-ab9b-33c1d0cf1058"><td colspan="1" rowspan="1" data-local-id="532fc5f0-042a-4b8f-84a9-d14bd9b79e72" class="confluenceTd"><p local-id="d65aab58ff14"><strong>Configuration Propagation</strong></p></td><td colspan="1" rowspan="1" data-local-id="e7e8c6ba-b299-4669-86a2-e0f003c93a9a" class="confluenceTd"><p local-id="27d353295ea7">Manual per node</p></td><td colspan="1" rowspan="1" data-local-id="79233f12-ddb6-4e5e-b291-4dd9690b0465" class="confluenceTd"><p local-id="e8c028b1209d"><span class="inline-comment-marker" data-ref="68e968ed-9195-42e8-9400-9e377ae0db33">Automatic configuration reload (</span><span class="inline-comment-marker" data-ref="68e968ed-9195-42e8-9400-9e377ae0db33"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></span><span class="inline-comment-marker" data-ref="68e968ed-9195-42e8-9400-9e377ae0db33">) or manual reload per node</span></p></td></tr><tr data-local-id="cb98013a-4188-4120-aae7-3d54af897121"><td colspan="1" rowspan="1" data-local-id="d3c57e08-4862-4eb0-bd91-78af0cbd16f0" class="confluenceTd"><p local-id="c53c4831bd0c"><strong>HSM Setup</strong></p></td><td colspan="1" rowspan="1" data-local-id="48602d1d-3136-424d-9bf5-845d67e8fc2f" class="confluenceTd"><p local-id="89317801093b">One HSM per node</p></td><td colspan="1" rowspan="1" data-local-id="aa1e0137-5d64-4b3d-a405-bb5b5fd72f64" class="confluenceTd"><p local-id="e9364c657264">Shared or clustered HSM</p></td></tr><tr data-local-id="f4c93707-f0e5-4ded-a9d1-0bdf713aa09f"><td colspan="1" rowspan="1" data-local-id="3e215c1e-c389-4b33-97ab-05c9865ee3f8" class="confluenceTd"><p local-id="2addc8fc3e20"><strong>Fault Isolation</strong></p></td><td colspan="1" rowspan="1" data-local-id="8019a09c-ba1c-42c4-98d7-1375c0b238f2" class="confluenceTd"><p local-id="873c12f8b241">Higher</p></td><td colspan="1" rowspan="1" data-local-id="18aaf8f0-e072-4a3c-8222-e6375a921ebe" class="confluenceTd"><p local-id="058ae1031745">Lower (shared components are a common failure point)</p></td></tr></tbody></table></div>
+<nav id="ht-post-nav">
+        <a href="Supported_Algorithms.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Supported Algorithms</span>
+        </a>
+
+        <a href="Library_Manifest.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Library Manifest</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,244 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371001282">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:49.434+0000">
+    <meta name="exp-page-id" content="371001282">
+    <meta name="exp-page-title" content="Sign with OpenPGP Signatures">
+    <meta name="exp-page-version" content="32">
+    <meta name="exp-page-scroll-page-id" content="52387065430d8e940d934f028af1cbc3">
+    <meta name="exp-page-created" content="2022-12-19T15:01:32.000+0000">
+    <meta name="exp-page-last-modified" content="2026-07-02T12:33:19.779+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Sign with OpenPGP Signatures</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="b4d4cef8c8a41590a933c62f3ba9cf4399c67a3a839014e49c3b161789923da0"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignwithOpenPGPSignatures-top" pageid="371001282" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371001282" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Sign_with_OpenPGP_Signatures.html" target="_self" aria-current="page">Sign with OpenPGP Signatures</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-01983a55f1828a5e446f5e3c84ca836ec6a58cb7a7e144c10f31d6c042a38025"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Sign with OpenPGP Signatures</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="9f1e40b4-5301-4f79-8cbf-c34de0325523">SignServer supports OpenPGP and Debian package signing, allowing you to secure software release packages and repositories with code signing.</p><p local-id="88022fc7eeab">The <a href="OpenPGP_Signer.html" data-linked-resource-id="370999909" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999909" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999909/OpenPGP+Signer" data-scroll-link-target-source-id="370999909">OpenPGP Signer</a> signs arbitrary data and produces an OpenPGP detached signature in binary or ASCII armored form, or a cleartext signature. For more information on the OpenPGP format, refer to <a shape="rect" href="https://tools.ietf.org/html/rfc4880" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://tools.ietf.org/html/rfc4880" data-scroll-link-local="false">RFC 4880</a>. </p><p local-id="4ffd68022787">In addition to PGP signing for Debian software repositories, the <a href="Debian_Dpkg-sig_Signer.html" data-linked-resource-id="370999857" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="370999857" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999857/Debian+Dpkg-sig+Signer" data-scroll-link-target-source-id="370999857">Debian Dpkg-sig Signer</a> lets you sign individual Debian packages and adds the signature in the dpkg-sig format.</p><p local-id="fa672365-ab2e-4eee-abb1-f133814d1c4f">The <a href="OpenPGP_Signer.html" data-linked-resource-id="370999909" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999909" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999909/OpenPGP+Signer" data-scroll-link-target-source-id="370999909">OpenPGP Signer</a> and <a href="Debian_Dpkg-sig_Signer.html" data-linked-resource-id="370999857" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="370999857" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999857/Debian+Dpkg-sig+Signer" data-scroll-link-target-source-id="370999857">Debian Dpkg-sig Signer</a> use OpenPGP instead of X.509 certificates. The OpenPGP public key can instead be obtained from the Worker's status output. The Generate CSR functionality lets you add a user ID to the public key and store the result in the <code>PGPPUBLICKEY</code> Worker property. </p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="43e68ee0ea33">When using PGP with AWS CloudHSM or another HSM that does not store PKCS#11 certificate objects,<span class="inline-comment-marker" data-ref="90281f98-04e0-43a2-85ae-21016e5fc3ac"> use the </span><code><span class="inline-comment-marker" data-ref="90281f98-04e0-43a2-85ae-21016e5fc3ac">KEY_START_DATE.keyalias=YYYYMMDD</span></code><span class="inline-comment-marker" data-ref="90281f98-04e0-43a2-85ae-21016e5fc3ac"> Worker property with a fixed key creation date. F</span>or more information, see <a href="P11NG_Crypto_Token.html" data-linked-resource-id="371000135" data-linked-resource-version="34" data-linked-resource-type="page" data-scroll-target-source-id="371000135" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000135/P11NG+Crypto+Token" data-scroll-link-target-source-id="371000135">P11NG Crypto Token</a>.</p></div></div><hr local-id="a157c243fd68"><h2 local-id="4efa7c58b7ac" id="SignwithOpenPGPSignatures-Prerequisite:OpenPGPSignerConfigured" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-Prerequisite:-OpenPGP-Signer-Configured"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="inline-comment-marker" data-ref="d31b489a-0305-4051-8926-67f1529e51bd">Prerequisite: OpenPGP Signer Configured</span></span></h2><p local-id="797de1e81e36">In the <a href="Set_up_OpenPGP_Signer.html" data-linked-resource-id="370999530" data-linked-resource-version="24" data-linked-resource-type="page" data-scroll-target-source-id="370999530" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999530/Set+up+OpenPGP+Signer" data-scroll-link-target-source-id="370999530">Set up OpenPGP Signer</a>, follow the steps to configure the Signer, add User ID and certification, and generate a revocation certificate.</p><hr local-id="289cab5d2d5f"><h2 local-id="f6916f11-24ba-4636-9b40-d712d0d33c31" id="SignwithOpenPGPSignatures-SignaFile" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-Sign-a-File"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign a File</span></h2><p local-id="e689d7b0ae94">You can submit files for signing using the <a href="Client_Web.html" data-linked-resource-id="1924661694" data-linked-resource-version="25" data-linked-resource-type="page" data-scroll-target-source-id="1924661694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1924661694/Client+Web" data-scroll-link-target-source-id="1924661694">Client Web</a>, the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>, or <a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564">HTTP clients like cURL or wget</a>.</p><h3 local-id="feebcd166bb1" id="SignwithOpenPGPSignatures-UsingClientWeb" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-Using-Client-Web"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using Client Web</span></h3><p local-id="ce96557d613b">To upload a file and create a detached signature for it, perform these steps:</p><ol start="1" local-id="e4be60c2-bf54-4961-9b44-f946a05bc62d"><li local-id="34ccd919-e0e2-429a-8bbd-bb373dba9914"><p local-id="bdf66baaeb05">Go to the SignServer<strong> </strong>Client Web <strong>Generic </strong>page.</p></li><li local-id="6ff045b6-32b8-49a8-8a02-421e949dcf95"><p local-id="dc3d37edfa05">Scroll down to the <strong>Generic Signing Or Validation by File Upload</strong> section and specify <code>OpenPGPSigner</code> in the Worker <strong>Name</strong> field.</p></li><li local-id="cd71c847-c541-40f9-8d60-e6db748ec19f"><p local-id="3276f062a380">Click <strong>Choose File</strong>, select the file to create a detached signature for, such as <code>release.zip</code>.&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p><span class="confluence-embedded-file-wrapper image-left-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-left scroll-document-image" width="500" src="_scroll_external/attachments/b341520764b0/screenshot-from-2023-01-02-13-27-38.png"></span></li><li local-id="ddffd4c0-ce27-4a91-b3d7-6409eeb8c2c4"><p local-id="efaa68f7cc28">Click <strong>Submit</strong>.</p></li><li local-id="3481486374c5"><p local-id="79dacb388d53">Store the resulting signature file, for example, <code>release.zip.asc</code>.</p></li></ol><h3 local-id="be6b2304f9b8" id="SignwithOpenPGPSignatures-UsingSignClient" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-Using-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using SignClient</span></h3><p local-id="5acafd07-be21-4acf-876c-2a402b428768">Send a signing request using the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignServer SignClient</a>:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin</code><code class="plain">/signclient</code><code class="plain"> signdocument -workername OpenPGPSigner -infile release.zip -outfile release.zip.asc</code></div>
+</div>
+</div><p local-id="56ffaa64-797f-4bbb-9c1c-77b99b496baa">Where <code>workername</code> is the name of the Worker, <code>infile</code> is the path to the file to sign, and <code>outfile</code> is where the signature will be written to.</p><h3 local-id="b4c4b103601b" id="SignwithOpenPGPSignatures-UsingcURL" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-Using-cURL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using cURL</span></h3><p local-id="681ccfee192a">Replace <code>http://localhost:8080/ </code>with the address of your server or appliance:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl -F </code><code class="string">"workerName=OpenPGPSigner"</code><code class="plain"> -F </code><code class="string">"file=@firmware.bin"</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/process &gt; firmware.sig</code></div>
+</div>
+</div><p local-id="acea1cf06eca">The following shows the HTTP traffic between the browser and the server, and the resulting signature file response:</p><div class="contentLayout2">
+<div class="columnLayout two-equal" data-layout="two-equal">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-title-macro scroll-title-macro-type-figure"><span class="confluence-embedded-file-wrapper image-left-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-left scroll-document-image scroll-titled-element scroll-title-macro-link-target" alt="Showing the HTTP traffic between the browser and the server" width="499" src="_scroll_external/attachments/8f44e7379535/browserserver-http-traffic.jpg" id="14f79bc1-423a-4898-9748-01083df2b9da"></span><div class="scroll-title-macro-caption scroll-title-after">Showing the HTTP traffic between the browser and the server</div></div></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-title-macro scroll-title-macro-type-figure"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image scroll-titled-element scroll-title-macro-link-target" alt="Response with the signature file" width="500" src="_scroll_external/attachments/6f9e33dc466b/response-with-signature-file.jpg" id="56154b69-b616-4789-b8b2-ff8f5c004d0c"></span><div class="scroll-title-macro-caption scroll-title-after">Response with the signature file</div></div></div>
+</div>
+</div>
+</div>
+<hr local-id="c04e17a53fca"><h2 local-id="2eef13f4-6cdf-4fb0-8281-35ebfbbb6789" id="SignwithOpenPGPSignatures-VerifytheSignature" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-Verify-the-Signature"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify the Signature</span></h2><p local-id="38f8288e-f503-4131-802f-e89836ee7197">You can verify the signature using any OpenPGP tool. This example uses the OpenPGP tool <a shape="rect" href="https://gnupg.org/" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://gnupg.org/" data-scroll-link-local="false">GnuPG</a>.</p><p local-id="28d48df22db4">If the public key for the Signer is not yet in your GnuPG keyring, import it first:</p><ol start="1" local-id="ec31031c-cc0e-4918-bb67-38ca5d8365cf"><li local-id="ea71e460-ef00-4c95-b7fc-c7e4bb499873"><p local-id="736111648e92">Save the public key (from the <code>PGPPUBLICKEY</code> property) as <code>signer001-pub.asc</code>.</p></li><li local-id="0f9c055a-8ed9-4828-aef2-3b772ab1a640"><p local-id="7cec1627237e">Import the key:</p></li></ol><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ gpg --</code><code class="keyword">import</code><code class="plain"> signer001-pub.asc</code></div>
+</div>
+</div><p local-id="59a7ee779e47">Then verify the signature:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ gpg --verify release.zip.asc release.zip</code></div>
+</div>
+</div><p local-id="4494ce0a-31ff-43dd-8f23-6e1dfd38f10c">Run the following to verify the signature using GnuPG:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">$ gpg --verify release.zip.asc release.zip</code></div>
+</div>
+</div><h2 local-id="ff0f513705f4" id="SignwithOpenPGPSignatures-(Optional)DistributethePublicKey" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001282_SignwithOpenPGPSignatures-(Optional)-Distribute-the-Public-Key"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">(Optional) Distribute the Public Key</span></h2><p local-id="80a8d692f5d0">The OpenPGP public key can be published to online key servers or distributed to clients by other means.</p>
+<nav id="ht-post-nav">
+        <a href="Sign_with_CMS_Signatures.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with CMS Signatures</span>
+        </a>
+
+        <a href="Sign_with_RPM_Signatures.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with RPM Signatures</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

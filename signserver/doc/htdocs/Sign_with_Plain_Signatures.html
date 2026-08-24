@@ -1,0 +1,244 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="371001205">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:47.708+0000">
+    <meta name="exp-page-id" content="371001205">
+    <meta name="exp-page-title" content="Sign with Plain Signatures">
+    <meta name="exp-page-version" content="26">
+    <meta name="exp-page-scroll-page-id" content="2f58fd333536d4b0383d363898f25d2d">
+    <meta name="exp-page-created" content="2022-09-28T12:28:44.000+0000">
+    <meta name="exp-page-last-modified" content="2026-07-02T12:32:09.367+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Sign with Plain Signatures</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="156bd505aecb66058144194a789ebf1cc206b9088f5f0c91ebf4d8d740f17dda"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignwithPlainSignatures-top" pageid="371001205" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=371001205" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Sign_with_Plain_Signatures.html" target="_self" aria-current="page">Sign with Plain Signatures</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-0a7b162d145f7ef7367de71c60bf7971884683209221eee10f1d81fe00166bd2"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Sign with Plain Signatures</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        
+<p local-id="1c47a5131433">A plain signature is the simplest signature format in SignServer. The plain signature is the raw output bytes of the chosen signature algorithm, with no embedded certificate, public key, or original document.</p><p local-id="d3439d4856fb">This makes it useful in situations where the receiver already has access to the certificate or public key through another channel. For example, in firmware on embedded devices, it could be that a list of trusted certificates or public keys is pre-installed, or as part of a custom protocol that encodes certificates separately.</p><hr local-id="30f9735d9f24"><h2 local-id="cd42c16e-a3be-4312-adc6-9004014442cc" id="SignwithPlainSignatures-PlainSignerConfigurationProperties" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Plain-Signer-Configuration-Properties"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Plain Signer Configuration Properties</span></h2><p local-id="38ec6ecc168b">The following property is the most relevant when configuring the Plain Signer:</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="8459c1d7-e9e7-47ec-9fc6-b3052d1f65ab" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 23.9474%;"><col span="1" style="width: 76.0526%;"></colgroup><thead><tr data-local-id="e5f595ae-253c-4b09-a4e2-904eb6385119"><th colspan="1" rowspan="1" data-local-id="4d2b5f15-0ff0-4837-a8e7-8d33f9a73c8d" class="confluenceTh"><p local-id="fb2971e1afed"><strong>Property</strong></p></th><th colspan="1" rowspan="1" data-local-id="426595f6-adf4-48e9-bdb4-b14e7fab798a" class="confluenceTh"><p local-id="a155a477b143"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="e7f2076c-3b73-438d-9b1a-b9ff49bf1b6f"><td colspan="1" rowspan="1" data-local-id="08f34f39-29c4-4072-9e9a-5f25d1925e3d" class="confluenceTd"><p local-id="8947bb1a175f"><code>SIGNATUREALGORITHM</code></p></td><td colspan="1" rowspan="1" data-local-id="c87f4a61-ac83-45c5-8591-d03caeec4819" class="confluenceTd"><p local-id="4ffb73d0125c">The algorithm used to sign the data. Example: <code>SHA256withRSA</code></p></td></tr></tbody></table></div><p local-id="1a816a402f4e">For all available properties, see <a href="Plain_Signer.html" data-linked-resource-id="370999934" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="370999934" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999934/Plain+Signer" data-scroll-link-target-source-id="370999934">Plain Signer</a>.</p><p local-id="41e97eaa5b10">Supported signature algorithms include:</p><ul local-id="7b47f8ac-cc2a-4001-a65b-4ed868ca3099"><li local-id="1b04a896-12b9-450e-af90-875c54eb5a04"><p local-id="4bf466832a56"><strong>ECDSA: </strong><code>SHAxWithECDSA</code>, <code>NONEwithECDSA</code></p></li><li local-id="c9bdc45a-5938-4a23-93f2-475c9575edcc"><p local-id="5a78bca3e74f"><strong>RSA: </strong><code>SHAxWithRSA</code> (RSASSA-PKCS1_v1.5), <code>SHAxWithRSAandMGF1</code> (RSASSA-PSS), <code>NONEwithRSA</code></p></li><li local-id="eb990eb3-096d-47ba-8ec6-3e060cae95ba"><p local-id="218fe6c3fd19"><strong>ML-DSA: </strong>Pure <code>ML-DSA-&lt;44/65/87&gt;</code>, <code>ML-DSA-EXTERNAL-MU</code></p></li><li local-id="fcff3364-7993-47b2-b080-890e44984557"><p local-id="718214394e15"><strong>SLH-DSA: </strong>Pure <code>SLH-DSA &lt;SHA2/SHAKE&gt;</code> (hash function) <code>&lt;128/192/256&gt;</code><em> </em>(size specification)<code> &lt;f/s&gt;</code><em> </em>(fast or small)</p></li></ul><p local-id="31793ddfdb03">Supported cryptographic hash functions can be SHA-1, SHA-256,&nbsp;SHA-384, and SHA-512, and so on. For information on using the&nbsp;signature algorithms <code>NONEwithRSA</code> and <code>NONEwithECDSA</code>, refer to <a href="Client-side_Hashing.html" data-linked-resource-id="371000790" data-linked-resource-version="46" data-linked-resource-type="page" data-scroll-target-source-id="371000790" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000790/Client-side+Hashing" data-scroll-link-target-source-id="371000790">Client-side Hashing</a> and <a shape="rect" href="https://tools.ietf.org/html/rfc3447" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://tools.ietf.org/html/rfc3447" data-scroll-link-local="false">RFC#3447</a>.</p><p local-id="6ab9d23255df">For more supported algorithms, see <a href="Plain_Signer_Algorithm_Support.html" data-linked-resource-id="370999938" data-linked-resource-version="14" data-linked-resource-type="page" data-scroll-target-source-id="370999938" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999938/Plain+Signer+Algorithm+Support" data-scroll-link-target-source-id="370999938">Plain Signer Algorithm Support</a>. </p><hr local-id="64eb4ee59104"><h2 local-id="6cbcfcf9-662e-4d8c-9375-676f22a9741f" id="SignwithPlainSignatures-SetupthePlainSignerAdding_a_Plain_Signer_bookmark12" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="SignwithPlainSignatures-Adding_a_Plain_Signer"></span><span class="confluence-anchor-link" id="Adding_a_Plain_Signer"></span><span class="confluence-anchor-link" id="SignwithPlainSignatures-_bookmark12"></span><span class="confluence-anchor-link" id="_bookmark12"></span><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Set-up-the-Plain-Signer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Set up the Plain Signer </span></h2><h3 local-id="c80b54810318" id="SignwithPlainSignatures-Step1-AddandConfiguretheSigner" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Step-1---Add-and-Configure-the-Signer"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 1 - Add and Configure the Signer</span></h3><ol start="1" local-id="182c0249-cc65-4aaa-a54f-609e01bc32f0"><li local-id="b66929b7-8f58-4a7e-8e6d-317b89db55e1"><p local-id="7ea11ab1-c6b1-4a4f-aec1-a1ad8be9a1a0">Open the <a href="Admin_Web.html" data-linked-resource-id="371000514" data-linked-resource-version="15" data-linked-resource-type="page" data-scroll-target-source-id="371000514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000514/Admin+Web" data-scroll-link-target-source-id="371000514">Admin Web</a>, and go to the <a href="Workers_Page.html" data-linked-resource-id="371000522" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="371000522" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000522/Workers+Page" data-scroll-link-target-source-id="371000522">Workers</a> page.</p></li><li local-id="a178091799bc"><p local-id="efb7b6c7981d">Click <strong>Add</strong> and select <strong>From Template</strong>.</p></li><li local-id="f97db582-784f-4784-875a-76702f1e8cee"><p local-id="201945e2-e19f-4677-b3e4-ef25e0676199">Choose <strong>plainsigner.properties</strong> and click <strong>Next</strong>.</p></li><li local-id="c12f43fb-91f9-4f68-ae13-e793abbcee75"><p local-id="be707e6a-f7ec-4a57-8bec-f0ab11e4e4f2">Click<strong> Apply</strong>.</p></li><li local-id="9573893cee3f"><p local-id="537797367df1">Select the Worker named <strong>PlainSigner</strong> from the list.</p></li><li local-id="29e647b9-52ad-4e64-8d1f-cb374532266b"><p local-id="5cf78204-25a3-4c87-a786-95ef2c7b0201">Click the <strong>Configuration</strong> tab and update the following properties:</p><ul local-id="9433b8f4-3372-4146-acfe-8cbe485a27a5"><li local-id="732c5817-b47f-45bf-832f-58ab22434f50"><p local-id="e79c12b9-29a7-41da-b99c-9d8ca62bf2ac"><strong>NAME</strong>: Set a descriptive name for the worker.</p></li><li local-id="275557e7ac7f"><p local-id="1c50a0e55244"><strong>CRYPTOTOKEN</strong>: set this to match your Crypto Token.</p></li></ul></li><li local-id="a7fa0fa3bc3f"><p local-id="880429a20906">Click the <strong>Status Summary</strong> tab, and click <strong>Renew Key</strong>. </p></li><li local-id="5be6ad0f4f19"><p local-id="a5cf18296121">Select a <strong>Key Algorithm</strong> (for example, <code>RSA</code>) and <strong>Key Specification</strong> (for example, <code>2048</code>), and click <strong>Generate</strong>.</p></li></ol><h3 local-id="0925d64512bb" id="SignwithPlainSignatures-Step2–GenerateaCSRandInstalltheCertificate" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Step-2-–-Generate-a-CSR-and-Install-the-Certificate"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 2 – Generate a CSR and Install the Certificate</span></h3><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="48cbc8b7-48b1-4995-8300-116743b969ba">If you set the <code>NOCERTIFICATES</code> property to <code>true</code>,  the Plain Signer does not require a certificate. Skip this step and confirm the Worker status is <strong>Active</strong>.</p></div></div><ol start="1" local-id="a086b8ec470e"><li local-id="3b357b9581c2"><p local-id="40a41968-b861-48c3-8bd5-5b969b504a2f"><span class="inline-comment-marker" data-ref="516979a2-b3c4-4b17-b6f1-6ba0810d791d">Click </span><strong><span class="inline-comment-marker" data-ref="516979a2-b3c4-4b17-b6f1-6ba0810d791d">Generate CSR</span></strong><span class="inline-comment-marker" data-ref="516979a2-b3c4-4b17-b6f1-6ba0810d791d">. </span></p></li><li local-id="1ec417d84d1b"><p local-id="77de8e4135cc">Choose a Signature Algorithm, such as <code>SHA256withRSA</code>, and enter a <strong>Subject DN</strong> for the new certificate such as <code>CN=Plain Signer Test,O=My Company, C=SE</code>.</p></li><li local-id="c4fd11c97fa4"><p local-id="d16cc127b8e9">Click<strong> Generate</strong>.</p></li><li local-id="fb410cdc-e6d9-4e5c-b52c-9b3a2b2a0251"><p local-id="08378e11-7095-4426-893c-0cc594582c36">Click <strong>Download</strong> and save the CSR file.</p></li><li local-id="72f6eb57-e77a-4ab4-997f-140b90bc11f5"><p local-id="f0fbdd7f-d132-4d6c-b796-0bc82d99587f">Submit the CSR to your Certificate Authority. The CA returns the signed certificate and any CA certificates in the chain.</p></li></ol><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="5a171e26-1b97-443b-93cf-d1fb2aa4db03">Before installing certificates in a production system, verify the Signer authorization settings. Once certificates are installed, the signer will be fully functional and ready to receive requests.</p></div></div><ol start="6" local-id="a2c2201b3cbd"><li local-id="e7b6e5f8d175"><p local-id="912f418e-e826-4d80-ade6-cb93a7870144">Click <strong>Install certificates</strong>. Provide the Signer certificate first and then add the issuing CA certificates in order. </p></li><li local-id="cb545d3c94cf"><p local-id="5b2f2dc702ea">Click <strong>Add</strong> to append the certificates to the chain.</p></li><li local-id="460b3a5a-5ec5-49c2-be8b-3d426b784389"><p local-id="87be89ee-1f75-4ca2-815c-846490b1f012">When all certificates have been added in the correct order, click <strong>Install</strong>.</p></li><li local-id="dc360bc3-0baf-40c2-a23e-af378843632b"><p local-id="e63fc347-41a1-4b70-819a-d5e9ee714b1e">Confirm the Worker status is <strong>Active</strong>. If not, check the <strong>Status Summary</strong> page for errors.</p></li></ol><hr local-id="5fc1799d4cbf"><h2 local-id="c8e7f5d6-d978-4f6d-9e88-fc4f1dc7dde0" id="SignwithPlainSignatures-SignaFile" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Sign-a-File"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign a File</span></h2><p local-id="ef81bab36bf3">You can submit files for signing using the <a href="Client_Web.html" data-linked-resource-id="1924661694" data-linked-resource-version="25" data-linked-resource-type="page" data-scroll-target-source-id="1924661694" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1924661694/Client+Web" data-scroll-link-target-source-id="1924661694">Client Web</a>, the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>, or <a href="Client_HTTP_Interface.html" data-linked-resource-id="370999564" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="370999564" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999564/Client+HTTP+Interface" data-scroll-link-target-source-id="370999564"><u>HTTP clients like cURL</u></a>.</p><h3 local-id="feebcd166bb1" id="SignwithPlainSignatures-UsingClientWeb" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Using-Client-Web"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using Client Web</span></h3><p local-id="350a78214ee4">To upload a file and create a detached signature for it, perform these steps:</p><ol start="1" local-id="c95e60b7-3632-4102-8664-20c8814d7a50"><li local-id="19a63ef9-ec41-414d-85ed-e05ea894183a"><p local-id="cbd2c0f96c11">Go to the SignServer<strong> </strong>Client Web <strong>Generic </strong>page.</p></li><li local-id="6e4eaf78-7395-4e28-a73d-6bca0a8e4823"><p local-id="d76363714883">Scroll down to the <strong>Generic Signing Or Validation by File Upload</strong> section and specify <code>PlainSigner</code> in the Worker <strong>Name</strong> field.</p></li><li local-id="06185486-7d06-4738-ad5a-ac5cc41b3a72"><p local-id="a44b53311f1f">Click <strong>Choose File</strong>, select the file to create a detached signature for, such as <code>release.zip</code>.&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p><span class="confluence-embedded-file-wrapper image-left-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-left scroll-document-image" width="500" src="_scroll_external/attachments/c857268703ee/screenshot-from-2023-01-02-13-27-38.png"></span></li><li local-id="9fcee151-1fb4-441d-be3c-e96e99478b97"><p local-id="b24ffea8f668">Click <strong>Submit</strong>.</p></li><li local-id="585eea96-b5a6-489a-9ae8-697b5da7b146"><p local-id="b395ebe63e68">Save the resulting signature file, for example, <code>release.zip.asc</code>.</p></li></ol><h3 local-id="be6b2304f9b8" id="SignwithPlainSignatures-UsingSignClient" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Using-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using SignClient</span></h3><p local-id="c280a3bf6f2b">Send a signing request using the <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625"><u>SignServer SignClient</u></a>:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin/signclient signdocument -workername PlainSigner1 -infile firmware.bin -outfile firmware.sig</code></div>
+</div>
+</div><p local-id="dab63dcbf6cd">Where <code>workername</code> is the name of the Worker, <code>infile</code> is the path to the file to sign, and <code>outfile</code> is where the signature will be written to.</p><p local-id="34e671c5b3ff">The SignClient can also run (as User)&nbsp;in batch mode, which processes all files in an input directory across parallel threads and writes results to an output directory:</p><div class="scroll-code scroll-highlighted-code-block" data-language="none" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">bin/signclient signdocument -workername PlainSigner1 -indir ./input/ -removefromindir -outdir ./output/ -threads </code><code class="value">10</code></div>
+</div>
+</div><h3 local-id="cc40279a-45d3-4fcb-aa67-41da82010055" id="SignwithPlainSignatures-UsingcURL" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Using-cURL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Using cURL </span></h3><p local-id="ab66ab5e-c3c5-4c02-be61-9e33dea710dc">Replace <code>http://localhost:8080/</code> with the address of your server or appliance:</p><div class="scroll-code scroll-highlighted-code-block" data-language="bash" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">curl -F </code><code class="string">"workerName=PlainSigner1"</code><code class="plain"> -F </code><code class="string">"file=@firmware.bin"</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">http:</code><code class="plain">//localhost</code><code class="plain">:8080</code><code class="plain">/signserver/process</code><code class="plain"> &gt; firmware.sig</code></div>
+</div>
+</div><p local-id="c83afb4f29ef">The following shows the HTTP traffic between the browser and the server, and the resulting signature file response:</p><div class="contentLayout2">
+<div class="columnLayout two-equal" data-layout="two-equal">
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-title-macro scroll-title-macro-type-figure"><span class="confluence-embedded-file-wrapper image-left-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-left scroll-document-image scroll-titled-element scroll-title-macro-link-target" alt="Showing the HTTP traffic between the browser and the server" width="500" src="_scroll_external/attachments/d947f93bb93f/browserserver-http-traffic.jpg" id="0ce1a323-94f4-4378-a4c2-241e6c50e8de"></span><div class="scroll-title-macro-caption scroll-title-after">Showing the HTTP traffic between the browser and the server</div></div></div>
+</div>
+<div class="cell normal" data-type="normal">
+<div class="innerCell">
+<div class="scroll-title-macro scroll-title-macro-type-figure"><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size scroll-fabric-editor-image"><img class="confluence-embedded-image image-center scroll-document-image scroll-titled-element scroll-title-macro-link-target" alt="Response with the signature file" width="500" src="_scroll_external/attachments/8fb9d32871e5/response-with-signature-file.jpg" id="b61d0d04-8ce8-40fd-b74b-e74525593062"></span><div class="scroll-title-macro-caption scroll-title-after">Response with the signature file</div></div></div>
+</div>
+</div>
+</div>
+<hr local-id="aa8176744f86"><h2 local-id="7fd4dcbf-36f0-48fe-a5ba-e154458c1aba" id="SignwithPlainSignatures-VerifytheSignature" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-371001205_SignwithPlainSignatures-Verify-the-Signature"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify the Signature</span></h2><p local-id="b1e6fdda-4cf1-4787-9a6d-607d26754576">Use the OpenSSL <code>dgst</code> command to verify a plain signature. The command requires the public key, so it must first be extracted from the certificate:</p><div class="scroll-code scroll-highlighted-code-block" data-language="none" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">openssl x509 -in plainsigner1.pem -noout -pubkey &gt; plainsigner1-pubkey.pem </code></div>
+<div class="line"><code class="plain">openssl dgst -signature firmware.bin.sig -verify plainsigner1-pubkey.pem -sha1</code></div>
+<div class="line"><code class="plain">    firmware.bin </code></div>
+<div class="line"><code class="plain">Verified OK</code></div>
+</div>
+</div><p local-id="029addee-de01-4c4b-851f-d647708484cd">Replace&nbsp;<code>-sha1</code> with the digest algorithm used as part of the signature process, for example <code>-sha256</code>.</p>
+<nav id="ht-post-nav">
+        <a href="Code_Signing.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Code Signing</span>
+        </a>
+
+        <a href="Sign_with_CMS_Signatures.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with CMS Signatures</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

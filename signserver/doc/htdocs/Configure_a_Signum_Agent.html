@@ -1,0 +1,408 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="2723807518">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:24:04.566+0000">
+    <meta name="exp-page-id" content="2723807518">
+    <meta name="exp-page-title" content="Configure a Signum Agent">
+    <meta name="exp-page-version" content="6">
+    <meta name="exp-page-scroll-page-id" content="96504d5796087c782b1d9a4417bc8f76">
+    <meta name="exp-page-created" content="2026-05-19T13:05:31.444+0000">
+    <meta name="exp-page-last-modified" content="2026-06-10T09:33:18.320+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Configure a Signum Agent</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="da48c8d76cd6a2e1c9bcd2268b62b171c2b5a550e506ef14fd12c6178bd82c50"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="ConfigureaSignumAgent-top" pageid="2723807518" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=2723807518" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Client_Interfaces.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Client Interfaces</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Signum_Agents.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Signum Agents</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Configure_a_Signum_Agent.html" target="_self" aria-current="page">Configure a Signum Agent</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-cf0a4ae4886f552a2c694abb9384dd2ad02ab5a6dccf5aa1a8fda842516cfadb"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Configure a Signum Agent</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="90745a12703d"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span> </p><p local-id="cc92c016b965">The Signum Agents use native code signing tools to access certificates stored in SignServer.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="3eab6b0fa72f">The current version of the Signum Agents supports only configuring one backend at a time. You can set up either SignServer or Signum as the backend, but not both simultaneously. For more information, see <a shape="rect" href="https://docs.keyfactor.com/signum/latest/signum-agents" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://docs.keyfactor.com/signum/latest/signum-agents" data-scroll-link-local="false">Signum Agents</a>.</p></div></div><h2 local-id="92d293f7-f345-439d-8c27-ca0a290dd8e8" id="ConfigureaSignumAgent-Prerequisites" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Prerequisites"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Prerequisites</span></h2><ul local-id="8078844861b1"><li local-id="b2313909eba6"><p local-id="6670356568b4">SignServer Enterprise 7.4.0 or later</p></li></ul><h2 local-id="1732bc6e-5c90-47a0-bcd2-f5b4bc96467f" id="ConfigureaSignumAgent-Step1-InstallAgent(ServiceUtilAgent)" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Step-1---Install-Agent-(ServiceUtilAgent)"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 1 - Install Agent (ServiceUtilAgent)</span></h2><p local-id="d7b412ed8403">For access to the Agent download, contact Keyfactor.</p><ol start="1" local-id="4a7eeba3-fdb1-4a09-862d-5475c23ff66f"><li local-id="47a38fe8-c5e3-44b7-8e34-fe775a6adc9f"><p local-id="fee1d151a552">Download the .pkg package.</p></li><li local-id="44f829dc-1c11-49f3-a195-e1bb475c6dfb"><p local-id="96f49f1e10c9">Click on the package to install.</p></li><li local-id="c7b2206b-0de1-4136-b410-af713c99f8f0"><p local-id="25e694b39be8">Follow the installer guide to complete the Agent installation.</p></li></ol><p local-id="bbc2081c45f8">After completing the installation, three new tools are available:</p><ul local-id="c99f5a34-effe-4339-a69f-e7bdfb781499"><li local-id="4beb89e2-26f3-4b1a-8df2-0e9e5290a143"><p local-id="3b3f60d5a704">SignumUtil</p></li><li local-id="4b602c0e-b7f7-4d13-9dc0-da0d6e824622"><p local-id="f57bdcbcc66a">SignumService</p></li><li local-id="b4183af1-9163-4927-be7d-81b28d99873d"><p local-id="c9106fcbc5e6">SignumAgent App</p></li></ul><p local-id="08675f515044">The Signum Agent is set up and configured using the signum-util tool. The tool is added to <em>/usr/local/bin/signum-util</em> by the installer and added to the users path.</p><p local-id="dfa68b507ed9">Follow the next steps to set up your SignServer workers for this new integration and to set up SignumUtil to use your SignServer as the backend for signing.</p><h2 local-id="0c1e0008-b02b-4f11-902a-c6f4f22f85d1" id="ConfigureaSignumAgent-Step2-SetupSignServerWorker" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Step-2---Set-up-SignServer-Worker"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 2 - Set up SignServer Worker</span></h2><p local-id="480cad30855c">To use your SignServer instance with the Agent, you need to have already set up a Crypto Worker. For more information, see <a href="Crypto_Tokens__HSMs_&amp;_Keystores.html" data-linked-resource-id="371000119" data-linked-resource-version="46" data-linked-resource-type="page" data-scroll-target-source-id="371000119" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/371000119/Crypto+Tokens+HSMs+Keystores" data-scroll-link-target-source-id="371000119">Crypto Tokens: HSMs &amp; Keystores</a>.</p><h3 local-id="19b19647-cfc1-4694-9d86-40aa65fb62ed" id="ConfigureaSignumAgent-WorkerConfigurationworker-config" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="ConfigureaSignumAgent-worker-config"></span><span class="confluence-anchor-link" id="worker-config"></span><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Worker-Configuration"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Worker Configuration</span></h3><p local-id="9bd994cb5af0"><a href="Plain_Signer.html" data-linked-resource-id="370999934" data-linked-resource-version="26" data-linked-resource-type="page" data-scroll-target-source-id="370999934" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999934/Plain+Signer" data-scroll-link-target-source-id="370999934">Plain Signer</a> configured in SignServer to process the request made through SignumUtil.</p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="663d9109df4d">The Agent supports signing operations only with a Plain Signer configured in SignServer. Use of any other worker type is not supported in this workflow.</p></div></div><p local-id="717a61ad18fa">For the configuration to work with the SignumUtil:</p><ol start="1" local-id="21a1fc9c-4534-482b-9979-6d6d165df789"><li local-id="601091d5-7a06-418e-b15d-8fc5c726c42f"><p local-id="cbe49c1e8f6e">Set <code>CLIENT_VISIBLE=true</code> to let the Agent access only the workers set up for use with SignumUtil.</p></li><li local-id="75d1c024-de46-496c-8747-efd46d603085"><p local-id="af6fd3417e30">Set <code>CLIENTSIDEHASHING=true</code> to sign with the Agent.</p></li></ol><p local-id="e9f1f1c2ca38">In the example, the CryptoWorker is configured from our PlainSigner template using a P12 CryptoToken and NOAUTH:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">WORKERGENID1.CLIENT_VISIBLE=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP12</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ACCEPTED_HASH_DIGEST_ALGORITHMS=SHA-</code><code class="value">256</code><code class="plain">,SHA-</code><code class="value">384</code><code class="plain">,SHA-</code><code class="value">512</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DISABLEKEYUSAGECOUNTER=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">WORKERGENID1.AUTHTYPE=NOAUTH</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CLIENTSIDEHASHING=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=code00001</code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=PlainSigner</code></div>
+</div>
+</div><p local-id="639a7cc08835">The preferred configuration for authentication for production environments is to use ClientCert as AuthType in your worker. See <a href="Configure_Client_Certificate_Authentication_and_Authorization.html" data-linked-resource-id="370999449" data-linked-resource-version="9" data-linked-resource-type="page" data-scroll-target-source-id="370999449" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999449/Configure+Client+Certificate+Authentication+and+Authorization" data-scroll-link-target-source-id="370999449">Configure Client Certificate Authentication and Authorization</a>.</p><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="7a6e68bc935b">Multiple PlainSigners can be configured for signing with different certificates or keys. However, setting up several PlainSigners with different configurations but pointing to same certificate can result in unexpected behavior and is not recommended.</p></div></div><h2 local-id="65358682-4233-459e-b8a5-a1dc717ae8a8" id="ConfigureaSignumAgent-Step3-SetupSignumAgent" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Step-3---Set-up-Signum-Agent"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 3 - Set up Signum Agent</span></h2><p local-id="160c0124091d">To use the Agent, the SignumUtil needs to be configured to connect to your SignServer deployment. </p><h3 local-id="f485df44-0958-40a6-8f78-45baa18c887a" id="ConfigureaSignumAgent-macOSAgentConfiguration" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-macOS-Agent-Configuration"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">macOS Agent Configuration</span></h3><p local-id="9cca26d6bae2">The setup for SignServer configuration is done with the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signum-util signserversetup --certificate /home/path/to/my/cert --hostname localhost:</code><code class="value">443</code></div>
+</div>
+</div><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="88daf3455339">SignumUtil needs to have permissions to the path where your certificate is stored.</p></div></div><p local-id="7842c0d96435">Example of a successful setup:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util signserversetup -c /tmp/dss10_client1.p12 -h localhost:</code><code class="value">443</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">SignServer Test completed, able to connect to instance [localhost:</code><code class="value">443</code><code class="plain">] with certificate [/tmp/dss10_client1.p12].</code></div>
+<div class="line"><code class="plain">New configuration saved successfully, some changes to system settings might require restarting SignumService.</code></div>
+<div class="line"><code class="plain">Please run [signum-util service --restart], [systemctl restart SignumService] or equivalent with appropiate permissions.</code></div>
+</div>
+</div><p local-id="583b8e06038b">Check the setup by running the <code>show</code> command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util show                                                      </code></div>
+<div class="line"><code class="plain">Signum SignServer stored configuration.</code></div>
+<div class="line"><code class="plain">   certificate=/tmp/dss10_client1.p12</code></div>
+<div class="line"><code class="plain">   hostname=localhost:</code><code class="value">443</code></div>
+<div class="line"><code class="plain">   loglevel=NONE</code></div>
+</div>
+</div><p local-id="1dbcd52e74c5">You can also retest the configuration:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util test</code></div>
+<div class="line"><code class="plain">SignServer Test completed, able to connect to instance [localhost:</code><code class="value">443</code><code class="plain">] with certificate [/tmp/dss10_client1.p12].</code></div>
+</div>
+</div><h3 local-id="d2dda2cfb266" id="ConfigureaSignumAgent-LinuxAgentConfiguration" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Linux-Agent-Configuration"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Linux Agent Configuration</span></h3><p local-id="d731ca96ddb3">By default, the Signum Linux Agent expects a setup with Signum as the backend. Therefore, if you try to set the Agent to connect to SignServer, you get the following error:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">User configuration saved as SignServer but SignumService configured to use Signum</code></div>
+<div class="line"><code class="plain">Please run [signum-util service --backend SIGNSERVER -r] with appropriate permissions.</code></div>
+</div>
+</div><p local-id="cf9e317c76d9">To set up SignServer as the backend, run:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">sudo signum-util service --backend SIGNSERVER -r</code></div>
+<div class="line"><code class="plain">Service Settings saved successfully.</code></div>
+<div class="line"><code class="plain">Service Settings reloaded successfully.</code></div>
+<div class="line"><code class="plain">Configuration updated and SignumService restarted successfully.</code></div>
+</div>
+</div><p local-id="bc0fbab5c3f8">The setup for SignServer configuration is done with the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signum-util signserversetup --certificate /home/path/to/my/cert --hostname localhost:</code><code class="value">443</code></div>
+</div>
+</div><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="07cfa5c96547">Make sure the SignumUtil has permissions to the path where your certificate is stored.</p></div></div><p local-id="ff14ca109439">Example of a successful setup:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util signserversetup -c /tmp/dss10_client1.p12 -h localhost:</code><code class="value">443</code><code class="plain"> </code></div>
+<div class="line"><code class="plain">SignServer Test completed, able to connect to instance [localhost:</code><code class="value">443</code><code class="plain">] with certificate [/tmp/dss10_client1.p12].</code></div>
+<div class="line"><code class="plain">New configuration saved successfully, some changes to system settings might require restarting SignumService.</code></div>
+<div class="line"><code class="plain">Please run [signum-util service --restart], [systemctl restart SignumService] or equivalent with appropiate permissions.</code></div>
+</div>
+</div><p local-id="17904ba76761">Check the setup by running the <code>show</code> command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util show                                                      </code></div>
+<div class="line"><code class="plain">Signum SignServer stored configuration.</code></div>
+<div class="line"><code class="plain">   certificate=/tmp/dss10_client1.p12</code></div>
+<div class="line"><code class="plain">   hostname=localhost:</code><code class="value">443</code></div>
+<div class="line"><code class="plain">   loglevel=NONE</code></div>
+</div>
+</div><p local-id="681c9d3c12d8">You can also retest the configuration:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util test</code></div>
+<div class="line"><code class="plain">SignServer Test completed, able to connect to instance [localhost:</code><code class="value">443</code><code class="plain">] with certificate [/tmp/dss10_client1.p12].</code></div>
+</div>
+</div><h2 local-id="d5cb639c86e3" id="ConfigureaSignumAgent-Step4-UsingSignum" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Step-4---Using-Signum"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Step 4 - Using Signum</span></h2><p local-id="1cb84641dcec">The <code>listcertificates</code> command returns the certificates that the user is authorized to access and that are configured in SignServer for use with the Signum Agent. For more information, see the <code>CLIENT_VISIBLE</code> setting in the <a href="Configure_a_Signum_Agent.html#ConfigureaSignumAgent-worker-config" data-scroll-target-source-id="2723807518" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/2723807518/Configure+a+Signum+Agent#src-2723807518_ConfigureaSignumAgent-worker-config" data-scroll-link-target-source-id="2723807518">Worker Configuration</a>.</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">signum-util listcertificates</code></div>
+<div class="line"><code class="plain">Subject CN     : code00001</code></div>
+<div class="line"><code class="plain">    Issuer CN      : DSS Root CA </code><code class="value">10</code></div>
+<div class="line"><code class="plain">    Valid Until    : </code><code class="value">2036</code><code class="plain">-</code><code class="value">02</code><code class="plain">-</code><code class="value">27</code></div>
+<div class="line"><code class="plain">    Valid From     : </code><code class="value">2016</code><code class="plain">-</code><code class="value">03</code><code class="plain">-</code><code class="value">03</code></div>
+<div class="line"><code class="plain">    Thumbprint     : 0A9861B55542C065E68DBA15AA106C6C02095A2B</code></div>
+</div>
+</div><p local-id="523e7df4b518">In the example, the response includes only one certificate, reflecting the SignServer configuration above that grants the user access to a single signing certificate with SignumUtil:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util keychain --add                                         </code></div>
+<div class="line"><code class="plain">Existing Signum certificates where successfully removed from the KeyChain</code></div>
+<div class="line"><code class="plain">Certificate with alias [code00001] and ID [</code><code class="value">1</code><code class="plain">] was added successfully to the KeyChain</code></div>
+</div>
+</div><p local-id="c4aefcace9a8">After running the <code>--add</code> command, check that the certificate was added successfully by running the following:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% sc_auth identities</code></div>
+<div class="line"><code class="plain">SmartCard: com.keyfactor.signum.token:</code><code class="value">1</code></div>
+<div class="line"><code class="plain">Unpaired identities:</code></div>
+<div class="line"><code class="plain">9DB1491F4933493C083F3CFE5E25AC3D10C0EB1E    code00001</code></div>
+</div>
+</div><hr local-id="3b2337b32edb"><h2 local-id="64fcb76f-3220-4d2f-8b14-d89d2ee98102" id="ConfigureaSignumAgent-LinuxExample:SignUsingOpenSSL" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Linux-Example:-Sign-Using-OpenSSL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Linux Example: Sign Using OpenSSL</span></h2><p local-id="ca3c0c9c67d3">The following steps show how to sign a file using OpenSSL.</p><h3 local-id="6148ba2e-112a-4e4b-9e16-14d2f1a1e64b" id="ConfigureaSignumAgent-ConfigureOpenSSL" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Configure-OpenSSL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure OpenSSL</span></h3><ol start="1" local-id="d68f6463-00d5-4740-920d-3d8b1cdf2558"><li local-id="e3fb2ce0-b7bc-401e-aec0-60e6bf069055"><p local-id="00bfaea09c0c">Install the OpenSSL PKCS#11 module:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">sudo apt-get install libengine-pkcs11-openssl opensc</code></div>
+</div>
+</div></li><li local-id="75402c9f-5ce5-4548-bb68-503462794fc3"><p local-id="a1a925c022e6">Edit your OpenSSL config file by default in: /usr/lib/ssl/openssl.cnf and add the following entries:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">[openssl_init]</code></div>
+<div class="line"><code class="plain">engines=engine_section</code></div>
+<div class="line"><code class="plain">[engine_section]</code></div>
+<div class="line"><code class="plain">pkcs11 = pkcs11_section</code></div>
+<div class="line"><code class="plain">[pkcs11_section]</code></div>
+<div class="line"><code class="plain">engine_id = pkcs11</code></div>
+<div class="line"><code class="plain">MODULE_PATH = /usr/lib/libkeyfactorpkcs11.so</code></div>
+<div class="line"><code class="plain">init = </code><code class="value">0</code></div>
+</div>
+</div></li></ol><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="3c521d0d5047">The section <code>[openssl_init]</code> should already be in your openssl.cnf. Add the <code>engines=engine_section</code> there.</p></div></div><p local-id="50a17e4a4e67">This configuration adds Signum as a PKCS#11 interface to OpenSSL, allowing for crypto operations with key storing provided by Signum.</p><h3 local-id="e65a02d5-6f25-41d7-9c3b-d9c9dc5d0baa" id="ConfigureaSignumAgent-UseOpenSSL" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Use-OpenSSL"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Use OpenSSL</span></h3><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="e82a1abe093b">From OpenSSL 3.0.8, using a specific PKCS#11 URL is the required method for signing, rather than relying solely on a certificate thumbprint.</p></div></div><p local-id="7cdb839e8a6f">The pkcs11-tool can be used to view available key objects to the authenticated Signum user:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">pkcs11-tool --module /usr/lib/libsignumpkcs11.so -O</code></div>
+<div class="line"><code class="plain">Using slot </code><code class="value">0</code><code class="plain"> with a present token (</code><code class="value">0x11</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">Certificate Object; type = X.</code><code class="value">509</code><code class="plain"> cert</code></div>
+<div class="line"><code class="plain">  label:      0A9861B55542C065E68DBA15AA106C6C02095A2B - Certificate</code></div>
+<div class="line"><code class="plain">  subject:    DN: CN=code00001, OU=Testing, O=SignServer, C=SE</code></div>
+<div class="line"><code class="plain">  ID:         0a9861b55542c065e68dba15aa106c6c02095a2b</code></div>
+<div class="line"><code class="plain">  Unique ID:  </code></div>
+<div class="line"><code class="plain">Public Key Object; RSA </code><code class="value">2048</code><code class="plain"> bits</code></div>
+<div class="line"><code class="plain">  label:      0A9861B55542C065E68DBA15AA106C6C02095A2B - Public key</code></div>
+<div class="line"><code class="plain">  ID:         0a9861b55542c065e68dba15aa106c6c02095a2b</code></div>
+<div class="line"><code class="plain">  Usage:      encrypt, verify, wrap</code></div>
+<div class="line"><code class="plain">  Access:     none</code></div>
+<div class="line"><code class="plain">  Unique ID:  </code></div>
+<div class="line"><code class="plain">Private Key Object; RSA </code></div>
+<div class="line"><code class="plain">  label:      0A9861B55542C065E68DBA15AA106C6C02095A2B - Private key</code></div>
+<div class="line"><code class="plain">  ID:         0a9861b55542c065e68dba15aa106c6c02095a2b</code></div>
+<div class="line"><code class="plain">  Usage:      decrypt, sign, signRecover, unwrap</code></div>
+<div class="line"><code class="plain">  Access:     sensitive, extractable</code></div>
+<div class="line"><code class="plain">  Unique ID:  </code></div>
+</div>
+</div><p local-id="8f59056c9f4a">Use the p11tool to find the PKCS#11 URL:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">p11tool --list-tokens --provider /usr/lib/libsignumpkcs11.so</code></div>
+<div class="line"><code class="plain">Token </code><code class="value">0</code><code class="plain">:</code></div>
+<div class="line"><code class="plain">    URL: pkcs11:model=Linux;manufacturer=Keyfactor;serial=</code><code class="value">1</code><code class="plain">;token=Keyfactor </code><code class="keyword">for</code><code class="plain"> Linux</code></div>
+<div class="line"><code class="plain">    Label: Keyfactor </code><code class="keyword">for</code><code class="plain"> Linux</code></div>
+<div class="line"><code class="plain">    Type: Hardware token</code></div>
+<div class="line"><code class="plain">    Flags: uPIN uninitialized</code></div>
+<div class="line"><code class="plain">    Manufacturer: Keyfactor</code></div>
+<div class="line"><code class="plain">    Model: Linux</code></div>
+<div class="line"><code class="plain">    Serial: </code><code class="value">1</code></div>
+<div class="line"><code class="plain">    Module: </code></div>
+</div>
+</div><h3 local-id="0f7fddea06d4" id="ConfigureaSignumAgent-SigntheFile" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Sign-the-File"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign the File</span></h3><p local-id="b93f44f7e6d4">To create a test .txt file to sign, run the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">echo test &gt; test.txt</code></div>
+</div>
+</div><p local-id="6fcb150efbf0">To sign the .txt file, run the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">openssl dgst -engine pkcs11 \</code></div>
+<div class="line"><code class="plain">  -keyform engine \</code></div>
+<div class="line"><code class="plain">  -sha256 \</code></div>
+<div class="line"><code class="plain">  -sign </code><code class="string">"pkcs11:model=Linux;manufacturer=Keyfactor;serial=1;token=Keyfactor for Linux"</code><code class="plain"> \</code></div>
+<div class="line"><code class="plain">  -out signature.bin \</code></div>
+<div class="line"><code class="plain">  test.txt</code></div>
+</div>
+</div><p local-id="fefc086dc441">Expected result:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">Engine </code><code class="string">"pkcs11"</code><code class="plain"> set.</code></div>
+</div>
+</div><h3 local-id="853c00bd9daa" id="ConfigureaSignumAgent-Verify" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Verify"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify</span></h3><p local-id="bab57a9bdc10">To verify the signature, run the following command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">openssl dgst -engine pkcs11 -keyform engine -sha256 -verify </code><code class="string">"pkcs11:model=Linux;manufacturer=Keyfactor;serial=1;token=Keyfactor for Linux"</code><code class="plain"> -signature signature.bin &lt; test.txt</code></div>
+<div class="line"><code class="plain">Engine </code><code class="string">"pkcs11"</code><code class="plain"> set.</code></div>
+<div class="line"><code class="plain">Verified OK</code></div>
+</div>
+</div><hr local-id="654ebdd68373"><h2 local-id="0ecd121c9b21" id="ConfigureaSignumAgent-macOSExample:SignusingCodesign" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-macOS-Example:-Sign-using-Codesign"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">macOS Example: Sign using Codesign</span></h2><p local-id="aa1dec37a325">This example shows how to sign a file using Codesign.</p><p local-id="f2f22ffe175e">Create a sample file to sign:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">echo </code><code class="string">"Something cool to sign"</code><code class="plain"> &gt; file.sh</code></div>
+</div>
+</div><p local-id="b0beb271043a">The created file is then provided to Codesign together with the Thumbprint returned by the <code>listcertificates</code> command above. The output should return <code>file.sh: signed generic</code>, as seen in the following output:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% codesign -s 0A9861B55542C065E68DBA15AA106C6C02095A2B -v file.sh                                   </code></div>
+<div class="line"><code class="plain">file.sh: signed generic [file]</code></div>
+</div>
+</div><p local-id="3f5d62881c01">If an error is returned, check the output logs from Codesign for more information about where the error occurred.</p><p local-id="082a5805b31c">After signing the file, use the following command to check the signed file:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% codesign -dv --verbose file.sh</code></div>
+<div class="line"><code class="plain">/file.sh</code></div>
+<div class="line"><code class="plain">Identifier=file</code></div>
+<div class="line"><code class="plain">Format=generic</code></div>
+<div class="line"><code class="plain">CodeDirectory v=</code><code class="value">20100</code><code class="plain"> size=</code><code class="value">149</code><code class="plain"> flags=</code><code class="value">0x0</code><code class="plain">(none) hashes=</code><code class="value">1</code><code class="plain">+</code><code class="value">2</code><code class="plain"> location=embedded</code></div>
+<div class="line"><code class="plain">Signature size=</code><code class="value">3608</code></div>
+<div class="line"><code class="plain">Authority=code00001</code></div>
+<div class="line"><code class="plain">Authority=DSS Root CA </code><code class="value">10</code></div>
+<div class="line"><code class="plain">Signed Time=</code><code class="value">15</code><code class="plain"> Oct </code><code class="value">2025</code><code class="plain"> at </code><code class="value">08</code><code class="plain">:</code><code class="value">04</code><code class="plain">:</code><code class="value">00</code></div>
+<div class="line"><code class="plain">Info.plist=not bound</code></div>
+<div class="line"><code class="plain">TeamIdentifier=not set</code></div>
+<div class="line"><code class="plain">Sealed Resources=none</code></div>
+<div class="line"><code class="plain">Internal requirements count=</code><code class="value">1</code><code class="plain"> size=</code><code class="value">80</code></div>
+</div>
+</div><hr local-id="682bbb0ea6da"><h2 local-id="8d27f481-c39a-496c-82aa-19374a0fb802" id="ConfigureaSignumAgent-Troubleshooting" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2723807518_ConfigureaSignumAgent-Troubleshooting"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Troubleshooting</span></h2><p local-id="5bf7cea5b222">If any errors are returned during setup of signum-util or during signing, check the logs for more information about the root cause of the error.</p><p local-id="e5cec6105ca6">The output logs for signum-util can be found under <code>/tmp</code>.</p><p local-id="93de96b803e6">Some examples of issues that could cause the errors:</p><ul local-id="2f9cd5a6-78d2-4fdf-bedf-a2cd1a684c04"><li local-id="e5b11f02-d6bb-4cfe-9a86-f23828efbec5"><p local-id="289fb7cf5be6"><strong>Incorrect certificate url</strong>: The certificate provided needs to be in a location that signum-util has permissions for. If this is the cause of the error, the logs will state that signum-util does not have permission to the provided p12.</p></li></ul><p local-id="eba63a109510" style="margin-left: 30.0px;">The url provided during configuration must be only the base url. Do not include the scheme or the SignServer path.</p><ul local-id="46345b28-53cd-4cc3-bbe0-2570c027ab5a"><li local-id="278cb677-7ed1-4a56-9833-170c55c9a4c2"><p local-id="e0c74aceff6c"><strong>Incorrect certificate type</strong>: The chosen certificate for signing must be a signing certificate otherwise the signing fails. The command <code>signum-util listcertificates -v Detailed</code> shows the capabilities attribute:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">% signum-util listcertificates -v Detailed</code></div>
+<div class="line"><code class="plain">Subject CN     : code00001</code></div>
+<div class="line"><code class="plain">    Issuer CN      : DSS Root CA </code><code class="value">10</code></div>
+<div class="line"><code class="plain">    Valid Until    : </code><code class="value">2036</code><code class="plain">-</code><code class="value">02</code><code class="plain">-</code><code class="value">27</code></div>
+<div class="line"><code class="plain">    Valid From     : </code><code class="value">2016</code><code class="plain">-</code><code class="value">03</code><code class="plain">-</code><code class="value">03</code></div>
+<div class="line"><code class="plain">    Thumbprint     : 0A9861B55542C065E68DBA15AA106C6C02095A2B</code></div>
+<div class="line"><code class="plain">    Serial Number  : 0DE0C0DA115F264C</code></div>
+<div class="line"><code class="plain">    Key Algorithm  : RSA</code></div>
+<div class="line"><code class="plain">    Key Size       : </code><code class="value">2048</code><code class="plain"> bits</code></div>
+<div class="line"><code class="plain">    Signature Algo : sha256RSA</code></div>
+<div class="line"><code class="plain">    Capability     : Client Authentication (</code><code class="value">1.3</code><code class="plain">.</code><code class="value">6.1</code><code class="plain">.</code><code class="value">5.5</code><code class="plain">.</code><code class="value">7.3</code><code class="plain">.</code><code class="value">2</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">    Capability     : Code Signing (</code><code class="value">1.3</code><code class="plain">.</code><code class="value">6.1</code><code class="plain">.</code><code class="value">5.5</code><code class="plain">.</code><code class="value">7.3</code><code class="plain">.</code><code class="value">3</code><code class="plain">)</code></div>
+<div class="line"><code class="plain">    Capability     : Email Protection (</code><code class="value">1.3</code><code class="plain">.</code><code class="value">6.1</code><code class="plain">.</code><code class="value">5.5</code><code class="plain">.</code><code class="value">7.3</code><code class="plain">.</code><code class="value">4</code><code class="plain">)</code></div>
+</div>
+</div></li><li local-id="69b5a096-e9c7-4839-8d22-01c8620dac61"><p local-id="949506fc1777"><strong>Worker changes not reflected in the keychain</strong>: Changes on the Workers in SignServer are not directly reflected in the keychain. For every server change, execute a <code>listcertificates</code> and a <code>keychain --add</code> in the signum-util.</p></li><li local-id="9a8ff98f-eb4d-451b-ae04-f40de66b1b03"><p local-id="32d093954c6c"><strong>TLS issues with private PKI</strong>: When running a private PKI with the macOS Agent and SignServer, TLS issues can occur, indicated by the following error:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">The SSL connection could not be established, see inner exception.</code></div>
+<div class="line"><code class="plain">The remote certificate is invalid because of errors in the certificate chain: UntrustedRoot</code></div>
+</div>
+</div><p local-id="ed1311424fe3">To resolve, run the following command to add the certificate to the system keychain and ensure SSL validation:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychsudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain PrivatePKIManagementCA.cacert.pem</code></div>
+</div>
+</div></li></ul>
+<nav id="ht-post-nav">
+        <a href="Signum_Agents.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Signum Agents</span>
+        </a>
+
+        <a href="Client_Web.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Client Web</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

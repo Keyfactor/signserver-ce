@@ -1,0 +1,257 @@
+<!doctype html>
+
+<html class="no-js" lang="en" data-vp-page-id="2841510743">
+
+
+    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="_scroll_external/remote/6bf9cdd43395/download">
+
+    <!-- Primary Meta Tags -->
+    <meta name="exp-export-timestamp" content="2026-08-12T08:25:50.788+0000">
+    <meta name="exp-page-id" content="2841510743">
+    <meta name="exp-page-title" content="Sign with Debsigs">
+    <meta name="exp-page-version" content="17">
+    <meta name="exp-page-scroll-page-id" content="077af476441bd016d94dab7aa5adf940">
+    <meta name="exp-page-created" content="2026-06-17T07:17:46.370+0000">
+    <meta name="exp-page-last-modified" content="2026-07-01T13:20:40.318+0000">
+    <meta name="exp-page-labels" content="">
+    <meta name="exp-page-context-keys" content="">
+    <meta name="exp-space-key" content="SSDOCS">
+    <meta name="exp-space-title" content="SignServer Documentation">
+
+    <!-- Additional Meta Tags -->
+    <meta name="exp-document-id" content="371111034">
+    <meta name="exp-document-title" content="SignServer">
+    <meta name="exp-document-summary" content="A server-side digital signature software utilized for signing documents and code.">
+    <meta name="exp-version-status" content="in-progress">
+    <meta name="exp-version-id" content="8a3e757d15e64586aa644eaf0980f27a">
+    <meta name="exp-version-name" content="Working version">
+    <meta name="exp-version-description" content="">
+    <meta name="exp-version-date" content="2024-02-17 13:18:25">
+    <meta name="exp-variant-id" content="">
+    <meta name="exp-variant-name" content="">
+    <meta name="exp-variant-description" content="">
+    <meta name="exp-language-code" content="">
+    <meta name="exp-language-name" content="">
+
+    <link rel="stylesheet" href="css/app.css">
+
+
+
+<script id="search-worker" type="javascript/worker">
+    onmessage = function(event) {
+        // dispatch events to handling functions
+        var message = event.data;
+
+        if ((message.type === 'setup') && message.baseUrl) {
+            setup(message.baseUrl);
+        }
+
+        if (message.type === 'search-request') {
+            search(message.query);
+        }
+    }
+
+    var searchIndex;
+
+    function setup(baseUrl) {
+        importScripts(
+            baseUrl + 'js/lunr.js',
+            baseUrl + 'js/lunr-index.js',
+            baseUrl + 'js/lunr-data.js'
+        );
+        try {
+            // load lunr-extras if it exists, which contains language-specific files for languages other than english
+            importScripts(baseUrl + 'js/lunr-extras.js');
+        } catch (e) {}
+        searchIndex = lunr.Index.load(lunrIndex);
+    }
+
+    function search(query) {
+        var searchHits = searchIndex.search(query);
+        var results = searchHits.map(function (result) {
+            return lunrData.filter(function (d) {
+                return d.id === result.ref;
+            })[0]
+        });
+        postMessage({ type: 'search-results', results: results, query: query });
+    }
+</script>
+    <title>Sign with Debsigs</title>
+
+<meta name="generator" content="Scroll HTML Exporter / K15t GmbH"><meta name="exp-content-hash" content="1fc3bf39a0ba7b24d78e5118b34638133925bd67c7690c3fd199335ccc552085"></head>
+    <!-- pageid attribute is deprecated - please use data-vp-page-id on html element instead -->
+    <body id="SignwithDebsigs-top" pageid="2841510743" class="flex flex-col" data-confluence-deployment-type="CLOUD">
+        <div id="vp-js-desktop__navigation__skip-to-navigation-link"></div>
+
+
+
+
+<header class="home-icon-container flex justify-between header hc-header-background-color hc-header-background-color ">
+    <div class="header__navigation--logo">
+        <a href="SignServer_Documentation.html">
+            <img src="_scroll_external/remote/6bf9cdd43395/download" alt="SignServer Documentation" title="SignServer Documentation">
+        </a>
+    </div>
+        <div class="top-bar-right no-print header__navigation--large__menu hc-header-background-color">
+    
+
+    <div data-vp-id="search-bar-placeholder" data-vp-component="search-bar" class="vp-search-bar" aria-hidden="true">
+        <form action="/search.html" method="GET" class="vp-search-bar__input-container">
+            <div data-vp-component="search-input" data-vp-variant="border" class="vp-search-input vp-search-input--border">
+                <input type="search" id="search-texbox" autocomplete="off" class="vp-search-input__input" style="margin-right: 0;">
+                <div class="vp-search-input__icon" aria-hidden="true">
+                    <span class="vp-icon material-icons mdi-magnify w-6 h-6 text-icon-md"></span>
+                </div>
+            </div>
+        </form>
+        <div id="search-suggestion-container" class="vp-search-suggestion-panel" data-vp-component="search-suggestion"></div>
+        <template id="search-suggestion-option-template">
+            <div class="vp-search-suggestion-option-container vp-search-form__suggestion">
+                <a class="vp-search-suggestion-option vp-search-form__suggestion" href=""></a>
+            </div>
+        </template>
+    </div>
+
+        </div>
+</header>
+
+        <main>
+
+
+
+<div class="vp-article vp-container vp-container--with-content-padding article vp-container--full full vp-article--wide">
+    <div class="flex">
+
+        <div id="exp-navigation-wrapper" class="hidden lg:block">
+            <iframe src="toc.html?pageId=2841510743" class="border-0"></iframe>
+        </div>
+
+
+        <div class="vp-article__content-panel flex-auto grid-container full js-loading" id="article-content">
+            <article role="article">
+                <header>
+<nav aria-label="Breadcrumb" role="navigation">
+    <div class="breadcrumbs-wrapper">
+        <ol class="breadcrumbs breadcrumbs--fit-content js-loading js-loading__stacked js-loading__stacked--breadcrumb">
+                <li class="js-hide-until-loaded">
+                    <a href="SignServer_Documentation.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">SignServer Documentation</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Operations_&amp;_Guides.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Operations &amp; Guides</a>
+                </li>
+                <li class="js-hide-until-loaded">
+                    <a href="Code_Signing.html" rel="prev" target="_self" class="js-breadcrumbs-truncate">Code Signing</a>
+                </li>
+            <li class="breadcrumbs--active js-hide-until-loaded">
+                <a href="Sign_with_Debsigs.html" target="_self" aria-current="page">Sign with Debsigs</a>
+            </li>
+        </ol>
+        <div class="breadcrumbs-wrapper__scroll-mask"></div>
+    </div>
+</nav>
+                    <!-- CSS class article__heading is deprecated and will be removed in the future -->
+                    <h1 class="cell vp-article__heading article__heading js-loading js-loading__stacked js-loading__stacked--heading scroll-h1 scroll-original-h1 scroll-relative-h1 scroll-custom-section-heading scroll-document-section-heading" role="heading" data-scroll-heading-rank="1" data-scroll-original-heading-rank="1" data-scroll-relative-heading-rank="1" id="no-src_generated-id-d02bf3f72ad7f6e9531731731612982b7a02ca314d98741f02a18d3cac0a5fed"><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none"><span class="js-hide-until-loaded">Sign with Debsigs</span></span></h1>
+                </header>
+                <section class="page" id="content" role="main">
+                    <div id="vp-js-desktop__navigation__skip-to-navigation-target"></div>
+                    <div id="main-content" class="wiki-content article__content js-tocBot-content js-hide-until-loaded">
+                        <p local-id="18c86c6d-d5fc-428d-aff8-dbaaaf45c36b"><span class="status-macro aui-lozenge aui-lozenge-visual-refresh aui-lozenge-complete">enterprise</span></p><p local-id="3cad426d3f41">The debsigs format replaces the deprecated dpkg-sign format used in older versions of Debian and Debian-based operating systems, such as Ubuntu. For more information on debsigs, see the <a shape="rect" href="https://manpages.debian.org/unstable/debsigs/debsigs.1p.en.html" class="external-link scroll-external-link" rel="nofollow" data-scroll-link-type="default" data-scroll-link-target="https://manpages.debian.org/unstable/debsigs/debsigs.1p.en.html" data-scroll-link-local="false">Debian debsigs documentation</a>.</p><p local-id="703fa23f7273">Instead of a dedicated debsigs package Signer, SignServer leverages <a href="OpenPGP_Signer.html" data-linked-resource-id="370999909" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999909" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999909/OpenPGP+Signer" data-scroll-link-target-source-id="370999909">OpenPGP Signer</a> to generate signatures and <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> to integrate those signatures into the DEB signing workflow.</p><p local-id="8789a292-e897-444e-b375-035c0e61a868">The <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> is a script that wraps <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a> and behaves like a <code>gpg</code> (GnuPG) command, allowing the standard <code>debsigs</code> tool to use <code>signwrapper-gpg</code> instead of <code>gpg</code>. Because Debian packages embeds signatures directly inside the package file, this scheme requires some logic on the client side: preparing the file, hashing it, and inserting the resulting signature into the Debian data structure. </p><p local-id="c7516fc5-cd2f-4c5b-b7dc-3385875e0953">The Signer uses OpenPGP public keys instead of X.509 certificates. The public key can instead be obtained from the Worker's status output. Additionally, the Generate CSR functionality lets you associate a User ID with the key and store it in the <code>PGPPUBLICKEY</code> property. When using RSA keys for Debian signing, this step is required to produce the correct key type.</p><hr local-id="6d8741c92abf"><h2 local-id="4efa7c58b7ac" id="SignwithDebsigs-Prerequisite:OpenPGPSignerConfigured" data-scroll-heading-rank="2" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="2" class="scroll-original-h3 scroll-custom-section-heading scroll-document-section-heading scroll-h2 scroll-relative-h2"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Prerequisite:-OpenPGP-Signer-Configured"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Prerequisite: OpenPGP Signer Configured</span></h2><p local-id="87ba6673e7da">In the <a href="Set_up_OpenPGP_Signer.html" data-linked-resource-id="370999530" data-linked-resource-version="24" data-linked-resource-type="page" data-scroll-target-source-id="370999530" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999530/Set+up+OpenPGP+Signer" data-scroll-link-target-source-id="370999530">Set up OpenPGP Signer</a>, follow the steps to configure a <a href="OpenPGP_Signer.html" data-linked-resource-id="370999909" data-linked-resource-version="19" data-linked-resource-type="page" data-scroll-target-source-id="370999909" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999909/OpenPGP+Signer" data-scroll-link-target-source-id="370999909">OpenPGP Signer</a>, add User ID and certification, and generate a revocation certificate.</p><hr local-id="ae9ca196-23ee-48b9-911e-9b6022d22580"><h2 local-id="ea37489f-dd18-4b20-a133-fdb13079b5a6" id="SignwithDebsigs-SetupDebsigsforSigningusingSignWrapper-GPG" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Set-up-Debsigs-for-Signing-using-SignWrapper-GPG"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Set up Debsigs for Signing using SignWrapper-GPG</span></h2><p local-id="1fad24b36bba">The SignServer <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a> replaces the <code>gpg</code> (GnuPG) command in the DEB signing workflow by routing requests through <a href="SignClient.html" data-linked-resource-id="370999625" data-linked-resource-version="39" data-linked-resource-type="page" data-scroll-target-source-id="370999625" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/370999625/SignClient" data-scroll-link-target-source-id="370999625">SignClient</a>. </p><h3 local-id="599659f23bc9" id="SignwithDebsigs-ConfigureSignWrapper-GPG" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Configure-SignWrapper-GPG"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure SignWrapper-GPG</span></h3><p local-id="d618f44441fc">To use SignWrapper-GPG together with <code>debsigs</code>it needs to know where SignClient is located. If <code>signwrapper-gpg</code> is not kept in the SignClient folder, set one of the following environment variables:</p><ul local-id="2d5aee0a-3292-49c3-a010-5e25c7697652"><li local-id="d4721612-4f67-49b8-9feb-4a82c77e5614"><p local-id="eca1ef70d7af"><code>SIGNCLIENT_CMD</code>: Set to the full path of the <code>bin/signclient</code> script, or</p></li><li local-id="77edd8f6-75f4-4968-8f56-7d1d4968661d"><p local-id="982475acabab"><code>SIGNCLIENT_HOME</code> or <code>SIGNSERVER_HOME</code>: Set to the root folder of the SignClient distribution.</p></li></ul><h3 local-id="01b5bff78f2d" id="SignwithDebsigs-ConfigureSignClient" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Configure-SignClient"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure SignClient</span></h3><p local-id="a1ab511b67f9">Set the following environment variables so SignWrapper-GPG can connect to your SignServer instance:</p><div class="table-wrap"><table data-table-width="760" data-layout="center" data-local-id="8f7f23be-6575-4f8f-9f57-901cc9c9dec9" class="confluenceTable"><colgroup span="1"><col span="1" style="width: 22.5000%;"><col span="1" style="width: 77.5000%;"></colgroup><thead><tr data-local-id="f166d28f890a"><th colspan="1" rowspan="1" data-local-id="c43f7cfb2b87" class="confluenceTh"><p local-id="d214b4762d02"><strong>Variable</strong></p></th><th colspan="1" rowspan="1" data-local-id="f27cf44b6463" class="confluenceTh"><p local-id="9c0279e31032"><strong>Description</strong></p></th></tr></thead><tbody><tr data-local-id="e557ebb617aa"><td colspan="1" rowspan="1" data-local-id="bef426aff515" class="confluenceTd"><p local-id="436f8947c084"><code>SIGNCLIENT_HOSTS</code></p></td><td colspan="1" rowspan="1" data-local-id="71b194dfb5db" class="confluenceTd"><p local-id="865003c39a0c">Value for the <code>-hosts HOSTS</code> SignClient parameter is the hostname or IP-address of the SignServer host or a comma separated list of hosts. </p><p local-id="7882260f9dd4">Example: <code>signserver1.example.com</code></p></td></tr><tr data-local-id="568f7c3863de"><td colspan="1" rowspan="1" data-local-id="c0e44b75cc79" class="confluenceTd"><p local-id="fe5872213848"><code>SIGNCLIENT_PORT</code></p></td><td colspan="1" rowspan="1" data-local-id="643f87146304" class="confluenceTd"><p local-id="10f753c505a8">Value for the <code>-port PORT</code> SignClient parameter is the TCP port on the SignServer host to use. </p><p local-id="60836fe21f1b">Example: <code>8080</code></p></td></tr><tr data-local-id="34077a78d19c"><td colspan="1" rowspan="1" data-local-id="486b9de56d5b" class="confluenceTd"><p local-id="43c3caf21060"><code>SIGNCLIENT_PARAMS</code></p></td><td colspan="1" rowspan="1" data-local-id="5636877a843c" class="confluenceTd"><p local-id="127c3ecf0346">(Optional) Value for any extra parameters to put on the SignClient command line. </p><p local-id="e1d9414960f0">Example: <code>-truststore TRUSTSTORE -truststorepwd PWD</code></p></td></tr></tbody></table></div><h3 local-id="f745346f1f34" id="SignwithDebsigs-ConfigureGPGPath" data-scroll-heading-rank="3" data-scroll-original-heading-rank="3" data-scroll-relative-heading-rank="3" class="scroll-h3 scroll-original-h3 scroll-relative-h3 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Configure-GPG-Path"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Configure GPG Path</span></h3><p local-id="43f48b3086fb"><span class="inline-comment-marker" data-ref="1820dfd9-2e34-444a-8574-bc45ae05734f">In order for debsigs to use SignWrapper-GPG instead of the native GPG tool, put </span><code><span class="inline-comment-marker" data-ref="1820dfd9-2e34-444a-8574-bc45ae05734f">signwrapper-gpg</span></code><span class="inline-comment-marker" data-ref="1820dfd9-2e34-444a-8574-bc45ae05734f"> on the path “shadowing” the GPG command:</span></p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">ln -s $SIGNSERVER_HOME/bin/signwrapper-gpg /opt/gpg</code></div>
+<div class="line"><code class="plain">export PATH=/opt:$PATH</code></div>
+</div>
+</div><p local-id="ca03bf0e0b91">For more details on the command, see <a href="SignWrapper-GPG.html" data-linked-resource-id="1769406514" data-linked-resource-version="10" data-linked-resource-type="page" data-scroll-target-source-id="1769406514" class=" scroll-document-link" data-scroll-link-type="document" data-scroll-link-target="https://keyfactor.atlassian.net/wiki/spaces/SSDOCS/pages/1769406514/SignWrapper-GPG" data-scroll-link-target-source-id="1769406514">SignWrapper-GPG</a>.</p><hr local-id="13655e10-5157-4952-ad15-906ad292f09b"><h2 local-id="5b6d21d8-f579-4c71-886a-7b1f9dde738a" id="SignwithDebsigs-SignaDEBPackage" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Sign-a-DEB-Package"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Sign a DEB Package</span></h2><p local-id="e7e6f82f0381">With the debsigs tool configured to use SignWrapper-GPG, sign a package using the standard <code>debsigs</code> command:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">debsigs --sign=origin --</code><code class="keyword">default</code><code class="plain">-key=OpenPGPSigner release.deb</code></div>
+</div>
+</div><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p local-id="e976a376fac9">Use the Worker name as the key identity.</p></div></div><p local-id="f6b262c8ac85">When the command completes, the <code>release.deb</code> contains the embedded signature.</p><p local-id="c74a4eadb28c">List signatures in the package:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">debsigs --list release.deb</code></div>
+</div>
+</div><hr local-id="20bc4716-0ec6-4bd0-a22e-dcda1880f78b"><h2 local-id="cc08ccd9-1799-4bf5-8eb7-5fe70293203f" id="SignwithDebsigs-VerifytheSignature" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-Verify-the-Signature"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">Verify the Signature</span></h2><p local-id="245acaf2-7464-475d-b335-a7373da04664">Use <code>debsig-verify</code> to verify the signature. </p><p local-id="5460a8233d93">If the Signer's public key is not yet imported to the local GPG keyring, import it first:</p><ol start="1" local-id="e8ff2fb4f375"><li local-id="bb30bd9c3f5e"><p local-id="7fdc04fba03f">Save the public key (from <code>PGPPUBLICKEY</code> property) as <code>signer001-pub.asc</code>.</p></li><li local-id="7674edfe-b560-418a-9a13-8f863bf20776"><p local-id="533fec8f-9e65-4335-b393-5d3a7f74f6df">Import the key to GPG keyring:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">gpg --</code><code class="keyword">import</code><code class="plain"> signer001-pub.asc</code></div>
+</div>
+</div></li></ol><p local-id="d681041c-ea4c-4ce2-89f3-b9ab4d058b28">Add public key to debsigs policy:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">gpg --list-</code><code class="keyword">public</code><code class="plain">-keys</code></div>
+<div class="line"><code class="plain">KEY_ID=`echo -n 78064687F8BEB17E5B188436D18D3718FAB9BDCD | cut -c25-` # extract last </code><code class="value">16</code><code class="plain"> characters as key ID (replace full ID string with correspoding output from --list-</code><code class="keyword">public</code><code class="plain">-keys)</code></div>
+<div class="line"><code class="plain">POL_DIR=/etc/debsig/policies/$KEY_ID</code></div>
+<div class="line"><code class="plain">mkdir $POL_DIR</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">cat &gt; $POL_DIR/my-app.pol &lt;&lt; EOF</code></div>
+<div class="line"><code class="plain">&lt;?xml version=</code><code class="string">"1.0"</code><code class="plain">?&gt;</code></div>
+<div class="line"><code class="plain">&lt;!DOCTYPE Policy SYSTEM </code><code class="string">"https://www.debian.org/debsig/1.0/policy.dtd"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">&lt;Policy xmlns=</code><code class="string">"https://www.debian.org/debsig/1.0/"</code><code class="plain">&gt;</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">  &lt;Origin Name=</code><code class="string">"Debsig"</code><code class="plain"> id=</code><code class="string">"$KEY_ID"</code><code class="plain"> Description=</code><code class="string">"Debsig testing"</code><code class="plain">/&gt;</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">  &lt;Selection&gt;</code></div>
+<div class="line"><code class="plain">    &lt;Required Type=</code><code class="string">"origin"</code><code class="plain"> File=</code><code class="string">"debsig.gpg"</code><code class="plain"> id=</code><code class="string">"$KEY_ID"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">  &lt;/Selection&gt;</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">  &lt;Verification MinOptional=</code><code class="string">"0"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    &lt;Required Type=</code><code class="string">"origin"</code><code class="plain"> File=</code><code class="string">"debsig.gpg"</code><code class="plain"> id=</code><code class="string">"$KEY_ID"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">  &lt;/Verification&gt;</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">&lt;/Policy&gt;</code></div>
+<div class="line"><code class="plain">EOF</code></div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="plain">gpg --export 78064687F8BEB17E5B188436D18D3718FAB9BDCD &gt; $KEY_DIR/debsig.gpg</code></div>
+</div>
+</div><p local-id="582195b2a4d4">Verify package signature:</p><div class="scroll-code scroll-highlighted-code-block" data-title-type="code" data-theme="defaultnew" style="  counter-reset: scroll-code-numbering 0;"><div class="defaultnew content">
+<div class="line"><code class="plain">debsig-verify release.deb</code></div>
+</div>
+</div><hr local-id="f5869d93-b587-4c54-b5cc-c37c58546915"><h2 local-id="b6100573a8ab" id="SignwithDebsigs-(Optional)DistributethePublicKey" data-scroll-heading-rank="2" data-scroll-original-heading-rank="2" data-scroll-relative-heading-rank="2" class="scroll-h2 scroll-original-h2 scroll-relative-h2 scroll-custom-section-heading scroll-document-section-heading"><span class="confluence-anchor-link" id="src-2841510743_SignwithDebsigs-(Optional)-Distribute-the-Public-Key"></span><span class="scroll-document-section-heading-counter" role="none"></span><span class="scroll-document-section-heading-text" role="none">(Optional) Distribute the Public Key</span></h2><p local-id="f12e9b6eee60">The OpenPGP public key can be published to online key servers or distributed to clients by other means.</p>
+<nav id="ht-post-nav">
+        <a href="Sign_with_RPM_Signatures.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign with RPM Signatures</span>
+        </a>
+
+        <a href="Sign_Git_Commits.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewbox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2" sketch:type="MSShapeGroup" transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Sign Git Commits</span>
+        </a>
+</nav>
+                    </div>
+                </section>
+            </article>
+        </div>
+
+        <div class="vp-article__aside-right flex-shrink-0 w-1/6 article__toc hidden xl:block no-print">
+            <div class="vp-scrollable-container vp-scrollable-container--hidden-scrollbars">
+                <div class="js-tocBot">
+                                    </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        </main>
+
+
+        <div id="vp-js-mobile__navigation">
+            <div tabindex="-1" class="vp-mobile-navigation__trigger fixed outline-none z-mobile-menu-trigger">
+                <button type="button" class="vp-button vp-button--variant-floating-action vp-mobile-navigation__button flex items-center justify-center" aria-label="navigation.open.label">
+                    <div class="vp-mobile-navigation__button__icon relative">
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                        <div class="absolute w-full"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>

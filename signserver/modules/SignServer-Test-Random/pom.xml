@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>7.7.1-Beta-2</version>
+        <version>7.7.1-Beta-3</version>
     </parent>
     <artifactId>SignServer-Test-Random</artifactId>
     <name>SignServer-Test-Random</name>
